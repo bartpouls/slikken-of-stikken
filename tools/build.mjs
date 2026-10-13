@@ -19,14 +19,16 @@ const css = CSS.map((p) => `<style data-bron="${p}">\n${veiligCSS(lees(p))}\n</s
 const js = JS.map((p) => `<script data-bron="${p}">\n${veiligJS(lees(p))}\n</script>`).join('\n');
 
 let html = lees('src/index.template.html');
+
+// Controle (op de template; de inline bronnen noemen <script src> alleen in commentaar): geen externe verwijzingen.
+const extern = html.match(/<(?:script|link|img|iframe|audio|video|source|object|embed)\b[^>]*\b(?:src|href)\s*=\s*["'](?!data:|#)[^"']+["']/gi);
+if (extern) throw new Error('build: externe verwijzing gevonden: ' + extern.join(', '));
+
 for (const [teken, inhoud] of [['<!-- @@CSS -->', css], ['<!-- @@JS -->', js]]) {
   if (!html.includes(teken)) throw new Error(`build: ${teken} ontbreekt in src/index.template.html`);
   html = html.replace(teken, () => inhoud);
 }
 
-// Controle: geen externe verwijzingen.
-const extern = html.match(/\b(?:src|href)\s*=\s*["'](?!data:|#)[^"']+["']/gi);
-if (extern) throw new Error('build: externe verwijzing gevonden: ' + extern.join(', '));
 if (/@import|url\(\s*["']?https?:/i.test(html)) throw new Error('build: externe CSS-verwijzing gevonden');
 
 writeFileSync(join(root, 'index.html'), html);
