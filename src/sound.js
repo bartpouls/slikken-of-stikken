@@ -5,9 +5,11 @@
  * PUBLIEKE API (window.SoS.sound)
  *   unlock()            Roep aan in de eerste tik/klik-handler. Maakt de
  *                       AudioContext aan en ontgrendelt hem (iOS/Android).
- *                       Ook automatisch gekoppeld aan de eerste pointerdown/
- *                       touchend/click/keydown op de pagina. Geeft true als er
- *                       een context is. Veilig om vaak aan te roepen.
+ *                       Ook automatisch gekoppeld aan click/touchend/pointerup/
+ *                       keydown op de pagina. Doet niets buiten een activerend
+ *                       gebaar (veeg, Shift, Escape), dus geen consolewaarschuwing.
+ *                       Geeft true als er een context is. Veilig om vaak aan
+ *                       te roepen.
  *   play(naam)          Speelt een geluid; start binnen ~5 ms. Geeft true als
  *                       het is ingepland, false bij demp, onbekende naam, nog
  *                       geen tik gehad, of geen Web Audio. Gooit nooit.
@@ -25,17 +27,18 @@
  *   _render(naam)       Alleen voor tests: Promise<AudioBuffer|null> van het
  *                       geluid via OfflineAudioContext (zelfde mastergain).
  *
- * GELUIDEN (naam — wanneer — karakter)
+ * GELUIDEN (naam — wanneer — karakter). Elk geluid heeft energie tussen
+ * 800 en 4000 Hz, zodat het ook op een telefoonspeaker hoorbaar is.
  *   tik       knop-tik                 piepklein droog klikje (~30 ms)
  *   poort     poortje komt eraan       heel zacht hoog tikje (~35 ms)
- *   slik      tablet slikken           lage 'glk', zakkende toon in twee delen (~150 ms)
+ *   slik      tablet slikken           zakkende 'glk' met klankkleur rond 1 kHz (~150 ms)
  *   zetpil    zetpil geven             dof 'pff-plop', gedempt en laag (~140 ms)
  *   spuit     spuit: werkt direct      scherpe, hoge stijgende 'tsjik' (~100 ms)
  *   overslaan niets / overgeslagen     neutraal zacht 'tu-tu' omlaag (~120 ms)
- *   au        fout / onder de zone     doffe klap + duidelijk zakkende 'au' (~240 ms)
+ *   au        fout / onder de zone     klap + zakkende stem 'a-oe', luidste actiegeluid (~240 ms)
  *   alarm     te hoog / giftig / lever drie korte tweetoon-piepjes (~235 ms)
  *   wending   plotwending/gebeurtenis  opwaartse 'hm?' + belletje, geen foutgeluid (~250 ms)
- *   bonk      lithium-spuitgrap        holle, komische 'bonk' (~170 ms)
+ *   bonk      lithium-spuitgrap        holle, houtachtige komische 'bonk' (~170 ms)
  *   klaar     race klaar               kort opgewekt loopje van vier noten (~390 ms)
  */
 (function (root) {
@@ -105,15 +108,17 @@
     param.linearRampToValueAtTime(0, t + dur + 0.01);
   }
 
-  function filt(E, o) {
+  // o: [type, freq, Q, freqEind, t, glide] — met freqEind schuift het filter mee
+  function filt(E, o, t, glide) {
     var f = E.c.createBiquadFilter();
     f.type = o[0];
-    f.frequency.value = o[1];
     f.Q.value = o[2] || 0.7;
+    f.frequency.setValueAtTime(o[1], t);
+    if (o[3]) f.frequency.exponentialRampToValueAtTime(o[3], t + glide);
     return f;
   }
 
-  // o: {type, f0, f1, glide, at, dur, gain, a, filter:[type,freq,Q]}
+  // o: {type, f0, f1, glide, at, dur, gain, a, filter:[type,freq,Q,freqEind]}
   function tone(E, o) {
     var c = E.c, t = E.t + (o.at || 0);
     var osc = c.createOscillator();
@@ -123,7 +128,7 @@
     var g = c.createGain();
     env(g.gain, t, o.a || 0.003, o.dur, o.gain);
     var node = osc;
-    if (o.filter) { var f = filt(E, o.filter); osc.connect(f); node = f; }
+    if (o.filter) { var f = filt(E, o.filter, t, o.glide || o.dur); osc.connect(f); node = f; }
     node.connect(g);
     g.connect(E.out);
     osc.start(t);
@@ -132,7 +137,7 @@
     E.end = Math.max(E.end || 0, t + o.dur + 0.03);
   }
 
-  // o: {at, dur, gain, a, filter:[type,freq,Q]}
+  // o: {at, dur, gain, a, filter:[type,freq,Q,freqEind]}
   function noise(E, o) {
     var c = E.c, t = E.t + (o.at || 0);
     var s = c.createBufferSource();
@@ -140,7 +145,7 @@
     var g = c.createGain();
     env(g.gain, t, o.a || 0.002, o.dur, o.gain);
     var node = s;
-    if (o.filter) { var f = filt(E, o.filter); s.connect(f); node = f; }
+    if (o.filter) { var f = filt(E, o.filter, t, o.dur); s.connect(f); node = f; }
     node.connect(g);
     g.connect(E.out);
     s.start(t, Math.random() * 0.3);
@@ -159,12 +164,17 @@
       tone(E, { type: 'sine', f0: 1600, dur: 0.035, gain: 0.13, a: 0.002 });
     },
     slik: function (E) {
-      tone(E, { type: 'sine', f0: 340, f1: 150, dur: 0.11, gain: 0.55, a: 0.006 });
-      tone(E, { type: 'sine', f0: 250, f1: 185, at: 0.075, dur: 0.075, gain: 0.32, a: 0.004 });
+      // 'glk': lage zakkende toon, met een meeschuivende klankkleur rond 1 kHz
+      // zodat hij ook op een telefoonspeaker hoorbaar is
+      tone(E, { type: 'sawtooth', f0: 230, f1: 120, dur: 0.11, gain: 0.4, a: 0.006, filter: ['bandpass', 1500, 3, 700] });
+      tone(E, { type: 'sine', f0: 300, f1: 150, dur: 0.1, gain: 0.18, a: 0.006 });
+      tone(E, { type: 'sine', f0: 1300, f1: 900, at: 0.075, dur: 0.05, gain: 0.12, a: 0.003 });
     },
     zetpil: function (E) {
-      noise(E, { dur: 0.06, gain: 0.22, a: 0.008, filter: ['bandpass', 700, 1.2] });
-      tone(E, { type: 'triangle', f0: 210, f1: 105, at: 0.025, dur: 0.11, gain: 0.45, filter: ['lowpass', 600] });
+      // dof 'pff-plop': gefilterde ruis, dan een zachte plop
+      noise(E, { dur: 0.06, gain: 0.16, a: 0.008, filter: ['bandpass', 1100, 1.2] });
+      tone(E, { type: 'triangle', f0: 210, f1: 105, at: 0.025, dur: 0.11, gain: 0.14, filter: ['lowpass', 600] });
+      tone(E, { type: 'sine', f0: 1000, f1: 620, at: 0.025, dur: 0.07, gain: 0.14, a: 0.003 });
     },
     spuit: function (E) {
       tone(E, { type: 'square', f0: 1300, f1: 2600, dur: 0.06, gain: 0.1, a: 0.001, filter: ['highpass', 900] });
@@ -172,13 +182,17 @@
       tone(E, { type: 'sine', f0: 2600, at: 0.045, dur: 0.05, gain: 0.12, a: 0.001 });
     },
     overslaan: function (E) {
-      tone(E, { type: 'triangle', f0: 520, dur: 0.045, gain: 0.16 });
-      tone(E, { type: 'triangle', f0: 390, at: 0.06, dur: 0.06, gain: 0.14 });
+      tone(E, { type: 'square', f0: 520, dur: 0.045, gain: 0.07, filter: ['lowpass', 1800] });
+      tone(E, { type: 'sine', f0: 1040, dur: 0.04, gain: 0.04 });
+      tone(E, { type: 'square', f0: 390, at: 0.06, dur: 0.06, gain: 0.06, filter: ['lowpass', 1500] });
+      tone(E, { type: 'sine', f0: 780, at: 0.06, dur: 0.05, gain: 0.04 });
     },
     au: function (E) {
-      noise(E, { dur: 0.05, gain: 0.3, filter: ['lowpass', 1500] });
-      tone(E, { type: 'square', f0: 500, f1: 170, glide: 0.2, dur: 0.22, gain: 0.18, a: 0.004, filter: ['lowpass', 2000] });
-      tone(E, { type: 'sine', f0: 250, f1: 85, glide: 0.2, dur: 0.2, gain: 0.35, a: 0.004 });
+      // 'a-oe': zakkende stem door twee klinkerfilters (a → oe), plus een klap
+      noise(E, { dur: 0.04, gain: 0.4, a: 0.001, filter: ['bandpass', 1400, 1] });
+      tone(E, { type: 'sawtooth', f0: 340, f1: 190, glide: 0.2, dur: 0.22, gain: 1.9, a: 0.004, filter: ['bandpass', 1100, 4, 500] });
+      tone(E, { type: 'sawtooth', f0: 340, f1: 190, glide: 0.2, dur: 0.22, gain: 1.1, a: 0.004, filter: ['bandpass', 1700, 5, 950] });
+      tone(E, { type: 'sine', f0: 340, f1: 190, glide: 0.2, dur: 0.2, gain: 0.2, a: 0.004 });
     },
     alarm: function (E) {
       var f = [990, 740, 990];
@@ -187,21 +201,23 @@
       }
     },
     wending: function (E) {
-      tone(E, { type: 'sine', f0: 380, f1: 1000, dur: 0.12, gain: 0.22, a: 0.01 });
-      tone(E, { type: 'triangle', f0: 1320, at: 0.11, dur: 0.14, gain: 0.2, a: 0.002 });
-      tone(E, { type: 'sine', f0: 1980, at: 0.11, dur: 0.12, gain: 0.07, a: 0.002 });
+      tone(E, { type: 'sine', f0: 380, f1: 1000, dur: 0.12, gain: 0.14, a: 0.01 });
+      tone(E, { type: 'triangle', f0: 1320, at: 0.11, dur: 0.14, gain: 0.13, a: 0.002 });
+      tone(E, { type: 'sine', f0: 1980, at: 0.11, dur: 0.12, gain: 0.05, a: 0.002 });
     },
     bonk: function (E) {
-      tone(E, { type: 'sine', f0: 190, f1: 55, glide: 0.12, dur: 0.17, gain: 0.7, a: 0.002 });
-      tone(E, { type: 'triangle', f0: 420, f1: 160, dur: 0.05, gain: 0.2, a: 0.001 });
-      noise(E, { dur: 0.025, gain: 0.3, a: 0.001, filter: ['lowpass', 900] });
+      // holle 'bonk': diepe val, met houtachtige boventonen en een klikje
+      tone(E, { type: 'sine', f0: 190, f1: 55, glide: 0.12, dur: 0.17, gain: 0.2, a: 0.002 });
+      tone(E, { type: 'sine', f0: 900, f1: 760, dur: 0.09, gain: 0.3, a: 0.001 });
+      tone(E, { type: 'sine', f0: 1480, f1: 1250, dur: 0.05, gain: 0.1, a: 0.001 });
+      noise(E, { dur: 0.015, gain: 0.2, a: 0.001, filter: ['bandpass', 2000, 1.5] });
     },
     klaar: function (E) {
       var f = [523.25, 659.25, 783.99, 1046.5];
       for (var i = 0; i < 4; i++) {
         var last = i === 3;
-        tone(E, { type: 'triangle', f0: f[i], at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.2 });
-        tone(E, { type: 'sine', f0: f[i] / 2, at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.08 });
+        tone(E, { type: 'triangle', f0: f[i], at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.16 });
+        tone(E, { type: 'sine', f0: f[i] / 2, at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.06 });
       }
     }
   };
@@ -219,6 +235,9 @@
 
   function unlock() {
     if (!Ctor) return false;
+    // Zonder activerend gebaar (veeg, Shift, Escape) niets aanmaken of
+    // hervatten: Chromium zou dan in de console waarschuwen.
+    if (!canActivate()) return !!ctx;
     try {
       if (!ctx) {
         try { ctx = new Ctor({ latencyHint: 'interactive' }); }
@@ -239,11 +258,19 @@
     }
   }
 
-  function gesture() {
+  function gesture(ev) {
+    if (ev && ev.type === 'keydown' && !activatingKey(ev)) return;
     unlock();
     if (ctx && ctx.state === 'running') detach();
   }
-  var EVENTS = ['pointerdown', 'touchend', 'click', 'keydown'];
+  // Toetsen die geen gebruikersactivering geven (HTML-spec: Escape, modifiers).
+  var DEAD_KEYS = { Escape: 1, Shift: 1, Control: 1, Alt: 1, Meta: 1, AltGraph: 1,
+    CapsLock: 1, Fn: 1, FnLock: 1, Hyper: 1, NumLock: 1, ScrollLock: 1, Super: 1, Symbol: 1, SymbolLock: 1 };
+  function activatingKey(ev) {
+    return !DEAD_KEYS[ev.key] && !ev.ctrlKey && !ev.metaKey && !ev.altKey;
+  }
+  // Geen pointerdown: een aanraking die een veeg wordt, activeert niets.
+  var EVENTS = ['click', 'touchend', 'pointerup', 'keydown'];
   function attach() {
     try {
       for (var i = 0; i < EVENTS.length; i++) {
@@ -269,11 +296,20 @@
   }
   if (Ctor) attach();
 
+  // true = zeker binnen een activerend gebaar
   function inGesture() {
     try {
       var ua = root.navigator && root.navigator.userActivation;
       return !!(ua && ua.isActive);
     } catch (e) { return false; }
+  }
+  // false alleen als de browser zeker weet dat er geen activering is;
+  // zonder userActivation-API (oudere Safari) proberen we het gewoon.
+  function canActivate() {
+    try {
+      var ua = root.navigator && root.navigator.userActivation;
+      return ua ? !!ua.isActive : true;
+    } catch (e) { return true; }
   }
 
   // ---------- stemmen beperken ----------
@@ -305,7 +341,12 @@
         if (!inGesture()) return false; // nooit een context buiten een tik
         if (!unlock()) return false;
       }
-      if (ctx.state !== 'running') resume();
+      if (ctx.state !== 'running') {
+        // gepauzeerde context: alleen hervatten binnen een gebaar, anders
+        // stil overslaan (geen waarschuwing, geen opgestapelde wachtrij)
+        if (!canActivate()) return false;
+        resume();
+      }
       var now = ctx.currentTime;
       var gap = MIN_GAP[name] || 0.035;
       if (lastPlayed[name] !== undefined && now - lastPlayed[name] < gap) return false;

@@ -51,7 +51,18 @@
  *     echtSchema:{tekst, aantal}, telling:{toedienmomenten, totaleDosis:{waarde, eenheid, tekst},
  *     dagteller (alleen paracetamol): {hoogste, max, eenheid:'g', over, tekst}},
  *     uren:{zone, onder, boven, toxisch}, praktijk:{regel, zin} }
- *   S.verslag(casus, log, teller) bouwt dit uit een sim-log en een teller (intern gebruikt).
+ *   S.verslag(casus, log, teller) bouwt dit uit een sim-log en een S.maakTeller(casus) (intern gebruikt).
+ *   Lithium-spuitknop in de tijdlijn: soort 'overgeslagen' (of 'tablet' als ook geslikt) met geenPrik = true.
+ *   tijdlijn[i].echt komt uit casus.echtSchema (paracetamol: tablet op 0, 6, 12, 18 — letterlijk het casusblad,
+ *   ook al is slikken om 12 u in de race geblokkeerd).
+ *
+ * PRAKTIJKZINNEN (praktijk.regel; de eerste die past)
+ *   paracetamol: lever (dagteller > 4 g) · niets · zetpilNauwelijks (F ≤ 0,4) / zetpilHalf (F < 0,7, woordelijk §3) /
+ *     zetpilGoed (zetpil tijdens misselijkheid) · spuit (spuit tijdens misselijkheid) · veelOnder (> 1/4 van de
+ *     race onder de zone buiten de misselijkheid) · misselijkGemist · goed (alleen bereikbaar zonder blokkade).
+ *   lithium: giftigDubbel / giftig (> 1,5) · niets · naIbuTeVeelWeg (na ibuprofen overgeslagen én onder 0,6) /
+ *     naIbuMinder (woordelijk §3, % = overgeslagen poortjes vanaf t = 120 / 15) · overgeslagenOnder ·
+ *     naIbuTeHoog · nabespreking (casusblad).
  */
 (function (root, factory) {
   var api = factory(function () {
@@ -309,12 +320,12 @@
       }
       if (spuiten.length) return { regel: 'spuit',
         zin: 'Tijdens de misselijkheid koos jij de spuit. Een prik werkt meteen, ook als opa Jan niet kan slikken.' };
+      if ((teller.uren.onder - teller.onderTijdensBlokkade) / T > 1 / 4) return { regel: 'veelOnder',
+        zin: 'Opa Jan zat ' + pct(teller.uren.onder / T) + ' van de tijd onder de streep. ' +
+          'Een pil werkt maar een paar uur: verdeel de doses over de dag.' };
       if (!inBlok.length && (geblokt || teller.onderTijdensBlokkade > 0)) return { regel: 'misselijkGemist',
         zin: 'Tijdens de misselijkheid kreeg opa Jan geen paracetamol, en de pijn kwam terug. ' +
           'Kan iemand niet slikken, dan kan het ook als zetpil of prik.' };
-      if (teller.uren.onder / T > 1 / 3) return { regel: 'veelOnder',
-        zin: 'Opa Jan zat ' + pct(teller.uren.onder / T) + ' van de tijd onder de streep. ' +
-          'Een pil werkt maar een paar uur: verdeel de doses over de dag.' };
       return { regel: 'goed',
         zin: 'Jij bleef met ' + telling.totaleDosis.tekst + ' binnen de 4 g per dag. ' +
           'Een vast schema op vaste tijden houdt de pijn weg en de lever heel.' };
