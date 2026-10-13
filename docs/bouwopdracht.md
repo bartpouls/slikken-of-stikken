@@ -32,15 +32,15 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 ### Flow
 
 1. **Start:** speelnaam (alias), één knop "Start". Binnen 3 tikken aan het spelen.
-2. **Tutorial (paracetamol):** een verhaal in korte stappen. Elke stap: één nieuw begrip, maximaal één zin tekst, en de speler doet het zelf:
+2. **Tutorial (paracetamol, slik / spuit / zetpil):** een verhaal in korte stappen. Elke stap: één nieuw begrip, maximaal één zin tekst, en de speler doet het zelf:
    1. "Opa Jan heeft pijn." → slik → curve stijgt pas na even: *een pil moet eerst door je maag.*
    2. Curve zakt → *je lichaam ruimt het op: elke 2,5 uur is de helft weg.*
    3. Spuit → *een prik werkt meteen, maar zakt net zo hard.*
    4. Dagteller → *meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.*
    5. Zetpil → *een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.*
    6. "Klaar? Race!"
-3. **Race 1: paracetamol** (slik of zetpil, met misselijkheid; zie casusblad).
-4. **Race 2: lithium** (slik of overslaan, met ibuprofen halverwege; zie casusblad).
+3. **Race 1: paracetamol** (tablet, zetpil of spuit, met misselijkheid; zie casusblad).
+4. **Race 2: lithium** (tablet of overslaan; de spuitknop is er wel, maar lithium bestaat niet als injectie; zie casusblad).
 5. **Eindscherm** (zie §2), groot en leesbaar op 2 meter, één tik "Nog een keer".
 
 ## 4. Rekenmodel
@@ -67,12 +67,12 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 | T½ | 2,5 uur | bron [3] (1,9–2,5 u) |
 | Slik | 1 g per keer, F = 0,85, ka = 1,5 /u (piek ±9,2 mg/L na ±1,4 u) | F: bron [3] (0,7–0,9); ka: aanname, past bij piek ±1,5 u [2] |
 | Zetpil | 1 g per keer. Per zetpil F uit 0,3–0,9 en ka uit 0,3–1,0 /u, uit een vaste reeks (voor iedereen gelijk) | richting bron [4][5] (traag en wisselend); spreiding is een spelkeuze |
-| Spuit | 1 g iv, directe piek 1000/63 = 15,9 mg/L. **Alleen in de tutorial.** | vereenvoudiging: echt iv-paracetamol loopt in 15 min in, met piek ±30 mg/L [1] |
+| Spuit | 1 g iv, directe piek 1000/63 = 15,9 mg/L. In tutorial en race 1. Telt mee voor de dagteller. | vereenvoudiging: echt iv-paracetamol loopt in 15 min in, met piek ±30 mg/L [1] |
 | Zone | ≥ 5 mg/L = "pijnstilling (vereenvoudigd)" | spelkeuze, afgesteld op het echte schema (zie onder) |
 | Bovengrens | Dagteller: maximaal 4 g per 24 uur. Daarboven: levermeter vol. | Bart akkoord |
 | Poortjes | elk uur (24 poortjes) | spelkeuze |
 | Racelengte | 24 uur patiënttijd (±10 T½) | spelkeuze |
-| Gebeurtenis race 1 | Uur 10 tot 16: "Opa is misselijk na de narcose." Slikken geblokkeerd; alleen zetpil of niets. | Bart akkoord |
+| Gebeurtenis race 1 | Uur 10 tot 16: "Opa is misselijk na de narcose." Slikken geblokkeerd; zetpil, spuit of niets. | Bart akkoord |
 | Echt schema (eindscherm) | 1 g 4dd | Bart akkoord |
 | Onder de zone, in lekentaal | "Au. De pijn komt terug." | |
 | Boven 4 g, in lekentaal | "Te veel paracetamol beschadigt de lever." | |
@@ -90,6 +90,7 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 | Zone | 0,6–1,0 mmol/L | geheugen, Bart akkoord |
 | Toxisch | > 1,5 mmol/L | geheugen, Bart akkoord |
 | Poortjes | 3× per dag, om 0, 8 en 16 uur (30 poortjes); keuze slikken of overslaan | spelkeuze |
+| Spuitknop | Zichtbaar, maar doet niets aan de spiegel. Bij tikken: "Lithium bestaat niet als prik. Slikken of stikken!" Geen strafpunten. | farmacologisch: er is geen injecteerbare lithium; Bart akkoord |
 | Start | Al in steady state op 3dd 400 mg: spiegel ±0,76–0,87 | doorgerekend |
 | Racelengte | 10 dagen patiënttijd (±10 T½) | spelkeuze |
 | Gebeurtenis race 2 | Dag 5 (t = 120 u): "Mevrouw De Vries koopt ibuprofen bij de drogist." Klaring × 0,7 tot het einde. Geen tegenactie mogelijk. | factor binnen gerapporteerde range [6][7][8]; Bart akkoord |
@@ -108,6 +109,7 @@ Doorgerekend met het model uit §4 (numeriek, stap 0,005 u). Het spel moet hier 
 |---|---|---|---|
 | Niets | 0% | 0 | 0 g |
 | 1 g slik om 0, 6, 12, 18 u (echt schema) | 78% | 11,9 | 4 g |
+| Idem, dosis van 12 u als spuit | 78% | 19,6 | 4 g |
 | Idem, dosis van 12 u als zetpil met F 0,6 / ka 0,6 | 75% | 11,8 | 4 g |
 | Idem, dosis van 12 u als zetpil met F 0,3 / ka 0,3 | 57% | 11,4 | 4 g |
 | Dosis van 12 u gemist | 54% | 11,4 | 3 g |
@@ -142,7 +144,7 @@ Stopregel: stoppen zodra de blinde check 0 afwijkingen vindt.
 ### B. Speelbaarheid — type: bewijs met vooraf afgesproken drempels
 
 Automatische spelers (bots) spelen het echte spel in een telefoonscherm (375 × 667 en 390 × 844). Poortcriteria:
-1. **Paracetamol:** echt schema ≥ zetpil-variant > gemiste dosis > niets. "Elk uur slikken" eindigt met leverschade en scoort lager dan het echte schema. Het echte schema haalt minstens 80% van de hoogste botscore.
+1. **Paracetamol:** echt schema = spuit-variant ≥ zetpil-variant > gemiste dosis > niets. "Elk uur slikken" eindigt met leverschade en scoort lager dan het echte schema. Het echte schema haalt minstens 80% van de hoogste botscore.
 2. **Lithium:** "na de ibuprofen elke 3e overslaan" > "alles slikken" > "niets"; "elk poortje dubbel" belandt in de toxische zone en scoort het laagst.
 3. Van openen tot spelen: maximaal 3 tikken. Een race duurt 60–120 seconden. "Nog een keer" is één tik.
 4. Knoppen minstens 48 × 48 px. Geen horizontaal scrollen. Geen netwerkverzoeken na het laden.
@@ -153,7 +155,7 @@ Maximaal 2 rondes, tenzij de drempels nog niet gehaald zijn.
 
 ### C. Beleving — type: smaak
 
-Eén bouwronde, één verse controle op A en B, daarna de correctielijst van Bart. Referenties (patronen overnemen, niets kopiëren):
+Eén bouwronde, één verse controle op A en B, daarna de correctielijst van Bart. Schermafbeeldingen van de twee hoofdreferenties staan in `docs/referenties/` en zijn leidend als de sites niet te openen zijn. Stijlkeuze: **verhaal en tutorial in de stijl van The Evolution of Trust** (wit, zwarte schetslijnen, simpele figuurtjes met een gekleurd hoedje: opa Jan en mevrouw De Vries); **de races in de stijl van Universe Forecast** (zwart met gekleurde sterretjes, platte illustraties, paarse tijdmarkeringen met een lijn ervoor en erachter, korte witte tekst in het midden). Overweeg de tijd van boven naar beneden te laten lopen, zoals de tijdlijn van Universe Forecast: dat past bij een staand telefoonscherm. Referenties (patronen overnemen, niets kopiëren):
 - **Uitstraling:** neal.fun/universe-forecast — rustige, grote typografie, veel lucht, alles beweegt soepel, één ding tegelijk in beeld.
 - **Verhaal en uitleg:** ncase.me/trust (The Evolution of Trust) — een verhaal in korte hoofdstukken, één begrip per stap, leren door te doen; figuurtjes die reageren als je ze aanraakt of aanwijst.
 - **Geluid:** Flappy Bird — korte, droge blips bij elke actie en een duidelijk "au"-geluid bij een fout.
