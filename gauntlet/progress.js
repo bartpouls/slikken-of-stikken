@@ -5,9 +5,9 @@ window.GAUNTLET = {
   level: "blind",
   status: "running",
   round: 1, maxRounds: 4,
-  updated: "2026-10-13 18:45",
+  updated: "2026-10-13 18:55",
   units: [
-    { name: "U1 Rekenmodel + casusdata (A1–A3)", round: 1, verdict: "PENDING", evidence: "gebouwd; blinde criticus rekent onafhankelijk na", artifact: "src/model.js" },
+    { name: "U1 Rekenmodel + casusdata (A1–A3)", round: 1, verdict: "PASS", evidence: "Blind PASS A1–A4, 0 afwijkingen; eigen RK4 in Python: max fout 4e-13, halvering 0,5000000, alle tabelregels binnen marge. Stopregel A gehaald. Kleine robuustheidsfix blokkade-epsilon", artifact: "src/model.js" },
     { name: "U2 QALY-score + rangorde headless (B1–B2 voorlopig)", round: 1, verdict: "PENDING", evidence: "bouwer gestart", artifact: "src/score.js" },
     { name: "U3 Geluid (C, hard: zelf gesynthetiseerd, dempknop)", round: 2, verdict: "FAIL", evidence: "R1 FAIL: au valt niet op; slik/zetpil/au <400 Hz → onhoorbaar op telefoonspeaker; consolewarning na veeg. Ronde 2 in bouw", artifact: "src/sound.js" },
     { name: "U4 Scorebord beamer (C)", round: 1, verdict: "PENDING", evidence: "gebouwd; verse criticus beoordeelt", artifact: "scorebord.html" },
@@ -19,9 +19,10 @@ window.GAUNTLET = {
   ],
   log: [
     { round: 0, unit: "LEAD", verdict: "PENDING", note: "Sites §6C niet bereikbaar (netwerkbeleid: 403/ENOTFOUND). Schermafbeeldingen in docs/referenties/ zijn leidend." },
+    { round: 1, unit: "U1", verdict: "PASS", note: "Blind: 0 afwijkingen casusdata; tabel gereproduceerd. Bevinding: blokkadegrens zonder tolerantie → kleine fix" },
     { round: 1, unit: "U3", verdict: "FAIL", note: "P2 au niet opvallend + basgeluid verdwijnt op telefoonspeaker; P5/P6 AudioContext bij veeg → warning. Terug naar bouwer" },
     { round: 1, unit: "U1", verdict: "PENDING", note: "Model gebouwd: exacte exponentiële stap; 3 tijdpercentages wijken relatief >2% af maar ronden af op tabelwaarde → LEAD-interpretatie ±2 procentpunt" }
   ],
   open: ["LEAD-besluit lat A3: tabel heeft hele procenten, dus tijdpercentages ±2 procentpunt; concentraties/doses ±2% relatief. Akkoord?"],
-  belowBar: []
+  belowBar: ["Lithium steady state in het model: 0,764–0,882 mmol/L; casusblad zegt ±0,76–0,87 (bovengrens +1,4%). Bart: bevestigen.", "Lithium piek na één dosis 3,65 u (casusblad: ±3,5 u)."]
 };
