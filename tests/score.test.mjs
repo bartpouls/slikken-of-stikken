@@ -35,30 +35,48 @@ function frames(soort) {
   let x = 12345;
   return () => { x = (x * 1103515245 + 12345) % 2147483648; return 0.003 + (x / 2147483648) * 0.4; };
 }
-function speel(casus, bot, frameSoort = 'vast') {
-  const race = S.maakRace(casus);
+// frameSoort 'vast': de speler loopt eerst met race.naar(poortjetijd) naar het poortje en geeft dan.
+// frameSoort 'grillig': grillige frames die vlak vóór het poortje stoppen; de bot geeft met {index} en laat
+// race.geef zelf naar het poortje lopen (het robuuste pad). Beide moeten bit-identiek uitkomen.
+function speel(casus, bot, frameSoort = 'vast', opties) {
+  const race = S.maakRace(casus, opties);
   const c = race.casus, tijden = M.poortjes(c), stapje = frames(frameSoort);
   const schaal = c.raceDuur / 24; // lithium: frames in verhouding (zelfde aantal frames per race)
+  const metIndex = frameSoort !== 'vast';
   let klok = 0;
   tijden.forEach((tp, idx) => {
-    while (klok < tp - 1e-12) { klok = Math.min(tp, klok + stapje() * schaal); race.naar(klok); }
-    race.naar(tp);
-    for (const k of bot(race, tp, idx)) {
-      const r = race.geef(k.route, k);
-      if (!r.ok && k.anders) race.geef(k.anders.route, k.anders);
+    if (metIndex) {
+      for (let st = stapje() * schaal; klok + st < tp; st = stapje() * schaal) { klok += st; race.naar(klok); }
+    } else {
+      while (klok < tp - 1e-12) { klok = Math.min(tp, klok + stapje() * schaal); race.naar(klok); }
+      race.naar(tp);
     }
+    const keuzes = metIndex ? bot(kijk(race, tp), tp, idx) : bot(race, tp, idx);
+    for (const k of keuzes) {
+      const r = race.geef(k.route, metIndex ? { ...k, index: idx } : k);
+      if (!r.ok && k.anders) race.geef(k.anders.route, metIndex ? { ...k.anders, index: idx } : k.anders);
+    }
+    klok = Math.max(klok, race.t);
   });
   while (!race.klaar) { klok += stapje() * schaal; race.naar(klok); }
   return race;
+}
+
+// In het 'grillig'-pad staat de race nog vlak vóór het poortje; de bot kijkt naar de toestand óp het
+// poortje (zoals de speler die het poortje ziet aankomen), via een kopie die tot tp doorloopt.
+function kijk(race, tp) {
+  const k = kopie(race); k.naar(tp);
+  return { sim: k, casus: race.casus, t: tp };
 }
 
 // Voorspelling voor slimme bots: kopie van de sim, zonder of met een extra dosis, tot t + h.
 function kopie(race) {
   const s = race.sim;
   const k = M.maakSim(race.casus, { steadyState: false, t0: s.t, blokkades: false });
-  k.C = s.C; k.depots = s.depots.map(d => ({ A: d.A, ka: d.ka }));
+  k.C = s.C; k.depots = s.depots.map(d => ({ A: d.A, ka: d.ka })); k.log = s.log.slice();
   return k;
 }
+
 function voorspel(race, h, dosis) {
   const k = kopie(race);
   if (dosis) k.geef(dosis.route, dosis);
