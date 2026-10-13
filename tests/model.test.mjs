@@ -227,6 +227,27 @@ kop('Casusdata, spelregels en zetpilreeks');
 }
 
 // ---------------------------------------------------------------------------------------------
+kop('Zwevendekommaruis bij blokkade (stap 0,1 / 0,2 / 1/30)');
+{
+  for (const [naam, h] of [['0,1', 0.1], ['0,2', 0.2], ['1/30', 1 / 30]]) {
+    const uitkomst = {};
+    for (const doel of [9, 10, 15, 16]) {
+      const sim = M.maakSim('paracetamol');
+      const n = Math.round(doel / h);
+      for (let i = 0; i < n; i++) sim.stap(h);
+      const r = sim.geef('slik'); // geef() zonder expliciete tijd: gebruikt sim.t
+      uitkomst[doel] = { t: sim.t, ok: r.ok, blok: !!M.geblokkeerd('paracetamol', 'slik', sim.t) };
+    }
+    console.log(`stap ${naam}: ` + Object.entries(uitkomst).map(([d, u]) => `uur ${d} (t=${u.t}) slik ${u.ok ? 'toegestaan' : 'geweigerd'}`).join('; '));
+    check(uitkomst[9].ok && !uitkomst[10].ok && !uitkomst[15].ok && uitkomst[16].ok, `stap ${naam}: blokkade uur 10–16 niet robuust`);
+    check([9, 10, 15, 16].every(d => uitkomst[d].blok === !uitkomst[d].ok), `stap ${naam}: geblokkeerd() en geef() oneens`);
+  }
+  // Vlak vóór / ná de grenzen (verder dan de tolerantie) gedraagt zich nog als verwacht
+  check(!M.geblokkeerd('paracetamol', 'slik', 9.99) && M.geblokkeerd('paracetamol', 'slik', 15.99) && !M.geblokkeerd('paracetamol', 'slik', 16), 'blokkadegrenzen');
+  check(M.poortjeIndex('paracetamol', 9.99999999999998) === 10, 'poortje-index bij ruis');
+}
+
+// ---------------------------------------------------------------------------------------------
 kop('Browser-lading (<script>)');
 {
   const ctx = { window: {} };

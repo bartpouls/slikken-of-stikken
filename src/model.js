@@ -18,7 +18,8 @@
  * M.k(casus, t)                     -> eliminatieconstante (/u) op tijdstip t, inclusief klaringgebeurtenissen.
  * M.steadyState(casus)              -> {C, depot, min, max, tau}: begintoestand lithium (dalspiegel vlak
  *                                      vóór een dosis), uit de modelkern berekend (vaste-puntoplossing).
- * M.geblokkeerd(casus, route, t)    -> null of de gebeurtenis die deze route op t blokkeert.
+ * M.geblokkeerd(casus, route, t)    -> null of de gebeurtenis die deze route op t blokkeert (van ≤ t < tot,
+ *                                      met tolerantie 1e-9 u tegen zwevendekommaruis; ook in M.venster).
  *
  * (a) Incrementeel, voor de UI:
  *   const sim = M.maakSim('paracetamol', {blokkades: true});
@@ -66,6 +67,9 @@
   'use strict';
 
   var LN2 = Math.log(2);
+  // Tolerantie (uur) voor tijdvergelijkingen met poortjes/blokkades/venster: een UI die met stap(0.1) of
+  // stap(1/30) oploopt komt op t = 9,99999999999998 uit; dat telt als uur 10.
+  var EPS_T = 1e-9;
 
   // ---------------------------------------------------------------------------------------------
   // Zetpilreeks: vaste, met de hand gekozen reeks (F in 0,3–0,9; ka in 0,3–1,0 /u). Eén waarde per
@@ -235,7 +239,7 @@
   function venster(c, t) {
     c = casus(c);
     var v = c.venster[0];
-    for (var i = 1; i < c.venster.length; i++) if (t >= c.venster[i].vanaf) v = c.venster[i];
+    for (var i = 1; i < c.venster.length; i++) if (t >= c.venster[i].vanaf - EPS_T) v = c.venster[i];
     return { laag: v.laag, hoog: v.hoog };
   }
 
@@ -273,7 +277,7 @@
     var gs = casus(c).gebeurtenissen;
     for (var i = 0; i < gs.length; i++) {
       var g = gs[i];
-      if (g.type === 'blokkade' && g.routes.indexOf(route) >= 0 && t >= g.van && t < g.tot) return g;
+      if (g.type === 'blokkade' && g.routes.indexOf(route) >= 0 && t >= g.van - EPS_T && t < g.tot - EPS_T) return g;
     }
     return null;
   }
