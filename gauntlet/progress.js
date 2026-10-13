@@ -5,10 +5,10 @@ window.GAUNTLET = {
   level: "blind",
   status: "running",
   round: 1, maxRounds: 4,
-  updated: "2026-10-13 20:45",
+  updated: "2026-10-13 21:00",
   units: [
     { name: "U1 Rekenmodel + casusdata (A1–A3)", round: 1, verdict: "PASS", evidence: "Blind PASS A1–A4, 0 afwijkingen; eigen RK4 in Python: max fout 4e-13, halvering 0,5000000, alle tabelregels binnen marge. Stopregel A gehaald. Kleine robuustheidsfix blokkade-epsilon", artifact: "src/model.js" },
-    { name: "U2 QALY-score + rangorde headless (B1–B2 voorlopig)", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: leverschade eenmalig −1000 + −250/g (beste >4 g = −250 < gemist 418); zinnen herschreven. Verse criticus zoekt exploits"nodig\" bij te hoge spiegel). Q2–Q5 PASS (beste bot 828; echt schema 93%). Ronde 2 in bouw", artifact: "src/score.js" },
+    { name: "U2 QALY-score + rangorde headless (B1–B2 voorlopig)", round: 3, verdict: "FAIL", evidence: "R2: Q1–Q5 PASS (2 onafhankelijke scorers, 0 verschil; beste ≤4 g 828, echt schema 93%; beste >4 g −250 < gemist 418). FAIL Q6: lithiumzinnen bij dubbele (inhaal)dosis noemen verkeerde oorzaak of prijzen overslaan. R3 (drempel niet gehaald → doorgaan)"nodig\" bij te hoge spiegel). Q2–Q5 PASS (beste bot 828; echt schema 93%). Ronde 2 in bouw", artifact: "src/score.js" },
     { name: "U3 Geluid (C, hard: zelf gesynthetiseerd, dempknop)", round: 3, verdict: "PENDING", evidence: "R3 gebouwd: alle actiegeluiden boven telefoondrempel via echt pad; au ≥3,7 dB boven rest. Verse criticus + blinde A/B", artifact: "src/sound.js" },
     { name: "U4 Scorebord beamer (C)", round: 3, verdict: "PENDING", evidence: "R3 gebouwd: namen tot 16+ tekens heel op 1920/1280, vaste scoremaat. Verse criticus + blinde A/B", artifact: "scorebord.html" },
     { name: "U5 Racescherm + spelverloop (C, B3–B6)", round: 1, verdict: "PENDING", evidence: "Gebouwd: tijd loopt omlaag, zone als verticale baan, paarse poortjes; race 93 s; live = batch score. Verse criticus op momentopname", artifact: "index.html" },
@@ -19,6 +19,7 @@ window.GAUNTLET = {
   ],
   log: [
     { round: 0, unit: "LEAD", verdict: "PENDING", note: "Sites §6C niet bereikbaar (netwerkbeleid: 403/ENOTFOUND). Schermafbeeldingen in docs/referenties/ zijn leidend." },
+    { round: 2, unit: "U2", verdict: "FAIL", note: "Score zelf PASS; 7 randgevallen in zinnen. LEAD: §3-voorbeeldzinnen mogen 3 zinnen zijn" },
     { round: 2, unit: "U3", verdict: "FAIL", note: "Beter dan R1 (blind), alleen absoluut niveau op telefoonspeaker te laag → R3" },
     { round: 2, unit: "U4", verdict: "FAIL", note: "Beter dan R1 (blind 3/3), maar podium niet berekend op realistische data → R3" },
     { round: 1, unit: "U2", verdict: "FAIL", note: "Leverschade te goedkoop; lithiumzinnen noemen overslaan \"nodig\" of wijzen verkeerde oorzaak aan. LEAD: QALY-uitleg §3 vrij van 2-zinnenregel; echt schema = 1 g 0/6/12/18 met op 12 u de toegestane route; nieuwe eis: beste >4 g-strategie < gemiste dosis" },

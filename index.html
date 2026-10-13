@@ -295,32 +295,327 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 
 </style>
 <style data-bron="src/tutorial.css">
-/* Slikken of Stikken — src/tutorial.css (PLACEHOLDER). Prefix .tut- ; gedeelde stijl staat in style.css. */
+/* Slikken of Stikken — src/tutorial.css. Prefix .tut- ; gedeelde stijl (kleuren, .knop-wit, .actie, .fig) staat in style.css. */
 .tut-binnen {
-  margin: auto; width: 100%; max-width: 420px;
-  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;
+  width: 100%; max-width: 440px; min-height: 100%; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: stretch; text-align: center;
 }
-.tut-podium { width: 100%; max-width: 300px; display: flex; justify-content: center; border-bottom: 3px solid var(--inkt); }
-.tut-podium .fig { width: 120px; margin-bottom: -3px; }
-.tut-kop { margin: 18px 0 14px; font-size: 34px; font-weight: 800; }
+
+/* bovenrand: overslaan · stippen · (ruimte voor dempknop) */
+.tut-top { flex: none; display: grid; grid-template-columns: 96px 1fr 96px; align-items: center; min-height: 44px; margin-top: -6px; }
+.tut-over {
+  justify-self: start; min-height: 48px; min-width: 48px; padding: 0 8px 0 0;
+  background: none; border: 0; color: #8a8a93; font-family: var(--font-rond); font-size: 15px;
+  text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px;
+}
+.tut-stippen { display: flex; justify-content: center; gap: 8px; }
+.tut-stippen span { width: 9px; height: 9px; border-radius: 50%; border: 2px solid var(--inkt); background: transparent; transition: background .2s, transform .2s; }
+.tut-stippen span.af { background: var(--inkt); }
+.tut-stippen span.nu { background: var(--paars); transform: scale(1.25); }
+
+/* podium: opa Jan (en levertje) op een getekende grondlijn */
+.tut-podium {
+  position: relative; flex: none; height: 138px; width: 100%; max-width: 320px; margin: 2px auto 0;
+  display: flex; align-items: flex-end; justify-content: center; gap: 34px;
+  border-bottom: 3px solid var(--inkt);
+}
+.tut-opa { position: relative; width: 84px; margin-bottom: -3px; }
+.tut-opa .fig { width: 100%; cursor: pointer; touch-action: manipulation; }
+.tut-maag {
+  position: absolute; left: 50%; top: 74%; width: 26px; height: 26px; pointer-events: none;
+  transform: translate(-50%, -50%) scale(.35); opacity: 0; transition: opacity .25s;
+  filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, .55));
+}
+.tut-maag svg { width: 100%; height: 100%; display: block; }
+.tut-naamje {
+  position: absolute; right: calc(100% + 2px); top: 34px; white-space: nowrap;
+  font-size: 13px; color: #8a8a93; pointer-events: none;
+}
+.tut-naamje::after { content: "↘"; margin-left: 2px; }
+.tut-ballon {
+  position: absolute; left: 78%; top: -4px; padding: 3px 10px; white-space: nowrap;
+  background: #fff; border: 2.5px solid var(--inkt); border-radius: 14px 14px 14px 3px;
+  font-size: 16px; font-weight: 800; color: var(--inkt);
+  opacity: 0; transform: translateY(6px) scale(.8); transform-origin: 0 100%;
+  transition: opacity .18s ease, transform .18s ease; pointer-events: none;
+}
+.tut-ballon.zicht { opacity: 1; transform: none; }
+
+.tut-lever { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 8px; }
+.tut-lever .fig { width: 70px; cursor: pointer; touch-action: manipulation; }
+.tut-meter { position: relative; width: 92px; height: 11px; border-radius: 6px; background: #e8e5de; border: 2px solid var(--inkt); overflow: hidden; }
+.tut-meter-vul { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--geel); transition: width .3s ease, background .3s; }
+.tut-meter-max { position: absolute; top: 0; bottom: 0; left: 80%; width: 2px; background: var(--inkt); }
+.tut-meter-tekst { font-size: 13px; font-weight: 700; color: #45454c; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tut-lever.vol .tut-meter-vul { background: var(--koraal); }
+.tut-lever.vol .tut-meter-tekst { color: #d2453a; }
+.tut-lever.vol .tut-meter { animation: tut-knipper .5s ease 3; }
+@keyframes tut-knipper { 50% { opacity: .35; } }
+
+/* één zin */
+.tut-tekst {
+  flex: none; margin: 12px auto 4px; max-width: 360px; min-height: 3.9em;
+  display: flex; align-items: center; justify-content: center;
+  font-size: clamp(18px, 5.2vw, 21px); line-height: 1.3; font-weight: 700; color: var(--inkt);
+}
+.tut-tekst.nieuw { animation: tut-in .35s ease; }
+@keyframes tut-in { from { opacity: 0; transform: translateY(6px); } }
+
+/* grafiek (SVG, uit het model) */
+.tut-grafiek { flex: none; width: 100%; height: 186px; }
+.tut-grafiek svg { display: block; width: 100%; height: 100%; overflow: visible; font-family: var(--font); }
+.tut-as { font-size: 12px; font-weight: 600; fill: #6a6a72; }
+.tut-as-zone { fill: #1f9e68; font-weight: 800; }
+.tut-zone { font-size: 11.5px; font-weight: 700; fill: #1f9e68; letter-spacing: .03em; }
+.tut-eenheid { font-size: 11px; font-weight: 600; fill: #8a8a93; }
+.tut-half { font-size: 17px; font-weight: 800; fill: #3d7fe0; }
+.tut-klok { font-size: 13px; font-weight: 800; fill: var(--paars-diep); font-variant-numeric: tabular-nums; }
+.tut-label { font-size: 12px; font-weight: 800; }
+
+/* bediening: raceknop(pen) links, Verder rechts */
+.tut-bediening {
+  flex: none; margin-top: auto; padding-top: 12px; min-height: 96px;
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+}
+.tut-acties { display: flex; gap: 10px; }
+.tut-actie { flex: none; width: 96px; min-height: 76px; }
+.tut-actie:disabled { opacity: .35; cursor: default; }
+.tut-actie.tut-wijs::before {
+  content: ""; position: absolute; inset: -9px; border: 3px dashed var(--inkt); border-radius: 26px;
+  animation: tut-puls 1.1s ease-in-out infinite; pointer-events: none;
+}
+@keyframes tut-puls { 0%, 100% { transform: scale(1); opacity: .9; } 50% { transform: scale(1.06); opacity: .45; } }
+.tut-volgende {
+  flex: 1 1 auto; max-width: 210px; min-height: 60px;
+  visibility: hidden; opacity: 0; transform: translateY(6px);
+  transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s;
+}
+.tut-volgende.zicht { visibility: visible; opacity: 1; transform: none; transition: opacity .2s ease, transform .2s ease, visibility 0s; }
+.tut-volgende.zicht:active { transform: translateY(4px); }
+
+/* slot: Klaar? Race! */
+.tut-podium.slot { height: 190px; gap: 30px; margin-top: auto; }
+.tut-podium.slot .tut-opa { width: 120px; }
+.tut-podium.slot .tut-lever { margin-bottom: 14px; }
+.tut-podium.slot .tut-lever .fig { width: 84px; }
+.tut-bediening.slot { margin-top: 28px; margin-bottom: auto; }
+.tut-bediening.slot .tut-acties { width: 100%; justify-content: center; }
+.tut-race { font-size: 24px; }
+
+@media (min-height: 760px) {
+  .tut-podium { height: 160px; }
+  .tut-opa { width: 96px; }
+  .tut-grafiek { height: 210px; }
+  .tut-tekst { margin-top: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tut-actie.tut-wijs::before, .tut-tekst.nieuw, .tut-lever.vol .tut-meter { animation: none; }
+}
 
 </style>
 <style data-bron="src/einde.css">
-/* Slikken of Stikken — src/einde.css (PLACEHOLDER). Prefix .eind- ; gedeelde stijl staat in style.css. */
+/*
+ * Slikken of Stikken — src/einde.css  (eindscherm + toedienverslag). Prefix .eind- ; gedeelde stijl in style.css.
+ * Stijl: wit papier met zwarte schetslijnen (Evolution of Trust, zoals start en intro), mini-curves als zwarte
+ * racepaneeltjes (Universe Forecast), paarse tijdmarkering met lijn ervoor en erachter.
+ * Tekstkleuren op --papier halen WCAG AA (≥ 4,5:1); tegelkleuren ≥ 3:1 tegen het papier.
+ */
+#scherm-einde { padding-bottom: 0; scroll-behavior: auto; }
+
 .eind-binnen {
-  margin: auto; width: 100%; max-width: 420px;
-  display: flex; flex-direction: column; align-items: center; text-align: center;
+  width: 100%; max-width: 440px; margin: 0 auto;
+  display: flex; flex-direction: column;
 }
-.eind-naam { margin: 0; font-size: 40px; font-weight: 800; line-height: 1.1; word-break: break-word; }
-.eind-label { margin: 18px 0 0; font-size: 16px; color: #66666d; }
-.eind-totaal { margin: 0 0 14px; font-size: 64px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
-.eind-races { list-style: none; margin: 0 0 18px; padding: 0; width: 100%; max-width: 340px; }
-.eind-race {
-  display: flex; justify-content: space-between; align-items: baseline;
-  padding: 10px 4px; border-bottom: 2px solid #e4e2dc; font-size: 18px;
+
+/* ---------- 1. eindscherm ---------- */
+.eind-held { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 2px; }
+.eind-naam {
+  margin: 0; padding: 0 44px; /* vrij van de dempknop */
+  max-width: 100%;
+  font-size: 36px; font-weight: 800; line-height: 1.08; letter-spacing: -.01em;
+  overflow-wrap: anywhere;
 }
-.eind-race b { font-size: 22px; font-variant-numeric: tabular-nums; }
-.eind-vraag { margin: 6px 0 22px; font-size: 18px; font-weight: 600; max-width: 330px; line-height: 1.35; }
+.eind-label { margin: 6px 0 0; font-size: 15px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #5c5c64; }
+.eind-totaal {
+  margin: -2px 0 10px; font-size: 72px; font-weight: 800; line-height: 1; letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+  animation: eind-plop .5s cubic-bezier(.3, 1.6, .5, 1) both;
+}
+@keyframes eind-plop { from { transform: scale(.6); opacity: 0; } }
+
+.eind-kaarten { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+.eind-kaart {
+  display: block; width: 100%; min-height: 48px; padding: 10px 12px 8px;
+  text-align: left; background: var(--wit); color: var(--inkt);
+  border: 3px solid var(--inkt); border-radius: 18px; box-shadow: 0 4px 0 var(--inkt);
+  font-family: var(--font-rond);
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.eind-kaart:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--inkt); }
+.eind-kaart:focus-visible { outline: 3px solid var(--paars-diep); outline-offset: 3px; }
+.eind-kaart-kop { display: flex; align-items: center; gap: 10px; }
+.eind-kaart-fig { width: 34px; flex: none; margin: -4px 0 -2px; }
+.eind-kaart-titel { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; font-size: 19px; font-weight: 800; line-height: 1.1; }
+.eind-kaart-titel small { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #5c5c64; }
+.eind-kaart-score { flex: none; font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.eind-kaart-meer { display: block; margin-top: 6px; font-size: 14px; font-weight: 700; color: #6a3fd1; text-align: right; }
+
+/* tegels: één per poortje, twee rijen */
+.eind-tegels { display: flex; flex-direction: column; gap: 4px; margin-top: 9px; }
+.eind-tegelrij { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 3px; }
+.eind-tegel {
+  display: block; height: 22px; border-radius: 5px; background: #dcd8cf;
+  animation: eind-tegel .32s ease both; animation-delay: calc(var(--i, 0) * 14ms + 150ms);
+}
+@keyframes eind-tegel { from { transform: scale(.4) rotateX(80deg); opacity: .2; } }
+.t-zone { background: #138a55; }
+.t-onder { background: #e2533f; }
+.t-boven { background: #c97a00; }
+.t-giftig { background: #6e0f2c; }
+
+.eind-legenda {
+  list-style: none; margin: 10px 0 0; padding: 0;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px;
+  font-size: 14px; color: #45454c;
+}
+.eind-legenda li { display: inline-flex; align-items: center; gap: 6px; }
+.eind-legenda .eind-tegel { width: 14px; height: 14px; border-radius: 3px; animation: none; }
+
+.eind-vraag {
+  position: relative; width: 100%; margin: 16px 0 0; padding: 14px 16px 14px;
+  background: #f1ecff; border: 3px solid var(--inkt); border-radius: 18px;
+}
+.eind-vraag-kop {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  padding: 1px 10px; background: var(--paars-diep); color: var(--wit); border-radius: 999px;
+  font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+}
+.eind-vraag p { margin: 4px 0 0; font-size: 22px; font-weight: 800; line-height: 1.25; }
+.eind-scorebord { margin: 12px 0 0; font-size: 16px; line-height: 1.4; color: #2f2f35; max-width: 340px; }
+.eind-spelpunten { margin: 6px 0 4px; font-size: 14px; color: #5c5c64; }
+
+/* ---------- 2. toedienverslag ---------- */
+.eind-verslag { margin-top: 28px; padding-top: 22px; border-top: 3px solid var(--inkt); }
+.eind-v-kop { display: flex; align-items: center; gap: 12px; }
+.eind-v-fig { width: 54px; flex: none; cursor: pointer; }
+.eind-v-kop > div { flex: 1 1 auto; min-width: 0; }
+.eind-kicker { margin: 0; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #6a3fd1; }
+.eind-v-kop h2 { margin: 2px 0 0; font-size: 28px; font-weight: 800; line-height: 1.05; }
+.eind-v-wie { margin: 2px 0 0; font-size: 15px; color: #4d4d55; }
+.eind-v-score { margin: 0; flex: none; display: flex; flex-direction: column; align-items: flex-end; }
+.eind-v-score b { font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.eind-v-score span { font-size: 12.5px; font-weight: 700; color: #5c5c64; }
+
+.eind-curve { margin: 14px 0 0; }
+.eind-curve svg { display: block; width: 100%; height: auto; }
+.eind-curve figcaption { margin-top: 6px; font-size: 14px; color: #4d4d55; }
+.eind-svg-label, .eind-svg-as, .eind-svg-gebeurtenis, .eind-svg-paars { font-family: var(--font); font-size: 11.5px; font-weight: 600; }
+.eind-svg-label { fill: rgba(255, 255, 255, .78); }
+.eind-svg-as { fill: rgba(255, 255, 255, .72); }
+.eind-svg-gebeurtenis { fill: #d6ef9a; }
+.eind-svg-paars { fill: #c9a6ff; }
+
+.eind-opbouw { width: 100%; margin: 16px 0 0; border-collapse: collapse; font-size: 18px; font-variant-numeric: tabular-nums; }
+.eind-opbouw caption { text-align: left; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #5c5c64; padding-bottom: 4px; }
+.eind-opbouw th { text-align: left; font-weight: 600; padding: 7px 0; border-bottom: 2px solid #e2ded5; }
+.eind-opbouw td { text-align: right; font-weight: 800; padding: 7px 0; border-bottom: 2px solid #e2ded5; white-space: nowrap; }
+.eind-opbouw td.plus { color: #12784a; }
+.eind-opbouw td.min { color: #c0362a; }
+.eind-opbouw td.nul { color: #5c5c64; }
+.eind-opbouw-totaal th, .eind-opbouw-totaal td { border-bottom: 0; border-top: 3px solid var(--inkt); font-size: 21px; font-weight: 800; padding-top: 8px; }
+
+.eind-h3 { margin: 22px 0 6px; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #5c5c64; }
+.eind-echt { margin: 0 0 10px; font-size: 15.5px; line-height: 1.45; color: #2f2f35; }
+.eind-echt b { font-size: 17px; color: var(--inkt); }
+.eind-echt-kop {
+  display: inline-block; padding: 0 8px; border: 2px dashed var(--paars-diep); border-radius: 8px;
+  font-size: 13px; font-weight: 800; color: #6a3fd1; letter-spacing: .04em;
+}
+
+/* rooster per poortje */
+.eind-rooster { list-style: none; margin: 0; padding: 0; }
+.eind-rooster-uur { display: grid; grid-template-columns: repeat(var(--k, 6), 1fr); gap: 5px; }
+.eind-cel {
+  position: relative; min-height: 52px; padding: 14px 2px 4px;
+  display: flex; align-items: center; justify-content: center; gap: 0;
+  background: var(--wit); border: 2px solid #d3cfc6; border-radius: 10px;
+}
+.eind-cel.misselijk { background: #eef5d8; }
+.eind-cel.echt { border: 2.5px dashed var(--paars-diep); }
+.eind-cel-uur { position: absolute; top: 2px; left: 6px; font-size: 11.5px; font-weight: 700; color: #5c5c64; }
+.eind-cel-echt {
+  position: absolute; top: 1px; right: 4px; font-size: 11px; font-weight: 800; color: #6a3fd1;
+}
+.eind-cel-ic { position: relative; display: inline-flex; align-items: center; }
+.eind-cel-ic svg { width: 28px; height: 28px; filter: drop-shadow(0 0 .6px #1b1b1f) drop-shadow(0 0 .6px #1b1b1f); }
+.eind-cel-ic + .eind-cel-ic { margin-left: -6px; }
+.eind-cel-ic b { font-size: 12px; font-weight: 800; margin-left: -2px; }
+.eind-cel-leeg { font-size: 20px; font-weight: 700; color: #8a8a93; line-height: 1; }
+.s-overgeslagen .eind-cel-leeg { color: #77777f; }
+
+/* lithium: dagen × poortjes */
+.eind-rooster-dag { display: flex; flex-direction: column; gap: 4px; }
+.eind-dagrij { display: grid; grid-template-columns: 54px 1fr; align-items: center; gap: 6px; }
+.eind-dagrij ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--k, 3), 1fr); gap: 5px; }
+.eind-dagrij .eind-cel { min-height: 40px; padding: 3px 2px; }
+.eind-dagkop { font-size: 12.5px; font-weight: 700; color: #5c5c64; text-align: center; grid-template-columns: 54px repeat(var(--k, 3), 1fr); gap: 5px 6px; }
+.eind-dagkop span:first-child { visibility: hidden; }
+.eind-dag { font-size: 15px; font-weight: 700; color: #3c3c43; }
+.eind-markering { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; color: #6a3fd1; font-size: 15px; font-weight: 800; }
+.eind-markering::before, .eind-markering::after { content: ""; flex: 1 1 auto; height: 2px; background: var(--paars-diep); }
+
+.eind-leg {
+  list-style: none; margin: 10px 0 0; padding: 0;
+  display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; color: #3c3c43;
+}
+.eind-leg li { display: inline-flex; align-items: center; gap: 6px; }
+.eind-leg-ic { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; }
+.eind-leg-ic svg { width: 22px; height: 22px; filter: drop-shadow(0 0 .6px #1b1b1f) drop-shadow(0 0 .6px #1b1b1f); }
+.eind-leg-leeg { font-weight: 700; color: #77777f; font-size: 17px; }
+.eind-leg-echt { padding: 0 5px; border: 2px dashed var(--paars-diep); border-radius: 6px; font-size: 11.5px; font-weight: 800; color: #6a3fd1; }
+.eind-leg-misselijk { width: 18px; height: 18px; border-radius: 5px; background: #eef5d8; border: 2px solid #d3cfc6; }
+
+.eind-telling { display: grid; grid-template-columns: repeat(auto-fit, minmax(96px, 1fr)); gap: 8px; margin-top: 18px; }
+.eind-telling > div {
+  display: flex; flex-direction: column; gap: 2px; padding: 10px 10px 9px;
+  background: var(--wit); border: 2px solid #d3cfc6; border-radius: 14px;
+}
+.eind-telling span { font-size: 13px; font-weight: 700; color: #4d4d55; line-height: 1.2; }
+.eind-telling b { font-size: 26px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.eind-telling small { font-size: 13px; color: #4d4d55; }
+.eind-telling .over { border-color: #c0362a; background: #fff1ee; }
+.eind-telling .over b, .eind-telling .over small { color: #b02f24; }
+
+.eind-praktijk {
+  position: relative; margin: 18px 0 0; padding: 14px 16px 14px 18px;
+  background: var(--wit); border: 3px solid var(--inkt); border-radius: 18px;
+  font-size: 18px; font-weight: 600; line-height: 1.42;
+}
+.eind-praktijk::before {
+  content: "In de praktijk"; display: block; margin-bottom: 4px;
+  font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #6a3fd1;
+}
+.eind-nabespreking {
+  margin: 12px 0 0; padding: 12px 16px; border-radius: 14px; background: #f1ecff;
+  font-size: 17px; font-weight: 700; line-height: 1.4;
+}
+
+/* ---------- 3. "Nog een keer" plakt onderaan ---------- */
+.eind-voet {
+  position: sticky; bottom: 0; z-index: 2;
+  display: flex; justify-content: center;
+  margin-top: 22px; padding: 18px 0 calc(var(--veilig-onder) + 14px);
+  background: linear-gradient(to bottom, rgba(251, 250, 247, 0), var(--papier) 34%);
+}
+
+@media (min-height: 800px) {
+  .eind-naam { font-size: 40px; }
+  .eind-totaal { font-size: 80px; margin-bottom: 14px; }
+  .eind-tegel { height: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .eind-totaal, .eind-tegel { animation: none; }
+}
 
 </style>
 </head>
@@ -1820,62 +2115,554 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 </script>
 <script data-bron="src/tutorial.js">
 /*
- * Slikken of Stikken — src/tutorial.js  (PLACEHOLDER; wordt later door een andere bouwer ingevuld)
+ * Slikken of Stikken — src/tutorial.js  (stap 2 van de flow: tutorial met paracetamol en opa Jan)
  *
  * INTERFACE (houd deze vast; app.js roept alleen dit aan)
  * ----------------------------------------------------------
- *   SoS.tutorial.start(container, gereed, opties) -> {stop()} | undefined
+ *   SoS.tutorial.start(container, gereed, opties) -> {stop()}
  *     container  <section id="scherm-tutorial" class="scherm wit">: leeg, al zichtbaar, EoT-stijl (wit).
- *                De module vult hem helemaal zelf (innerHTML/DOM) en mag hem vrij gebruiken.
- *     gereed()   Roep precies één keer aan als de speler klaar is ("Klaar? Race!"). app.js toont
- *                dan het intro-kaartje van race 1. Geef de laatste knop data-actie="verder".
- *     opties     {naam, speed}: speelnaam en de testhaak ?speed=N (versnel eigen animaties/klokken
- *                ermee als je die hebt).
- *     stop()     Optioneel: app.js roept dit aan als het scherm weggaat (timers/rAF opruimen).
+ *                De module vult hem helemaal zelf.
+ *     gereed()   Wordt precies één keer aangeroepen als de speler klaar is ("Klaar? Race!", of "Overslaan").
+ *                De laatste knop heeft data-actie="verder".
+ *     opties     {naam, speed}: speelnaam en de testhaak ?speed=N (versnelt de klok en de pauzes hier).
+ *     stop()     Ruimt rAF/timers/listeners op; haalt data-actie="verder" weg zodat de verborgen tutorial
+ *                niet botst met de "verder"-knop na de races, en leegt de container na de overgang.
  *
- * BESCHIKBAAR (gebruik pas binnen start(), app.js laadt ná dit bestand):
- *   SoS.model, SoS.score, SoS.sound (unlock/play/isMuted), en SoS.ui uit app.js:
- *   SoS.ui.figuur({wie:'opa'|'vries', stemming, ...}) -> SVG-string (opa Jan blauw hoedje,
- *   mevrouw De Vries rood hoedje), SoS.ui.icoon(soort) -> SVG-string (tablet/zetpil/spuit/niets),
- *   SoS.ui.el(tag, attrs, kinderen), SoS.ui.getal(x, decimalen), SoS.ui.speel(naam).
- *   Stijl: classes .knop-wit (.groot), .fig, en de kleurvariabelen uit style.css.
- *   Eigen stijl in src/tutorial.css, met prefix .tut- .
+ * VERLOOP (§3 Flow stap 2; één begrip per stap, de speler doet het zelf):
+ *   1 Tablet  → curve (echt model) stijgt pas na even; pilletje in opa's maag slinkt met het depot.
+ *   2 "2,5 uur" (klok) → spiegel halveert per 2,5 uur, als staafjes met ½ (gemeten op t = 5; 7,5; 10 u).
+ *   3 Spuit   → sprong naar 1000/63 mg/L op t = 0, daarna ½ per 2,5 uur; tabletcurve als grijze schaduw.
+ *   4 Tablet  → na het echte schema (0, 6, 12, 18 u = 4 g) duwt een 5e gram (20 u) de dagteller over 4 g:
+ *               levermeter vol, levertje zorgelijk. Alleen in de tutorial; raakt de race niet.
+ *   5 Zetpil ×2 → M.zetpil(3) en M.zetpil(4) uit de vaste reeks: de ene haalt de zone, de andere niet.
+ *   6 "Klaar? Race!" (data-actie="verder") → gereed().
+ *   Alle curves komen uit SoS.model.maakSim (exacte stappen); tijd loopt versneld (uren per seconde).
+ *
+ * TESTHAKEN (alleen-lezen): .tut-binnen[data-stap="1".."6"][data-fase="wacht"|"loopt"|"klaar"].
+ *   Knoppen: data-tut="slik"|"klok"|"spuit"|"zetpil"|"volgende"|"overslaan"; laatste: data-actie="verder".
+ *   (Bewust geen data-actie="slik" enz.: die zijn voor de raceknoppen.)
  */
 (function (root) {
   'use strict';
   if (!root) return;
   var SoS = root.SoS = root.SoS || {};
 
-  function start(container, gereed, opties) {
-    var ui = SoS.ui;
-    var klaar = false;
-    container.innerHTML =
-      '<div class="tut-binnen">' +
-        '<div class="tut-podium"><div class="fig" data-fig="opa">' + ui.figuur({ wie: 'opa', stemming: 'blij' }) + '</div></div>' +
-        '<h2 class="tut-kop">Klaar? Race!</h2>' +
-        '<button type="button" class="knop-wit groot" data-actie="verder">Klaar? Race!</button>' +
-      '</div>';
-    var knop = container.querySelector('[data-actie="verder"]');
-    knop.addEventListener('click', function () {
-      if (klaar) return;
-      klaar = true;
-      ui.speel('tik');
-      gereed();
-    });
-    return { stop: function () { klaar = true; } };
+  var INKT = '#1b1b1f';
+  var KLOK_ICOON = '<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    '<circle cx="20" cy="22" r="13" fill="none" stroke="#fff" stroke-width="3"/>' +
+    '<path d="M20 13.5V22l6 4" stroke="#ffd166" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
+    '<path d="M15.5 5.5h9" stroke="#fff" stroke-width="3" stroke-linecap="round"/></svg>';
+
+  function lever(stemming) {
+    var ziek = stemming === 'ziek';
+    var L = 'stroke="' + INKT + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"';
+    var s = '<svg viewBox="0 0 90 70" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Lever">';
+    s += '<path d="M8 30 C6 14 24 7 46 7 C68 7 84 11 84 21 C84 39 62 62 38 62 C20 62 9 46 8 30 Z" fill="' +
+      (ziek ? '#d8bd9a' : '#e0896b') + '" stroke="' + INKT + '" stroke-width="3.5" stroke-linejoin="round"/>';
+    s += '<path d="M47 9 C44 22 46 34 52 44" stroke="' + INKT + '" stroke-opacity=".35" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+    if (ziek) {
+      s += '<path d="M24 25 l7 3 M44 25 l-7 3" ' + L + '/>';
+      s += '<circle cx="28" cy="33" r="2.6" fill="' + INKT + '"/><circle cx="40" cy="33" r="2.6" fill="' + INKT + '"/>';
+      s += '<path d="M26 45 q3 -3 6 0 t6 0" ' + L + '/>';
+      s += '<path d="M60 20 q4 6 0 9 q-4 -3 0 -9 z" fill="#7cc4ff" stroke="' + INKT + '" stroke-width="1.5"/>';
+    } else {
+      s += '<circle cx="28" cy="32" r="2.6" fill="' + INKT + '"/><circle cx="40" cy="32" r="2.6" fill="' + INKT + '"/>';
+      s += '<path d="M27 40 q7 6 14 0" ' + L + '/>';
+    }
+    return s + '</svg>';
   }
 
-  SoS.tutorial = { start: start, placeholder: true };
+  function start(container, gereed, opties) {
+    opties = opties || {};
+    var ui = SoS.ui, M = SoS.model;
+    var C = M.casus('paracetamol');
+    var SPEED = (opties.speed > 0 && isFinite(opties.speed)) ? opties.speed : 1;
+    var ZONE = M.venster(C, 0).laag;                 // 5 mg/L
+    var MAX = C.bovengrens.maxPer24u;                // 4000 mg per 24 uur
+    var THALF = C.Thalf;                             // 2,5 uur
+    var Z_GOED = 3, Z_SLECHT = 4;                    // indexen in M.ZETPIL_REEKS (F 0,9/ka 1,0 en F 0,3/ka 0,3)
+
+    var gestopt = false, klaarGemeld = false, raf = 0;
+    var stap = 0, fase = 'wacht';
+    var curves = [], staven = [], grafiek = null, actief = null;
+    var stemming = 'pijn', leverZiek = false, laatsteDag = -1;
+
+    // ------------------------------------------------------------------ DOM
+    var el = ui.el;
+    var binnen = el('div', { class: 'tut-binnen', 'data-stap': '1', 'data-fase': 'wacht' });
+    var top = el('div', { class: 'tut-top' });
+    var over = el('button', { type: 'button', class: 'tut-over', 'data-tut': 'overslaan', text: 'Overslaan' });
+    var stippen = el('div', { class: 'tut-stippen', 'aria-hidden': 'true' });
+    for (var i = 0; i < 6; i++) stippen.appendChild(el('span'));
+    top.appendChild(over); top.appendChild(stippen);
+
+    var podium = el('div', { class: 'tut-podium' });
+    var opaWrap = el('div', { class: 'tut-opa' });
+    var opaFig = el('div', { class: 'fig', 'data-fig': 'opa' });
+    var maag = el('div', { class: 'tut-maag', html: ui.icoon('tablet'), 'aria-hidden': 'true' });
+    var ballon = el('div', { class: 'tut-ballon', 'aria-hidden': 'true' });
+    var naamje = el('div', { class: 'tut-naamje', text: 'opa Jan' });
+    opaWrap.appendChild(ballon); opaWrap.appendChild(opaFig); opaWrap.appendChild(maag); opaWrap.appendChild(naamje);
+    var leverWrap = el('div', { class: 'tut-lever', hidden: true });
+    var leverFig = el('div', { class: 'fig', html: lever('blij') });
+    var leverMeter = el('div', { class: 'tut-meter', 'aria-hidden': 'true', html: '<span class="tut-meter-vul"></span><span class="tut-meter-max"></span>' });
+    var leverTekst = el('div', { class: 'tut-meter-tekst', 'aria-live': 'polite' });
+    leverWrap.appendChild(leverFig); leverWrap.appendChild(leverMeter); leverWrap.appendChild(leverTekst);
+    podium.appendChild(opaWrap); podium.appendChild(leverWrap);
+
+    var tekst = el('p', { class: 'tut-tekst', 'aria-live': 'polite' });
+    var graf = el('div', { class: 'tut-grafiek', role: 'img', 'aria-label': 'Spiegel van paracetamol in de tijd' });
+    var bediening = el('div', { class: 'tut-bediening' });
+    var acties = el('div', { class: 'tut-acties' });
+    var volgende = el('button', { type: 'button', class: 'knop-wit tut-volgende', 'data-tut': 'volgende', html: 'Verder <span aria-hidden="true">→</span>' });
+    bediening.appendChild(acties); bediening.appendChild(volgende);
+
+    [top, podium, tekst, graf, bediening].forEach(function (n) { binnen.appendChild(n); });
+    container.innerHTML = '';
+    container.appendChild(binnen);
+
+    // ------------------------------------------------------------------ hulpjes
+    function kort(x) { var s = ui.getal(x, 1); return s.replace(/,0$/, ''); }
+    function zetFase(f) { fase = f; binnen.setAttribute('data-fase', f); }
+
+    // Eén tik telt één keer: pointerdown (snel, zoals in de race) én click (toetsenbord).
+    function bijTik(knop, fn) {
+      var viaPointer = 0;
+      knop.addEventListener('pointerdown', function (ev) {
+        if (ev.button != null && ev.button > 0) return;
+        viaPointer = Date.now();
+        fn(ev);
+      });
+      knop.addEventListener('click', function (ev) {
+        if (Date.now() - viaPointer < 1000) return;
+        fn(ev);
+      });
+    }
+    function flits(n, klasse) { n.classList.remove(klasse); void n.offsetWidth; n.classList.add(klasse); }
+
+    function zetStemming(st, metBallon) {
+      if (st === stemming && opaFig.innerHTML) return;
+      var oud = stemming;
+      stemming = st;
+      opaFig.innerHTML = ui.figuur({ wie: 'opa', stemming: st });
+      if (!metBallon || oud === st) return;
+      if (st === 'pijn') { zegt('Au!'); ui.speel('au'); flits(opaFig, 'wiebel'); }
+      else zegt('Ahh!');
+    }
+    var ballonTimer = 0;
+    function zegt(t) {
+      ballon.textContent = t;
+      ballon.classList.add('zicht');
+      root.clearTimeout(ballonTimer);
+      ballonTimer = root.setTimeout(function () { ballon.classList.remove('zicht'); }, 1300);
+    }
+    function zetLever(ziek, metGeluid) {
+      if (ziek === leverZiek && leverFig.innerHTML) return;
+      leverZiek = ziek;
+      leverFig.innerHTML = lever(ziek ? 'ziek' : 'blij');
+      leverWrap.classList.toggle('vol', ziek);
+      if (ziek && metGeluid) { ui.speel('alarm'); flits(leverFig, 'wiebel'); }
+    }
+    function werkLeverBij(dag) {
+      if (dag === laatsteDag) return;
+      laatsteDag = dag;
+      leverTekst.textContent = kort(dag / 1000) + ' g van max. ' + kort(MAX / 1000) + ' g';
+      var vol = dag > MAX;
+      leverMeter.firstChild.style.width = (vol ? 100 : 100 * dag / (MAX * 1.25)) + '%';
+      zetLever(vol, true);
+    }
+
+    // Figuurtjes reageren op aanraken (EoT-patroon).
+    opaFig.addEventListener('pointerdown', function () {
+      flits(opaFig, 'wiebel');
+      ui.speel('tik');
+      zegt(stemming === 'pijn' ? 'Au!' : 'Ahh!');
+    });
+    leverFig.addEventListener('pointerdown', function () { flits(leverFig, 'wiebel'); ui.speel('tik'); });
+
+    // ------------------------------------------------------------------ curves (echt model)
+    // Een curve = eigen modelsimulatie; punten worden in kleine exacte stappen bijgehouden.
+    function Curve(o) {
+      this.sim = M.maakSim(C, { blokkades: false });
+      this.p = [[0, 0]];
+      this.stijl = o.stijl || 'nu';
+      this.doses = [];
+      this.gepland = (o.gepland || []).slice();   // [{t, route, o}] toedieningen die vanzelf gebeuren
+      this.metingen = (o.metingen || []).slice(); // [t] momenten om een ½-staafje te meten
+      this.label = o.label || null;
+      this.dt = o.dt || 0.02;
+    }
+    Curve.prototype.geef = function (route, o) {
+      var s = this.sim, voor = s.C;
+      var r = s.geef(route, o || {});
+      if (route === 'spuit') this.p.push([s.t, voor]);
+      this.p.push([s.t, s.C]);
+      this.doses.push({ t: s.t, route: route });
+      return r;
+    };
+    Curve.prototype.meet = function () {
+      var s = this.sim, vorige = staven.length ? staven[staven.length - 1] : null;
+      staven.push({ t: s.t, C: s.C, vorige: vorige && Math.abs(s.t - vorige.t - THALF) < 1e-6 ? vorige : null });
+      if (staven.length > 1) ui.speel('poort');
+    };
+    Curve.prototype.tot = function (tEind) {
+      var s = this.sim;
+      while (true) {
+        while (this.gepland.length && this.gepland[0].t <= s.t + 1e-9) {
+          var g = this.gepland.shift();
+          this.geef(g.route, g.o);
+          if (g.geluid) ui.speel(g.geluid);
+        }
+        while (this.metingen.length && this.metingen[0] <= s.t + 1e-9) { this.metingen.shift(); this.meet(); }
+        if (s.t >= tEind - 1e-9) break;
+        var h = Math.min(this.dt, tEind - s.t);
+        if (this.gepland.length) h = Math.min(h, this.gepland[0].t - s.t);
+        if (this.metingen.length) h = Math.min(h, this.metingen[0] - s.t);
+        s.stap(h);
+        this.p.push([s.t, s.C]);
+      }
+    };
+
+    // Laat de klok van de actieve curve lopen tot tEind (uren per seconde), daarna klaar().
+    function loop(curve, tEind, uurPerSec, klaar) {
+      root.cancelAnimationFrame(raf);
+      var t0 = curve.sim.t, start0 = 0;
+      zetFase('loopt');
+      function frame(nu) {
+        if (gestopt) return;
+        if (!start0) start0 = nu;
+        var t = Math.min(tEind, t0 + (nu - start0) / 1000 * uurPerSec * SPEED);
+        curve.tot(t);
+        bijwerken(true);
+        if (t >= tEind - 1e-9) { raf = 0; if (klaar) klaar(); return; }
+        raf = root.requestAnimationFrame(frame);
+      }
+      raf = root.requestAnimationFrame(frame);
+    }
+
+    function bijwerken(metBallon) {
+      if (actief) {
+        var c = actief.sim.C;
+        zetStemming(c >= ZONE - 1e-9 ? 'blij' : 'pijn', metBallon);
+        // Pilletje in de maag: deel van de geslikte dosis dat nog in het opnamedepot zit.
+        if (grafiek && grafiek.maag) {
+          var f = Math.max(0, Math.min(1, actief.sim.depot / (C.routes.slik.F * C.routes.slik.dosis)));
+          maag.style.opacity = f > 0.02 ? String(0.25 + 0.75 * f) : '0';
+          maag.style.transform = 'translate(-50%, -50%) scale(' + (0.35 + 0.65 * f).toFixed(3) + ')';
+        }
+        if (grafiek && grafiek.lever) werkLeverBij(actief.sim.dagteller());
+      }
+      teken();
+    }
+
+    // ------------------------------------------------------------------ grafiek (SVG)
+    function tekenGetal(x) { return ui.getal(x, x % 1 ? 1 : 0); }
+    function teken() {
+      if (!grafiek) { graf.innerHTML = ''; return; }
+      var g = grafiek;
+      var W = Math.round(graf.clientWidth || 340), H = Math.round(graf.clientHeight || 186);
+      var Lp = 30, Rp = 12, Tp = 24, Bp = 50;
+      var pw = W - Lp - Rp, ph = H - Tp - Bp, y0 = Tp + ph;
+      var X = function (t) { return Lp + t / g.T * pw; };
+      var Y = function (c) { return y0 - Math.min(c, g.ymax * 1.06) / g.ymax * ph; };
+      var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H + '" xmlns="http://www.w3.org/2000/svg">';
+      // zone (≥ 5 mg/L)
+      var yz = Y(ZONE);
+      s += '<rect x="' + Lp + '" y="' + (Tp - 4) + '" width="' + pw + '" height="' + (yz - Tp + 4) + '" fill="#3ddc97" fill-opacity=".13"/>';
+      s += '<path d="M' + Lp + ' ' + yz + 'H' + (Lp + pw) + '" stroke="#1f9e68" stroke-width="2" stroke-dasharray="6 5"/>';
+      s += '<text x="' + (Lp + pw - 4) + '" y="' + (Tp + 11) + '" text-anchor="end" class="tut-zone">pijnstilling</text>';
+      // y-as
+      s += '<text x="' + (Lp - 6) + '" y="' + (Tp - 9) + '" text-anchor="start" class="tut-eenheid">mg/L</text>';
+      g.ticksY.forEach(function (c) {
+        s += '<text x="' + (Lp - 7) + '" y="' + (Y(c) + 4.5) + '" text-anchor="end" class="' + (c === ZONE ? 'tut-as tut-as-zone' : 'tut-as') + '">' + tekenGetal(c) + '</text>';
+        if (c !== ZONE) s += '<path d="M' + Lp + ' ' + Y(c) + 'h-4" stroke="' + INKT + '" stroke-width="2"/>';
+      });
+      // assen (schetslijn)
+      s += '<path d="M' + Lp + ' ' + (Tp - 6) + 'V' + y0 + 'H' + (Lp + pw + 4) + '" stroke="' + INKT + '" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+      g.ticksX.forEach(function (t, i) {
+        var lab = tekenGetal(t) + (i === g.ticksX.length - 1 ? ' u' : '');
+        s += '<path d="M' + X(t) + ' ' + y0 + 'v5" stroke="' + INKT + '" stroke-width="2"/>';
+        s += '<text x="' + X(t) + '" y="' + (H - 5) + '" text-anchor="middle" class="tut-as">' + lab + '</text>';
+      });
+      // ½-staafjes
+      staven.forEach(function (b) {
+        var x = Math.max(Lp + 7, X(b.t)), yb = Y(b.C);
+        s += '<rect x="' + (x - 6) + '" y="' + yb + '" width="12" height="' + Math.max(0, y0 - yb) + '" rx="2" fill="#3d7fe0" fill-opacity=".3" stroke="#3d7fe0" stroke-width="2"/>';
+        if (b.vorige) {
+          var xv = Math.max(Lp + 7, X(b.vorige.t)), yh = Y(b.vorige.C / 2);
+          s += '<path d="M' + (xv - 6) + ' ' + yh + 'H' + (x + 9) + '" stroke="#3d7fe0" stroke-width="2" stroke-dasharray="3 4"/>';
+          s += '<text x="' + (x + 11) + '" y="' + (yh - 4) + '" class="tut-half">½</text>';
+        }
+      });
+      // curves
+      curves.forEach(function (c) {
+        if (c.p.length < 2) return;
+        var d = '';
+        for (var i = 0; i < c.p.length; i++) {
+          if (c.p[i][0] > g.T + 1e-9) break;
+          d += (i ? 'L' : 'M') + X(c.p[i][0]).toFixed(1) + ' ' + Y(c.p[i][1]).toFixed(1);
+        }
+        var stijl = c.stijl === 'spook' ? 'stroke="#a9a9b2" stroke-width="3" stroke-dasharray="2 7"'
+          : c.stijl === 'twee' ? 'stroke="#ff6f61" stroke-width="4"'
+          : 'stroke="' + INKT + '" stroke-width="4"';
+        s += '<path d="' + d + '" ' + stijl + ' fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
+        if (c.label) {
+          var piek = c.p[0];
+          for (var j = 0; j < c.p.length; j++) if (c.p[j][1] > piek[1] && c.p[j][0] <= g.T) piek = c.p[j];
+          var kleur = c.stijl === 'twee' ? '#ff6f61' : c.stijl === 'spook' ? '#8a8a93' : INKT;
+          var lx = Math.min(Lp + pw - 12, X(piek[0]) + 4), ly = Y(piek[1]) - 9;
+          s += '<circle cx="' + lx + '" cy="' + (ly - 4) + '" r="9" fill="#fff" stroke="' + kleur + '" stroke-width="2"/>';
+          s += '<text x="' + lx + '" y="' + ly + '" text-anchor="middle" class="tut-label" fill="' + kleur + '">' + c.label + '</text>';
+        }
+      });
+      // nu: lijn, stip en klok
+      if (actief) {
+        var tn = actief.sim.t, xn = X(Math.min(tn, g.T)), yn = Y(actief.sim.C);
+        s += '<path d="M' + xn + ' ' + (Tp - 4) + 'V' + y0 + '" stroke="#b07cff" stroke-width="2"/>';
+        s += '<circle cx="' + xn + '" cy="' + yn + '" r="5.5" fill="' + (actief.sim.C >= ZONE - 1e-9 ? '#3ddc97' : '#ff6f61') + '" stroke="' + INKT + '" stroke-width="2.5"/>';
+        var kx = Math.max(Lp + 46, Math.min(Lp + pw - 22, xn));
+        s += '<text x="' + kx + '" y="' + (Tp - 9) + '" text-anchor="middle" class="tut-klok">' + ui.getal(Math.floor(tn * 10 + 1e-6) / 10, (Math.floor(tn * 10 + 1e-6) % 10) ? 1 : 0) + ' u</text>';
+      }
+      // toedieningen onder de as
+      var gezien = {};
+      curves.forEach(function (c) {
+        if (c.stijl === 'spook') return;
+        c.doses.forEach(function (d) {
+          var k = d.t.toFixed(2), n = gezien[k] = (gezien[k] || 0) + 1;
+          var x = X(d.t) + (n - 1) * 24, y = y0 + 19;
+          s += '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + (c.stijl === 'twee' ? '#ff6f61' : INKT) + '"/>';
+          s += ui.icoon(d.route === 'slik' ? 'tablet' : d.route).replace('<svg ', '<svg x="' + (x - 9) + '" y="' + (y - 9) + '" width="18" height="18" ');
+        });
+      });
+      s += '</svg>';
+      graf.innerHTML = s;
+    }
+
+    // ------------------------------------------------------------------ knoppen
+    function actieKnop(soort, label, icoonHtml) {
+      var b = el('button', { type: 'button', class: 'actie tut-actie', 'data-tut': soort, 'aria-label': label });
+      b.innerHTML = icoonHtml + '<span>' + label + '</span>';
+      acties.appendChild(b);
+      return b;
+    }
+    function wijs(b, aan) { b.classList.toggle('tut-wijs', !!aan); }
+    function uit(b) { b.disabled = true; b.classList.remove('tut-wijs'); }
+    function toonVolgende(aan) {
+      volgende.classList.toggle('zicht', !!aan);
+      volgende.disabled = !aan;
+      if (aan) zetFase('klaar');
+    }
+    bijTik(volgende, function () {
+      if (volgende.disabled || gestopt) return;
+      ui.speel('tik');
+      naarStap(stap + 1);
+    });
+    bijTik(over, function () { if (!gestopt) { ui.speel('tik'); meldGereed(); } });
+
+    function meldGereed() {
+      if (klaarGemeld) return;
+      klaarGemeld = true;
+      gereed();
+    }
+
+    // ------------------------------------------------------------------ stappen
+    function nieuweGrafiek(o) {
+      grafiek = o; curves = []; staven = []; actief = null;
+    }
+    function zetTekst(t) {
+      tekst.textContent = t;
+      flits(tekst, 'nieuw');
+    }
+
+    function naarStap(n) {
+      stap = n;
+      root.cancelAnimationFrame(raf); raf = 0;
+      binnen.setAttribute('data-stap', String(n));
+      var st = stippen.children;
+      for (var i = 0; i < st.length; i++) st[i].className = i < n - 1 ? 'af' : i === n - 1 ? 'nu' : '';
+      acties.innerHTML = '';
+      toonVolgende(false);
+      zetFase('wacht');
+      leverWrap.hidden = !(n === 4 || n === 6);
+      podium.classList.toggle('met-lever', !leverWrap.hidden);
+      maag.style.opacity = '0';
+      ({ 1: stap1, 2: stap2, 3: stap3, 4: stap4, 5: stap5, 6: stap6 })[n]();
+      teken();
+    }
+
+    var tabletCurve = null;
+
+    // 1. Opa Jan heeft pijn → tablet → curve stijgt pas na even.
+    function stap1() {
+      nieuweGrafiek({ T: 10, ymax: 12, ticksX: [0, 2.5, 5, 7.5, 10], ticksY: [5, 10], maag: true });
+      tabletCurve = new Curve({ stijl: 'nu', dt: 0.02 });
+      curves.push(tabletCurve); actief = tabletCurve;
+      zetStemming('pijn', false);
+      zetTekst('Opa Jan heeft pijn.');
+      var b = actieKnop('slik', 'Tablet', ui.icoon('tablet'));
+      wijs(b, true);
+      bijTik(b, function () {
+        if (b.disabled) return;
+        uit(b); flits(b, 'tik');
+        ui.speel('slik');
+        tabletCurve.geef('slik');
+        zetTekst('Een pil moet eerst door je maag.');
+        bijwerken(false);
+        loop(tabletCurve, 2, 0.85, function () { toonVolgende(true); });
+      });
+    }
+
+    // 2. Curve zakt → elke 2,5 uur is de helft weg (½-staafjes op 5; 7,5; 10 u).
+    function stap2() {
+      grafiek.maag = true;
+      actief = tabletCurve;
+      zetTekst('Je lichaam ruimt het op: elke 2,5 uur is de helft weg.');
+      tabletCurve.metingen = [2 * THALF];
+      var b = actieKnop('klok', ui.getal(THALF, 1) + ' uur', KLOK_ICOON);
+      b.disabled = true;
+      var keer = 0;
+      loop(tabletCurve, 2 * THALF, 1.5, function () { b.disabled = false; wijs(b, true); zetFase('wacht'); });
+      bijTik(b, function () {
+        if (b.disabled || fase === 'loopt') return;
+        keer++;
+        flits(b, 'tik'); ui.speel('tik');
+        wijs(b, false);
+        var doel = (2 + keer) * THALF;
+        tabletCurve.metingen = [doel];
+        if (keer >= 2) uit(b);
+        loop(tabletCurve, doel, 1.6, function () { toonVolgende(true); });
+      });
+    }
+
+    // 3. Spuit → meteen hoog, zakt net zo hard (½ per 2,5 uur); tabletcurve als schaduw.
+    function stap3() {
+      var schaduw = { sim: tabletCurve.sim, p: tabletCurve.p, stijl: 'spook', doses: [] };
+      nieuweGrafiek({ T: 3 * THALF, ymax: 18, ticksX: [0, 2.5, 5, 7.5], ticksY: [5, 10, 15] });
+      curves.push(schaduw);
+      var c = new Curve({ stijl: 'nu', dt: 0.02, metingen: [THALF, 2 * THALF, 3 * THALF] });
+      curves.push(c); actief = c;
+      zetStemming('pijn', false);
+      zetTekst('Een prik werkt meteen, maar zakt net zo hard.');
+      var b = actieKnop('spuit', 'Spuit', ui.icoon('spuit'));
+      wijs(b, true);
+      bijTik(b, function () {
+        if (b.disabled) return;
+        uit(b); flits(b, 'tik');
+        ui.speel('spuit');
+        c.geef('spuit');
+        c.meet();
+        bijwerken(true);
+        loop(c, 3 * THALF, 2.5, function () { toonVolgende(true); });
+      });
+    }
+
+    // 4. Dagteller: na 4 × 1 g (0, 6, 12, 18 u) duwt een 5e gram (20 u) de teller over 4 g.
+    function stap4() {
+      nieuweGrafiek({ T: 24, ymax: 20, ticksX: [0, 6, 12, 18, 24], ticksY: [5, 10, 15], maag: true, lever: true });
+      laatsteDag = -1;
+      zetLever(false, false);
+      var gepland = C.echtSchema.schema.map(function (d) { return { t: d.t, route: d.route, geluid: 'tik' }; });
+      var c = new Curve({ stijl: 'nu', dt: 0.04, gepland: gepland });
+      curves.push(c); actief = c;
+      zetStemming('pijn', false);
+      werkLeverBij(0);
+      zetTekst('Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.');
+      var b = actieKnop('slik', 'Tablet', ui.icoon('tablet'));
+      b.disabled = true;
+      loop(c, 20, 10, function () { b.disabled = false; wijs(b, true); zetFase('wacht'); });
+      bijTik(b, function () {
+        if (b.disabled || fase === 'loopt') return;
+        uit(b); flits(b, 'tik');
+        ui.speel('slik');
+        c.geef('slik');
+        bijwerken(false);
+        loop(c, 24, 2, function () { toonVolgende(true); });
+      });
+    }
+
+    // 5. Zetpil: twee zetpillen uit de vaste reeks van het model, met zichtbaar ander effect.
+    function stap5() {
+      nieuweGrafiek({ T: 3 * THALF, ymax: 12, ticksX: [0, 2.5, 5, 7.5], ticksY: [5, 10] });
+      zetStemming('pijn', false);
+      zetTekst('Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.');
+      var b = actieKnop('zetpil', 'Zetpil', ui.icoon('zetpil'));
+      wijs(b, true);
+      var keer = 0;
+      bijTik(b, function () {
+        if (b.disabled || fase === 'loopt') return;
+        keer++;
+        flits(b, 'tik');
+        ui.speel('zetpil');
+        wijs(b, false);
+        if (keer >= 2) uit(b);
+        var c = new Curve({ stijl: keer === 1 ? 'nu' : 'twee', dt: 0.02, label: String(keer) });
+        c.geef('zetpil', { index: keer === 1 ? Z_GOED : Z_SLECHT });
+        curves.push(c); actief = c;
+        zetStemming('pijn', false);
+        bijwerken(false);
+        loop(c, 3 * THALF, 3, function () {
+          if (keer < 2) { wijs(b, true); zetFase('wacht'); } else toonVolgende(true);
+        });
+      });
+    }
+
+    // 6. Klaar? Race!
+    function stap6() {
+      grafiek = null; curves = []; staven = []; actief = null;
+      over.hidden = true;
+      zetStemming('blij', false);
+      zetLever(false, false);
+      leverTekst.textContent = '';
+      leverMeter.hidden = true;
+      podium.classList.add('slot');
+      tekst.textContent = '';
+      graf.innerHTML = '';
+      volgende.hidden = true;
+      var b = el('button', { type: 'button', class: 'knop-wit groot tut-race', 'data-actie': 'verder', text: 'Klaar? Race!' });
+      acties.appendChild(b);
+      bediening.classList.add('slot');
+      zetFase('klaar');
+      ui.speel('klaar');
+      bijTik(b, function () {
+        if (gestopt) return;
+        ui.speel('tik');
+        meldGereed();
+      });
+    }
+
+    function opResize() { teken(); }
+    root.addEventListener('resize', opResize);
+
+    naarStap(1);
+
+    return {
+      stop: function () {
+        if (gestopt) return;
+        gestopt = true;
+        klaarGemeld = true;
+        root.cancelAnimationFrame(raf);
+        root.clearTimeout(ballonTimer);
+        root.removeEventListener('resize', opResize);
+        var v = binnen.querySelectorAll('[data-actie]');
+        for (var i = 0; i < v.length; i++) v[i].removeAttribute('data-actie');
+        root.setTimeout(function () {
+          if (binnen.parentNode === container) container.removeChild(binnen);
+        }, 450);
+      }
+    };
+  }
+
+  SoS.tutorial = { start: start };
 })(typeof window !== 'undefined' ? window : null);
 
 </script>
 <script data-bron="src/einde.js">
 /*
- * Slikken of Stikken — src/einde.js  (PLACEHOLDER; wordt later door een andere bouwer ingevuld)
+ * Slikken of Stikken — src/einde.js  (eindscherm + toedienverslag per race; §2, §3, §6B5, §6C)
  *
  * INTERFACE (houd deze vast; app.js roept alleen dit aan)
  * ----------------------------------------------------------
- *   SoS.einde.toon(container, data, opnieuw) -> {stop()} | undefined
+ *   SoS.einde.toon(container, data, opnieuw) -> {stop()}
  *     container  <section id="scherm-einde" class="scherm wit">: leeg en zichtbaar. Vul hem zelf.
  *     data = {
  *       naam:    speelnaam (string),
@@ -1889,49 +2676,391 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
  *     }
  *     opnieuw()  Roep aan bij "Nog een keer" (één tik; knop data-actie="opnieuw"). app.js start dan
  *                meteen race 1 opnieuw, met dezelfde naam (tutorial en intro worden overgeslagen).
- *     stop()     Optioneel: opruimen als het scherm weggaat.
+ *     stop()     Opruimen als het scherm weggaat.
  *   Eisen (§6B): naam en totaalscore ≥ 32 px; nabespreekvraag "Wat deed je toen je onder de streep zakte?".
  *
- * BESCHIKBAAR: SoS.model, SoS.score, SoS.sound, SoS.ui (zie app.js). Eigen stijl in src/einde.css, prefix .eind- .
+ * OPBOUW (één scrollend scherm, wit = Evolution-of-Trust-stijl zoals start en intro; de mini-curves
+ * zijn zwarte racepaneeltjes, zodat ze er net zo uitzien als tijdens de race):
+ *   1. Eindscherm (boven de vouw): speelnaam (36 px), totaal QALY-punten (72 px), per race een kaart met
+ *      de QALY-punten en een tegelrij (één tegel per poortje, kleur = waar de spiegel tot het volgende
+ *      poortje het meest zat: in de zone / te laag / te hoog / giftig; uit data.curves), de
+ *      nabespreekvraag, een regel over het scorebord, "spelpunten, geen echte QALY's".
+ *   2. Toedienverslag per race (data-verslag="0|1"): mini-curve, QALY-opbouw in vier regels + totaal,
+ *      rooster met je toedieningen per poortje naast het echte schema, telling (toedienmomenten,
+ *      totale dosis, dagteller), de praktijkzin en (lithium) de nabesprekingszin uit het casusblad.
+ *   3. "Nog een keer" (data-actie="opnieuw") plakt onderaan in beeld; één tik.
+ *   Alle getallen komen uit data (verslag/score) of het casusblad; dit bestand rekent niets nieuws uit,
+ *   behalve de tegelkleur (welke toestand de meeste meetpunten van de eigen curve had).
+ * Stabiele haken voor tests: [data-eind="naam"|"totaal"|"race-0"|"race-1"], [data-verslag="i"] met
+ *   [data-regel="zone|laag|hoog|giftig|totaal"], [data-poortje="index"][data-soort], [data-tel="..."],
+ *   [data-zin="praktijk"|"nabespreking"], knoppen data-actie="opnieuw" en "naar-verslag" (data-race).
  */
 (function (root) {
   'use strict';
   if (!root) return;
   var SoS = root.SoS = root.SoS || {};
 
+  var VRAAG = 'Wat deed je toen je onder de streep zakte?';
+  var TOESTAND_LABEL = { zone: 'in de zone', onder: 'te laag', boven: 'te hoog', giftig: 'giftig' };
+  var SOORT_LABEL = { tablet: 'tablet', zetpil: 'zetpil', spuit: 'spuit', overgeslagen: 'overgeslagen', geblokkeerd: 'geblokkeerd' };
+  var LIJN = { zone: '#7ef0c4', onder: '#ff8f80', boven: '#ffb067', giftig: '#ff5a5a' }; // zoals in de race
+
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
     });
   }
+  function getal(x, dec) { return SoS.ui.getal(x, dec || 0); }
+  function metTeken(x) { return x > 0 ? '+' + getal(x) : getal(x); } // getal() zet zelf "−"
+  function lijst(xs) { // "0, 6, 12 en 18"
+    return xs.length < 2 ? xs.join('') : xs.slice(0, -1).join(', ') + ' en ' + xs[xs.length - 1];
+  }
 
-  function toon(container, data, opnieuw) {
-    var ui = SoS.ui;
-    var namen = { paracetamol: 'Paracetamol', lithium: 'Lithium' };
-    var rijen = (data.races || []).map(function (v, i) {
-      return '<li class="eind-race"><span>Race ' + (i + 1) + ' · ' + esc(namen[v.casus] || v.casus) + '</span>' +
-        '<b>' + ui.getal(v.opbouw.totaal, 0) + '</b></li>';
+  function toestand(c, C, t) {
+    var M = SoS.model, v = M.venster(c, t);
+    if (c.toxisch != null && C > c.toxisch) return 'giftig';
+    return C < v.laag ? 'onder' : (C > v.hoog ? 'boven' : 'zone');
+  }
+
+  // Per poortje: de toestand waarin de eigen spiegel tot het volgende poortje het vaakst zat.
+  function tegelStaten(c, curve) {
+    var tijden = SoS.model.poortjes(c), uit = [];
+    var ernst = { zone: 0, onder: 1, boven: 2, giftig: 3 };
+    for (var i = 0; i < tijden.length; i++) {
+      var a = tijden[i], b = i + 1 < tijden.length ? tijden[i + 1] : c.raceDuur, n = {}, best = null;
+      for (var j = 0; j < curve.length; j++) {
+        var p = curve[j];
+        if (p.t >= a - 1e-6 && p.t < b - 1e-6) { var s = toestand(c, p.C, p.t); n[s] = (n[s] || 0) + 1; }
+      }
+      Object.keys(n).forEach(function (s) {
+        if (best == null || n[s] > n[best] || (n[s] === n[best] && ernst[s] > ernst[best])) best = s;
+      });
+      uit.push(best);
+    }
+    return uit;
+  }
+
+  function stemming(c, v) {
+    if (c.toxisch != null && v.uren && v.uren.toxisch > 0) return 'misselijk';
+    if (v.lever && v.lever.beschadigd) return 'misselijk';
+    return v.opbouw.totaal >= 500 ? 'blij' : (v.opbouw.totaal >= 0 ? 'neutraal' : 'pijn');
+  }
+  function figuurHtml(c, v, klasse) {
+    return '<div class="fig ' + (klasse || '') + '" aria-hidden="true">' +
+      SoS.ui.figuur({ wie: c.id === 'lithium' ? 'vries' : 'opa', stemming: stemming(c, v),
+        prop: c.id === 'lithium' ? null : 'stok' }) + '</div>';
+  }
+
+  // ------------------------------------------------------------------------------------------
+  // 1. Eindscherm
+  // ------------------------------------------------------------------------------------------
+  function kaartHtml(i, c, v, curve) {
+    var staten = curve && curve.length ? tegelStaten(c, curve) : null;
+    var tegels = '';
+    if (staten) {
+      // twee rijen: paracetamol uur 0–11 | 12–23; lithium dag 0–4 | dag 5–9 (vanaf de ibuprofen)
+      var helft = Math.ceil(staten.length / 2);
+      var rij = function (van, tot) {
+        var s = '<span class="eind-tegelrij" style="--n:' + (tot - van) + '">';
+        for (var k = van; k < tot; k++) {
+          s += '<span class="eind-tegel t-' + (staten[k] || 'leeg') + '" style="--i:' + k + '"></span>';
+        }
+        return s + '</span>';
+      };
+      tegels = '<span class="eind-tegels" role="img" aria-label="Per poortje: waar de spiegel zat">' +
+        rij(0, helft) + rij(helft, staten.length) + '</span>';
+    }
+    return '<button type="button" class="eind-kaart" data-actie="naar-verslag" data-race="' + i + '">' +
+      '<span class="eind-kaart-kop">' + figuurHtml(c, v, 'eind-kaart-fig') +
+        '<span class="eind-kaart-titel"><small>Race ' + (i + 1) + '</small>' + esc(c.naam) + '</span>' +
+        '<span class="eind-kaart-score" data-eind="race-' + i + '">' + getal(v.opbouw.totaal) + '</span>' +
+      '</span>' + tegels +
+      '<span class="eind-kaart-meer">Bekijk je verslag <span aria-hidden="true">↓</span></span>' +
+    '</button>';
+  }
+
+  function legendaHtml(cs) {
+    var heeft = { zone: true, onder: true, boven: false, giftig: false };
+    cs.forEach(function (c) {
+      if (!c) return;
+      if (c.venster.some(function (v) { return v.hoog !== Infinity; })) heeft.boven = true;
+      if (c.toxisch != null) heeft.giftig = true;
+    });
+    return '<ul class="eind-legenda" aria-label="Kleuren van de tegels">' +
+      ['zone', 'onder', 'boven', 'giftig'].filter(function (s) { return heeft[s]; }).map(function (s) {
+        return '<li><span class="eind-tegel t-' + s + '"></span>' + TOESTAND_LABEL[s] + '</li>';
+      }).join('') + '</ul>';
+  }
+
+  // ------------------------------------------------------------------------------------------
+  // 2. Toedienverslag
+  // ------------------------------------------------------------------------------------------
+  function curveSvg(c, curve) {
+    if (!curve || curve.length < 2) return '';
+    var W = 340, H = 132, L = 8, R = 8, T = 18, B = 22, pw = W - L - R, ph = H - T - B;
+    var maxC = 0;
+    curve.forEach(function (p) { if (p.C > maxC) maxC = p.C; });
+    var vast = c.id === 'lithium' ? 2 : 20;
+    var ymax = Math.max(vast, maxC * 1.08);
+    var x = function (t) { return L + pw * t / c.raceDuur; };
+    var y = function (C) { return T + ph * (1 - Math.min(C, ymax) / ymax); };
+    var f = function (n) { return Math.round(n * 10) / 10; };
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" ' +
+      'aria-label="Jouw spiegel tijdens de race, met de zone">';
+    s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="14" fill="#000"/>';
+    // gebeurtenissen
+    c.gebeurtenissen.forEach(function (g) {
+      if (g.type === 'blokkade') {
+        s += '<rect x="' + f(x(g.van)) + '" y="' + T + '" width="' + f(x(g.tot) - x(g.van)) + '" height="' + ph +
+          '" fill="rgba(190,230,90,0.13)"/>';
+        s += '<text x="' + f((x(g.van) + x(g.tot)) / 2) + '" y="' + (T - 5) + '" text-anchor="middle" class="eind-svg-gebeurtenis">misselijk</text>';
+      } else if (g.type === 'klaring') {
+        s += '<line x1="' + f(x(g.t)) + '" y1="' + T + '" x2="' + f(x(g.t)) + '" y2="' + (T + ph) +
+          '" stroke="#b07cff" stroke-width="2"/>';
+        s += '<text x="' + f(x(g.t) + 4) + '" y="' + (T - 5) + '" class="eind-svg-paars">ibuprofen</text>';
+      }
+    });
+    // zone(s)
+    var v0 = c.venster[0];
+    var yHoog = v0.hoog === Infinity ? T : y(v0.hoog), yLaag = y(v0.laag);
+    s += '<rect x="' + L + '" y="' + f(yHoog) + '" width="' + pw + '" height="' + f(yLaag - yHoog) + '" fill="rgba(61,220,151,0.16)"/>';
+    s += '<line x1="' + L + '" y1="' + f(yLaag) + '" x2="' + (L + pw) + '" y2="' + f(yLaag) + '" stroke="rgba(61,220,151,0.85)" stroke-width="1.5"/>';
+    if (v0.hoog !== Infinity) {
+      s += '<line x1="' + L + '" y1="' + f(yHoog) + '" x2="' + (L + pw) + '" y2="' + f(yHoog) + '" stroke="rgba(61,220,151,0.5)" stroke-width="1"/>';
+    }
+    if (c.toxisch != null && c.toxisch < ymax) {
+      s += '<line x1="' + L + '" y1="' + f(y(c.toxisch)) + '" x2="' + (L + pw) + '" y2="' + f(y(c.toxisch)) +
+        '" stroke="rgba(255,90,90,0.7)" stroke-width="1.2" stroke-dasharray="4 4"/>';
+    }
+    // curve, gekleurd per toestand
+    var stuk = null, paden = [];
+    for (var i = 0; i < curve.length; i++) {
+      var p = curve[i], st = toestand(c, p.C, p.t), pt = f(x(p.t)) + ' ' + f(y(p.C));
+      if (!stuk || stuk.st !== st) {
+        if (stuk) stuk.d += ' L' + pt;
+        stuk = { st: st, d: 'M' + pt };
+        paden.push(stuk);
+      } else stuk.d += ' L' + pt;
+    }
+    paden.forEach(function (pd) {
+      s += '<path d="' + pd.d + '" fill="none" stroke="' + LIJN[pd.st] + '" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
+    });
+    // labels: drempels (casusblad) en tijdas
+    var eenh = c.eenheid.concentratie;
+    var labels = c.id === 'lithium'
+      ? [[v0.laag, getal(v0.laag, 1)], [v0.hoog, getal(v0.hoog, 1)], [c.toxisch, getal(c.toxisch, 1) + ' ' + eenh + ' giftig']]
+      : [[v0.laag, getal(v0.laag) + ' ' + eenh]];
+    labels.forEach(function (lb) {
+      if (lb[0] == null || lb[0] >= ymax) return;
+      s += '<text x="' + (W - R - 2) + '" y="' + f(y(lb[0]) - 3) + '" text-anchor="end" class="eind-svg-label">' + esc(lb[1]) + '</text>';
+    });
+    var asTekst = c.id === 'lithium'
+      ? [[0, 'dag 0'], [c.raceDuur / 2, 'dag ' + c.raceDuur / 48], [c.raceDuur, 'dag ' + c.raceDuur / 24]]
+      : [[0, 'uur 0'], [c.raceDuur / 2, 'uur ' + c.raceDuur / 2], [c.raceDuur, 'uur ' + c.raceDuur]];
+    asTekst.forEach(function (a, k) {
+      var anker = k === 0 ? 'start' : (k === 2 ? 'end' : 'middle');
+      s += '<text x="' + f(x(a[0])) + '" y="' + (H - 6) + '" text-anchor="' + anker + '" class="eind-svg-as">' + a[1] + '</text>';
+    });
+    return s + '</svg>';
+  }
+
+  function opbouwHtml(v) {
+    var rijen = v.opbouw.regels.map(function (r) {
+      var kl = r.punten > 0 ? 'plus' : (r.punten < 0 ? 'min' : 'nul');
+      return '<tr data-regel="' + r.id + '"><th scope="row">' + esc(r.label) + '</th>' +
+        '<td class="' + kl + '">' + metTeken(r.punten) + '</td></tr>';
     }).join('');
+    return '<table class="eind-opbouw"><caption>QALY-opbouw</caption><tbody>' + rijen +
+      '<tr class="eind-opbouw-totaal" data-regel="totaal"><th scope="row">totaal</th><td>' + getal(v.opbouw.totaal) +
+      '</td></tr></tbody></table>';
+  }
+
+  function celInhoud(rij) {
+    var j = rij.jij, ic = SoS.ui.icoon;
+    if (j.soorten.length) {
+      return j.soorten.map(function (so) {
+        return '<span class="eind-cel-ic">' + ic(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : '') + '</span>';
+      }).join('');
+    }
+    if (j.soort === 'geblokkeerd') return '<span class="eind-cel-ic">' + ic('kruis') + '</span>';
+    return '<span class="eind-cel-leeg" aria-hidden="true">–</span>';
+  }
+
+  function roosterHtml(c, v) {
+    var M = SoS.model, rijen = v.tijdlijn;
+    var allesEcht = rijen.every(function (r) { return r.echt; });
+    var blok = null;
+    c.gebeurtenissen.forEach(function (g) { if (g.type === 'blokkade') blok = g; });
+    var klaring = null;
+    c.gebeurtenissen.forEach(function (g) { if (g.type === 'klaring') klaring = g; });
+    var cel = function (r, metTijd) {
+      var j = r.jij, misselijk = blok && r.t >= blok.van - 1e-9 && r.t < blok.tot - 1e-9;
+      var echt = r.echt && !allesEcht;
+      var label = r.tijdTekst + ': ' + j.tekst + (r.echt ? '; echt schema ' + r.echt : '');
+      return '<li class="eind-cel' + (echt ? ' echt' : '') + (misselijk ? ' misselijk' : '') + ' s-' + j.soort + '"' +
+        ' data-poortje="' + r.index + '" data-soort="' + j.soort + '" data-tekst="' + esc(j.tekst) + '"' +
+        ' aria-label="' + esc(label) + '">' +
+        (metTijd ? '<span class="eind-cel-uur" aria-hidden="true">' + r.t + '</span>' : '') +
+        celInhoud(r) +
+        (echt ? '<span class="eind-cel-echt" aria-hidden="true">' + esc(r.echt) + '</span>' : '') + '</li>';
+    };
+    var s = '';
+    if (c.id === 'lithium') {
+      // rijen = dagen, kolommen = de poortjes van die dag
+      var perDag = Math.round(24 / c.poortjes.interval), dagen = Math.ceil(rijen.length / perDag);
+      var kop = rijen.slice(0, perDag).map(function (r) { return '<span>' + r.t + ' u</span>'; }).join('');
+      s += '<div class="eind-rooster eind-rooster-dag" style="--k:' + perDag + '">';
+      s += '<div class="eind-dagrij eind-dagkop" aria-hidden="true"><span></span>' + kop + '</div>';
+      for (var d = 0; d < dagen; d++) {
+        var r0 = rijen[d * perDag];
+        if (klaring && Math.abs(r0.t - klaring.t) < 1e-9) {
+          s += '<div class="eind-markering"><span>dag ' + (klaring.t / 24) + ': ibuprofen</span></div>';
+        }
+        s += '<div class="eind-dagrij"><span class="eind-dag">dag ' + d + '</span><ul>' +
+          rijen.slice(d * perDag, (d + 1) * perDag).map(function (r) { return cel(r, false); }).join('') + '</ul></div>';
+      }
+      s += '</div>';
+    } else {
+      // rijen van 6 uur: het echte schema (om de 6 uur) valt steeds in de eerste kolom
+      var stap = c.echtSchema.schema.length > 1 ? Math.round((c.echtSchema.schema[1].t - c.echtSchema.schema[0].t) / c.poortjes.interval) : 6;
+      s += '<ul class="eind-rooster eind-rooster-uur" style="--k:' + stap + '">' + rijen.map(function (r) { return cel(r, true); }).join('') + '</ul>';
+    }
+    // legenda: alleen wat voorkomt (+ altijd overgeslagen), en het echte schema
+    var komtVoor = {};
+    rijen.forEach(function (r) {
+      r.jij.soorten.forEach(function (so) { komtVoor[so.soort] = true; });
+      if (r.jij.soort === 'geblokkeerd') komtVoor.geblokkeerd = true;
+    });
+    var ic = SoS.ui.icoon;
+    var leg = ['tablet', 'zetpil', 'spuit'].filter(function (k) { return komtVoor[k]; }).map(function (k) {
+      return '<li><span class="eind-leg-ic">' + ic(k) + '</span>' + SOORT_LABEL[k] + '</li>';
+    });
+    if (komtVoor.geblokkeerd) leg.push('<li><span class="eind-leg-ic">' + ic('kruis') + '</span>geblokkeerd (wilde slikken, maar misselijk)</li>');
+    leg.push('<li><span class="eind-leg-ic eind-leg-leeg">–</span>overgeslagen</li>');
+    if (!allesEcht) leg.push('<li><span class="eind-leg-echt">' + esc(rijen.filter(function (r) { return r.echt; })[0].echt) + '</span>echt schema</li>');
+    if (blok) leg.push('<li><span class="eind-leg-misselijk"></span>misselijk (' + esc(blok.tijdTekst.toLowerCase()) + ')</li>');
+    return s + '<ul class="eind-leg">' + leg.join('') + '</ul>';
+  }
+
+  function echtTekstHtml(c, v) {
+    var sch = c.echtSchema.schema, perDag = sch.filter(function (e) { return e.t < 24; });
+    var dosis = (v.tijdlijn.filter(function (r) { return r.echt; })[0] || {}).echt || '';
+    var tijden = perDag.map(function (e) { return e.t; });
+    var lek = c.id === 'lithium'
+      ? perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur). Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.'
+      : perDag.length + '× per dag ' + dosis + ' (om uur ' + lijst(tijden) + ').';
+    return '<p class="eind-echt"><span class="eind-echt-kop">Echt schema</span> <b>' + esc(v.echtSchema.tekst) + '</b><br>' +
+      'Dat is: ' + esc(lek) + (c.id === 'lithium' ? ' In het rooster: elk vakje 1 tablet.' : '') + '</p>';
+  }
+
+  function tellingHtml(v) {
+    var t = v.telling, s = '<div class="eind-telling">';
+    s += '<div data-tel="momenten"><span>Toedienmomenten</span><b>' + getal(t.toedienmomenten) + '</b>' +
+      '<small>echt schema: ' + getal(v.echtSchema.aantal) + '</small></div>';
+    s += '<div data-tel="dosis"><span>Totale dosis</span><b>' + esc(t.totaleDosis.tekst) + '</b></div>';
+    if (t.dagteller) {
+      s += '<div data-tel="dagteller" class="' + (t.dagteller.over ? 'over' : '') + '"><span>Dagteller (hoogste 24 uur)</span>' +
+        '<b>' + getal(t.dagteller.hoogste, t.dagteller.hoogste % 1 ? 1 : 0) + ' g</b>' +
+        '<small>max. ' + getal(t.dagteller.max) + ' g' + (t.dagteller.over ? ' · lever beschadigd' : '') + '</small></div>';
+    }
+    return s + '</div>';
+  }
+
+  function verslagHtml(i, c, v, curve) {
+    var s = '<section class="eind-verslag" data-verslag="' + i + '" id="eind-verslag-' + i + '" aria-labelledby="eind-v-kop-' + i + '">';
+    s += '<header class="eind-v-kop">' + figuurHtml(c, v, 'eind-v-fig') +
+      '<div><p class="eind-kicker">Race ' + (i + 1) + ' · toedienverslag</p>' +
+      '<h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + '</h2><p class="eind-v-wie">' + esc(c.patient) + '</p></div>' +
+      '<p class="eind-v-score"><b>' + getal(v.opbouw.totaal) + '</b><span>QALY-punten</span></p></header>';
+    if (curve && curve.length > 1) {
+      s += '<figure class="eind-curve">' + curveSvg(c, curve) +
+        '<figcaption>Jouw spiegel. Groene baan: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + ').</figcaption></figure>';
+    }
+    s += opbouwHtml(v);
+    s += '<h3 class="eind-h3">Jouw toedieningen per poortje</h3>';
+    s += echtTekstHtml(c, v);
+    s += roosterHtml(c, v);
+    s += tellingHtml(v);
+    s += '<blockquote class="eind-praktijk" data-zin="praktijk">' + esc(v.praktijk.zin) + '</blockquote>';
+    if (c.nabespreking && v.praktijk.zin.indexOf(c.nabespreking) < 0) {
+      s += '<p class="eind-nabespreking" data-zin="nabespreking">' + esc(c.nabespreking) + '</p>';
+    }
+    return s + '</section>';
+  }
+
+  // ------------------------------------------------------------------------------------------
+  function toon(container, data, opnieuw) {
+    var ui = SoS.ui, M = SoS.model;
+    data = data || {};
+    var races = data.races || [], curves = data.curves || [];
+    var cs = races.map(function (v, i) {
+      return (data.casussen && data.casussen[i]) || (v ? M.casus(v.casus) : null);
+    });
+    var totaal = data.totaal != null ? data.totaal : races.reduce(function (s, v) { return s + (v ? v.opbouw.totaal : 0); }, 0);
+
+    var kaarten = '', verslagen = '';
+    races.forEach(function (v, i) {
+      if (!v || !cs[i]) return;
+      kaarten += kaartHtml(i, cs[i], v, curves[i]);
+      verslagen += verslagHtml(i, cs[i], v, curves[i]);
+    });
+
     container.innerHTML =
       '<div class="eind-binnen">' +
-        '<p class="eind-naam">' + esc(data.naam) + '</p>' +
-        '<p class="eind-label">QALY-punten totaal</p>' +
-        '<p class="eind-totaal">' + ui.getal(data.totaal, 0) + '</p>' +
-        '<ul class="eind-races">' + rijen + '</ul>' +
-        '<p class="eind-vraag">Wat deed je toen je onder de streep zakte?</p>' +
-        '<button type="button" class="knop-wit groot" data-actie="opnieuw">Nog een keer</button>' +
+        '<div class="eind-held">' +
+          '<p class="eind-naam" data-eind="naam">' + esc(data.naam || '') + '</p>' +
+          '<p class="eind-label">QALY-punten totaal</p>' +
+          '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
+          '<div class="eind-kaarten">' + kaarten + '</div>' +
+          legendaHtml(cs) +
+          '<div class="eind-vraag"><span class="eind-vraag-kop">Nabespreken</span>' +
+            '<p data-eind="vraag">' + VRAAG + '</p></div>' +
+          '<p class="eind-scorebord">Geef je speelnaam en totaal door aan Bart: hij zet je op het scorebord in de zaal.</p>' +
+          '<p class="eind-spelpunten">QALY-punten zijn spelpunten, geen echte QALY\'s.</p>' +
+        '</div>' +
+        verslagen +
+        '<div class="eind-voet"><button type="button" class="knop-wit groot" data-actie="opnieuw">Nog een keer</button></div>' +
       '</div>';
+
     var bezig = false;
-    container.querySelector('[data-actie="opnieuw"]').addEventListener('click', function () {
+    var weg = [];
+    function luister(el, ev, fn) { el.addEventListener(ev, fn); weg.push(function () { el.removeEventListener(ev, fn); }); }
+
+    luister(container.querySelector('[data-actie="opnieuw"]'), 'click', function () {
       if (bezig) return;
       bezig = true;
       ui.speel('tik');
       opnieuw();
     });
-    return { stop: function () { bezig = true; } };
+    Array.prototype.forEach.call(container.querySelectorAll('[data-actie="naar-verslag"]'), function (k) {
+      luister(k, 'click', function () {
+        var doel = container.querySelector('[data-verslag="' + k.getAttribute('data-race') + '"]');
+        if (!doel) return;
+        ui.speel('tik');
+        var glad = !(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        container.scrollTo({ top: doel.offsetTop - 8, behavior: glad ? 'smooth' : 'auto' });
+      });
+    });
+    // figuurtjes reageren op aanraken (EoT)
+    Array.prototype.forEach.call(container.querySelectorAll('.eind-v-fig'), function (f) {
+      luister(f, 'pointerdown', function () {
+        f.classList.remove('wiebel'); void f.offsetWidth; f.classList.add('wiebel');
+        ui.speel('tik');
+      });
+    });
+
+    container.scrollTop = 0;
+    ui.speel('klaar');
+    return {
+      stop: function () {
+        bezig = true;
+        weg.forEach(function (f) { f(); });
+        weg = [];
+      }
+    };
   }
 
-  SoS.einde = { toon: toon, placeholder: true };
+  SoS.einde = { toon: toon };
 })(typeof window !== 'undefined' ? window : null);
 
 </script>
