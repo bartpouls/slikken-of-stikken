@@ -36,7 +36,7 @@
  *   slik      tablet slikken           zakkende 'glk' met klankkleur rond 1 kHz (~150 ms)
  *   zetpil    zetpil geven             dof 'pff-plop', gedempt en laag (~140 ms)
  *   spuit     spuit: werkt direct      scherpe, hoge stijgende 'tsjik' (~100 ms)
- *   overslaan niets / overgeslagen     neutraal zacht 'tu-tu' omlaag (~120 ms)
+ *   overslaan niets / overgeslagen     neutraal 'tu-tu' omlaag (~150 ms)
  *   au        fout / onder de zone     klap + zakkende stem 'a-oe', luidste actiegeluid (~240 ms)
  *   alarm     te hoog / giftig / lever drie korte tweetoon-piepjes (~235 ms)
  *   wending   plotwending/gebeurtenis  opwaartse 'hm?' + belletje, geen foutgeluid (~250 ms)
@@ -190,9 +190,9 @@
     },
     zetpil: function (E) {
       // dof 'pff-plop': gefilterde ruis, dan een zachte plop
-      noise(E, { dur: 0.06, gain: 0.32, a: 0.008, filter: ['bandpass', 1300, 1.2] });
+      noise(E, { dur: 0.06, gain: 0.26, a: 0.008, filter: ['bandpass', 1300, 1.2] });
       tone(E, { type: 'triangle', f0: 210, f1: 105, at: 0.025, dur: 0.11, gain: 0.1, filter: ['lowpass', 600] });
-      tone(E, { type: 'sine', f0: 1250, f1: 850, at: 0.025, dur: 0.07, gain: 0.3, a: 0.003 });
+      tone(E, { type: 'sine', f0: 1250, f1: 850, at: 0.025, dur: 0.07, gain: 0.24, a: 0.003 });
     },
     spuit: function (E) {
       tone(E, { type: 'square', f0: 1300, f1: 2600, dur: 0.06, gain: 0.1, a: 0.001, filter: ['highpass', 900] });
@@ -200,10 +200,10 @@
       tone(E, { type: 'sine', f0: 2600, at: 0.045, dur: 0.05, gain: 0.12, a: 0.001 });
     },
     overslaan: function (E) {
-      tone(E, { type: 'square', f0: 660, dur: 0.045, gain: 0.08, filter: ['lowpass', 2600] });
-      tone(E, { type: 'sine', f0: 1320, dur: 0.04, gain: 0.14 });
-      tone(E, { type: 'square', f0: 495, at: 0.06, dur: 0.06, gain: 0.07, filter: ['lowpass', 2200] });
-      tone(E, { type: 'sine', f0: 990, at: 0.06, dur: 0.05, gain: 0.14 });
+      tone(E, { type: 'square', f0: 660, dur: 0.065, gain: 0.08, filter: ['lowpass', 2600] });
+      tone(E, { type: 'sine', f0: 1320, dur: 0.06, gain: 0.2 });
+      tone(E, { type: 'square', f0: 495, at: 0.07, dur: 0.07, gain: 0.07, filter: ['lowpass', 2200] });
+      tone(E, { type: 'sine', f0: 990, at: 0.07, dur: 0.065, gain: 0.2 });
     },
     au: function (E) {
       // 'a-oe': zakkende stem door twee klinkerfilters (a → oe), plus een klap
@@ -215,7 +215,7 @@
     alarm: function (E) {
       var f = [990, 740, 990];
       for (var i = 0; i < 3; i++) {
-        tone(E, { type: 'square', f0: f[i], at: i * 0.085, dur: 0.065, gain: 0.16, a: 0.002, filter: ['lowpass', 3200] });
+        tone(E, { type: 'square', f0: f[i], at: i * 0.085, dur: 0.065, gain: 0.19, a: 0.002, filter: ['lowpass', 3200] });
       }
     },
     wending: function (E) {
@@ -226,9 +226,9 @@
     bonk: function (E) {
       // holle 'bonk': diepe val, met houtachtige boventonen en een klikje
       tone(E, { type: 'sine', f0: 190, f1: 55, glide: 0.12, dur: 0.17, gain: 0.1, a: 0.002 });
-      tone(E, { type: 'sine', f0: 900, f1: 760, dur: 0.09, gain: 0.3, a: 0.001 });
-      tone(E, { type: 'sine', f0: 1480, f1: 1250, dur: 0.05, gain: 0.1, a: 0.001 });
-      noise(E, { dur: 0.015, gain: 0.2, a: 0.001, filter: ['bandpass', 2000, 1.5] });
+      tone(E, { type: 'sine', f0: 900, f1: 760, dur: 0.09, gain: 0.24, a: 0.001 });
+      tone(E, { type: 'sine', f0: 1480, f1: 1250, dur: 0.05, gain: 0.08, a: 0.001 });
+      noise(E, { dur: 0.015, gain: 0.16, a: 0.001, filter: ['bandpass', 2000, 1.5] });
     },
     klaar: function (E) {
       var f = [523.25, 659.25, 783.99, 1046.5];
