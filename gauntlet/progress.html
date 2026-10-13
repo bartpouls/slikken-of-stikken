@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gauntlet voortgang</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --text: #1c2430; --muted: #5b6676; --line: #dde2ea;
+    --pass: #1f7a3d; --pass-bg: #e3f4e8; --fail: #b3261e; --fail-bg: #fbe7e5;
+    --pend: #8a5a00; --pend-bg: #fdf1d6; --accent: #2457c5;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #12161c; --card: #1a2029; --text: #e7ebf1; --muted: #9aa5b5; --line: #2c3541;
+      --pass: #6fd18e; --pass-bg: #17301f; --fail: #ff8a80; --fail-bg: #3a1a18;
+      --pend: #f2c35c; --pend-bg: #3a2e12; --accent: #8fb0ff;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, "Segoe UI", sans-serif; }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 48px; }
+  h1 { font-size: 1.3rem; margin: 0 0 4px; }
+  h2 { font-size: 1rem; margin: 0 0 10px; }
+  .sub { color: var(--muted); font-size: .85rem; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; margin-top: 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .chip { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: .78rem; font-weight: 600; }
+  .PASS { color: var(--pass); background: var(--pass-bg); }
+  .FAIL { color: var(--fail); background: var(--fail-bg); }
+  .PENDING { color: var(--pend); background: var(--pend-bg); }
+  .info { color: var(--accent); background: transparent; border: 1px solid var(--line); }
+  .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 8px; }
+  .bar > i { display: block; height: 100%; background: var(--accent); }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+  tr:last-child td { border-bottom: 0; }
+  .table-wrap { overflow-x: auto; }
+  ul { margin: 0; padding-left: 20px; }
+  li { margin: 3px 0; }
+  .empty { color: var(--muted); font-style: italic; }
+  .warn { border-color: var(--pend); }
+  code { font-size: .85em; word-break: break-all; }
+</style>
+</head>
+<body>
+<main>
+  <h1 id="goal">Gauntlet voortgang</h1>
+  <div class="sub" id="meta">Wacht op gegevens uit progress.js …</div>
+
+  <div class="card" id="statuscard">
+    <div class="row" id="chips"></div>
+    <div class="bar"><i id="prog" style="width:0%"></i></div>
+  </div>
+
+  <div class="card"><h2>De lat</h2><div id="bar_text" class="empty">—</div><div class="sub" id="budget"></div></div>
+
+  <div class="card"><h2>Stukken</h2>
+    <div class="table-wrap"><table>
+      <thead><tr><th>Stuk</th><th>Ronde</th><th>Oordeel</th><th>Bewijs</th><th>Artefact</th></tr></thead>
+      <tbody id="units"></tbody>
+    </table></div>
+  </div>
+
+  <div class="card"><h2>Ronde-log</h2><div id="log"></div></div>
+  <div class="card" id="opencard"><h2>Open vragen voor jou</h2><div id="open"></div></div>
+  <div class="card"><h2>Nog onder de lat</h2><div id="below"></div></div>
+</main>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
+  function list(items, empty) {
+    if (!items || !items.length) return '<div class="empty">' + empty + '</div>';
+    return '<ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+  }
+  function render(g) {
+    if (!g) return;
+    $('goal').textContent = g.goal || 'Gauntlet voortgang';
+    $('meta').textContent = 'Laatst bijgewerkt: ' + (g.updated || 'onbekend') + ' · ververst elke 10 s';
+    var lvl = g.level === 'blind' ? 'blind (aparte criticus)' : 'zelfreview (niet blind)';
+    var st = g.status || 'running';
+    $('chips').innerHTML =
+      '<span class="chip info">Status: ' + esc(st) + '</span>' +
+      '<span class="chip info">Ronde ' + esc(g.round || 0) + ' van max ' + esc(g.maxRounds || '?') + '</span>' +
+      '<span class="chip ' + (g.level === 'blind' ? 'PASS' : 'PENDING') + '">Niveau: ' + esc(lvl) + '</span>';
+    var pct = g.maxRounds ? Math.min(100, Math.round(100 * (g.round || 0) / g.maxRounds)) : 0;
+    $('prog').style.width = pct + '%';
+    $('bar_text').textContent = g.bar || '—';
+    $('budget').textContent = g.budget ? 'Budget: ' + g.budget : '';
+    var u = g.units || [];
+    $('units').innerHTML = u.length ? u.map(function (x) {
+      var v = x.verdict || 'PENDING';
+      return '<tr><td>' + esc(x.name) + '</td><td>' + esc(x.round) + '</td><td><span class="chip ' + esc(v) + '">' + esc(v) + '</span></td><td>' + esc(x.evidence) + '</td><td><code>' + esc(x.artifact) + '</code></td></tr>';
+    }).join('') : '<tr><td colspan="5" class="empty">Nog geen stukken.</td></tr>';
+    var log = (g.log || []).slice().reverse();
+    $('log').innerHTML = log.length ? '<ul>' + log.map(function (x) {
+      return '<li><b>R' + esc(x.round) + '</b> · ' + esc(x.unit) + ' · <span class="chip ' + esc(x.verdict || 'PENDING') + '">' + esc(x.verdict || '') + '</span> ' + esc(x.note) + '</li>';
+    }).join('') + '</ul>' : '<div class="empty">Nog geen rondes.</div>';
+    $('open').innerHTML = list(g.open, 'Geen. Alles loopt zonder jou.');
+    $('opencard').className = 'card' + ((g.open && g.open.length) ? ' warn' : '');
+    $('below').innerHTML = list(g.belowBar, 'Niets, of nog niet bepaald.');
+  }
+  function load() {
+    var old = document.getElementById('gdata');
+    var s = document.createElement('script');
+    s.id = 'gdata';
+    s.src = 'progress.js?t=' + Date.now();
+    s.onload = function () { render(window.GAUNTLET); };
+    s.onerror = function () { $('meta').textContent = 'progress.js nog niet gevonden. Staat het naast deze pagina?'; };
+    if (old) old.remove();
+    document.head.appendChild(s);
+  }
+  load();
+  setInterval(load, 10000);
+})();
+</script>
+</body>
+</html>
