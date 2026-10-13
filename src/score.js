@@ -11,10 +11,13 @@
  *   te laag    (C < laag):         −LAAG / T · d² · dt,  d = (laag − C) / laag     LAAG = 1000
  *   te hoog    (C > hoog):         −HOOG / T · d² · dt,  d = (C − hoog) / hoog     HOOG = 1000
  *   giftig     (C > casus.toxisch, alleen lithium > 1,5): extra −GIFTIG / T · dt   GIFTIG = 2000
- *   lever      (paracetamol): elke gram die de dagteller boven 4 g per 24 uur brengt: −250 (LEVER_PER_GRAM),
- *              meteen bij die toediening. De race gaat door (zware straf, geen einde race): zo ziet de speler
- *              de misselijkheid en zijn curve nog, en blijft elke extra gram even duur (geen "nu maakt het
- *              niet meer uit").
+ *   lever      (paracetamol, dagteller boven 4 g per 24 uur): eenmalig −LEVER_SCHADE (1000) op het moment dat
+ *              de dagteller voor het eerst boven 4 g komt ("levermeter vol"), plus −LEVER_PER_GRAM (250) voor elke
+ *              gram boven 4 g, meteen bij die toediening; in de opbouwregel "lever / giftig".
+ *              Waarom zo zwaar: de beste denkbare >4 g-race haalt hooguit +1000 (hele race in de zone) en krijgt
+ *              minstens −1250, dus ≤ −250: altijd lager dan "gemiste dosis" (418). Leverschade kost in één klap
+ *              een hele race aan punten. De race gaat door (geen einde race): de speler ziet de misselijkheid en
+ *              zijn curve nog, en elke extra gram blijft even duur (geen "nu maakt het niet meer uit").
  * Dus: hele race in de zone = +1000 per race, ongeacht of de race 24 uur of 10 dagen duurt. Afstand buiten
  * de zone is relatief t.o.v. de zonegrens, zodat paracetamol (mg/L) en lithium (mmol/L) dezelfde schaal
  * hebben. Paracetamol heeft geen concentratie-bovengrens (hoog = ∞): "te hoog" blijft 0, de lever loopt via
@@ -24,7 +27,7 @@
  *
  * PUBLIEKE API
  * ------------
- * S.PUNTEN                 {ZONE, LAAG, HOOG, GIFTIG, LEVER_PER_GRAM, DT}
+ * S.PUNTEN                 {ZONE, LAAG, HOOG, GIFTIG, LEVER_SCHADE, LEVER_PER_GRAM, DT}
  * S.UITLEG                 de QALY-uitlegzin uit §3 (+ "spelpunten, geen echte QALY's").
  * S.REGELS                 [{id:'zone'|'laag'|'hoog'|'giftig', label:'in de zone'|'te laag'|'te hoog'|'lever / giftig'}]
  * S.tempo(casus, C, t)     -> {zone, laag, hoog, giftig}: punten per uur op dit moment (+ / − getekend).
@@ -34,11 +37,19 @@
  *   race.naar(t)          spelklok naar t (uur): loopt raster-stap voor raster-stap, telt punten.
  *                         race.t = laatste rasterpunt ≤ t (max. racelengte). Roep dit per frame aan met de
  *                         spelklok; de uitkomst is onafhankelijk van de framerate.
- *   race.geef(route, o)   = sim.geef ('slik'|'zetpil'|'spuit', {aantal, F, ka, index}); geef op het poortje:
- *                         eerst race.naar(poortjetijd), dan race.geef(...). Extra veld in het antwoord:
- *                         res.lever = strafpunten (≤ 0) die deze toediening de lever kostte.
+ *   race.geef(route, o)   = sim.geef ('slik'|'zetpil'|'spuit', {aantal, F, ka, index, t}).
+ *                         BELANGRIJK: een toediening hoort precies op het poortje. Geef o.index (poortje-index,
+ *                         zoals M.poortjes) of o.t (poortjetijd): dan loopt de race eerst zelf naar dat poortje
+ *                         (race.naar(poortjetijd)) en valt de toediening exact op het raster, net als in de batch.
+ *                         Zonder index/t valt hij op race.t; roep dan eerst race.naar(poortjetijd) aan (anders
+ *                         kan de live stand ±1 punt van de batch afwijken). Ligt race.t al voorbij het poortje,
+ *                         dan geeft hij op race.t met res.laat = true (terugspoelen kan niet).
+ *                         Na het einde van de race (race.klaar) weigert hij: {ok:false, reden:'voorbij'}, niet gelogd.
+ *                         Extra velden in het antwoord: res.lever = strafpunten (≤ 0) die deze toediening de lever
+ *                         kostte (incl. eenmalig −1000 bij de eerste overschrijding), res.leverSchade (bool: deze
+ *                         toediening bracht de dagteller voor het eerst boven 4 g).
  *   race.stand()          -> {totaal, regels:{zone, laag, hoog, giftig} (hele getallen), exact:{...},
- *                             dagteller (dosis-eenheden), klaar}  — voor de live QALY-stand.
+ *                             dagteller (dosis-eenheden), leverBeschadigd, klaar}  — voor de live QALY-stand.
  *   race.sim, race.casus, race.t, race.klaar (t = racelengte), race.verslag() (zie (c)).
  * (b) Batch: S.scoreSchema(casus, schema, {blokkades = true, dt})  schema zoals M.simuleer
  *   -> {stand, verslag, model: uitvoer van M.simuleer}. Rekent onafhankelijk via M.simuleer en geeft
@@ -46,23 +57,33 @@
  * (c) Eindverslag: race.verslag() / scoreSchema(...).verslag ->
  *   { casus, opbouw:{regels:[{id,label,punten}], totaal},
  *     tijdlijn:[{index, t, tijdTekst, jij:{soort:'tablet'|'zetpil'|'spuit'|'overgeslagen'|'geblokkeerd',
- *                aantal, toedieningen:[{route, soort, aantal, dosis, F, ka}], geblokkeerd, geenPrik},
- *                echt:'tablet'|null}],
+ *                aantal (eenheden van die eerste soort), soorten:[{soort, aantal}] (alle soorten op dit
+ *                poortje, bv. spuit + tablet), tekst ('tablet' | '2 tabletten' | 'spuit + tablet' | 'zetpil' |
+ *                'overgeslagen' | 'geblokkeerd'), toedieningen:[{route, soort, aantal, dosis, F, ka}],
+ *                geblokkeerd, geenPrik},
+ *                echt: '1 g' | '400 mg' | null}],   (dosis van het echte schema op dit moment, zonder route)
  *     echtSchema:{tekst, aantal}, telling:{toedienmomenten, totaleDosis:{waarde, eenheid, tekst},
  *     dagteller (alleen paracetamol): {hoogste, max, eenheid:'g', over, tekst}},
- *     uren:{zone, onder, boven, toxisch}, praktijk:{regel, zin} }
+ *     uren:{zone, onder, boven, toxisch}, lever:{beschadigd, gramBoven4g, punten} (paracetamol),
+ *     praktijk:{regel, zin} }
  *   S.verslag(casus, log, teller) bouwt dit uit een sim-log en een S.maakTeller(casus) (intern gebruikt).
  *   Lithium-spuitknop in de tijdlijn: soort 'overgeslagen' (of 'tablet' als ook geslikt) met geenPrik = true.
- *   tijdlijn[i].echt komt uit casus.echtSchema (paracetamol: tablet op 0, 6, 12, 18 — letterlijk het casusblad,
- *   ook al is slikken om 12 u in de race geblokkeerd).
+ *   tijdlijn[i].echt komt uit casus.echtSchema: paracetamol "1 g 4dd" → '1 g' op 0, 6, 12, 18 u (bewust zonder
+ *   route: het casusblad noemt er geen, en om 12 u is slikken geblokkeerd); lithium '400 mg' op elk poortje.
  *
- * PRAKTIJKZINNEN (praktijk.regel; de eerste die past)
- *   paracetamol: lever (dagteller > 4 g) · niets · zetpilNauwelijks (F ≤ 0,4) / zetpilHalf (F < 0,7, woordelijk §3) /
- *     zetpilGoed (zetpil tijdens misselijkheid) · spuit (spuit tijdens misselijkheid) · veelOnder (> 1/4 van de
- *     race onder de zone buiten de misselijkheid) · misselijkGemist · goed (alleen bereikbaar zonder blokkade).
- *   lithium: giftigDubbel / giftig (> 1,5) · niets · naIbuTeVeelWeg (na ibuprofen overgeslagen én onder 0,6) /
- *     naIbuMinder (woordelijk §3, % = overgeslagen poortjes vanaf t = 120 / 15) · overgeslagenOnder ·
- *     naIbuTeHoog · nabespreking (casusblad).
+ * PRAKTIJKZINNEN (praktijk.regel; de eerste die past; max. twee zinnen, behalve naIbuMinder = woordelijk §3)
+ *   paracetamol: lever (dagteller > 4 g) · niets · zetpil tijdens de misselijkheid: zetpilNauwelijks (F ≤ 0,4) /
+ *     zetpilHalf (F < 0,7; bij één zetpil woordelijk §3) / zetpilGoed (F ≥ 0,7) / zetpilWisselend (meerdere zetpillen
+ *     met verschillend effect; bij meerdere zetpillen meervoud) · spuit (spuit tijdens misselijkheid) · veelOnder
+ *     (> 1/4 van de race onder de zone buiten de misselijkheid; route-neutraal) · misselijkGemist ·
+ *     goed (vangnet; alleen bereikbaar zonder blokkade).
+ *   lithium: giftigDubbel (> 1,5 na een dubbele dosis) · giftig (vangnet: met één tablet per poortje komt de
+ *     spiegel nooit boven 1,5, dus in de race onbereikbaar) · niets · overgeslagenOnder (onder 0,6 en overgeslagen
+ *     vóór de ibuprofen, of vóór én na; oorzaak volgens wat er gebeurde) · naIbuTeVeelWeg (alleen na de ibuprofen
+ *     overgeslagen en onder 0,6) · dubbel (dubbele dosis, spiegel > 1,0, niet giftig) · naIbuMinder (woordelijk §3;
+ *     alleen als na t = 120 ≥ 90% in de zone en < 5% boven 1,0; % = overgeslagen poortjes vanaf t = 120 / 15) ·
+ *     naIbuNogTeHoog (na ibuprofen overgeslagen, maar ≥ 5% boven 1,0) · naIbuTeHoog (alles gegeven, boven 1,0) ·
+ *     nabespreking (vangnet, casusbladtekst; in de race onbereikbaar).
  */
 (function (root, factory) {
   var api = factory(function () {

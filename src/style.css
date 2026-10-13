@@ -207,7 +207,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   opacity: 0; transition: opacity .25s ease, transform .25s ease;
   pointer-events: none;
   padding: 10px 12px; border-radius: 16px;
-  background: radial-gradient(ellipse at center, rgba(0, 0, 0, .78) 30%, rgba(0, 0, 0, 0) 75%);
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, .92) 45%, rgba(0, 0, 0, 0) 72%);
 }
 .melding.zicht { opacity: 1; transform: translate(-50%, 0); }
 .melding.wending { font-size: 21px; }

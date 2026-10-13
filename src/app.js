@@ -597,7 +597,7 @@
         ctx.fillRect(4, y1, 3, y2 - y1);
         ctx.font = '600 12px ' + FONT;
         ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-        ctx.fillText('misselijk', 12, Math.max(y1 + 6, Math.min(y2 - 18, 28)));
+        ctx.fillText('misselijk', 12, Math.max(y1 + 6, Math.min(y2 - 18, 48)));
       } else if (g.type === 'klaring') {
         var yk = yVan(g.t);
         if (yk > h) return;
@@ -610,7 +610,7 @@
         ctx.fillStyle = 'rgba(255,176,103,0.95)';
         ctx.font = '600 12px ' + FONT;
         ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-        var yl = Math.max(yk + 6, 28);
+        var yl = Math.max(yk + 6, 48);
         tekenIcoon(ctx, 'doosje', 20, yl + 7, 18);
         ctx.fillText('ibuprofen', 32, yl);
       }
@@ -635,9 +635,11 @@
       }
       var extra = icoonSoort ? 30 + (aantal > 1 ? 18 : 0) : 0;
       var cx = w / 2, l1 = cx - tw / 2 - 12, r1 = cx + tw / 2 + 12 + extra;
-      var a = verleden ? 0.38 : (doel ? 1 : 0.62);
+      var a = verleden ? 0.3 : (doel ? 1 : 0.6);
       // in de verte vervagen
       if (yg > h - 60) a *= Math.max(0, (h - yg) / 60) * 0.8 + 0.2;
+      if (yg < 64) a *= Math.max(0, (yg - 20) / 44);
+      if (a <= 0.01) continue;
       ctx.globalAlpha = a;
       ctx.strokeStyle = KLEUR.paars; ctx.lineWidth = doel ? 2 : 1.25;
       ctx.beginPath(); ctx.moveTo(L - 6, yg); ctx.lineTo(l1, yg); ctx.moveTo(r1, yg); ctx.lineTo(Rr + 6, yg); ctx.stroke();
