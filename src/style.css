@@ -169,8 +169,10 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .qaly { display: flex; align-items: baseline; gap: 6px; font-variant-numeric: tabular-nums; }
 .qaly-label { font-size: 12px; font-weight: 700; letter-spacing: .12em; color: rgba(255, 255, 255, .55); }
 .qaly-getal { font-size: 26px; font-weight: 800; min-width: 3ch; text-align: right; transition: color .3s; }
-.qaly.plus .qaly-getal { color: var(--groen); }
-.qaly.min .qaly-getal { color: var(--koraal); }
+.qaly.negatief .qaly-getal { color: var(--koraal); }
+.qaly-trend { width: 14px; font-size: 14px; line-height: 1; align-self: center; }
+.qaly.plus .qaly-trend { color: var(--groen); }
+.qaly.min .qaly-trend { color: var(--koraal); }
 
 .race-rij {
   flex: none; min-height: 34px;

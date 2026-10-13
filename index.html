@@ -180,8 +180,10 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .qaly { display: flex; align-items: baseline; gap: 6px; font-variant-numeric: tabular-nums; }
 .qaly-label { font-size: 12px; font-weight: 700; letter-spacing: .12em; color: rgba(255, 255, 255, .55); }
 .qaly-getal { font-size: 26px; font-weight: 800; min-width: 3ch; text-align: right; transition: color .3s; }
-.qaly.plus .qaly-getal { color: var(--groen); }
-.qaly.min .qaly-getal { color: var(--koraal); }
+.qaly.negatief .qaly-getal { color: var(--koraal); }
+.qaly-trend { width: 14px; font-size: 14px; line-height: 1; align-self: center; }
+.qaly.plus .qaly-trend { color: var(--groen); }
+.qaly.min .qaly-trend { color: var(--koraal); }
 
 .race-rij {
   flex: none; min-height: 34px;
@@ -362,7 +364,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   <section id="scherm-race" class="scherm zwart" data-scherm="race">
     <header class="race-kop">
       <div class="klok" id="klok" aria-live="off">Uur 0</div>
-      <div class="qaly" id="qaly"><span class="qaly-label">QALY</span><span class="qaly-getal" id="qaly-getal">0</span></div>
+      <div class="qaly" id="qaly"><span class="qaly-label">QALY</span><span class="qaly-getal" id="qaly-getal">0</span><span class="qaly-trend" id="qaly-trend" aria-hidden="true"></span></div>
     </header>
     <div class="race-rij" id="race-rij">
       <div class="lever" id="lever" hidden>
@@ -971,7 +973,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
  *   lithium: giftigDubbel (> 1,5 na een dubbele dosis) · giftig (vangnet: met één tablet per poortje komt de
  *     spiegel nooit boven 1,5, dus in de race onbereikbaar) · niets · overgeslagenOnder (onder 0,6 en overgeslagen
  *     vóór de ibuprofen, of vóór én na; oorzaak volgens wat er gebeurde) · naIbuTeVeelWeg (alleen na de ibuprofen
- *     overgeslagen en onder 0,6) · dubbel (dubbele dosis, spiegel > 1,0, niet giftig) · naIbuMinder (woordelijk §3;
+ *     overgeslagen en onder 0,6) · dubbel (dubbele dosis en spiegel > 1,0 in dezelfde periode vóór/na de ibuprofen, niet giftig) · naIbuMinder (woordelijk §3;
  *     alleen als na t = 120 ≥ 90% in de zone en < 5% boven 1,0; % = overgeslagen poortjes vanaf t = 120 / 15) ·
  *     naIbuNogTeHoog (na ibuprofen overgeslagen, maar ≥ 5% boven 1,0) · naIbuTeHoog (alles gegeven, boven 1,0) ·
  *     nabespreking (vangnet, casusbladtekst; in de race onbereikbaar).
@@ -1296,7 +1298,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     var dubbelVoor = voorRijen.filter(function (r) { return tabl(r) >= 2; }).length;
     var dubbelNa = naRijen.filter(function (r) { return tabl(r) >= 2; }).length;
     var dubbel = dubbelVoor + dubbelNa;
-    var keer = function (n) { return n + ' keer een dubbele dosis'; };
+    var keer = function (n) { return (n === 1 ? 'één' : n) + ' keer een dubbele dosis'; };
     var naZone = teller.na.zone / naDuur, naBoven = teller.na.boven / naDuur;
 
     if (teller.uren.toxisch > 0) {
@@ -1320,7 +1322,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       zin: 'Jij liet na de ibuprofen ' + pct(wegNa / naRijen.length) + ' van de doses weg en de spiegel zakte ' +
         'onder de 0,6. In het echt verlaagt de arts de dosis en laat de spiegel prikken: zelf pillen overslaan ' +
         'is geen goed idee.' };
-    if (dubbel && teller.uren.boven > 0) return { regel: 'dubbel',
+    if ((dubbelNa && teller.na.boven > 0) || (dubbelVoor && teller.voor.boven > 0)) return { regel: 'dubbel',
       zin: dubbelNa
         ? 'Jij gaf na de ibuprofen ' + keer(dubbelNa) + ', terwijl de nieren al minder opruimden: de spiegel ' +
           'kwam boven de 1,0. Bij lithium nooit dubbel innemen: te veel geeft trillen, misselijkheid en diarree.'
@@ -1383,8 +1385,10 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
  *   onMuteChange(fn)    fn(muted) bij elke wijziging (voor het knopicoon).
  *   available           true als de browser Web Audio heeft.
  *   voices()            Aantal nu klinkende stemmen (diagnose; max 6).
- *   _render(naam)       Alleen voor tests: Promise<AudioBuffer|null> van het
- *                       geluid via OfflineAudioContext (zelfde mastergain).
+ *   _render(naam)       Alleen voor tests: Promise<AudioBuffer|null> (mono,
+ *                       44,1 kHz, 0,6 s) van het geluid via OfflineAudioContext,
+ *                       via precies dezelfde keten als play(); begint op het
+ *                       aanroepmoment.
  *
  * GELUIDEN (naam — wanneer — karakter). Elk geluid heeft energie tussen
  * 800 en 4000 Hz, zodat het ook op een telefoonspeaker hoorbaar is.
@@ -1393,7 +1397,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
  *   slik      tablet slikken           zakkende 'glk' met klankkleur rond 1 kHz (~150 ms)
  *   zetpil    zetpil geven             dof 'pff-plop', gedempt en laag (~140 ms)
  *   spuit     spuit: werkt direct      scherpe, hoge stijgende 'tsjik' (~100 ms)
- *   overslaan niets / overgeslagen     neutraal zacht 'tu-tu' omlaag (~120 ms)
+ *   overslaan niets / overgeslagen     neutraal 'tu-tu' omlaag (~150 ms)
  *   au        fout / onder de zone     klap + zakkende stem 'a-oe', luidste actiegeluid (~240 ms)
  *   alarm     te hoog / giftig / lever drie korte tweetoon-piepjes (~235 ms)
  *   wending   plotwending/gebeurtenis  opwaartse 'hm?' + belletje, geen foutgeluid (~250 ms)
@@ -1406,7 +1410,8 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   var SoS = root.SoS = root.SoS || {};
 
   var STORE_KEY = 'sos.sound.muted';
-  var MASTER = 0.45;       // bescheiden totaalvolume
+  var MASTER = 0.45;       // bescheiden totaalvolume (vóór de compressor)
+  var TRIM = 1;            // uitgangsniveau na de compressor
   var MAX_VOICES = 6;      // max. gelijktijdige geluiden
   var START = 0.005;       // inplan-offset in seconden
   var MIN_GAP = { poort: 0.15, alarm: 0.12, au: 0.1, klaar: 0.3 }; // anders 0.035
@@ -1447,6 +1452,8 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     return b;
   }
 
+  // Keten: stemmen → master-gain → compressor → uitgangstrim → luidspreker.
+  // De compressor voegt zelf make-up-gain toe; de trim houdt de piek onder 0 dBFS.
   function makeMaster(c, level) {
     var g = c.createGain();
     g.gain.value = level;
@@ -1455,9 +1462,22 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       comp.threshold.value = -12; comp.knee.value = 6; comp.ratio.value = 12;
       comp.attack.value = 0.002; comp.release.value = 0.08;
     } catch (e) { /* oude implementaties */ }
+    var trim = c.createGain();
+    trim.gain.value = TRIM;
     g.connect(comp);
-    comp.connect(c.destination);
+    comp.connect(trim);
+    trim.connect(c.destination);
     return g;
+  }
+
+  // Eén stem inplannen op tijd t; gedeeld door play() en _render().
+  function voice(c, mst, nb, name, t) {
+    var g = c.createGain();
+    g.gain.value = 1;
+    g.connect(mst);
+    var E = { c: c, out: g, t: t, noise: nb, src: [] };
+    SOUNDS[name](E);
+    return { name: name, g: g, src: E.src, end: E.end || t };
   }
 
   function env(param, t, a, dur, peak) {
@@ -1523,17 +1543,17 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       tone(E, { type: 'sine', f0: 1600, dur: 0.035, gain: 0.13, a: 0.002 });
     },
     slik: function (E) {
-      // 'glk': lage zakkende toon, met een meeschuivende klankkleur rond 1 kHz
+      // 'glk': zakkende toon met een meeschuivende klankkleur rond 1–2 kHz,
       // zodat hij ook op een telefoonspeaker hoorbaar is
-      tone(E, { type: 'sawtooth', f0: 230, f1: 120, dur: 0.11, gain: 0.4, a: 0.006, filter: ['bandpass', 1500, 3, 700] });
-      tone(E, { type: 'sine', f0: 300, f1: 150, dur: 0.1, gain: 0.18, a: 0.006 });
-      tone(E, { type: 'sine', f0: 1300, f1: 900, at: 0.075, dur: 0.05, gain: 0.12, a: 0.003 });
+      tone(E, { type: 'sawtooth', f0: 230, f1: 130, dur: 0.11, gain: 0.75, a: 0.006, filter: ['bandpass', 1900, 3, 1000] });
+      tone(E, { type: 'sine', f0: 300, f1: 150, dur: 0.1, gain: 0.1, a: 0.006 });
+      tone(E, { type: 'sine', f0: 1500, f1: 1050, at: 0.075, dur: 0.05, gain: 0.28, a: 0.003 });
     },
     zetpil: function (E) {
       // dof 'pff-plop': gefilterde ruis, dan een zachte plop
-      noise(E, { dur: 0.06, gain: 0.16, a: 0.008, filter: ['bandpass', 1100, 1.2] });
-      tone(E, { type: 'triangle', f0: 210, f1: 105, at: 0.025, dur: 0.11, gain: 0.14, filter: ['lowpass', 600] });
-      tone(E, { type: 'sine', f0: 1000, f1: 620, at: 0.025, dur: 0.07, gain: 0.14, a: 0.003 });
+      noise(E, { dur: 0.06, gain: 0.26, a: 0.008, filter: ['bandpass', 1300, 1.2] });
+      tone(E, { type: 'triangle', f0: 210, f1: 105, at: 0.025, dur: 0.11, gain: 0.1, filter: ['lowpass', 600] });
+      tone(E, { type: 'sine', f0: 1250, f1: 850, at: 0.025, dur: 0.07, gain: 0.24, a: 0.003 });
     },
     spuit: function (E) {
       tone(E, { type: 'square', f0: 1300, f1: 2600, dur: 0.06, gain: 0.1, a: 0.001, filter: ['highpass', 900] });
@@ -1541,10 +1561,10 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       tone(E, { type: 'sine', f0: 2600, at: 0.045, dur: 0.05, gain: 0.12, a: 0.001 });
     },
     overslaan: function (E) {
-      tone(E, { type: 'square', f0: 520, dur: 0.045, gain: 0.07, filter: ['lowpass', 1800] });
-      tone(E, { type: 'sine', f0: 1040, dur: 0.04, gain: 0.04 });
-      tone(E, { type: 'square', f0: 390, at: 0.06, dur: 0.06, gain: 0.06, filter: ['lowpass', 1500] });
-      tone(E, { type: 'sine', f0: 780, at: 0.06, dur: 0.05, gain: 0.04 });
+      tone(E, { type: 'square', f0: 660, dur: 0.065, gain: 0.08, filter: ['lowpass', 2600] });
+      tone(E, { type: 'sine', f0: 1320, dur: 0.06, gain: 0.2 });
+      tone(E, { type: 'square', f0: 495, at: 0.07, dur: 0.07, gain: 0.07, filter: ['lowpass', 2200] });
+      tone(E, { type: 'sine', f0: 990, at: 0.07, dur: 0.065, gain: 0.2 });
     },
     au: function (E) {
       // 'a-oe': zakkende stem door twee klinkerfilters (a → oe), plus een klap
@@ -1556,26 +1576,26 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     alarm: function (E) {
       var f = [990, 740, 990];
       for (var i = 0; i < 3; i++) {
-        tone(E, { type: 'square', f0: f[i], at: i * 0.085, dur: 0.065, gain: 0.12, a: 0.002, filter: ['lowpass', 3200] });
+        tone(E, { type: 'square', f0: f[i], at: i * 0.085, dur: 0.065, gain: 0.19, a: 0.002, filter: ['lowpass', 3200] });
       }
     },
     wending: function (E) {
-      tone(E, { type: 'sine', f0: 380, f1: 1000, dur: 0.12, gain: 0.14, a: 0.01 });
-      tone(E, { type: 'triangle', f0: 1320, at: 0.11, dur: 0.14, gain: 0.13, a: 0.002 });
+      tone(E, { type: 'sine', f0: 380, f1: 1000, dur: 0.12, gain: 0.17, a: 0.01 });
+      tone(E, { type: 'triangle', f0: 1320, at: 0.11, dur: 0.14, gain: 0.17, a: 0.002 });
       tone(E, { type: 'sine', f0: 1980, at: 0.11, dur: 0.12, gain: 0.05, a: 0.002 });
     },
     bonk: function (E) {
       // holle 'bonk': diepe val, met houtachtige boventonen en een klikje
-      tone(E, { type: 'sine', f0: 190, f1: 55, glide: 0.12, dur: 0.17, gain: 0.2, a: 0.002 });
-      tone(E, { type: 'sine', f0: 900, f1: 760, dur: 0.09, gain: 0.3, a: 0.001 });
-      tone(E, { type: 'sine', f0: 1480, f1: 1250, dur: 0.05, gain: 0.1, a: 0.001 });
-      noise(E, { dur: 0.015, gain: 0.2, a: 0.001, filter: ['bandpass', 2000, 1.5] });
+      tone(E, { type: 'sine', f0: 190, f1: 55, glide: 0.12, dur: 0.17, gain: 0.1, a: 0.002 });
+      tone(E, { type: 'sine', f0: 900, f1: 760, dur: 0.09, gain: 0.24, a: 0.001 });
+      tone(E, { type: 'sine', f0: 1480, f1: 1250, dur: 0.05, gain: 0.08, a: 0.001 });
+      noise(E, { dur: 0.015, gain: 0.16, a: 0.001, filter: ['bandpass', 2000, 1.5] });
     },
     klaar: function (E) {
       var f = [523.25, 659.25, 783.99, 1046.5];
       for (var i = 0; i < 4; i++) {
         var last = i === 3;
-        tone(E, { type: 'triangle', f0: f[i], at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.16 });
+        tone(E, { type: 'triangle', f0: f[i], at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.19 });
         tone(E, { type: 'sine', f0: f[i] / 2, at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.06 });
       }
     }
@@ -1694,7 +1714,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 
   function play(name) {
     try {
-      var build = SOUNDS[name];
+      var build = Object.prototype.hasOwnProperty.call(SOUNDS, name) && SOUNDS[name];
       if (!build || muted || !Ctor) return false;
       if (!ctx) {
         if (!inGesture()) return false; // nooit een context buiten een tik
@@ -1723,12 +1743,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
         steal(old, now);
       }
 
-      var g = ctx.createGain();
-      g.gain.value = 1;
-      g.connect(master);
-      var E = { c: ctx, out: g, t: now + START, noise: noiseBuf, src: [] };
-      build(E);
-      voices.push({ name: name, g: g, src: E.src, end: E.end || E.t });
+      voices.push(voice(ctx, master, noiseBuf, name, now + START));
       return true;
     } catch (e) {
       return false;
@@ -1757,15 +1772,22 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 
   function render(name) {
     try {
-      var build = SOUNDS[name];
+      var build = Object.prototype.hasOwnProperty.call(SOUNDS, name) && SOUNDS[name];
       if (!build || !OfflineCtor) return Promise.resolve(null);
-      var sr = 44100;
-      var oc = new OfflineCtor(1, Math.ceil(sr * 0.6), sr);
-      var m = makeMaster(oc, MASTER);
-      var E = { c: oc, out: m, t: 0, noise: makeNoise(oc), src: [] };
-      build(E);
+      // Zelfde keten als play(). De compressor eerst 0,5 s laten inslingeren
+      // (zoals live, waar de context al loopt), daarna het stuk vanaf het
+      // aanroepmoment teruggeven, inclusief de START-vertraging.
+      var sr = 44100, PRE = 0.5, LEN = 0.6;
+      var oc = new OfflineCtor(1, Math.ceil(sr * (PRE + LEN)), sr);
+      voice(oc, makeMaster(oc, MASTER), makeNoise(oc), name, PRE + START);
       var p = oc.startRendering();
-      return (p && p.then) ? p.then(null, function () { return null; }) : Promise.resolve(null);
+      if (!p || !p.then) return Promise.resolve(null);
+      return p.then(function (full) {
+        var off = Math.round(PRE * sr), n = Math.ceil(LEN * sr);
+        var out = oc.createBuffer(1, n, sr);
+        out.getChannelData(0).set(full.getChannelData(0).subarray(off, off + n));
+        return out;
+      }, function () { return null; });
     } catch (e) {
       return Promise.resolve(null);
     }
@@ -2286,6 +2308,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     $('klok').innerHTML = klokHtml(c, 0);
     $('qaly-getal').textContent = '0';
     $('qaly').className = 'qaly';
+    $('qaly-trend').textContent = '';
     var lever = $('lever');
     lever.hidden = !(c.bovengrens && c.bovengrens.type === 'dagteller');
     lever.classList.remove('vol');
@@ -2879,7 +2902,12 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       var som = tp.zone + tp.laag + tp.hoog + tp.giftig;
       trend = som > 0 ? 'plus' : (som < -1e-9 ? 'min' : '');
     }
-    if (trend !== R.trend) { $('qaly').className = 'qaly' + (trend ? ' ' + trend : ''); R.trend = trend; }
+    trend += st.totaal < 0 ? ' negatief' : '';
+    if (trend !== R.trend) {
+      $('qaly').className = 'qaly ' + trend;
+      $('qaly-trend').textContent = trend.indexOf('plus') === 0 ? '▲' : (trend.indexOf('min') === 0 ? '▼' : '');
+      R.trend = trend;
+    }
     if (c.bovengrens && c.bovengrens.type === 'dagteller' && st.dagteller !== R.dagteller) {
       R.dagteller = st.dagteller;
       var max = c.bovengrens.maxPer24u;

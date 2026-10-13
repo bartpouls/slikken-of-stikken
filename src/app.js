@@ -370,6 +370,7 @@
     $('klok').innerHTML = klokHtml(c, 0);
     $('qaly-getal').textContent = '0';
     $('qaly').className = 'qaly';
+    $('qaly-trend').textContent = '';
     var lever = $('lever');
     lever.hidden = !(c.bovengrens && c.bovengrens.type === 'dagteller');
     lever.classList.remove('vol');
@@ -963,7 +964,12 @@
       var som = tp.zone + tp.laag + tp.hoog + tp.giftig;
       trend = som > 0 ? 'plus' : (som < -1e-9 ? 'min' : '');
     }
-    if (trend !== R.trend) { $('qaly').className = 'qaly' + (trend ? ' ' + trend : ''); R.trend = trend; }
+    trend += st.totaal < 0 ? ' negatief' : '';
+    if (trend !== R.trend) {
+      $('qaly').className = 'qaly ' + trend;
+      $('qaly-trend').textContent = trend.indexOf('plus') === 0 ? '▲' : (trend.indexOf('min') === 0 ? '▼' : '');
+      R.trend = trend;
+    }
     if (c.bovengrens && c.bovengrens.type === 'dagteller' && st.dagteller !== R.dagteller) {
       R.dagteller = st.dagteller;
       var max = c.bovengrens.maxPer24u;
