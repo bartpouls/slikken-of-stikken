@@ -64,7 +64,8 @@ button { cursor: pointer; }
 .kop { text-align: center; order: 1; }
 .kop h1 {
   margin: .4rem 0 .2rem;
-  font-size: 2.3rem; font-weight: 800; letter-spacing: -.01em;
+  font-size: min(2.3rem, 7.6vw); font-weight: 800; letter-spacing: -.01em;
+  white-space: nowrap; max-width: 100%;
   display: inline-flex; align-items: center; gap: .45em;
 }
 .kop h1 svg { width: 1.05em; height: 1.05em; flex: none; }
@@ -85,7 +86,7 @@ button { cursor: pointer; }
   order: 2;
   position: sticky; top: 0; z-index: 5;
   margin: 1rem -16px 0; padding: .75rem 16px .8rem;
-  background: rgba(0, 0, 0, .9);
+  background: #000;
   border-bottom: 1px solid var(--lijn);
 }
 .velden { display: flex; flex-wrap: wrap; gap: .6rem; align-items: flex-end; }
@@ -171,8 +172,12 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 
 /* ---------- rest van de lijst ---------- */
 .rest { order: 4; margin-top: .6rem; min-width: 0; }
-.rest .rij { padding: .5rem .6rem; border-bottom: 1px dashed var(--lijn); border-radius: 12px; }
-.rest .rij:last-child { border-bottom-color: transparent; }
+.rest .rij { padding: .5rem .6rem; border-radius: 12px; }
+.rest .rij + .rij::before {
+  content: ""; position: absolute; left: .6rem; right: .6rem; top: 0;
+  border-top: 1px dashed var(--lijn); pointer-events: none;
+}
+.rest .rij.nieuw::before, .rest .rij.nieuw + .rij::before { display: none; }
 .rang {
   flex: none; min-width: 2.2ch; text-align: right;
   color: var(--paars); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 1.15rem;
@@ -197,12 +202,13 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   position: absolute; inset: 0; z-index: 2;
   display: flex; align-items: center; justify-content: flex-end; gap: .5rem;
   padding: 0 .5rem; border-radius: inherit;
-  background: linear-gradient(90deg, rgba(20, 12, 40, .55), rgba(20, 12, 40, .97) 35%);
+  background: #160d2c;
   border: 1.5px solid var(--paars);
   font-size: 1rem;
 }
 .bevestig span { margin-right: auto; padding-left: .5rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .knopje {
+  flex: none; white-space: nowrap;
   min-height: 44px; padding: 0 .9rem; border-radius: 10px;
   border: 1.5px solid var(--rand); background: rgba(0, 0, 0, .5); font-weight: 700;
 }
@@ -268,10 +274,9 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   .podium .plek1 .naam { font-size: 2.45rem; }
   .podium .plek1 .score { font-size: 3.9rem; }
   .rest {
-    grid-area: rest; margin-top: 1rem; min-height: 0;
+    grid-area: rest; margin: .5rem -.8rem 0; padding: .5rem .8rem 1rem; min-height: 0;
     overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
     scrollbar-width: thin; scrollbar-color: rgba(180, 140, 255, .5) transparent;
-    padding-right: .3rem;
   }
   .rest.loopt-door {
     -webkit-mask-image: linear-gradient(#000 calc(100% - 3rem), transparent);
@@ -335,7 +340,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
       <div class="veld veld-score">
         <label for="score">Totaal QALY-punten</label>
         <div class="scorerij">
-          <input type="text" id="score" name="score" inputmode="numeric" maxlength="12" placeholder="Bijv. 120 of -35" enterkeyhint="done">
+          <input type="text" id="score" name="score" inputmode="numeric" maxlength="12" placeholder="120 of -35" enterkeyhint="done">
           <button type="button" class="teken" id="teken" aria-label="Plus of min omdraaien" title="Plus of min omdraaien">±</button>
         </div>
       </div>
@@ -542,9 +547,9 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     if (bevestigId === sp.id) {
       var b = maak("div", "bevestig");
       b.appendChild(maak("span", "", sp.naam + " weghalen?"));
-      var ja = maak("button", "knopje ja", "Weghalen");
+      var ja = maak("button", "knopje ja", "Ja, weg");
       ja.type = "button"; ja.dataset.actie = "weg-ja";
-      var nee = maak("button", "knopje", "Laten staan");
+      var nee = maak("button", "knopje", "Nee");
       nee.type = "button"; nee.dataset.actie = "weg-nee";
       b.appendChild(ja); b.appendChild(nee);
       li.appendChild(b);
@@ -555,7 +560,6 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     var li = maak("li", "rij vrij plek" + plek);
     li.appendChild(maakSchijf(plek, plek));
     li.appendChild(maak("span", "naam", "nog vrij"));
-    li.appendChild(maak("span", "score", "–"));
     return li;
   }
 
@@ -820,12 +824,12 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     ctx.clearRect(0, 0, w, h);
     var r = rng(28112026);
     var kleuren = ["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#a9d8ff", "#ffb48f", "#ffd970", "#f59ad6", "#b48cff"];
-    var aantal = Math.min(900, Math.round(w * h / 3400));
+    var aantal = Math.min(1100, Math.round(w * h / 2300));
     for (var i = 0; i < aantal; i++) {
       var x = r() * w, y = r() * h;
       var kleur = kleuren[Math.floor(r() * kleuren.length)];
-      var straal = 0.55 + r() * r() * 1.5;
-      ctx.globalAlpha = 0.35 + r() * 0.6;
+      var straal = 0.7 + r() * r() * 1.8;
+      ctx.globalAlpha = 0.45 + r() * 0.55;
       ctx.fillStyle = kleur;
       ctx.beginPath();
       ctx.arc(x, y, straal, 0, Math.PI * 2);
