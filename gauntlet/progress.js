@@ -10,7 +10,7 @@ window.GAUNTLET = {
     { name: "U1 Rekenmodel + casusdata (A1–A3)", round: 1, verdict: "PASS", evidence: "Blind PASS A1–A4, 0 afwijkingen; eigen RK4 in Python: max fout 4e-13, halvering 0,5000000, alle tabelregels binnen marge. Stopregel A gehaald. Kleine robuustheidsfix blokkade-epsilon", artifact: "src/model.js" },
     { name: "U2 QALY-score + rangorde headless (B1–B2 voorlopig)", round: 1, verdict: "PENDING", evidence: "gebouwd: zone +1000/race, kwadratische straf buiten zone, lever −250/g boven 4 g; bouwer meldt 11/11 rangorde-eisen. Blinde criticus zoekt exploits", artifact: "src/score.js" },
     { name: "U3 Geluid (C, hard: zelf gesynthetiseerd, dempknop)", round: 2, verdict: "FAIL", evidence: "R1 FAIL: au valt niet op; slik/zetpil/au <400 Hz → onhoorbaar op telefoonspeaker; consolewarning na veeg. Ronde 2 in bouw", artifact: "src/sound.js" },
-    { name: "U4 Scorebord beamer (C)", round: 1, verdict: "PENDING", evidence: "gebouwd; verse criticus beoordeelt", artifact: "scorebord.html" },
+    { name: "U4 Scorebord beamer (C)", round: 2, verdict: "FAIL", evidence: "R1 FAIL: S2 contrast voettekst 3,95:1 (<AA); S4 horizontaal scrollen op 375 bij score ≥5 tekens / lange naam. S1, S3, S5 PASS. Gerichte herstelronde", artifact: "scorebord.html" },
     { name: "U5 Racescherm + spelverloop (C, B3–B6)", round: 1, verdict: "PENDING", evidence: "bouwer gestart (racescherm, flow, build)", artifact: "index.html" },
     { name: "U6 Tutorial opa Jan (C)", round: 0, verdict: "PENDING", evidence: "wacht op U5", artifact: "src/app.js" },
     { name: "U7 Eindverslag + eindscherm (C, B5)", round: 0, verdict: "PENDING", evidence: "wacht op U5", artifact: "src/app.js" },
@@ -19,6 +19,7 @@ window.GAUNTLET = {
   ],
   log: [
     { round: 0, unit: "LEAD", verdict: "PENDING", note: "Sites §6C niet bereikbaar (netwerkbeleid: 403/ENOTFOUND). Schermafbeeldingen in docs/referenties/ zijn leidend." },
+    { round: 1, unit: "U4", verdict: "FAIL", note: "Contrast <AA en horizontaal scrollen op 375 → gerichte fix (geen herontwerp)" },
     { round: 1, unit: "U1", verdict: "PASS", note: "Blind: 0 afwijkingen casusdata; tabel gereproduceerd. Bevinding: blokkadegrens zonder tolerantie → kleine fix" },
     { round: 1, unit: "U3", verdict: "FAIL", note: "P2 au niet opvallend + basgeluid verdwijnt op telefoonspeaker; P5/P6 AudioContext bij veeg → warning. Terug naar bouwer" },
     { round: 1, unit: "U1", verdict: "PENDING", note: "Model gebouwd: exacte exponentiële stap; 3 tijdpercentages wijken relatief >2% af maar ronden af op tabelwaarde → LEAD-interpretatie ±2 procentpunt" }
