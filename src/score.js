@@ -11,7 +11,7 @@
  *   te laag    (C < laag):         −LAAG / T · d² · dt,  d = (laag − C) / laag     LAAG = 1000
  *   te hoog    (C > hoog):         −HOOG / T · d² · dt,  d = (C − hoog) / hoog     HOOG = 1000
  *   giftig     (C > casus.toxisch, alleen lithium > 1,5): extra −GIFTIG / T · dt   GIFTIG = 2000
- *   lever      (paracetamol): elke gram die de dagteller boven 4 g per 24 uur brengt: −500 (LEVER_PER_GRAM),
+ *   lever      (paracetamol): elke gram die de dagteller boven 4 g per 24 uur brengt: −250 (LEVER_PER_GRAM),
  *              meteen bij die toediening. De race gaat door (zware straf, geen einde race): zo ziet de speler
  *              de misselijkheid en zijn curve nog, en blijft elke extra gram even duur (geen "nu maakt het
  *              niet meer uit").
@@ -67,7 +67,7 @@
 })(this, function (haalModel) {
   'use strict';
 
-  var PUNTEN = Object.freeze({ ZONE: 1000, LAAG: 1000, HOOG: 1000, GIFTIG: 2000, LEVER_PER_GRAM: 500, DT: 0.005 });
+  var PUNTEN = Object.freeze({ ZONE: 1000, LAAG: 1000, HOOG: 1000, GIFTIG: 2000, LEVER_PER_GRAM: 250, DT: 0.005 });
 
   var UITLEG = 'Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt ' +
     'zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY\'s.';
@@ -115,7 +115,7 @@
       tl.uren[w] += dt;
       if (c.toxisch != null && C > c.toxisch) tl.uren.toxisch += dt;
       if (w === 'onder' && mdl().geblokkeerd(c, 'slik', t)) tl.onderTijdensBlokkade += dt;
-      if (tK != null && t >= tK) tl.na[w] += dt;
+      if (tK != null && t >= tK - 1e-9) tl.na[w] += dt;
     };
     // log: alle eerdere toedieningen (sim.log); l: deze. Geeft de leverstraf (≤ 0) terug.
     tl.dosis = function (log, l) {
@@ -291,7 +291,8 @@
       var spuiten = inBlok.filter(function (x) { return x.d.route === 'spuit'; });
       var geblokt = rijen.some(function (r) { return blok(r.t) && r.jij.geblokkeerd; });
       if (telling.dagteller && telling.dagteller.over) return { regel: 'lever',
-        zin: 'Jij gaf ' + telling.dagteller.tekst.split(' van')[0] + ' in 24 uur, meer dan de 4 g die mag. ' +
+        zin: 'Jij gaf ' + getal(telling.dagteller.hoogste) + ' g in 24 uur, meer dan de ' + getal(telling.dagteller.max) +
+          ' g die mag. ' +
           'Te veel paracetamol beschadigt de lever.' };
       if (!doses.length) return { regel: 'niets',
         zin: 'Jij gaf opa Jan geen paracetamol, dus de pijn kwam terug. ' +
@@ -321,8 +322,8 @@
 
     // lithium
     var tK = eersteKlaring(c);
-    var naRijen = rijen.filter(function (r) { return r.t >= tK; });
-    var voorRijen = rijen.filter(function (r) { return r.t < tK; });
+    var naRijen = rijen.filter(function (r) { return r.t >= tK - 1e-9; });
+    var voorRijen = rijen.filter(function (r) { return r.t < tK - 1e-9; });
     var weg = function (rs) { return rs.filter(function (r) { return r.jij.toedieningen.length === 0; }).length; };
     var dubbel = rijen.filter(function (r) { return r.jij.aantal >= 2; }).length;
     if (teller.uren.toxisch > 0) {
