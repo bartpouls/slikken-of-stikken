@@ -80,7 +80,7 @@
  *   lithium: giftigDubbel (> 1,5 na een dubbele dosis) · giftig (vangnet: met één tablet per poortje komt de
  *     spiegel nooit boven 1,5, dus in de race onbereikbaar) · niets · overgeslagenOnder (onder 0,6 en overgeslagen
  *     vóór de ibuprofen, of vóór én na; oorzaak volgens wat er gebeurde) · naIbuTeVeelWeg (alleen na de ibuprofen
- *     overgeslagen en onder 0,6) · dubbel (dubbele dosis, spiegel > 1,0, niet giftig) · naIbuMinder (woordelijk §3;
+ *     overgeslagen en onder 0,6) · dubbel (dubbele dosis en spiegel > 1,0 in dezelfde periode vóór/na de ibuprofen, niet giftig) · naIbuMinder (woordelijk §3;
  *     alleen als na t = 120 ≥ 90% in de zone en < 5% boven 1,0; % = overgeslagen poortjes vanaf t = 120 / 15) ·
  *     naIbuNogTeHoog (na ibuprofen overgeslagen, maar ≥ 5% boven 1,0) · naIbuTeHoog (alles gegeven, boven 1,0) ·
  *     nabespreking (vangnet, casusbladtekst; in de race onbereikbaar).
@@ -405,7 +405,7 @@
     var dubbelVoor = voorRijen.filter(function (r) { return tabl(r) >= 2; }).length;
     var dubbelNa = naRijen.filter(function (r) { return tabl(r) >= 2; }).length;
     var dubbel = dubbelVoor + dubbelNa;
-    var keer = function (n) { return n + ' keer een dubbele dosis'; };
+    var keer = function (n) { return (n === 1 ? 'één' : n) + ' keer een dubbele dosis'; };
     var naZone = teller.na.zone / naDuur, naBoven = teller.na.boven / naDuur;
 
     if (teller.uren.toxisch > 0) {
@@ -429,7 +429,7 @@
       zin: 'Jij liet na de ibuprofen ' + pct(wegNa / naRijen.length) + ' van de doses weg en de spiegel zakte ' +
         'onder de 0,6. In het echt verlaagt de arts de dosis en laat de spiegel prikken: zelf pillen overslaan ' +
         'is geen goed idee.' };
-    if (dubbel && teller.uren.boven > 0) return { regel: 'dubbel',
+    if ((dubbelNa && teller.na.boven > 0) || (dubbelVoor && teller.voor.boven > 0)) return { regel: 'dubbel',
       zin: dubbelNa
         ? 'Jij gaf na de ibuprofen ' + keer(dubbelNa) + ', terwijl de nieren al minder opruimden: de spiegel ' +
           'kwam boven de 1,0. Bij lithium nooit dubbel innemen: te veel geeft trillen, misselijkheid en diarree.'

@@ -98,7 +98,7 @@ button { cursor: pointer; }
 .veld { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
 .veld label { font-size: .85rem; color: var(--zacht); letter-spacing: .02em; }
 .veld-naam { flex: 1 1 100%; }
-.veld-score { flex: 1 1 8rem; }
+.veld-score { flex: 1 1 11rem; }
 .scorerij { display: flex; gap: .4rem; }
 input[type="text"] {
   width: 100%; min-width: 0; min-height: 48px;
@@ -116,7 +116,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 }
 .teken:hover, .teken:focus-visible { border-color: var(--paars); outline: none; }
 .toevoegen {
-  flex: 0 0 auto; min-height: 48px; padding: 0 1.3rem;
+  flex: 1 0 auto; min-height: 48px; padding: 0 1.3rem;
   border: 0; border-radius: 12px; background: var(--paars); color: #140a2b;
   font-weight: 700; font-size: max(16px, 1.1rem);
   transition: background .2s, transform .1s;
@@ -155,23 +155,24 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 }
 .plek1 .schijf { width: 3.4rem; height: 3.4rem; }
 .plek1 .schijf b { font-size: 1.6rem; }
-/* breedtebudget: naam krijgt altijd ruimte (afkappen met ...), score wordt nooit afgekapt maar schaalt mee */
+/* breedtebudget: score heeft één vaste maat per rijtype (past tot -9.999);
+   de naam krijgt de rest en loopt zo nodig door op een tweede regel */
+.info { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: .6rem; }
 .naam {
   flex: 1 1 auto; min-width: 4rem;
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  font-weight: 600;
+  font-weight: 600; line-height: 1.12;
+  white-space: normal; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
 }
 .score {
   flex: none; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em;
-  text-align: right; white-space: nowrap;
+  text-align: right; white-space: nowrap; line-height: 1.05;
 }
-.score.l5 .cijfers { font-size: .8em; }
-.score.l7 .cijfers { font-size: .66em; }
 .score.negatief { color: var(--koraal); }
-.podium .naam { font-size: 1.3rem; }
-.podium .score { font-size: 1.9rem; }
-.podium .plek1 .naam { font-size: 1.5rem; }
-.podium .plek1 .score { font-size: 2.2rem; color: var(--goud); }
+.podium .naam { font-size: 1.25rem; }
+.podium .score { font-size: 1.75rem; }
+.podium .plek1 .naam { font-size: 1.35rem; }
+.podium .plek1 .score { font-size: 2rem; color: var(--goud); }
 .podium .plek2 .score { color: var(--zilver); }
 .podium .plek3 .score { color: var(--brons); }
 .podium .score.negatief { color: var(--koraal); }
@@ -207,14 +208,14 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 
 /* bevestigen per regel */
 .bevestig {
-  position: absolute; inset: 0; z-index: 2;
+  position: absolute; top: 0; left: 0; right: 0; min-height: 100%; z-index: 2;
   display: flex; align-items: center; justify-content: flex-end; gap: .5rem;
-  padding: 0 .5rem; border-radius: inherit;
+  padding: .35rem .5rem; border-radius: inherit;
   background: #160d2c;
   border: 1.5px solid var(--paars);
   font-size: 1rem;
 }
-.bevestig span { margin-right: auto; padding-left: .5rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bevestig span { margin-right: auto; padding-left: .5rem; min-width: 0; white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
 .knopje {
   flex: none; white-space: nowrap;
   min-height: 44px; padding: 0 .9rem; border-radius: 10px;
@@ -274,16 +275,20 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     display: flex; flex-direction: column; justify-content: flex-start;
   }
   .podium .rij { padding: .55rem .9rem; margin-bottom: .55rem; gap: 1.2rem; }
-  .naam { min-width: 6rem; }
+  .naam { min-width: 6rem; display: block; overflow: visible; -webkit-line-clamp: unset; }
+  /* podium op de beamer: naam boven, score eronder, zodat namen tot 16 tekens heel blijven */
+  .podium .info { flex-direction: column; align-items: flex-start; gap: .05rem; }
+  .podium .naam { min-width: 0; max-width: 100%; }
+  .podium .score { text-align: left; }
   .uitleg { font-size: 1.25rem; max-width: none; }
   .schijf { width: 4.4rem; height: 4.4rem; }
   .schijf b { font-size: 1.8rem; }
   .plek1 .schijf { width: 5.8rem; height: 5.8rem; }
   .plek1 .schijf b { font-size: 2.4rem; }
-  .podium .naam { font-size: 2rem; }
-  .podium .score { font-size: 3rem; }
-  .podium .plek1 .naam { font-size: 2.45rem; }
-  .podium .plek1 .score { font-size: 3.9rem; }
+  .podium .naam { font-size: 1.8rem; }
+  .podium .score { font-size: 2.6rem; }
+  .podium .plek1 .naam { font-size: 2.2rem; }
+  .podium .plek1 .score { font-size: 3.4rem; }
   .rest {
     grid-area: rest; margin: .5rem -.8rem 0; padding: .5rem .8rem 1rem; min-height: 0;
     overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
@@ -294,6 +299,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     mask-image: linear-gradient(#000 calc(100% - 3rem), transparent);
   }
   .rest .rij { padding: .45rem .7rem; gap: 1.1rem; }
+  .rest .info { gap: 1.1rem; }
   .nieuwlabel { right: 4rem; }
   .rang { font-size: 1.55rem; min-width: 2.4ch; }
   .rest .naam { font-size: 1.75rem; }
@@ -305,7 +311,8 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   }
   .velden { flex-wrap: nowrap; }
   .veld-naam { flex: 1 1 18rem; }
-  .veld-score { flex: 0 1 13rem; }
+  .veld-score { flex: 0 1 15rem; }
+  .toevoegen { flex: 0 0 auto; }
   input[type="text"], .toevoegen, .teken { font-size: 1rem; min-height: 2.6rem; }
   .teken, .weg { min-width: 2.6rem; }
   .melding, .melding:empty { display: flex; margin: 0 0 .35rem; min-height: 1.4em; }
@@ -314,6 +321,22 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     border-top: 1px solid var(--lijn); align-self: stretch; align-items: flex-end; justify-content: flex-end;
   }
   .weg { width: 2.6rem; height: 2.6rem; font-size: 1.2rem; }
+}
+
+/* heel smalle telefoon (320 px) */
+@media (max-width: 360px) {
+  .rij, .info { gap: .45rem; }
+  .schijf { width: 2.5rem; height: 2.5rem; }
+  .plek1 .schijf { width: 2.8rem; height: 2.8rem; }
+  .schijf b { font-size: 1.1rem; }
+  .plek1 .schijf b { font-size: 1.35rem; }
+  .podium .naam, .podium .plek1 .naam { font-size: 1.1rem; }
+  .podium .score { font-size: 1.5rem; }
+  .podium .plek1 .score { font-size: 1.7rem; }
+  .rest .naam { font-size: 1.05rem; }
+  .rest .score { font-size: 1.15rem; }
+  .rang { font-size: 1.05rem; }
+  .kop h1 { font-size: 1.75rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -347,12 +370,12 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     <div class="velden">
       <div class="veld veld-naam">
         <label for="naam">Speelnaam</label>
-        <input type="text" id="naam" name="naam" maxlength="24" placeholder="Bijvoorbeeld Sam" enterkeyhint="next" spellcheck="false">
+        <input type="text" id="naam" name="naam" maxlength="20" placeholder="Bijvoorbeeld Sam" enterkeyhint="next" spellcheck="false">
       </div>
       <div class="veld veld-score">
         <label for="score">Totaal QALY-punten</label>
         <div class="scorerij">
-          <input type="text" id="score" name="score" inputmode="numeric" maxlength="12" placeholder="120 of -35" enterkeyhint="done">
+          <input type="text" id="score" name="score" inputmode="numeric" maxlength="12" placeholder="1650 of -300" enterkeyhint="done">
           <button type="button" class="teken" id="teken" aria-label="Plus of min omdraaien" title="Plus of min omdraaien">±</button>
         </div>
       </div>
@@ -380,8 +403,8 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   "use strict";
 
   var SLEUTEL = "sos-scorebord-v1";
-  var MAX_NAAM = 24;
-  var MAX_SCORE = 999999;
+  var MAX_NAAM = 20;      /* spel: tot 16 tekens; wat marge voor met de hand getypte namen */
+  var MAX_SCORE = 9999;   /* bord gaat van -9.999 tot 9.999 */
   var NIEUW_MS = 8000;
 
   var $ = function (id) { return document.getElementById(id); };
@@ -401,7 +424,8 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 
   function geldig(sp) {
     return sp && typeof sp.naam === "string" && sp.naam.trim() !== "" &&
-      typeof sp.score === "number" && isFinite(sp.score) && Math.floor(sp.score) === sp.score;
+      typeof sp.score === "number" && isFinite(sp.score) && Math.floor(sp.score) === sp.score &&
+      Math.abs(sp.score) <= MAX_SCORE;
   }
   function laad() {
     if (!opslag) return [];
@@ -533,9 +557,11 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     if (opPodium) li.appendChild(maakSchijf(plek, rang));
     else li.appendChild(maak("span", "rang", String(rang)));
     li.appendChild(maak("span", "verborgen", "Plek " + rang + ": "));
+    var info = maak("span", "info");
     var naam = maak("span", "naam", sp.naam);
     naam.title = sp.naam;
-    li.appendChild(naam);
+    info.appendChild(naam);
+    li.appendChild(info);
     if (sp.id === nieuwId) {
       var verstreken = Date.now() - nieuwOp;
       if (verstreken < NIEUW_MS) {
@@ -548,13 +574,9 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
         li.appendChild(lab);
       }
     }
-    var tekst = opmaak(sp.score);
-    /* lange getallen kleiner zetten, zodat de naam ruimte houdt en niets buiten beeld valt */
-    var sc = maak("span", "score" + (sp.score < 0 ? " negatief" : "") +
-      (tekst.length >= 7 ? " l7" : tekst.length >= 5 ? " l5" : ""));
-    sc.appendChild(maak("span", "cijfers", tekst));
+    var sc = maak("span", "score" + (sp.score < 0 ? " negatief" : ""), opmaak(sp.score));
     if (sp.id === nieuwId && Date.now() - nieuwOp < 700) sc.style.animationDelay = (-(Date.now() - nieuwOp)) + "ms";
-    li.appendChild(sc);
+    info.appendChild(sc);
     li.appendChild(maak("span", "verborgen", " QALY-punten"));
     var weg = maak("button", "weg", "×");
     weg.type = "button";
@@ -577,7 +599,9 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   function maakVrij(plek) {
     var li = maak("li", "rij vrij plek" + plek);
     li.appendChild(maakSchijf(plek, plek));
-    li.appendChild(maak("span", "naam", "nog vrij"));
+    var info = maak("span", "info");
+    info.appendChild(maak("span", "naam", "nog vrij"));
+    li.appendChild(info);
     return li;
   }
 
@@ -726,10 +750,10 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     if (s.fout) {
       markeerFout(scoreVeld);
       meld({
-        leeg: "Vul ook de totaalscore in, bijvoorbeeld 120 of -35.",
-        komma: "Alleen hele getallen, zonder komma. Bijvoorbeeld 120 of -35.",
-        geen: "Dat is geen getal. Typ de score als heel getal, bijvoorbeeld 120 of -35.",
-        groot: "Dat getal is wel erg groot. Klopt het? Maximaal 999.999."
+        leeg: "Vul ook de totaalscore in, bijvoorbeeld 1650 of -300.",
+        komma: "Alleen hele getallen, zonder komma. Bijvoorbeeld 1650 of -300.",
+        geen: "Dat is geen getal. Typ de score als heel getal, bijvoorbeeld 1650 of -300.",
+        groot: "Dat getal is te groot voor dit scorebord: het gaat van -9.999 tot 9.999."
       }[s.fout], "fout");
       return;
     }

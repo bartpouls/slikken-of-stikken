@@ -92,6 +92,7 @@ function voorspel(race, h, dosis) {
   }
   return { Ceind: k.C, punten: p, Cmin: Math.min(...C) };
 }
+const schemaTekst = sch => sch.map(x => x.t + ({ slik: '', spuit: 's', zetpil: 'z' })[x.route]).join(',');
 const gegeven = race => race.sim.log.filter(l => l.ok).reduce((s, l) => s + l.dosis, 0);
 const geblokt = (t, route = 'slik') => !!M.geblokkeerd(P, route, t);
 
@@ -197,6 +198,51 @@ pRes['zoekbot: beste 4 g (' + zoek.best.sch.map(s => s.t + (s.route === 'spuit' 
   }
   pRes['zoekbot 4 g + beste 5e gram'] = beste5;
 }
+const boven4 = zoekBovenVierGram();
+pRes['zoekbot >4 g: ' + schemaTekst(boven4.sch)] = boven4.race;
+const criticus5 = [{ t: 0, route: 'spuit' }, { t: 4, route: 'slik' }, { t: 8, route: 'zetpil' }, { t: 14, route: 'zetpil' }, { t: 19, route: 'slik' }];
+pRes['5 g: spuit 0, slik 4, zetpil 8+14, slik 19'] = speel(P, (r, t) => criticus5.filter(x => x.t === t));
+pRes['5 g: 5x spuit (0,5,10,14,19)'] = speel(P, op([0, 5, 10, 14, 19], () => [spuit]));
+
+// Zoekbot boven 4 g: bundelzoektocht (beam) over alle poortjes met keuzes {niets, slik (als het mag),
+// zetpil (vaste reeks), spuit}, per totale dosis (5 t/m 24 g) de 120 beste deelschema's bewaard, gerangschikt
+// op zone- en te-laag-punten (dus zónder leverstraf: zoekt de schema's die het meest aan pijnstilling winnen).
+// De beste kandidaten worden daarna exact live nagespeeld, mét leverstraf.
+function zoekBovenVierGram() {
+  const dtz = 0.05, sub = Math.round(1 / dtz), W = 120, k = Math.LN2 / P.Thalf;
+  let bundel = [{ C: 0, dep: [], p: 0, g: 0, sch: [] }];
+  for (let t = 0; t < 24; t++) {
+    const opties = [null, spuit, zetpil];
+    if (!geblokt(t)) opties.push(slik);
+    const nieuw = [];
+    for (const st of bundel) for (const o of opties) {
+      let C = st.C; const dep = st.dep.map(d => ({ A: d.A, ka: d.ka }));
+      if (o && o.route === 'spuit') C += 1000 / P.Vd;
+      else if (o) {
+        const z = o.route === 'zetpil' ? M.zetpil(t) : { F: P.routes.slik.F, ka: P.routes.slik.ka };
+        dep.push({ A: z.F * 1000, ka: z.ka });
+      }
+      let p = st.p;
+      for (let i = 0; i < sub; i++) {
+        const r = S.tempo(P, C, t + i * dtz);
+        p += (r.zone + r.laag) * dtz;
+        C = M.stapExact(C, dep, P.Vd, k, dtz);
+      }
+      nieuw.push({ C, dep, p, g: st.g + (o ? 1 : 0), sch: o ? [...st.sch, { t, route: o.route }] : st.sch });
+    }
+    const perG = new Map();
+    for (const st of nieuw) { if (!perG.has(st.g)) perG.set(st.g, []); perG.get(st.g).push(st); }
+    bundel = [];
+    for (const lijst of perG.values()) bundel.push(...lijst.sort((a, b) => b.p - a.p).slice(0, W));
+  }
+  const kand = bundel.filter(st => st.g > 4).sort((a, b) => b.p - a.p).slice(0, 40);
+  let best = null;
+  for (const st of kand) {
+    const race = speel(P, (r, t) => st.sch.filter(x => x.t === t));
+    if (!best || race.stand().totaal > best.race.stand().totaal) best = { race, sch: st.sch };
+  }
+  return best;
+}
 
 function tabel(res) {
   const rij = (a, b, c, d, e, f, g) => console.log(a.padEnd(48) + b.padStart(7) + c.padStart(7) + d.padStart(7) + e.padStart(7) + f.padStart(8) + '  ' + g);
@@ -222,6 +268,16 @@ eis('B1 gemiste dosis > niets', sc('gemiste dosis') > sc('niets'));
 eis('B1 elk uur slikken: leverschade', pRes['elk uur slikken'].verslag().telling.dagteller.over && pRes['elk uur slikken'].stand().regels.giftig < 0);
 eis('B1 elk uur slikken < echt schema', sc('elk uur slikken') < sc(echt));
 eis(`B1 echt schema >= 80% van hoogste botscore (${sc(echt)} / ${hoogsteP} = ${Math.round(100 * sc(echt) / hoogsteP)}%)`, sc(echt) >= 0.8 * hoogsteP);
+{
+  const meer = Object.entries(pRes).filter(([, r]) => r.verslag().telling.dagteller.over);
+  const [bn, br] = meer.sort((a, b) => b[1].stand().totaal - a[1].stand().totaal)[0];
+  eis(`LEAD: beste strategie boven 4 g (${bn}: ${br.stand().totaal}) < gemiste dosis (${sc('gemiste dosis')})`,
+    br.stand().totaal < sc('gemiste dosis'));
+  // Bovengrens, los van elke zoektocht: zone ≤ +1000, te laag ≤ 0, lever ≤ −(LEVER_SCHADE + LEVER_PER_GRAM).
+  const grens = S.PUNTEN.ZONE - S.PUNTEN.LEVER_SCHADE - S.PUNTEN.LEVER_PER_GRAM;
+  check(grens < sc('gemiste dosis'), `bovengrens elke >4 g-race: ${grens} < gemiste dosis`);
+  console.log(`(bovengrens voor elke race boven 4 g: ${S.PUNTEN.ZONE} − ${S.PUNTEN.LEVER_SCHADE} − ${S.PUNTEN.LEVER_PER_GRAM} = ${grens})`);
+}
 check(sc('echt schema (letterlijk: slik 12 u geweigerd)') === sc('gemiste dosis'), 'letterlijk echt schema = gemiste dosis (slik op 12 u geweigerd)');
 check(sc('zoekbot 4 g + beste 5e gram') < sc(Object.keys(pRes).find(n => n.startsWith('zoekbot: beste'))), '5e gram loont niet (leverstraf)');
 
@@ -278,7 +334,30 @@ kop('Live = batch, framerate-onafhankelijk, opbouw');
   const r2 = S.maakRace('paracetamol');
   const straf = [];
   for (let t = 0; t < 6; t++) { r2.naar(t); straf.push(r2.geef('slik').lever); }
-  check(JSON.stringify(straf) === JSON.stringify([0, 0, 0, 0, -S.PUNTEN.LEVER_PER_GRAM, -S.PUNTEN.LEVER_PER_GRAM]), 'leverstraf: 5e en 6e gram elk −' + S.PUNTEN.LEVER_PER_GRAM + ' (' + straf + ')');
+  const LS = S.PUNTEN.LEVER_SCHADE, LG = S.PUNTEN.LEVER_PER_GRAM;
+  check(JSON.stringify(straf) === JSON.stringify([0, 0, 0, 0, -LS - LG, -LG]), `leverstraf: 5e gram −${LS}−${LG}, 6e gram −${LG} (${straf})`);
+  check(r2.stand().leverBeschadigd && r2.stand().regels.giftig === -LS - 2 * LG, 'leverstraf staat in de opbouwregel "lever / giftig"');
+  const vl = r2.verslag().lever;
+  check(vl.beschadigd && vl.gramBoven4g === 2 && vl.punten === -LS - 2 * LG, 'verslag.lever: ' + JSON.stringify(vl));
+  // Na het einde van de race weigert geef (ook de spuit op t = 24)
+  const r4 = S.maakRace('paracetamol');
+  for (const t of [0, 6, 12, 18]) r4.geef(t === 12 ? 'spuit' : 'slik', { index: t });
+  r4.naar(24);
+  const voor = r4.stand().totaal, nLog = r4.sim.log.length;
+  const na = r4.geef('spuit');
+  const na2 = S.maakRace('paracetamol'); na2.naar(30);
+  check(!na.ok && na.reden === 'voorbij' && na.lever === 0 && r4.stand().totaal === voor && r4.sim.log.length === nLog &&
+    r4.verslag().tijdlijn[23].jij.soort === 'overgeslagen' && !na2.geef('slik', { index: 23 }).ok, 'geef na het einde van de race geweigerd, niet gelogd, geen straf');
+  // geef met index/t zet de toediening exact op het poortje, ook als de UI de race niet eerst naar het poortje bracht
+  const ra = S.maakRace('paracetamol'), rb = S.maakRace('paracetamol'), rc = S.maakRace('paracetamol');
+  ra.naar(5.997); ra.geef('slik', { index: 6 }); ra.naar(24);
+  rb.naar(5.997); rb.geef('slik', { t: 6 }); rb.naar(24);
+  rc.naar(6); rc.geef('slik'); rc.naar(24);
+  const rd = S.scoreSchema('paracetamol', [{ t: 6, route: 'slik' }]);
+  check(ra.stand().exact.zone === rd.stand.exact.zone && rb.stand().exact.zone === rd.stand.exact.zone &&
+    rc.stand().exact.zone === rd.stand.exact.zone && Math.abs(ra.sim.log[0].t - 6) < 1e-9, 'geef met {index} of {t} valt exact op het poortje (= batch)');
+  const re = S.maakRace('paracetamol'); re.naar(6.2); const laat = re.geef('slik', { index: 6 });
+  check(laat.ok && laat.laat === true, 'geef na het poortje: gegeven op race.t met res.laat = true');
   const r3 = S.maakRace('lithium'); r3.naar(0); const g = r3.geef('spuit');
   check(!g.ok && g.reden === 'geenPrik' && g.lever === 0, 'lithium-spuit: geweigerd, geen straf');
 }
@@ -287,36 +366,72 @@ kop('Live = batch, framerate-onafhankelijk, opbouw');
 kop('Eindverslag en praktijkzinnen');
 {
   const zinnen = {};
-  const toon = (c, naam, race) => {
-    const v = race.verslag();
-    zinnen[v.praktijk.regel] = zinnen[v.praktijk.regel] || v.praktijk.zin; // eerste voorbeeld per regel
-    return v;
-  };
-  for (const [n, r] of Object.entries(pRes)) toon(P, n, r);
-  for (const [n, r] of Object.entries(lRes)) toon(L, n, r);
-  // extra scenario's om elke regel te raken
-  const extra = {
-    'zetpil op 13 u (F 0,35)': [P, op([0, 6, 13, 18], t => [t === 13 ? zetpil : slik])],
-    'zetpil op 14 u (F 0,9)': [P, op([0, 6, 14, 18], t => [t === 14 ? zetpil : slik])],
-    'alles vroeg': [P, op([0, 1, 2, 3], () => [slik])],
-    'slik 0, 4, 8, 16 (niets tijdens misselijkheid)': [P, op([0, 4, 8, 16], () => [slik])],
-    'li: na ibuprofen om de andere overslaan': [L, (race, t) => (t >= tK && naIbuNr(t) % 2 === 0 ? [] : [slik])],
-    'li: voor ibuprofen overslaan, daarna alles': [L, (race, t) => (t < tK && t % 16 === 0 ? [] : [slik])],
-    'li: één keer dubbel op dag 2': [L, (race, t) => [{ route: 'slik', aantal: t === 48 ? 2 : 1 }]]
-  };
-  for (const [n, [c, b]] of Object.entries(extra)) toon(c, n, speel(c, b));
+  // Eén scenario per praktijkzin (live gespeeld), met de regel die hij moet triggeren.
+  const naIbuOpT = (pred, dosis = slik) => (race, t) => (pred(t) ? [] : [dosis]);
+  const scen = [
+    // paracetamol
+    ['P lever: elk uur slikken', P, pBots['elk uur slikken'], 'lever'],
+    ['P niets', P, pBots['niets'], 'niets'],
+    ['P zetpil 12 u (F 0,6)', P, pBots['zetpil-variant'], 'zetpilHalf'],
+    ['P zetpil 13 u (F 0,35)', P, op([0, 6, 13, 18], t => [t === 13 ? zetpil : slik]), 'zetpilNauwelijks'],
+    ['P zetpil 14 u (F 0,9)', P, op([0, 6, 14, 18], t => [t === 14 ? zetpil : slik]), 'zetpilGoed'],
+    ['P rand 6: zetpil 10 u (F 0,7) en 13 u (F 0,35)', P, op([0, 10, 13, 18], t => [t === 10 || t === 13 ? zetpil : slik]), 'zetpilWisselend',
+      'Tijdens de misselijkheid koos jij 2 keer de zetpil. De ene werkte goed, de andere nauwelijks: daar kun je niet op rekenen.'],
+    ['P zetpil 11 u en 13 u (allebei nauwelijks)', P, op([0, 11, 13, 18], t => [t === 11 || t === 13 ? zetpil : slik]), 'zetpilNauwelijks',
+      'Tijdens de misselijkheid koos jij 2 keer de zetpil. Ze werkten nauwelijks: daar kun je niet op rekenen.'],
+    ['P spuit 12 u', P, pBots['spuit-variant'], 'spuit'],
+    ['P rand 5: alleen een spuit om 0 u', P, op([0], () => [spuit]), 'veelOnder'],
+    ['P alles vroeg (0, 1, 2, 3 u)', P, op([0, 1, 2, 3], () => [slik]), 'veelOnder'],
+    ['P gemiste dosis', P, pBots['gemiste dosis'], 'misselijkGemist'],
+    ['P echt schema zonder blokkade (vangnet)', P, op(VIER, () => [slik]), 'goed', null, { blokkades: false }],
+    // lithium
+    ['L elk poortje dubbel', L, lBots['elk poortje dubbel'], 'giftigDubbel'],
+    ['L niets', L, lBots['niets'], 'niets'],
+    ['L rand 3a: eerste 15 overslaan, daarna 1', L, (race, t) => (t === tK ? [slik] : []), 'overgeslagenOnder',
+      'Jij sloeg 29 van de 30 doses over, vóór én na de ibuprofen, en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.'],
+    ['L rand 3b: eerste 15 overslaan, daarna alles', L, naIbuOpT(t => t < tK), 'overgeslagenOnder',
+      'Jij sloeg vóór de ibuprofen 15 van de 15 doses over en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.'],
+    ['L na ibuprofen om de andere overslaan', L, naIbuOpT(t => t >= tK && naIbuNr(t) % 2 === 0), 'naIbuTeVeelWeg'],
+    ['L rand 4: dubbel na de ibuprofen (136 u)', L, (race, t) => [{ route: 'slik', aantal: t === 136 ? 2 : 1 }], 'dubbel'],
+    ['L dubbel vóór de ibuprofen (48 u)', L, (race, t) => [{ route: 'slik', aantal: t === 48 ? 2 : 1 }], 'dubbel'],
+    ['L na ibuprofen elke 3e overslaan', L, lBots['na de ibuprofen elke 3e overslaan'], 'naIbuMinder',
+      'Jij liet na de ibuprofen 33% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten.'],
+    ['L rand 2: alleen poortje 232 overslaan', L, naIbuOpT(t => t === 232), 'naIbuNogTeHoog'],
+    ['L alles slikken', L, lBots['alles slikken'], 'naIbuTeHoog']
+  ];
+  const rij = (a, b, c) => console.log(a.padEnd(50) + b.padEnd(18) + c);
+  for (const [naam, c, bot, regel, tekst, opties] of scen) {
+    const v = speel(c, bot, 'vast', opties).verslag();
+    zinnen[v.praktijk.regel] = zinnen[v.praktijk.regel] || v.praktijk.zin;
+    const ok = v.praktijk.regel === regel && (!tekst || v.praktijk.zin === tekst);
+    check(ok, `${naam}: verwacht ${regel}, kreeg ${v.praktijk.regel}: ${v.praktijk.zin}`);
+    rij(naam, v.praktijk.regel, v.praktijk.zin);
+  }
+  const zonder = ['giftig', 'nabespreking'].filter(r => !zinnen[r]);
+  console.log(`(vangnetregels zonder racescenario, in de race onbereikbaar: ${zonder.join(', ')})`);
   for (const [r, z] of Object.entries(zinnen)) {
     const n = z.split(/[.!?](\s|$)/).filter(s => s && s.trim()).length;
-    console.log(`[${r}] (${n} zin${n > 1 ? 'nen' : ''}) ${z}`);
     if (r !== 'naIbuMinder') check(n <= 2, `praktijkzin ${r} maximaal twee zinnen`);
     check(!/(overslaan|weglaten) is (goed|slim|handig)|sla .* over\b/i.test(z), `praktijkzin ${r} prijst overslaan niet`);
   }
+  check(!/pil/.test(zinnen.veelOnder), 'veelOnder route-neutraal (geen "pil")');
   check(zinnen.zetpilHalf === 'Tijdens de misselijkheid koos jij de zetpil. Die werkte maar half: daar kun je niet op rekenen.', 'voorbeeldzin zetpil woordelijk');
   check(zinnen.naIbuMinder === 'Jij liet na de ibuprofen 33% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten.', 'voorbeeldzin lithium woordelijk, percentage uit keuzes (5 van 15)');
 
   // Tijdlijn en telling
   const vL = pRes['echt schema (letterlijk: slik 12 u geweigerd)'].verslag();
-  check(vL.tijdlijn.length === 24 && vL.tijdlijn[12].jij.soort === 'geblokkeerd' && vL.tijdlijn[12].echt === 'tablet', 'tijdlijn: 12 u geblokkeerd naast echt schema tablet');
+  check(vL.tijdlijn.length === 24 && vL.tijdlijn[12].jij.soort === 'geblokkeerd' && vL.tijdlijn[12].jij.tekst === 'geblokkeerd' &&
+    vL.tijdlijn.map(r => r.echt).join() === [0, 6, 12, 18].reduce((a, t) => (a[t] = '1 g', a), Array(24).fill(null)).join(),
+    'tijdlijn: 12 u geblokkeerd; echt schema "1 g" op 0, 6, 12, 18 u, zonder route');
+  {
+    const r = S.maakRace('paracetamol');
+    r.geef('spuit', { index: 0 }); r.geef('slik', { index: 0 }); r.geef('zetpil', { index: 1 }); r.naar(24);
+    const j0 = r.verslag().tijdlijn[0].jij, j1 = r.verslag().tijdlijn[1].jij;
+    check(j0.tekst === 'spuit + tablet' && j0.soorten.length === 2 && j0.soort === 'spuit' && j0.aantal === 1 &&
+      j1.tekst === 'zetpil' && r.verslag().telling.toedienmomenten === 2, 'spuit + tablet op één poortje: beide getoond (' + j0.tekst + ')');
+    const vLi = lRes['elk poortje dubbel'].verslag().tijdlijn[0];
+    check(vLi.jij.tekst === '2 tabletten' && vLi.echt === '400 mg', 'lithium: "2 tabletten" naast echt "400 mg"');
+  }
   check(vL.telling.toedienmomenten === 3 && vL.telling.totaleDosis.tekst === '3 g' && vL.telling.dagteller.tekst === '3 g van max. 4 g', 'telling paracetamol: ' + JSON.stringify(vL.telling));
   const vS = pRes['spuit-variant'].verslag();
   check(vS.tijdlijn[12].jij.soort === 'spuit' && vS.tijdlijn[13].jij.soort === 'overgeslagen' && vS.echtSchema.tekst === '1 g 4dd', 'tijdlijn spuit / overgeslagen, echt schema 1 g 4dd');

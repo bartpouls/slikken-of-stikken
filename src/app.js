@@ -597,7 +597,8 @@
         ctx.fillRect(4, y1, 3, y2 - y1);
         ctx.font = '600 12px ' + FONT;
         ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-        ctx.fillText('misselijk', 12, Math.max(y1 + 6, Math.min(y2 - 18, 48)));
+        var ym = Math.max(y1 + 6, 48);
+        if (ym < y2 - 18) ctx.fillText('misselijk', 12, ym);
       } else if (g.type === 'klaring') {
         var yk = yVan(g.t);
         if (yk > h) return;
@@ -679,14 +680,18 @@
       ctx.stroke();
       // kleur per stuk (in de zone groen, eronder koraal)
       ctx.lineWidth = 3;
-      var kleur = null;
+      var kleur = null, xv = 0, yv = 0;
       for (var n = start; n < reeks.length; n++) {
         var p = reeks[n], k2 = lijnKleur(p.C, Math.max(0, p.t));
         var x2 = xVan(p.C), y2b = yVan(p.t);
         if (k2 !== kleur) {
-          if (kleur) { ctx.lineTo(x2, y2b); ctx.stroke(); }
-          ctx.strokeStyle = k2; ctx.beginPath(); ctx.moveTo(x2, y2b); kleur = k2;
+          // het stuk naar een nieuwe toestand krijgt de kleur van die toestand (spuit-sprong = nieuwe kleur)
+          if (kleur) ctx.stroke();
+          ctx.strokeStyle = k2; ctx.beginPath();
+          if (kleur) { ctx.moveTo(xv, yv); ctx.lineTo(x2, y2b); } else ctx.moveTo(x2, y2b);
+          kleur = k2;
         } else ctx.lineTo(x2, y2b);
+        xv = x2; yv = y2b;
       }
       if (kleur) ctx.stroke();
     }

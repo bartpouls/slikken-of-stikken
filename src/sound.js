@@ -24,8 +24,10 @@
  *   onMuteChange(fn)    fn(muted) bij elke wijziging (voor het knopicoon).
  *   available           true als de browser Web Audio heeft.
  *   voices()            Aantal nu klinkende stemmen (diagnose; max 6).
- *   _render(naam)       Alleen voor tests: Promise<AudioBuffer|null> van het
- *                       geluid via OfflineAudioContext (zelfde mastergain).
+ *   _render(naam)       Alleen voor tests: Promise<AudioBuffer|null> (mono,
+ *                       44,1 kHz, 0,6 s) van het geluid via OfflineAudioContext,
+ *                       via precies dezelfde keten als play(); begint op het
+ *                       aanroepmoment.
  *
  * GELUIDEN (naam — wanneer — karakter). Elk geluid heeft energie tussen
  * 800 en 4000 Hz, zodat het ook op een telefoonspeaker hoorbaar is.
@@ -47,7 +49,8 @@
   var SoS = root.SoS = root.SoS || {};
 
   var STORE_KEY = 'sos.sound.muted';
-  var MASTER = 0.45;       // bescheiden totaalvolume
+  var MASTER = 0.45;       // bescheiden totaalvolume (vóór de compressor)
+  var TRIM = 1;            // uitgangsniveau na de compressor
   var MAX_VOICES = 6;      // max. gelijktijdige geluiden
   var START = 0.005;       // inplan-offset in seconden
   var MIN_GAP = { poort: 0.15, alarm: 0.12, au: 0.1, klaar: 0.3 }; // anders 0.035
@@ -88,6 +91,8 @@
     return b;
   }
 
+  // Keten: stemmen → master-gain → compressor → uitgangstrim → luidspreker.
+  // De compressor voegt zelf make-up-gain toe; de trim houdt de piek onder 0 dBFS.
   function makeMaster(c, level) {
     var g = c.createGain();
     g.gain.value = level;
@@ -96,9 +101,22 @@
       comp.threshold.value = -12; comp.knee.value = 6; comp.ratio.value = 12;
       comp.attack.value = 0.002; comp.release.value = 0.08;
     } catch (e) { /* oude implementaties */ }
+    var trim = c.createGain();
+    trim.gain.value = TRIM;
     g.connect(comp);
-    comp.connect(c.destination);
+    comp.connect(trim);
+    trim.connect(c.destination);
     return g;
+  }
+
+  // Eén stem inplannen op tijd t; gedeeld door play() en _render().
+  function voice(c, mst, nb, name, t) {
+    var g = c.createGain();
+    g.gain.value = 1;
+    g.connect(mst);
+    var E = { c: c, out: g, t: t, noise: nb, src: [] };
+    SOUNDS[name](E);
+    return { name: name, g: g, src: E.src, end: E.end || t };
   }
 
   function env(param, t, a, dur, peak) {
@@ -164,17 +182,17 @@
       tone(E, { type: 'sine', f0: 1600, dur: 0.035, gain: 0.13, a: 0.002 });
     },
     slik: function (E) {
-      // 'glk': lage zakkende toon, met een meeschuivende klankkleur rond 1 kHz
+      // 'glk': zakkende toon met een meeschuivende klankkleur rond 1–2 kHz,
       // zodat hij ook op een telefoonspeaker hoorbaar is
-      tone(E, { type: 'sawtooth', f0: 230, f1: 120, dur: 0.11, gain: 0.4, a: 0.006, filter: ['bandpass', 1500, 3, 700] });
-      tone(E, { type: 'sine', f0: 300, f1: 150, dur: 0.1, gain: 0.18, a: 0.006 });
-      tone(E, { type: 'sine', f0: 1300, f1: 900, at: 0.075, dur: 0.05, gain: 0.12, a: 0.003 });
+      tone(E, { type: 'sawtooth', f0: 230, f1: 130, dur: 0.11, gain: 0.75, a: 0.006, filter: ['bandpass', 1900, 3, 1000] });
+      tone(E, { type: 'sine', f0: 300, f1: 150, dur: 0.1, gain: 0.1, a: 0.006 });
+      tone(E, { type: 'sine', f0: 1500, f1: 1050, at: 0.075, dur: 0.05, gain: 0.28, a: 0.003 });
     },
     zetpil: function (E) {
       // dof 'pff-plop': gefilterde ruis, dan een zachte plop
-      noise(E, { dur: 0.06, gain: 0.16, a: 0.008, filter: ['bandpass', 1100, 1.2] });
-      tone(E, { type: 'triangle', f0: 210, f1: 105, at: 0.025, dur: 0.11, gain: 0.14, filter: ['lowpass', 600] });
-      tone(E, { type: 'sine', f0: 1000, f1: 620, at: 0.025, dur: 0.07, gain: 0.14, a: 0.003 });
+      noise(E, { dur: 0.06, gain: 0.32, a: 0.008, filter: ['bandpass', 1300, 1.2] });
+      tone(E, { type: 'triangle', f0: 210, f1: 105, at: 0.025, dur: 0.11, gain: 0.1, filter: ['lowpass', 600] });
+      tone(E, { type: 'sine', f0: 1250, f1: 850, at: 0.025, dur: 0.07, gain: 0.3, a: 0.003 });
     },
     spuit: function (E) {
       tone(E, { type: 'square', f0: 1300, f1: 2600, dur: 0.06, gain: 0.1, a: 0.001, filter: ['highpass', 900] });
@@ -182,10 +200,10 @@
       tone(E, { type: 'sine', f0: 2600, at: 0.045, dur: 0.05, gain: 0.12, a: 0.001 });
     },
     overslaan: function (E) {
-      tone(E, { type: 'square', f0: 520, dur: 0.045, gain: 0.07, filter: ['lowpass', 1800] });
-      tone(E, { type: 'sine', f0: 1040, dur: 0.04, gain: 0.04 });
-      tone(E, { type: 'square', f0: 390, at: 0.06, dur: 0.06, gain: 0.06, filter: ['lowpass', 1500] });
-      tone(E, { type: 'sine', f0: 780, at: 0.06, dur: 0.05, gain: 0.04 });
+      tone(E, { type: 'square', f0: 660, dur: 0.045, gain: 0.08, filter: ['lowpass', 2600] });
+      tone(E, { type: 'sine', f0: 1320, dur: 0.04, gain: 0.14 });
+      tone(E, { type: 'square', f0: 495, at: 0.06, dur: 0.06, gain: 0.07, filter: ['lowpass', 2200] });
+      tone(E, { type: 'sine', f0: 990, at: 0.06, dur: 0.05, gain: 0.14 });
     },
     au: function (E) {
       // 'a-oe': zakkende stem door twee klinkerfilters (a → oe), plus een klap
@@ -197,17 +215,17 @@
     alarm: function (E) {
       var f = [990, 740, 990];
       for (var i = 0; i < 3; i++) {
-        tone(E, { type: 'square', f0: f[i], at: i * 0.085, dur: 0.065, gain: 0.12, a: 0.002, filter: ['lowpass', 3200] });
+        tone(E, { type: 'square', f0: f[i], at: i * 0.085, dur: 0.065, gain: 0.16, a: 0.002, filter: ['lowpass', 3200] });
       }
     },
     wending: function (E) {
-      tone(E, { type: 'sine', f0: 380, f1: 1000, dur: 0.12, gain: 0.14, a: 0.01 });
-      tone(E, { type: 'triangle', f0: 1320, at: 0.11, dur: 0.14, gain: 0.13, a: 0.002 });
+      tone(E, { type: 'sine', f0: 380, f1: 1000, dur: 0.12, gain: 0.17, a: 0.01 });
+      tone(E, { type: 'triangle', f0: 1320, at: 0.11, dur: 0.14, gain: 0.17, a: 0.002 });
       tone(E, { type: 'sine', f0: 1980, at: 0.11, dur: 0.12, gain: 0.05, a: 0.002 });
     },
     bonk: function (E) {
       // holle 'bonk': diepe val, met houtachtige boventonen en een klikje
-      tone(E, { type: 'sine', f0: 190, f1: 55, glide: 0.12, dur: 0.17, gain: 0.2, a: 0.002 });
+      tone(E, { type: 'sine', f0: 190, f1: 55, glide: 0.12, dur: 0.17, gain: 0.1, a: 0.002 });
       tone(E, { type: 'sine', f0: 900, f1: 760, dur: 0.09, gain: 0.3, a: 0.001 });
       tone(E, { type: 'sine', f0: 1480, f1: 1250, dur: 0.05, gain: 0.1, a: 0.001 });
       noise(E, { dur: 0.015, gain: 0.2, a: 0.001, filter: ['bandpass', 2000, 1.5] });
@@ -216,7 +234,7 @@
       var f = [523.25, 659.25, 783.99, 1046.5];
       for (var i = 0; i < 4; i++) {
         var last = i === 3;
-        tone(E, { type: 'triangle', f0: f[i], at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.16 });
+        tone(E, { type: 'triangle', f0: f[i], at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.19 });
         tone(E, { type: 'sine', f0: f[i] / 2, at: i * 0.075, dur: last ? 0.16 : 0.07, gain: 0.06 });
       }
     }
@@ -335,7 +353,7 @@
 
   function play(name) {
     try {
-      var build = SOUNDS[name];
+      var build = Object.prototype.hasOwnProperty.call(SOUNDS, name) && SOUNDS[name];
       if (!build || muted || !Ctor) return false;
       if (!ctx) {
         if (!inGesture()) return false; // nooit een context buiten een tik
@@ -364,12 +382,7 @@
         steal(old, now);
       }
 
-      var g = ctx.createGain();
-      g.gain.value = 1;
-      g.connect(master);
-      var E = { c: ctx, out: g, t: now + START, noise: noiseBuf, src: [] };
-      build(E);
-      voices.push({ name: name, g: g, src: E.src, end: E.end || E.t });
+      voices.push(voice(ctx, master, noiseBuf, name, now + START));
       return true;
     } catch (e) {
       return false;
@@ -398,15 +411,22 @@
 
   function render(name) {
     try {
-      var build = SOUNDS[name];
+      var build = Object.prototype.hasOwnProperty.call(SOUNDS, name) && SOUNDS[name];
       if (!build || !OfflineCtor) return Promise.resolve(null);
-      var sr = 44100;
-      var oc = new OfflineCtor(1, Math.ceil(sr * 0.6), sr);
-      var m = makeMaster(oc, MASTER);
-      var E = { c: oc, out: m, t: 0, noise: makeNoise(oc), src: [] };
-      build(E);
+      // Zelfde keten als play(). De compressor eerst 0,5 s laten inslingeren
+      // (zoals live, waar de context al loopt), daarna het stuk vanaf het
+      // aanroepmoment teruggeven, inclusief de START-vertraging.
+      var sr = 44100, PRE = 0.5, LEN = 0.6;
+      var oc = new OfflineCtor(1, Math.ceil(sr * (PRE + LEN)), sr);
+      voice(oc, makeMaster(oc, MASTER), makeNoise(oc), name, PRE + START);
       var p = oc.startRendering();
-      return (p && p.then) ? p.then(null, function () { return null; }) : Promise.resolve(null);
+      if (!p || !p.then) return Promise.resolve(null);
+      return p.then(function (full) {
+        var off = Math.round(PRE * sr), n = Math.ceil(LEN * sr);
+        var out = oc.createBuffer(1, n, sr);
+        out.getChannelData(0).set(full.getChannelData(0).subarray(off, off + n));
+        return out;
+      }, function () { return null; });
     } catch (e) {
       return Promise.resolve(null);
     }
