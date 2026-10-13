@@ -1,0 +1,8 @@
+/* Slikken of Stikken — src/tutorial.css (PLACEHOLDER). Prefix .tut- ; gedeelde stijl staat in style.css. */
+.tut-binnen {
+  margin: auto; width: 100%; max-width: 420px;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px;
+}
+.tut-podium { width: 100%; max-width: 300px; display: flex; justify-content: center; border-bottom: 3px solid var(--inkt); }
+.tut-podium .fig { width: 120px; margin-bottom: -3px; }
+.tut-kop { margin: 18px 0 14px; font-size: 34px; font-weight: 800; }

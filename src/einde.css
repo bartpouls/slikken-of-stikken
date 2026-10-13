@@ -1,0 +1,15 @@
+/* Slikken of Stikken — src/einde.css (PLACEHOLDER). Prefix .eind- ; gedeelde stijl staat in style.css. */
+.eind-binnen {
+  margin: auto; width: 100%; max-width: 420px;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+}
+.eind-naam { margin: 0; font-size: 40px; font-weight: 800; line-height: 1.1; word-break: break-word; }
+.eind-label { margin: 18px 0 0; font-size: 16px; color: #66666d; }
+.eind-totaal { margin: 0 0 14px; font-size: 64px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.eind-races { list-style: none; margin: 0 0 18px; padding: 0; width: 100%; max-width: 340px; }
+.eind-race {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 10px 4px; border-bottom: 2px solid #e4e2dc; font-size: 18px;
+}
+.eind-race b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.eind-vraag { margin: 6px 0 22px; font-size: 18px; font-weight: 600; max-width: 330px; line-height: 1.35; }

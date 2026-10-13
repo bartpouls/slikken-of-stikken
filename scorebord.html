@@ -17,8 +17,9 @@
 :root {
   --bg: #000;
   --inkt: #fff;
-  --zacht: rgba(255, 255, 255, .66);
-  --stil: rgba(255, 255, 255, .42);
+  --zacht: #cfcfcf;
+  --stil: #a6a6a6;
+  --halo: 0 0 2px #000, 0 0 6px #000, 0 0 12px #000;
   --lijn: rgba(255, 255, 255, .14);
   --paars: #b48cff;
   --paars-diep: #8f63f5;
@@ -30,10 +31,10 @@
   --brons: #ea9358;
   --brons-schaduw: #b8622d;
   --koraal: #ff8c7a;
-  --veld: rgba(255, 255, 255, .06);
+  --veld: #111;
   --rand: rgba(255, 255, 255, .26);
-  /* basismaat: groeit mee met het scherm (1920x1080 -> 22px, 1280x720 -> 15px) */
-  font-size: clamp(15px, min(1.15vw, 2.05vh), 28px);
+  /* basismaat: groeit mee met het scherm (1920x1080 -> 23,8px, 1280x720 -> 15,8px) */
+  font-size: clamp(15px, min(1.25vw, 2.2vh), 28px);
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--bg); color: var(--inkt); }
@@ -42,6 +43,7 @@ body {
   line-height: 1.3;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
+  overflow-wrap: anywhere;
 }
 #sterren {
   position: fixed; inset: 0; width: 100%; height: 100%;
@@ -52,8 +54,11 @@ body {
   display: flex; flex-direction: column;
   padding: 1rem 16px 2rem;
   max-width: 100%;
+  /* zwarte halo: sterren achter tekst worden gedimd */
+  text-shadow: var(--halo);
 }
-button, input { font: inherit; color: inherit; }
+button, input { font: inherit; color: inherit; text-shadow: none; }
+.wis, .melding button { text-shadow: var(--halo); }
 button { cursor: pointer; }
 .verborgen {
   position: absolute !important; width: 1px; height: 1px; overflow: hidden;
@@ -64,7 +69,7 @@ button { cursor: pointer; }
 .kop { text-align: center; order: 1; }
 .kop h1 {
   margin: .4rem 0 .2rem;
-  font-size: min(2.3rem, 7.6vw); font-weight: 800; letter-spacing: -.01em;
+  font-size: min(2.3rem, 7.6vw); font-weight: 700; letter-spacing: -.01em;
   white-space: nowrap; max-width: 100%;
   display: inline-flex; align-items: center; gap: .45em;
 }
@@ -72,14 +77,14 @@ button { cursor: pointer; }
 .markering {
   display: flex; align-items: center; gap: 1rem;
   margin: .5rem 0 .35rem;
-  color: var(--paars); font-weight: 700; font-size: 1.3rem;
+  color: var(--paars); font-weight: 600; font-size: 1.3rem;
 }
 .markering::before, .markering::after {
   content: ""; flex: 1 1 0; height: 1.5px; min-width: 1rem;
   background: var(--paars); opacity: .75;
 }
 .markering span { white-space: nowrap; }
-.uitleg { margin: 0 auto; max-width: 46rem; color: var(--zacht); font-size: 1rem; }
+.uitleg { margin: 0 auto; max-width: 46rem; color: var(--zacht); font-size: 1.15rem; }
 
 /* ---------- invoer ---------- */
 .invoer {
@@ -91,7 +96,7 @@ button { cursor: pointer; }
 }
 .velden { display: flex; flex-wrap: wrap; gap: .6rem; align-items: flex-end; }
 .veld { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
-.veld label { font-size: .8rem; color: var(--zacht); letter-spacing: .02em; }
+.veld label { font-size: .85rem; color: var(--zacht); letter-spacing: .02em; }
 .veld-naam { flex: 1 1 100%; }
 .veld-score { flex: 1 1 8rem; }
 .scorerij { display: flex; gap: .4rem; }
@@ -101,7 +106,7 @@ input[type="text"] {
   background: var(--veld); border: 1.5px solid var(--rand); border-radius: 12px;
   outline: none; transition: border-color .2s, box-shadow .2s;
 }
-input[type="text"]::placeholder { color: rgba(255, 255, 255, .35); }
+input[type="text"]::placeholder { color: #9a9a9a; opacity: 1; }
 input[type="text"]:focus { border-color: var(--paars); box-shadow: 0 0 0 3px var(--paars-gloed); }
 input[aria-invalid="true"] { border-color: var(--koraal); }
 .teken {
@@ -113,7 +118,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 .toevoegen {
   flex: 0 0 auto; min-height: 48px; padding: 0 1.3rem;
   border: 0; border-radius: 12px; background: var(--paars); color: #140a2b;
-  font-weight: 800; font-size: max(16px, 1.1rem);
+  font-weight: 700; font-size: max(16px, 1.1rem);
   transition: background .2s, transform .1s;
 }
 .toevoegen:hover { background: #c4a3ff; }
@@ -124,6 +129,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .8rem;
 }
 .melding:empty { display: none; }
+.melding > span { min-width: 0; overflow-wrap: anywhere; }
 .melding.fout { color: var(--koraal); font-weight: 600; }
 .melding.goed { color: var(--paars); font-weight: 600; }
 .melding button {
@@ -136,43 +142,46 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 .podium ol, .rest ol { list-style: none; margin: 0; padding: 0; }
 .rij {
   position: relative;
-  display: flex; align-items: center; gap: .9rem;
-  min-width: 0; border-radius: 18px;
+  display: flex; align-items: center; gap: .6rem;
+  min-width: 0; max-width: 100%; border-radius: 18px;
 }
-.podium .rij { padding: .45rem .6rem; margin-bottom: .35rem; }
-.schijf { position: relative; flex: none; width: 3.6rem; height: 3.6rem; }
+.podium .rij { padding: .45rem .4rem; margin-bottom: .35rem; }
+.schijf { position: relative; flex: none; width: 2.9rem; height: 2.9rem; }
 .schijf svg { position: absolute; inset: -18%; width: 136%; height: 136%; overflow: visible; }
 .schijf b {
   position: absolute; inset: 0; display: grid; place-items: center;
-  font-size: 1.45rem; font-weight: 800; color: #1b1206;
-  font-variant-numeric: tabular-nums;
+  font-size: 1.25rem; font-weight: 700; color: #1b1206;
+  font-variant-numeric: tabular-nums; text-shadow: none;
 }
-.plek1 .schijf { width: 4.6rem; height: 4.6rem; }
-.plek1 .schijf b { font-size: 1.9rem; }
+.plek1 .schijf { width: 3.4rem; height: 3.4rem; }
+.plek1 .schijf b { font-size: 1.6rem; }
+/* breedtebudget: naam krijgt altijd ruimte (afkappen met ...), score wordt nooit afgekapt maar schaalt mee */
 .naam {
-  flex: 1 1 auto; min-width: 0;
+  flex: 1 1 auto; min-width: 4rem;
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  font-weight: 700;
+  font-weight: 600;
 }
 .score {
-  flex: none; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -.01em;
-  text-align: right;
+  flex: none; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em;
+  text-align: right; white-space: nowrap;
 }
+.score.l5 .cijfers { font-size: .8em; }
+.score.l7 .cijfers { font-size: .66em; }
 .score.negatief { color: var(--koraal); }
-.podium .naam { font-size: 1.5rem; }
-.podium .score { font-size: 2.1rem; }
-.podium .plek1 .naam { font-size: 1.8rem; }
-.podium .plek1 .score { font-size: 2.7rem; color: var(--goud); }
+.podium .naam { font-size: 1.3rem; }
+.podium .score { font-size: 1.9rem; }
+.podium .plek1 .naam { font-size: 1.5rem; }
+.podium .plek1 .score { font-size: 2.2rem; color: var(--goud); }
 .podium .plek2 .score { color: var(--zilver); }
 .podium .plek3 .score { color: var(--brons); }
 .podium .score.negatief { color: var(--koraal); }
 .rij.vrij .naam { color: var(--stil); font-weight: 500; font-style: italic; }
-.rij.vrij .score { color: var(--stil); }
-.rij.vrij .schijf { opacity: .32; }
+.rij.vrij .schijf svg { opacity: .3; }
+.rij.vrij .schijf b { color: var(--zacht); }
 
 /* ---------- rest van de lijst ---------- */
 .rest { order: 4; margin-top: .6rem; min-width: 0; }
-.rest .rij { padding: .5rem .6rem; border-radius: 12px; }
+.rest .rij { padding: .5rem .4rem; border-radius: 12px; }
 .rest .rij + .rij::before {
   content: ""; position: absolute; left: .6rem; right: .6rem; top: 0;
   border-top: 1px dashed var(--lijn); pointer-events: none;
@@ -180,10 +189,10 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 .rest .rij.nieuw::before, .rest .rij.nieuw + .rij::before { display: none; }
 .rang {
   flex: none; min-width: 2.2ch; text-align: right;
-  color: var(--paars); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 1.15rem;
+  color: var(--paars); font-weight: 600; font-variant-numeric: tabular-nums; font-size: 1.15rem;
 }
-.rest .naam { font-size: 1.2rem; }
-.rest .score { font-size: 1.4rem; }
+.rest .naam { font-size: 1.15rem; }
+.rest .score { font-size: 1.3rem; }
 .leeg { color: var(--stil); text-align: center; margin: 1.5rem 0; font-size: 1.05rem; }
 
 /* verwijderknop: onopvallend, wel groot genoeg om te tikken */
@@ -191,10 +200,9 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   flex: none; width: 44px; height: 44px; margin-left: -.2rem;
   display: grid; place-items: center;
   background: none; border: 0; border-radius: 50%;
-  color: var(--stil); font-size: 1.4rem; line-height: 1; opacity: .55;
-  transition: opacity .2s, background .2s, color .2s;
+  color: var(--stil); font-size: 1.3rem; line-height: 1;
+  transition: background .2s, color .2s;
 }
-.rij:hover .weg, .weg:focus-visible { opacity: 1; }
 .weg:hover, .weg:focus-visible { background: rgba(255, 255, 255, .1); color: var(--inkt); outline: none; }
 
 /* bevestigen per regel */
@@ -210,7 +218,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 .knopje {
   flex: none; white-space: nowrap;
   min-height: 44px; padding: 0 .9rem; border-radius: 10px;
-  border: 1.5px solid var(--rand); background: rgba(0, 0, 0, .5); font-weight: 700;
+  border: 1.5px solid var(--rand); background: #000; font-weight: 700;
 }
 .knopje.ja { background: var(--koraal); border-color: var(--koraal); color: #2a0b05; }
 .knopje:hover, .knopje:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
@@ -219,31 +227,32 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 .nieuw { animation: oplichten 4.5s ease-out both; }
 .nieuw .score { animation: pop .7s cubic-bezier(.2, 1.6, .4, 1) both; }
 .nieuwlabel {
-  flex: none; padding: .1rem .55rem; border-radius: 999px;
-  background: var(--paars); color: #140a2b; font-size: .8rem; font-weight: 800;
-  text-transform: lowercase; letter-spacing: .03em;
+  position: absolute; top: 0; right: 3.2rem; transform: translateY(-50%); z-index: 1;
+  padding: .05rem .55rem; border-radius: 999px; pointer-events: none;
+  background: var(--paars); color: #140a2b; font-size: .8rem; font-weight: 700;
+  letter-spacing: .03em; text-shadow: none; white-space: nowrap;
   animation: vervaag 8s ease-in forwards;
 }
 @keyframes oplichten {
-  0%   { background: rgba(180, 140, 255, .55); box-shadow: 0 0 0 2px var(--paars), 0 0 2.2rem rgba(180, 140, 255, .6); }
-  55%  { background: rgba(180, 140, 255, .22); box-shadow: 0 0 0 2px var(--paars), 0 0 1.2rem rgba(180, 140, 255, .3); }
+  0%   { background: rgba(180, 140, 255, .28); box-shadow: 0 0 0 2px var(--paars), 0 0 2.2rem rgba(180, 140, 255, .6); }
+  55%  { background: rgba(180, 140, 255, .14); box-shadow: 0 0 0 2px var(--paars), 0 0 1.2rem rgba(180, 140, 255, .3); }
   100% { background: rgba(180, 140, 255, 0); box-shadow: 0 0 0 2px rgba(180, 140, 255, 0), 0 0 0 rgba(180, 140, 255, 0); }
 }
-@keyframes pop { 0% { transform: scale(.6); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes pop { 0% { transform: scale(.7); } 100% { transform: scale(1); } }
 @keyframes vervaag { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
 
 /* ---------- voet ---------- */
 .voet {
   order: 5; margin-top: 1.5rem;
   display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem 1rem;
-  color: var(--stil); font-size: .85rem;
+  color: var(--stil); font-size: 1rem;
 }
 .wis {
   background: none; border: 0; min-height: 40px; padding: 0 .2rem;
-  color: var(--stil); font-size: .85rem; text-decoration: underline; text-underline-offset: 3px;
+  color: var(--stil); font-size: 1rem; text-decoration: underline; text-underline-offset: 3px;
 }
 .wis:hover, .wis:focus-visible { color: var(--inkt); outline: none; }
-.wisvraag { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; color: var(--inkt); font-size: .95rem; }
+.wisvraag { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; color: var(--inkt); font-size: 1rem; }
 
 /* ---------- beamer / breed scherm ---------- */
 @media (min-width: 860px) and (min-height: 500px) and (orientation: landscape) {
@@ -265,6 +274,8 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     display: flex; flex-direction: column; justify-content: flex-start;
   }
   .podium .rij { padding: .55rem .9rem; margin-bottom: .55rem; gap: 1.2rem; }
+  .naam { min-width: 6rem; }
+  .uitleg { font-size: 1.25rem; max-width: none; }
   .schijf { width: 4.4rem; height: 4.4rem; }
   .schijf b { font-size: 1.8rem; }
   .plek1 .schijf { width: 5.8rem; height: 5.8rem; }
@@ -283,6 +294,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     mask-image: linear-gradient(#000 calc(100% - 3rem), transparent);
   }
   .rest .rij { padding: .45rem .7rem; gap: 1.1rem; }
+  .nieuwlabel { right: 4rem; }
   .rang { font-size: 1.55rem; min-width: 2.4ch; }
   .rest .naam { font-size: 1.75rem; }
   .rest .score { font-size: 2.05rem; }
@@ -301,7 +313,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     grid-area: voet; margin: .8rem 0 0; padding: .6rem 0 .7rem;
     border-top: 1px solid var(--lijn); align-self: stretch; align-items: flex-end; justify-content: flex-end;
   }
-  .weg { width: 2.6rem; height: 2.6rem; opacity: .3; }
+  .weg { width: 2.6rem; height: 2.6rem; font-size: 1.2rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -335,7 +347,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     <div class="velden">
       <div class="veld veld-naam">
         <label for="naam">Speelnaam</label>
-        <input type="text" id="naam" name="naam" maxlength="24" placeholder="Bijvoorbeeld Opa Jan" enterkeyhint="next" spellcheck="false">
+        <input type="text" id="naam" name="naam" maxlength="24" placeholder="Bijvoorbeeld Sam" enterkeyhint="next" spellcheck="false">
       </div>
       <div class="veld veld-score">
         <label for="score">Totaal QALY-punten</label>
@@ -531,10 +543,16 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
         li.style.animationDelay = (-verstreken) + "ms";
         var lab = maak("span", "nieuwlabel", "nieuw");
         lab.style.animationDelay = (-verstreken) + "ms";
+        lab.setAttribute("aria-hidden", "true");
+        lab.addEventListener("animationend", function () { if (this.parentNode) this.parentNode.removeChild(this); });
         li.appendChild(lab);
       }
     }
-    var sc = maak("span", "score" + (sp.score < 0 ? " negatief" : ""), opmaak(sp.score));
+    var tekst = opmaak(sp.score);
+    /* lange getallen kleiner zetten, zodat de naam ruimte houdt en niets buiten beeld valt */
+    var sc = maak("span", "score" + (sp.score < 0 ? " negatief" : "") +
+      (tekst.length >= 7 ? " l7" : tekst.length >= 5 ? " l5" : ""));
+    sc.appendChild(maak("span", "cijfers", tekst));
     if (sp.id === nieuwId && Date.now() - nieuwOp < 700) sc.style.animationDelay = (-(Date.now() - nieuwOp)) + "ms";
     li.appendChild(sc);
     li.appendChild(maak("span", "verborgen", " QALY-punten"));
@@ -740,7 +758,22 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
       var glad = !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       try { rij.scrollIntoView({ block: "nearest", behavior: glad ? "smooth" : "auto" }); }
       catch (e2) { rij.scrollIntoView(false); }
+      /* op de beamer (lijst scrolt zelf): na het oplichten terug naar boven */
+      if (getComputedStyle(restEl).overflowY === "auto") {
+        var gestart = Date.now();
+        clearTimeout(terugTimer);
+        terugTimer = setTimeout(function () {
+          if (handmatigOp > gestart || bevestigId) return;
+          try { restEl.scrollTo({ top: 0, behavior: glad ? "smooth" : "auto" }); }
+          catch (e3) { restEl.scrollTop = 0; }
+        }, 5000);
+      }
     }
+  });
+
+  var terugTimer = 0, handmatigOp = 0;
+  ["wheel", "touchstart", "pointerdown", "keydown"].forEach(function (t) {
+    restEl.addEventListener(t, function () { handmatigOp = Date.now(); }, { passive: true });
   });
 
   [naamVeld, scoreVeld].forEach(function (v) {
