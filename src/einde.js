@@ -114,9 +114,9 @@
     return '<button type="button" class="eind-kaart" data-actie="naar-verslag" data-race="' + i + '">' +
       '<span class="eind-kaart-kop">' + figuurHtml(c, v, 'eind-kaart-fig') +
         '<span class="eind-kaart-titel"><small>Race ' + (i + 1) + '</small>' + esc(c.naam) + '</span>' +
-        '<span class="eind-kaart-score" data-eind="race-' + i + '">' + getal(v.opbouw.totaal) + '</span>' +
+        '<span class="eind-kaart-rechts"><span class="eind-kaart-score" data-eind="race-' + i + '">' + getal(v.opbouw.totaal) + '</span>' +
+        '<span class="eind-kaart-meer">verslag <span aria-hidden="true">↓</span></span></span>' +
       '</span>' + tegels +
-      '<span class="eind-kaart-meer">Bekijk je verslag <span aria-hidden="true">↓</span></span>' +
     '</button>';
   }
 
@@ -138,7 +138,7 @@
   // ------------------------------------------------------------------------------------------
   function curveSvg(c, curve) {
     if (!curve || curve.length < 2) return '';
-    var W = 340, H = 132, L = 8, R = 8, T = 18, B = 22, pw = W - L - R, ph = H - T - B;
+    var W = 340, H = 132, L = 8, R = 30, T = 18, B = 22, pw = W - L - R, ph = H - T - B;
     var maxC = 0;
     curve.forEach(function (p) { if (p.C > maxC) maxC = p.C; });
     var vast = c.id === 'lithium' ? 2 : 20;
@@ -187,13 +187,13 @@
       s += '<path d="' + pd.d + '" fill="none" stroke="' + LIJN[pd.st] + '" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
     });
     // labels: drempels (casusblad) en tijdas
-    var eenh = c.eenheid.concentratie;
     var labels = c.id === 'lithium'
-      ? [[v0.laag, getal(v0.laag, 1)], [v0.hoog, getal(v0.hoog, 1)], [c.toxisch, getal(c.toxisch, 1) + ' ' + eenh + ' giftig']]
-      : [[v0.laag, getal(v0.laag) + ' ' + eenh]];
+      ? [[v0.laag, getal(v0.laag, 1), 5], [v0.hoog, getal(v0.hoog, 1), -1], [c.toxisch, getal(c.toxisch, 1), 4]]
+      : [[v0.laag, getal(v0.laag), 4]];
     labels.forEach(function (lb) {
       if (lb[0] == null || lb[0] >= ymax) return;
-      s += '<text x="' + (W - R - 2) + '" y="' + f(y(lb[0]) - 3) + '" text-anchor="end" class="eind-svg-label">' + esc(lb[1]) + '</text>';
+      s += '<text x="' + (W - 3) + '" y="' + f(y(lb[0]) + lb[2]) + '" text-anchor="end" class="eind-svg-label' +
+        (lb[0] === c.toxisch ? ' tox' : '') + '">' + esc(lb[1]) + '</text>';
     });
     var asTekst = c.id === 'lithium'
       ? [[0, 'dag 0'], [c.raceDuur / 2, 'dag ' + c.raceDuur / 48], [c.raceDuur, 'dag ' + c.raceDuur / 24]]
@@ -296,7 +296,7 @@
 
   function tellingHtml(v) {
     var t = v.telling, s = '<div class="eind-telling">';
-    s += '<div data-tel="momenten"><span>Toedienmomenten</span><b>' + getal(t.toedienmomenten) + '</b>' +
+    s += '<div data-tel="momenten"><span>Toedien&shy;momenten</span><b>' + getal(t.toedienmomenten) + '</b>' +
       '<small>echt schema: ' + getal(v.echtSchema.aantal) + '</small></div>';
     s += '<div data-tel="dosis"><span>Totale dosis</span><b>' + esc(t.totaleDosis.tekst) + '</b></div>';
     if (t.dagteller) {
@@ -310,12 +310,14 @@
   function verslagHtml(i, c, v, curve) {
     var s = '<section class="eind-verslag" data-verslag="' + i + '" id="eind-verslag-' + i + '" aria-labelledby="eind-v-kop-' + i + '">';
     s += '<header class="eind-v-kop">' + figuurHtml(c, v, 'eind-v-fig') +
-      '<div><p class="eind-kicker">Race ' + (i + 1) + ' · toedienverslag</p>' +
+      '<div><p class="eind-kicker">Race ' + (i + 1) + ' · verslag</p>' +
       '<h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + '</h2><p class="eind-v-wie">' + esc(c.patient) + '</p></div>' +
       '<p class="eind-v-score"><b>' + getal(v.opbouw.totaal) + '</b><span>QALY-punten</span></p></header>';
     if (curve && curve.length > 1) {
       s += '<figure class="eind-curve">' + curveSvg(c, curve) +
-        '<figcaption>Jouw spiegel. Groene baan: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + ').</figcaption></figure>';
+        '<figcaption>Jouw spiegel. Groene baan: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + ').' +
+        (c.toxisch != null ? ' Rode stippellijn: giftig (' + esc(c.toxischTekst || getal(c.toxisch, 1)) + ').' : '') +
+        '</figcaption></figure>';
     }
     s += opbouwHtml(v);
     s += '<h3 class="eind-h3">Jouw toedieningen per poortje</h3>';
@@ -352,12 +354,12 @@
           '<p class="eind-naam" data-eind="naam">' + esc(data.naam || '') + '</p>' +
           '<p class="eind-label">QALY-punten totaal</p>' +
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
+          '<p class="eind-spelpunten">Spelpunten, geen echte QALY\'s.</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
           legendaHtml(cs) +
           '<div class="eind-vraag"><span class="eind-vraag-kop">Nabespreken</span>' +
             '<p data-eind="vraag">' + VRAAG + '</p></div>' +
           '<p class="eind-scorebord">Geef je speelnaam en totaal door aan Bart: hij zet je op het scorebord in de zaal.</p>' +
-          '<p class="eind-spelpunten">QALY-punten zijn spelpunten, geen echte QALY\'s.</p>' +
         '</div>' +
         verslagen +
         '<div class="eind-voet"><button type="button" class="knop-wit groot" data-actie="opnieuw">Nog een keer</button></div>' +

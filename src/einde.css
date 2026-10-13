@@ -21,7 +21,7 @@
 }
 .eind-label { margin: 6px 0 0; font-size: 15px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #5c5c64; }
 .eind-totaal {
-  margin: -2px 0 10px; font-size: 72px; font-weight: 800; line-height: 1; letter-spacing: -.02em;
+  margin: -2px 0 0; font-size: 72px; font-weight: 800; line-height: 1; letter-spacing: -.02em;
   font-variant-numeric: tabular-nums;
   animation: eind-plop .5s cubic-bezier(.3, 1.6, .5, 1) both;
 }
@@ -42,7 +42,8 @@
 .eind-kaart-titel { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; font-size: 19px; font-weight: 800; line-height: 1.1; }
 .eind-kaart-titel small { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #5c5c64; }
 .eind-kaart-score { flex: none; font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
-.eind-kaart-meer { display: block; margin-top: 6px; font-size: 14px; font-weight: 700; color: #6a3fd1; text-align: right; }
+.eind-kaart-rechts { flex: none; display: flex; flex-direction: column; align-items: flex-end; }
+.eind-kaart-meer { margin-top: 2px; font-size: 13px; font-weight: 700; color: #6a3fd1; }
 
 /* tegels: één per poortje, twee rijen */
 .eind-tegels { display: flex; flex-direction: column; gap: 4px; margin-top: 9px; }
@@ -76,7 +77,7 @@
 }
 .eind-vraag p { margin: 4px 0 0; font-size: 22px; font-weight: 800; line-height: 1.25; }
 .eind-scorebord { margin: 12px 0 0; font-size: 16px; line-height: 1.4; color: #2f2f35; max-width: 340px; }
-.eind-spelpunten { margin: 6px 0 4px; font-size: 14px; color: #5c5c64; }
+.eind-spelpunten { margin: 2px 0 12px; font-size: 14px; color: #5c5c64; }
 
 /* ---------- 2. toedienverslag ---------- */
 .eind-verslag { margin-top: 28px; padding-top: 22px; border-top: 3px solid var(--inkt); }
@@ -94,7 +95,8 @@
 .eind-curve svg { display: block; width: 100%; height: auto; }
 .eind-curve figcaption { margin-top: 6px; font-size: 14px; color: #4d4d55; }
 .eind-svg-label, .eind-svg-as, .eind-svg-gebeurtenis, .eind-svg-paars { font-family: var(--font); font-size: 11.5px; font-weight: 600; }
-.eind-svg-label { fill: rgba(255, 255, 255, .78); }
+.eind-svg-label { fill: rgba(255, 255, 255, .8); }
+.eind-svg-label.tox { fill: #ff9a9a; }
 .eind-svg-as { fill: rgba(255, 255, 255, .72); }
 .eind-svg-gebeurtenis { fill: #d6ef9a; }
 .eind-svg-paars { fill: #c9a6ff; }
@@ -164,7 +166,7 @@
   display: flex; flex-direction: column; gap: 2px; padding: 10px 10px 9px;
   background: var(--wit); border: 2px solid #d3cfc6; border-radius: 14px;
 }
-.eind-telling span { font-size: 13px; font-weight: 700; color: #4d4d55; line-height: 1.2; }
+.eind-telling span { font-size: 13px; font-weight: 700; color: #4d4d55; line-height: 1.2; hyphens: manual; }
 .eind-telling b { font-size: 26px; font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .eind-telling small { font-size: 13px; color: #4d4d55; }
 .eind-telling .over { border-color: #c0362a; background: #fff1ee; }
@@ -194,7 +196,7 @@
 
 @media (min-height: 800px) {
   .eind-naam { font-size: 40px; }
-  .eind-totaal { font-size: 80px; margin-bottom: 14px; }
+  .eind-totaal { font-size: 80px; }
   .eind-tegel { height: 24px; }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -5,12 +5,12 @@ window.GAUNTLET = {
   level: "blind",
   status: "running",
   round: 1, maxRounds: 4,
-  updated: "2026-10-13 21:00",
+  updated: "2026-10-13 21:15",
   units: [
     { name: "U1 Rekenmodel + casusdata (A1–A3)", round: 1, verdict: "PASS", evidence: "Blind PASS A1–A4, 0 afwijkingen; eigen RK4 in Python: max fout 4e-13, halvering 0,5000000, alle tabelregels binnen marge. Stopregel A gehaald. Kleine robuustheidsfix blokkade-epsilon", artifact: "src/model.js" },
     { name: "U2 QALY-score + rangorde headless (B1–B2 voorlopig)", round: 3, verdict: "FAIL", evidence: "R2: Q1–Q5 PASS (2 onafhankelijke scorers, 0 verschil; beste ≤4 g 828, echt schema 93%; beste >4 g −250 < gemist 418). FAIL Q6: lithiumzinnen bij dubbele (inhaal)dosis noemen verkeerde oorzaak of prijzen overslaan. R3 (drempel niet gehaald → doorgaan)"nodig\" bij te hoge spiegel). Q2–Q5 PASS (beste bot 828; echt schema 93%). Ronde 2 in bouw", artifact: "src/score.js" },
     { name: "U3 Geluid (C, hard: zelf gesynthetiseerd, dempknop)", round: 3, verdict: "PENDING", evidence: "R3 gebouwd: alle actiegeluiden boven telefoondrempel via echt pad; au ≥3,7 dB boven rest. Verse criticus + blinde A/B", artifact: "src/sound.js" },
-    { name: "U4 Scorebord beamer (C)", round: 3, verdict: "PENDING", evidence: "R3 gebouwd: namen tot 16+ tekens heel op 1920/1280, vaste scoremaat. Verse criticus + blinde A/B", artifact: "scorebord.html" },
+    { name: "U4 Scorebord beamer (C)", round: 4, verdict: "FAIL", evidence: "R3: blind beter dan R2; S1–S3, S5, S6 PASS (namen heel, contrast ≥5,1:1). FAIL S4: bevestigvenster vervaagd (2,83:1) / half onder formulier op 320; score −10.275 haalbaar maar geweigerd. R4 gerichte fix, daarna mee in eindcontrole", artifact: "scorebord.html" },
     { name: "U5 Racescherm + spelverloop (C, B3–B6)", round: 1, verdict: "PENDING", evidence: "Gebouwd: tijd loopt omlaag, zone als verticale baan, paarse poortjes; race 93 s; live = batch score. Verse criticus op momentopname", artifact: "index.html" },
     { name: "U6 Tutorial opa Jan (C)", round: 1, verdict: "PENDING", evidence: "bouwer gestart", artifact: "src/app.js" },
     { name: "U7 Eindverslag + eindscherm (C, B5)", round: 1, verdict: "PENDING", evidence: "bouwer gestart", artifact: "src/app.js" },
@@ -19,6 +19,7 @@ window.GAUNTLET = {
   ],
   log: [
     { round: 0, unit: "LEAD", verdict: "PENDING", note: "Sites §6C niet bereikbaar (netwerkbeleid: 403/ENOTFOUND). Schermafbeeldingen in docs/referenties/ zijn leidend." },
+    { round: 3, unit: "U4", verdict: "FAIL", note: "Steeds beter (blind 3×), resterend: 3 randgevallen bevestigvenster/scorebereik" },
     { round: 2, unit: "U2", verdict: "FAIL", note: "Score zelf PASS; 7 randgevallen in zinnen. LEAD: §3-voorbeeldzinnen mogen 3 zinnen zijn" },
     { round: 2, unit: "U3", verdict: "FAIL", note: "Beter dan R1 (blind), alleen absoluut niveau op telefoonspeaker te laag → R3" },
     { round: 2, unit: "U4", verdict: "FAIL", note: "Beter dan R1 (blind 3/3), maar podium niet berekend op realistische data → R3" },
