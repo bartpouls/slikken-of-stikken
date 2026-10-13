@@ -14,7 +14,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 **Wel:**
 - Eén HTML-pagina, mobiel eerst (staand), werkt zonder installatie, account of server, en zonder internet na het laden. Geen externe bestanden of CDN's.
 - Speelnaam invoeren → tutorial → race 1 → race 2 → eindscherm.
-- Eindscherm: speelnaam, score race 1, score race 2, totaal, mini-curve per race, het doseerschema (welke poortjes, wat gekozen) en één nabespreekvraag.
+- Eindscherm: speelnaam, QALY-punten race 1, race 2 en totaal, en per race een kort eindverslag (zie §3). Plus één nabespreekvraag: "Wat deed je toen je onder de streep zakte?"
 - Een losse scorebordpagina voor de beamer: Bart of een student typt naam en totaal in, lijst sorteert zichzelf (alleen lokaal in die browser opgeslagen).
 - Geluid (korte blips à la Flappy Bird, zelf gesynthetiseerd, geen gekopieerde geluidsbestanden) met een dempknop.
 - Nederlands.
@@ -27,7 +27,12 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 - **Tijdas geschaald op de halfwaardetijd.** Elke race beslaat ±10 halfwaardetijden in ±90 seconden (60–120 s toegestaan). Daardoor voelt elke casus even snel, terwijl de klok laat zien dat het om uren (paracetamol) of dagen (lithium) gaat. Dat verschil is zelf een leerpunt.
 - **Directe feedback.** Elke keuze geeft binnen 100 ms beweging en geluid. Het verschil tussen slikken (vertraagd, lager) en spuiten (direct, hoog) moet je zien.
 - **Eerlijke race.** Iedereen speelt dezelfde casus, met de gebeurtenissen op hetzelfde moment. Toeval (zetpil) komt uit een vaste reeks die voor iedereen gelijk is.
-- **Score:** de bouwer ontwerpt de formule, maar die moet de botrangorde in §6B halen. Tijd in de zone levert punten op, tijd erbuiten kost punten, en hoe verder buiten de zone hoe meer (kwadratisch). Paracetamol: boven 4 g per 24 uur raakt de lever beschadigd (zware straf of einde race).
+- **Score in QALY-punten.** Uitleg in het spel in één zin: *"Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer."* Het zijn spelpunten, geen echte QALY's; zeg dat ook zo. De bouwer ontwerpt de formule, maar die moet de botrangorde in §6B halen. Tijd in de zone levert punten op, tijd erbuiten kost punten, en hoe verder buiten de zone hoe meer (kwadratisch). Paracetamol: boven 4 g per 24 uur raakt de lever beschadigd (zware straf of einde race). Tijdens de race is de QALY-stand live zichtbaar.
+- **Eindverslag per race** (toedienverslag, één scherm):
+  - QALY-opbouw in vier regels: *in de zone* (+), *te laag* (−), *te hoog* (−), *lever / giftig* (−), en het totaal.
+  - Tijdlijn van jouw toedieningen (welk poortje, tablet / zetpil / spuit / overgeslagen) naast het echte schema uit het casusblad.
+  - Telling: aantal toedienmomenten, totale dosis en, bij paracetamol, de dagteller tegen het maximum van 4 g.
+  - Eén zin die je keuzes koppelt aan de praktijk. Paracetamol bijvoorbeeld: *"Tijdens de misselijkheid koos jij de zetpil. Die werkte maar half: daar kun je niet op rekenen."* Lithium: *"Jij liet na de ibuprofen 30% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten."* Het spel mag nooit suggereren dat zelf pillen overslaan een goed idee is.
 
 ### Flow
 
@@ -155,11 +160,11 @@ Maximaal 2 rondes, tenzij de drempels nog niet gehaald zijn.
 
 ### C. Beleving — type: smaak
 
-Eén bouwronde, één verse controle op A en B, daarna de correctielijst van Bart. Schermafbeeldingen van de twee hoofdreferenties staan in `docs/referenties/` en zijn leidend als de sites niet te openen zijn. Stijlkeuze: **verhaal en tutorial in de stijl van The Evolution of Trust** (wit, zwarte schetslijnen, simpele figuurtjes met een gekleurd hoedje: opa Jan en mevrouw De Vries); **de races in de stijl van Universe Forecast** (zwart met gekleurde sterretjes, platte illustraties, paarse tijdmarkeringen met een lijn ervoor en erachter, korte witte tekst in het midden). Overweeg de tijd van boven naar beneden te laten lopen, zoals de tijdlijn van Universe Forecast: dat past bij een staand telefoonscherm. Referenties (patronen overnemen, niets kopiëren):
-- **Uitstraling:** neal.fun/universe-forecast — rustige, grote typografie, veel lucht, alles beweegt soepel, één ding tegelijk in beeld.
-- **Verhaal en uitleg:** ncase.me/trust (The Evolution of Trust) — een verhaal in korte hoofdstukken, één begrip per stap, leren door te doen; figuurtjes die reageren als je ze aanraakt of aanwijst.
+Eén bouwronde, één verse controle op A en B, daarna de correctielijst van Bart. Schermafbeeldingen van de twee hoofdreferenties staan in `docs/referenties/` (met bronvermelding in `docs/referenties/README.md`) en zijn leidend als de sites niet te openen zijn. Stijlkeuze: **verhaal en tutorial in de stijl van The Evolution of Trust** (wit, zwarte schetslijnen, simpele figuurtjes met een gekleurd hoedje: opa Jan en mevrouw De Vries); **de races in de stijl van Universe Forecast** (zwart met gekleurde sterretjes, platte illustraties, paarse tijdmarkeringen met een lijn ervoor en erachter, korte witte tekst in het midden). Overweeg de tijd van boven naar beneden te laten lopen, zoals de tijdlijn van Universe Forecast: dat past bij een staand telefoonscherm. Referenties (patronen overnemen, niets kopiëren):
+- **Uitstraling:** Universe Forecast van Neal Agarwal (neal.fun/universe-forecast) — rustige, grote typografie, veel lucht, alles beweegt soepel, één ding tegelijk in beeld.
+- **Verhaal en uitleg:** The Evolution of Trust van Nicky Case (ncase.me/trust) — een verhaal in korte hoofdstukken, één begrip per stap, leren door te doen; figuurtjes die reageren als je ze aanraakt of aanwijst.
 - **Geluid:** Flappy Bird — korte, droge blips bij elke actie en een duidelijk "au"-geluid bij een fout.
-- **Gebeurtenis:** neal.fun/password-game — een plotwending, geen foutmelding.
+- **Gebeurtenis:** The Password Game van Neal Agarwal (neal.fun/password-game) — een plotwending, geen foutmelding.
 - **Eindscherm:** Wordle — in één blik te snappen, leuk om te laten zien.
 - Streef: oogt op mobiel minstens zo strak als Epic Green Cards.
 
