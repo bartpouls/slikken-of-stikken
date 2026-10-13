@@ -5,11 +5,11 @@ window.GAUNTLET = {
   level: "blind",
   status: "running",
   round: 1, maxRounds: 4,
-  updated: "2026-10-13 18:00",
+  updated: "2026-10-13 18:25",
   units: [
-    { name: "U1 Rekenmodel + casusdata (A1–A3)", round: 1, verdict: "PENDING", evidence: "bouwer gestart", artifact: "src/model.js" },
-    { name: "U2 QALY-score + rangorde headless (B1–B2 voorlopig)", round: 0, verdict: "PENDING", evidence: "wacht op U1", artifact: "src/score.js" },
-    { name: "U3 Geluid (C, hard: zelf gesynthetiseerd, dempknop)", round: 1, verdict: "PENDING", evidence: "bouwer gestart", artifact: "src/sound.js" },
+    { name: "U1 Rekenmodel + casusdata (A1–A3)", round: 1, verdict: "PENDING", evidence: "gebouwd; blinde criticus rekent onafhankelijk na", artifact: "src/model.js" },
+    { name: "U2 QALY-score + rangorde headless (B1–B2 voorlopig)", round: 1, verdict: "PENDING", evidence: "bouwer gestart", artifact: "src/score.js" },
+    { name: "U3 Geluid (C, hard: zelf gesynthetiseerd, dempknop)", round: 1, verdict: "PENDING", evidence: "gebouwd (11 geluiden); criticus meet", artifact: "src/sound.js" },
     { name: "U4 Scorebord beamer (C)", round: 1, verdict: "PENDING", evidence: "bouwer gestart", artifact: "scorebord.html" },
     { name: "U5 Racescherm + spelverloop (C, B3–B6)", round: 0, verdict: "PENDING", evidence: "wacht op U1/U2", artifact: "index.html" },
     { name: "U6 Tutorial opa Jan (C)", round: 0, verdict: "PENDING", evidence: "wacht op U5", artifact: "src/app.js" },
@@ -18,8 +18,9 @@ window.GAUNTLET = {
     { name: "Eindcheck A4: elk getal en elke bewering in het spel tegen casusblad", round: 0, verdict: "PENDING", evidence: "na smoothing pass", artifact: "index.html" }
   ],
   log: [
-    { round: 0, unit: "LEAD", verdict: "PENDING", note: "Sites §6C niet bereikbaar (netwerkbeleid: 403/ENOTFOUND). Schermafbeeldingen in docs/referenties/ zijn leidend." }
+    { round: 0, unit: "LEAD", verdict: "PENDING", note: "Sites §6C niet bereikbaar (netwerkbeleid: 403/ENOTFOUND). Schermafbeeldingen in docs/referenties/ zijn leidend." },
+    { round: 1, unit: "U1", verdict: "PENDING", note: "Model gebouwd: exacte exponentiële stap; 3 tijdpercentages wijken relatief >2% af maar ronden af op tabelwaarde → LEAD-interpretatie ±2 procentpunt" }
   ],
-  open: [],
+  open: ["LEAD-besluit lat A3: tabel heeft hele procenten, dus tijdpercentages ±2 procentpunt; concentraties/doses ±2% relatief. Akkoord?"],
   belowBar: []
 };
