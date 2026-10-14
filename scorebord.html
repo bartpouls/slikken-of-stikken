@@ -198,7 +198,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 
 /* verwijderknop: onopvallend, wel groot genoeg om te tikken */
 .weg {
-  flex: none; width: 48px; height: 48px; margin-left: -.2rem;
+  flex: none; width: 50px; height: 50px; margin-left: -.2rem; /* ≥ 48 px, ook tijdens het verschuiven van regels */
   display: grid; place-items: center;
   background: none; border: 0; border-radius: 50%;
   color: var(--stil); font-size: 1.3rem; line-height: 1;
@@ -218,7 +218,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 .bevestig span { margin-right: auto; padding-left: .5rem; min-width: 0; white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
 .knopje {
   flex: none; white-space: nowrap;
-  min-height: 48px; min-width: 48px; padding: 0 .9rem; border-radius: 10px;
+  min-height: 50px; min-width: 50px; padding: 0 .9rem; border-radius: 10px;
   border: 1.5px solid var(--rand); background: #000; font-weight: 700;
 }
 .knopje.ja { background: var(--koraal); border-color: var(--koraal); color: #2a0b05; }
@@ -314,13 +314,13 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   .veld-score { flex: 0 1 15rem; }
   .toevoegen { flex: 0 0 auto; }
   input[type="text"], .toevoegen, .teken { font-size: 1rem; min-height: max(48px, 2.6rem); }
-  .teken, .weg { min-width: max(48px, 2.6rem); }
+  .teken { min-width: max(48px, 2.6rem); }
   .melding, .melding:empty { display: flex; margin: 0 0 .35rem; min-height: 1.4em; }
   .voet {
     grid-area: voet; margin: .8rem 0 0; padding: .6rem 0 .7rem;
     border-top: 1px solid var(--lijn); align-self: stretch; align-items: flex-end; justify-content: flex-end;
   }
-  .weg { width: max(48px, 2.6rem); height: max(48px, 2.6rem); font-size: 1.2rem; }
+  .weg { width: max(50px, 2.6rem); height: max(50px, 2.6rem); font-size: 1.2rem; }
 }
 
 /* beamer/laptop met minder breedte (bv. 1024x768): namen kleiner, podiumkolom iets breder */
