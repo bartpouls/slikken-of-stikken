@@ -8,13 +8,13 @@ window.GAUNTLET = {
   updated: "2026-10-14",
   units: [
     { name: "U1 Rekenmodel + casusdata (A1–A4)", round: 1, verdict: "PASS", evidence: "Blind PASS A1–A4, 0 afwijkingen; eigen RK4 in Python: max fout 4e-13, halvering 0,5000000, alle tabelregels binnen marge. Stopregel A gehaald.", artifact: "src/model.js" },
-    { name: "U2 QALY-score + rangorde headless", round: 4, verdict: "FAIL", evidence: "R3: Q1–Q5 PASS (uitputtende zoektocht ±916.000 schema's: beste ≤4 g 828, echt 92,8%; 900 bots live=batch). Q6: 3 randgevalzinnen (0 u in zone; 'pas na'). R4 = laatste ronde", artifact: "src/score.js" },
+    { name: "U2 QALY-score + rangorde headless", round: 4, verdict: "PENDING", evidence: "R4 gebouwd: regel nooitInZone, 'pas na' alleen bij 0 u vóór; eigen zin-tegen-feitcontrole 4000 bots 0 afwijkingen (bouwer). Laatste verse criticus loopt", artifact: "src/score.js" },
     { name: "U3 Geluid", round: 3, verdict: "PASS", evidence: "Blind R3: P1, P3–P6 PASS, P2 nipt FAIL (spuit 0,3 dB onder drempel in 1/143 + klik 48 kHz). Microfix daarna: spuit HP-RMS −27,8…−26,4 dBFS, klik weg (bouwermeting, NIET blind herbeoordeeld). Gestopt volgens smaakstopregel", artifact: "src/sound.js" },
     { name: "U4 Scorebord beamer", round: 4, verdict: "PENDING", evidence: "R4 gebouwd (bevestigvensters, bereik ±99.999). Gaat mee in eindcontrole", artifact: "scorebord.html" },
-    { name: "U5 Racescherm + spelverloop", round: 2, verdict: "FAIL", evidence: "R1: R1–R5 PASS (score spel = model in 9 strategieën; feedback ≤48 ms; race 93 s; 0 consolefouten). FAIL R6 zonelabel mist '(vereenvoudigd)'; R7 contrast 3,06–3,51 en overlap melding/curve over poortjes. R2 in bouw", artifact: "index.html" },
+    { name: "U5 Racescherm + spelverloop", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: 'pijnstilling (vereenvoudigd)', contrast ≥5,25:1, melding niet over doelpoortje, keuzefeedback, terug-knopbescherming, leverschade rood. Wordt beoordeeld door B-criticus + eindcontrole", artifact: "index.html" },
     { name: "U6 Tutorial opa Jan", round: 1, verdict: "PENDING", evidence: "Gebouwd: 6 stappen, curves uit model, 'Overslaan'-knop. Verse criticus", artifact: "src/tutorial.js" },
     { name: "U7 Eindverslag + eindscherm", round: 1, verdict: "PENDING", evidence: "Gebouwd: wit scherm, naam 36 px, totaal 72 px, Wordle-tegels per poortje. Verse criticus", artifact: "src/einde.js" },
-    { name: "U8 Bots in telefoonscherm (B1–B6)", round: 0, verdict: "PENDING", evidence: "wacht op U5–U7", artifact: "tests/bots.mjs" },
+    { name: "U8 Bots in telefoonscherm (B1–B6)", round: 1, verdict: "PENDING", evidence: "Bouwer schrijft bots (echte tikken, 375×667 en 390×844)", artifact: "tests/bots.mjs" },
     { name: "Eindcheck: smoothing + A4 over het hele spel", round: 0, verdict: "PENDING", evidence: "na U5–U8", artifact: "index.html" }
   ],
   log: [
