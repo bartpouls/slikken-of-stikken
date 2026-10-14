@@ -3085,8 +3085,12 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     var labels = c.id === 'lithium'
       ? [[v0.laag, getal(v0.laag, 1), 5], [v0.hoog, getal(v0.hoog, 1), -1], [c.toxisch, getal(c.toxisch, 1), 4]]
       : [[v0.laag, getal(v0.laag), 4]];
+    var gezet = [];
     labels.forEach(function (lb) {
       if (lb[0] == null || lb[0] >= ymax) return;
+      var yl = y(lb[0]) + lb[2];
+      if (gezet.some(function (g) { return Math.abs(g - yl) < 12; })) return; // geen labels over elkaar
+      gezet.push(yl);
       s += '<text x="' + (W - 3) + '" y="' + f(y(lb[0]) + lb[2]) + '" text-anchor="end" class="eind-svg-label' +
         (lb[0] === c.toxisch ? ' tox' : '') + '">' + esc(lb[1]) + '</text>';
     });
