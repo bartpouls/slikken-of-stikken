@@ -8,8 +8,8 @@
  * GEDEELD, VOOR ANDERE BOUWERS (SoS.ui; gebruik binnen je start()/toon(), niet bij het laden):
  *   SoS.ui.figuur({wie:'opa'|'vries', stemming:'neutraal'|'blij'|'pijn'|'misselijk', prop:'stok'|'doosje'|null,
  *                 kleur, label}) -> SVG-string in Evolution-of-Trust-stijl: rond wit hoofd, zwarte schetslijn,
- *                 gekleurd hoedje (opa Jan blauw #3d7fe0 met wandelstok, mevrouw De Vries rood #e0405f met
- *                 knotje en bril). Zet hem in een <div class="fig">; .fig.wiebel laat hem even reageren.
+ *                 gekleurd hoedje (opa Jan blauwe pet #3d7fe0 met wandelstok, mevrouw De Vries rode hoed
+ *                 met rand, knotje en bril). Zet hem in een <div class="fig">; .fig.wiebel laat hem even reageren.
  *   SoS.ui.icoon(soort)  soort 'tablet'|'slik'|'zetpil'|'spuit'|'niets'|'doosje' -> SVG-string (40×40).
  *   SoS.ui.el(tag, attrs, kinderen) -> element (attrs: class, text, html, data-*, aria-*, on<event>).
  *   SoS.ui.getal(x, decimalen) -> Nederlandse notatie ("1,5"; "1.250").
@@ -151,10 +151,17 @@
     s += '<path d="' + mond + '" stroke="' + ink + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
     if (st === 'pijn') s += '<path d="M77 40 q5 7 0 10 q-5 -3 0 -10 z" fill="#7cc4ff" stroke="' + ink + '" stroke-width="1.5"/>';
     if (st === 'misselijk') s += '<path d="M78 70 q3 -4 6 0 M80 78 q3 -4 6 0" stroke="#7bbf3a" stroke-width="2.5" stroke-linecap="round" fill="none"/>';
-    // hoedje (fez) met kwastje
-    s += '<path d="M35 40 L65 36.5 L60.5 14.5 L40.5 16.5 Z" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5" stroke-linejoin="round"/>';
-    s += '<path d="M50.5 15.5 C57 7 69 8 71 22" stroke="' + ink + '" stroke-width="2.6" stroke-linecap="round" fill="none"/>';
-    s += '<circle cx="71.2" cy="24.5" r="2.8" fill="' + ink + '"/>';
+    // eigen hoedjes: opa Jan een pet (flat cap) met klep, mevrouw De Vries een hoed met rand en lint
+    if (wie === 'opa') {
+      s += '<path d="M25 47 Q23 29 48 27 Q72 26 77 41 L77 45 Q52 39 25 47 Z" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5" stroke-linejoin="round"/>';
+      s += '<path d="M62 43 Q81 38 91 46 Q80 52 63 48 Z" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5" stroke-linejoin="round"/>';
+      s += '<path d="M36 33 Q48 30 62 32" stroke="' + ink + '" stroke-width="2" stroke-linecap="round" fill="none" opacity=".45"/>';
+      s += '<circle cx="49" cy="27.5" r="2.6" fill="' + ink + '"/>';
+    } else {
+      s += '<path d="M35 37 L37.5 15 Q50 10 62.5 15 L65 37 Z" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5" stroke-linejoin="round"/>';
+      s += '<path d="M36.6 29 L63.4 29" stroke="#ffd166" stroke-width="4.5"/>';
+      s += '<ellipse cx="50" cy="37" rx="31" ry="6" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5"/>';
+    }
     s += '</svg>';
     return s;
   }
