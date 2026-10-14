@@ -120,6 +120,7 @@
   }
 
   function env(param, t, a, dur, peak) {
+    param.value = 0; // vanaf aanmaken dicht: geen ongedempte sample vóór t
     param.setValueAtTime(0, t);
     param.linearRampToValueAtTime(peak, t + a);
     param.exponentialRampToValueAtTime(0.0008, t + dur);
@@ -195,9 +196,9 @@
       tone(E, { type: 'sine', f0: 1250, f1: 850, at: 0.025, dur: 0.07, gain: 0.24, a: 0.003 });
     },
     spuit: function (E) {
-      tone(E, { type: 'square', f0: 1300, f1: 2600, dur: 0.06, gain: 0.1, a: 0.001, filter: ['highpass', 900] });
-      noise(E, { dur: 0.03, gain: 0.12, a: 0.001, filter: ['highpass', 3500] });
-      tone(E, { type: 'sine', f0: 2600, at: 0.045, dur: 0.05, gain: 0.12, a: 0.001 });
+      tone(E, { type: 'square', f0: 1300, f1: 2600, dur: 0.06, gain: 0.12, a: 0.001, filter: ['highpass', 900] });
+      noise(E, { dur: 0.03, gain: 0.14, a: 0.001, filter: ['highpass', 3500] });
+      tone(E, { type: 'sine', f0: 2600, at: 0.045, dur: 0.05, gain: 0.14, a: 0.001 });
     },
     overslaan: function (E) {
       tone(E, { type: 'square', f0: 660, dur: 0.065, gain: 0.08, filter: ['lowpass', 2600] });
