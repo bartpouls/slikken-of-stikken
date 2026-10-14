@@ -5,6 +5,7 @@
  * Tekstkleuren op --papier halen WCAG AA (≥ 4,5:1); tegelkleuren ≥ 3:1 tegen het papier.
  */
 #scherm-einde { padding-bottom: 0; scroll-behavior: auto; }
+.eind-binnen { position: relative; }
 
 .eind-binnen {
   width: 100%; max-width: 440px; margin: 0 auto;
@@ -13,12 +14,10 @@
 
 /* ---------- 1. eindscherm ---------- */
 .eind-held { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 2px; }
-.eind-naam.lang { font-size: 32px; }
 .eind-naam {
-  margin: 0; padding: 0 44px; /* vrij van de dempknop */
-  max-width: 100%;
+  margin: 0; width: 100%;
   font-size: 36px; font-weight: 800; line-height: 1.08; letter-spacing: -.01em;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal; word-break: normal; hyphens: none; /* einde.js past de maat aan (≥ 32 px) */
 }
 .eind-label { margin: 6px 0 0; font-size: 15px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #5c5c64; }
 .eind-totaal {
@@ -44,16 +43,25 @@
 .eind-kaart-titel small { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #5c5c64; }
 .eind-kaart-score { flex: none; font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
 .eind-kaart-rechts { flex: none; display: flex; flex-direction: column; align-items: flex-end; }
-.eind-kaart-meer { margin-top: 2px; font-size: 13px; font-weight: 700; color: #6a3fd1; }
+.eind-kaart-meer { margin-top: 2px; font-size: 15px; font-weight: 700; color: #6a3fd1; }
 
 /* tegels: één per poortje, twee rijen */
-.eind-tegels { display: flex; flex-direction: column; gap: 4px; margin-top: 9px; }
-.eind-tegelrij { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 3px; }
+.eind-tegels { display: flex; flex-direction: column; gap: 8px; margin-top: 9px; }
+.eind-tegelrij { display: grid; grid-template-columns: 50px 1fr; align-items: center; gap: 4px; }
+.eind-rijlabel { font-size: 14px; font-weight: 700; color: #45454c; white-space: nowrap; }
+.eind-tegelvak { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 3px; }
 .eind-tegel {
+  position: relative;
   display: block; height: 22px; border-radius: 5px; background: #dcd8cf;
   animation: eind-tegel .32s ease both; animation-delay: calc(var(--i, 0) * 14ms + 150ms);
 }
 @keyframes eind-tegel { from { transform: scale(.4) rotateX(80deg); opacity: .2; } }
+.eind-tegel.m::after { /* misselijk: olijfgroen streepje onder de tegel */
+  content: ""; position: absolute; left: -2px; right: -2px; bottom: -6px; height: 4px; background: #6f8f12; border-radius: 2px;
+}
+.eind-tegel.ibu::before { /* ibuprofen: paarse streep vóór de tegel */
+  content: ""; position: absolute; left: -5px; top: -4px; bottom: -4px; width: 3px; background: var(--paars-diep); border-radius: 2px;
+}
 .t-zone { background: #138a55; }
 .t-onder { background: #e2533f; }
 .t-boven { background: #c97a00; }
@@ -61,11 +69,13 @@
 
 .eind-legenda {
   list-style: none; margin: 10px 0 0; padding: 0;
-  display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 14px;
-  font-size: 14px; color: #45454c;
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 2px 14px;
+  font-size: 16px; font-weight: 600; color: #3c3c43;
 }
 .eind-legenda li { display: inline-flex; align-items: center; gap: 6px; }
-.eind-legenda .eind-tegel { width: 14px; height: 14px; border-radius: 3px; animation: none; }
+.eind-legenda .eind-tegel { width: 16px; height: 16px; border-radius: 4px; animation: none; }
+.eind-leg-m { width: 18px; height: 5px; border-radius: 2px; background: #6f8f12; }
+.eind-leg-ibu { width: 4px; height: 18px; border-radius: 2px; background: var(--paars-diep); }
 
 .eind-vraag {
   position: relative; width: 100%; margin: 16px 0 0; padding: 14px 16px 14px;
@@ -77,8 +87,15 @@
   font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
 }
 .eind-vraag p { margin: 4px 0 0; font-size: 22px; font-weight: 800; line-height: 1.25; }
+.eind-acties { width: 100%; display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.eind-acties .knop-wit.groot { flex: 1 1 auto; max-width: none; }
+.eind-acties .demp { /* dempknop van app.js, hier niet vast */
+  position: static; flex: none; width: 60px; height: 60px;
+  border: 3px solid var(--inkt); border-radius: 50%; background: var(--wit); color: var(--inkt);
+}
+.eind-acties .demp svg { width: 28px; height: 28px; }
 .eind-scorebord { margin: 12px 0 0; font-size: 16px; line-height: 1.4; color: #2f2f35; max-width: 340px; }
-.eind-spelpunten { margin: 2px 0 12px; font-size: 14px; color: #5c5c64; }
+.eind-spelpunten { margin: 4px 0 0; font-size: 15px; color: #4d4d55; }
 
 /* ---------- 2. toedienverslag ---------- */
 .eind-verslag { margin-top: 28px; padding-top: 22px; border-top: 3px solid var(--inkt); }
@@ -132,6 +149,10 @@
 .eind-cel-echt {
   position: absolute; top: 1px; right: 4px; font-size: 11px; font-weight: 800; color: #6a3fd1;
 }
+.eind-cel-anders {
+  position: absolute; bottom: -7px; right: -6px; width: 20px; height: 20px; border-radius: 50%;
+  display: grid; place-items: center; background: #c0362a; color: var(--wit); font-size: 15px; font-weight: 800; line-height: 1;
+}
 .eind-cel-ic { position: relative; display: inline-flex; align-items: center; }
 .eind-cel-ic svg { width: 28px; height: 28px; filter: drop-shadow(0 0 .6px #1b1b1f) drop-shadow(0 0 .6px #1b1b1f); }
 .eind-cel-ic + .eind-cel-ic { margin-left: -6px; }
@@ -143,7 +164,7 @@
 .eind-rooster-dag { display: flex; flex-direction: column; gap: 4px; }
 .eind-dagrij { display: grid; grid-template-columns: 54px 1fr; align-items: center; gap: 6px; }
 .eind-dagrij ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(var(--k, 3), 1fr); gap: 5px; }
-.eind-dagrij .eind-cel { min-height: 40px; padding: 3px 2px; }
+.eind-dagrij .eind-cel { min-height: 46px; padding: 12px 2px 3px; }
 .eind-dagkop { font-size: 12.5px; font-weight: 700; color: #5c5c64; text-align: center; grid-template-columns: 54px repeat(var(--k, 3), 1fr); gap: 5px 6px; }
 .eind-dagkop span:first-child { visibility: hidden; }
 .eind-dag { font-size: 15px; font-weight: 700; color: #3c3c43; }
@@ -159,6 +180,7 @@
 .eind-leg-ic svg { width: 22px; height: 22px; filter: drop-shadow(0 0 .6px #1b1b1f) drop-shadow(0 0 .6px #1b1b1f); }
 .eind-leg-leeg { font-weight: 700; color: #66666d; font-size: 17px; }
 .eind-leg-echt { padding: 0 5px; border: 2px dashed var(--paars-diep); border-radius: 6px; font-size: 11.5px; font-weight: 800; color: #6a3fd1; }
+.eind-leg-anders { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #c0362a; color: var(--wit); font-weight: 800; font-size: 15px; }
 .eind-leg-misselijk { width: 18px; height: 18px; border-radius: 5px; background: #eef5d8; border: 2px solid #d3cfc6; }
 
 .eind-telling { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
@@ -187,17 +209,10 @@
   font-size: 17px; font-weight: 700; line-height: 1.4;
 }
 
-/* ---------- 3. "Nog een keer" plakt onderaan ---------- */
-.eind-voet {
-  position: sticky; bottom: 0; z-index: 2;
-  display: flex; justify-content: center;
-  margin-top: 22px; padding: 18px 0 calc(var(--veilig-onder) + 14px);
-  background: linear-gradient(to bottom, rgba(251, 250, 247, 0), var(--papier) 34%);
-}
+/* ---------- 3. onderaan: terug naar boven ---------- */
+.eind-voet { display: flex; justify-content: center; margin-top: 26px; padding: 0 0 calc(var(--veilig-onder) + 18px); }
 
 @media (min-height: 800px) {
-  .eind-naam.lang { font-size: 32px; }
-.eind-naam { font-size: 40px; }
   .eind-totaal { font-size: 80px; }
   .eind-tegel { height: 24px; }
 }
@@ -211,8 +226,7 @@
   .eind-kaart-score { font-size: 30px; }
   .eind-tegels { margin-top: 7px; gap: 3px; }
   .eind-tegel { height: 19px; }
-  .eind-legenda { margin-top: 8px; font-size: 13.5px; }
+  .eind-legenda { margin-top: 8px; }
   .eind-vraag { margin-top: 14px; padding: 10px 14px; }
   .eind-vraag p { font-size: 21px; }
-  .eind-voet { padding-top: 12px; padding-bottom: calc(var(--veilig-onder) + 10px); }
 }

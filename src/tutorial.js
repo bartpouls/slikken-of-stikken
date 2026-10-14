@@ -13,17 +13,18 @@
  *                niet botst met de "verder"-knop na de races, en leegt de container na de overgang.
  *
  * VERLOOP (§3 Flow stap 2; één begrip per stap, de speler doet het zelf):
- *   1 Tablet  → curve (echt model) stijgt pas na even; pilletje in opa's maag slinkt met het depot.
+ *   1 Tablet  → as 0–3 u, klok eerst 0,25 u/s: opa wacht (rode strook) tot C ≥ 5 (≈ 0,33 u modeltijd);
+ *               pilletje in opa's maag slinkt met het depot.
  *   2 "2,5 uur" (klok) → spiegel halveert per 2,5 uur, als staafjes met ½ (gemeten op t = 5; 7,5; 10 u).
  *   3 Spuit   → sprong naar 1000/63 mg/L op t = 0, daarna ½ per 2,5 uur; tabletcurve als grijze schaduw.
- *   4 Tablet  → na het echte schema (0, 6, 12, 18 u = 4 g) duwt een 5e gram (20 u) de dagteller over 4 g:
+ *   4 "volgens schema 4× 1 g" (speler tikt; 0, 6, 12, 18 u) en daarna Tablet: een 5e gram (20 u) duwt de dagteller over 4 g:
  *               levermeter vol, levertje zorgelijk. Alleen in de tutorial; raakt de race niet.
  *   5 Zetpil ×2 → M.zetpil(3) en M.zetpil(4) uit de vaste reeks: de ene haalt de zone, de andere niet.
  *   6 "Klaar? Race!" (data-actie="verder") → gereed().
  *   Alle curves komen uit SoS.model.maakSim (exacte stappen); tijd loopt versneld (uren per seconde).
  *
  * TESTHAKEN (alleen-lezen): .tut-binnen[data-stap="1".."6"][data-fase="wacht"|"loopt"|"klaar"].
- *   Knoppen: data-tut="slik"|"klok"|"spuit"|"zetpil"|"volgende"|"overslaan"; laatste: data-actie="verder".
+ *   Knoppen: data-tut="slik"|"klok"|"spuit"|"schema"|"zetpil"|"volgende"|"overslaan"; laatste: data-actie="verder".
  *   (Bewust geen data-actie="slik" enz.: die zijn voor de raceknoppen.)
  */
 (function (root) {
