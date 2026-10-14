@@ -71,17 +71,20 @@
  *   tijdlijn[i].echt komt uit casus.echtSchema: paracetamol "1 g 4dd" → '1 g' op 0, 6, 12, 18 u (bewust zonder
  *   route: het casusblad noemt er geen, en om 12 u is slikken geblokkeerd); lithium '400 mg' op elk poortje.
  *
- * PRAKTIJKZINNEN (praktijk.regel; de eerste die past; max. twee zinnen, behalve naIbuMinder = woordelijk §3)
+ * PRAKTIJKZINNEN (praktijk.regel; de eerste die past; eigen zinnen max. twee; de woordelijke §3-zinnen mogen meer)
  *   paracetamol: lever (dagteller > 4 g) · niets · zetpil tijdens de misselijkheid: zetpilNauwelijks (F ≤ 0,4) /
  *     zetpilHalf (F < 0,7; bij één zetpil woordelijk §3) / zetpilGoed (F ≥ 0,7) / zetpilWisselend (meerdere zetpillen
  *     met verschillend effect; bij meerdere zetpillen meervoud) · spuit (spuit tijdens misselijkheid) · veelOnder
- *     (> 1/4 van de race onder de zone buiten de misselijkheid; route-neutraal) · misselijkGemist ·
+ *     (> 1/2 van de race onder de streep gaat vóór de misselijkheidsregels; anders > 1/4 buiten de misselijkheid;
+ *     route-neutraal, bij één dosis "Eén dosis werkt maar een paar uur: daarna komt de pijn terug.") · misselijkGemist ·
  *     goed (vangnet; alleen bereikbaar zonder blokkade).
  *   lithium: giftigDubbel (> 1,5 na een dubbele dosis) · giftig (vangnet: met één tablet per poortje komt de
- *     spiegel nooit boven 1,5, dus in de race onbereikbaar) · niets · overgeslagenOnder (onder 0,6 en overgeslagen
- *     vóór de ibuprofen, of vóór én na; oorzaak volgens wat er gebeurde) · naIbuTeVeelWeg (alleen na de ibuprofen
- *     overgeslagen en onder 0,6) · dubbel (dubbele dosis en spiegel > 1,0 in dezelfde periode vóór/na de ibuprofen, niet giftig) · naIbuMinder (woordelijk §3;
- *     alleen als na t = 120 ≥ 90% in de zone en < 5% boven 1,0; % = overgeslagen poortjes vanaf t = 120 / 15) ·
+ *     spiegel nooit boven 1,5, dus in de race onbereikbaar) · niets · dubbel (zodra er ergens een dubbele dosis is:
+ *     altijd genoemd, nooit geprezen, "ook niet om in te halen"; oorzaak van boven 1,0 naar de uren vóór (dubbele
+ *     dosis) vs. na t = 120 (ibuprofen), beide genoemd als beide ≥ 1 u) · overgeslagenOnder (onder 0,6 en
+ *     overgeslagen vóór de ibuprofen, of vóór én na) · naIbuTeVeelWeg (alleen na de ibuprofen overgeslagen en onder
+ *     0,6) · naIbuMinder (woordelijk §3; alleen zonder dubbele doses en als na t = 120 ≥ 90% in de zone en < 5% boven
+ *     1,0; % = netto ontbrekende tabletten vanaf t = 120 / 15 poortjes) ·
  *     naIbuNogTeHoog (na ibuprofen overgeslagen, maar ≥ 5% boven 1,0) · naIbuTeHoog (alles gegeven, boven 1,0) ·
  *     nabespreking (vangnet, casusbladtekst; in de race onbereikbaar).
  */
@@ -349,9 +352,10 @@
 
   function zetpilZin(zetpillen) {
     var kl = zetpillen.map(function (x) { return zetpilKlasse(x.d.F); });
-    var lo = Math.min.apply(null, kl), hi = Math.max.apply(null, kl), n = zetpillen.length;
+    var lo = Math.min.apply(null, kl), hi = Math.max.apply(null, kl), n = 0;
+    zetpillen.forEach(function (x) { n += x.d.aantal; }); // eenheden (aantal 2 = twee zetpillen)
     var kop = n === 1 ? 'Tijdens de misselijkheid koos jij de zetpil. '
-      : 'Tijdens de misselijkheid koos jij ' + n + ' keer de zetpil. ';
+      : 'Tijdens de misselijkheid gaf jij ' + n + ' zetpillen. ';
     var regel = ['zetpilNauwelijks', 'zetpilHalf', 'zetpilGoed'][lo];
     if (lo !== hi) return { regel: 'zetpilWisselend',
       zin: kop + 'De ene werkte ' + ZETPIL_WERKING[hi] + ', ' + (n === 2 ? 'de andere ' : 'een andere ') +
@@ -381,12 +385,17 @@
       if (!doses.length) return { regel: 'niets',
         zin: 'Jij gaf opa Jan geen paracetamol, dus de pijn kwam terug. ' +
           'Een vast schema op vaste tijden houdt de spiegel boven de streep.' };
+      var nDoses = 0;
+      doses.forEach(function (x) { nDoses += x.d.aantal; });
+      var veelOnder = { regel: 'veelOnder',
+        zin: 'Opa Jan zat ' + pct(teller.uren.onder / T) + ' van de tijd onder de streep. ' + (nDoses === 1
+          ? 'Eén dosis werkt maar een paar uur: daarna komt de pijn terug.'
+          : 'Elke dosis werkt maar een paar uur: verdeel de doses over de dag.') };
+      if (teller.uren.onder / T > 1 / 2) return veelOnder; // grootste deel onder de streep: dáár gaat het over
       if (zetpillen.length) return zetpilZin(zetpillen);
       if (spuiten.length) return { regel: 'spuit',
         zin: 'Tijdens de misselijkheid koos jij de spuit. Een prik werkt meteen, ook als opa Jan niet kan slikken.' };
-      if ((teller.uren.onder - teller.onderTijdensBlokkade) / T > 1 / 4) return { regel: 'veelOnder',
-        zin: 'Opa Jan zat ' + pct(teller.uren.onder / T) + ' van de tijd onder de streep. ' +
-          'Elke dosis werkt maar een paar uur: verdeel de doses over de dag.' };
+      if ((teller.uren.onder - teller.onderTijdensBlokkade) / T > 1 / 4) return veelOnder;
       if (!inBlok.length && (geblokt || teller.onderTijdensBlokkade > 0)) return { regel: 'misselijkGemist',
         zin: 'Tijdens de misselijkheid kreeg opa Jan geen paracetamol, en de pijn kwam terug. ' +
           'Kan iemand niet slikken, dan kan het ook als zetpil of prik.' };
@@ -407,11 +416,15 @@
     var dubbel = dubbelVoor + dubbelNa;
     var keer = function (n) { return (n === 1 ? 'één' : n) + ' keer een dubbele dosis'; };
     var naZone = teller.na.zone / naDuur, naBoven = teller.na.boven / naDuur;
+    var tablNa = 0;
+    naRijen.forEach(function (r) { tablNa += tabl(r); });
+    var ontbrekendNa = Math.max(0, naRijen.length - tablNa); // netto ontbrekende tabletten na de ibuprofen
+    var NOOIT_DUBBEL = 'Bij lithium nooit dubbel innemen, ook niet om in te halen: te veel geeft trillen, misselijkheid en diarree.';
 
     if (teller.uren.toxisch > 0) {
       if (dubbel) return { regel: 'giftigDubbel',
         zin: 'Jij gaf ' + keer(dubbel) + ' en de spiegel kwam boven de 1,5: giftig. ' +
-          'Bij lithium liggen goed en giftig dicht bij elkaar, dus nooit dubbel innemen.' };
+          'Bij lithium liggen goed en giftig dicht bij elkaar, dus nooit dubbel innemen, ook niet om in te halen.' };
       return { regel: 'giftig', // vangnet, in de race onbereikbaar
         zin: 'De spiegel kwam boven de 1,5: giftig, met kans op verwardheid en nieren in gevaar. ' +
           'Bij lithium liggen goed en giftig dicht bij elkaar.' };
@@ -419,28 +432,46 @@
     if (!doses.length) return { regel: 'niets',
       zin: 'Jij gaf mevrouw De Vries geen lithium en de spiegel zakte onder de 0,6. ' +
         'Kans op terugval: somber of juist ontremd.' };
+
+    // Ergens een dubbele dosis: altijd noemen, nooit prijzen. Oorzaak van "boven 1,0" volgens de uren
+    // vóór (alleen een dubbele dosis kan de spiegel dan boven 1,0 brengen) en na de ibuprofen.
+    if (dubbel) {
+      var waarD = dubbelNa === 0 ? ' vóór de ibuprofen' : (dubbelVoor === 0 ? ' na de ibuprofen' : '');
+      var kopD = 'Jij gaf ' + keer(dubbel) + waarD;
+      var bV = teller.voor.boven, bN = teller.na.boven, SIG = 1; // uur: "van betekenis"
+      var sigV = bV >= SIG, sigN = bN >= SIG;
+      if (!sigV && !sigN && (bV > 0 || bN > 0)) { sigV = bV >= bN; sigN = !sigV; }
+      var gevolg;
+      if (teller.uren.onder > 0 && weg(rijen) > 0) gevolg = ', maar sloeg ook ' + weg(rijen) + ' van de ' + rijen.length +
+        ' doses over en de spiegel zakte onder de 0,6';
+      else if (sigV && sigN) gevolg = bN >= bV
+        ? ' en de spiegel kwam boven de 1,0: vooral na de ibuprofen, omdat de nieren minder opruimden, maar ook door het dubbel innemen'
+        : ' en de spiegel kwam boven de 1,0: vooral door het dubbel innemen, en na de ibuprofen ook omdat de nieren minder opruimden';
+      else if (sigV) gevolg = (dubbelNa ? ' en door die vóór de ibuprofen' : ' en daardoor') + ' kwam de spiegel boven de 1,0';
+      else if (sigN) gevolg = dubbelNa
+        ? (dubbelVoor ? ', terwijl de nieren na de ibuprofen al minder opruimden' : ', terwijl de nieren al minder opruimden') +
+          ': de spiegel kwam boven de 1,0'
+        : '; de spiegel kwam pas na de ibuprofen boven de 1,0, omdat de nieren minder opruimden';
+      else gevolg = '; de spiegel bleef deze keer onder de 1,0';
+      return { regel: 'dubbel', zin: kopD + gevolg + '. ' + NOOIT_DUBBEL };
+    }
+
     if (teller.uren.onder > 0 && wegVoor > 0 && (teller.voor.onder > 0 || wegNa > 0)) {
       var waar = wegNa > 0 ? 'Jij sloeg ' + (wegVoor + wegNa) + ' van de ' + rijen.length + ' doses over, vóór én na de ibuprofen,'
         : 'Jij sloeg vóór de ibuprofen ' + wegVoor + ' van de ' + voorRijen.length + ' doses over';
       return { regel: 'overgeslagenOnder',
         zin: waar + ' en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.' };
     }
-    if (wegNa > 0 && teller.na.onder > 0) return { regel: 'naIbuTeVeelWeg',
-      zin: 'Jij liet na de ibuprofen ' + pct(wegNa / naRijen.length) + ' van de doses weg en de spiegel zakte ' +
+    if (ontbrekendNa > 0 && teller.na.onder > 0) return { regel: 'naIbuTeVeelWeg',
+      zin: 'Jij liet na de ibuprofen ' + pct(ontbrekendNa / naRijen.length) + ' van de doses weg en de spiegel zakte ' +
         'onder de 0,6. In het echt verlaagt de arts de dosis en laat de spiegel prikken: zelf pillen overslaan ' +
         'is geen goed idee.' };
-    if ((dubbelNa && teller.na.boven > 0) || (dubbelVoor && teller.voor.boven > 0)) return { regel: 'dubbel',
-      zin: dubbelNa
-        ? 'Jij gaf na de ibuprofen ' + keer(dubbelNa) + ', terwijl de nieren al minder opruimden: de spiegel ' +
-          'kwam boven de 1,0. Bij lithium nooit dubbel innemen: te veel geeft trillen, misselijkheid en diarree.'
-        : 'Jij gaf ' + keer(dubbelVoor) + ' en de spiegel kwam boven de 1,0. ' +
-          'Bij lithium nooit dubbel innemen: te veel geeft trillen, misselijkheid en diarree.' };
-    if (wegNa > 0 && naZone >= 0.9 && naBoven < 0.05) return { regel: 'naIbuMinder',
-      zin: 'Jij liet na de ibuprofen ' + pct(wegNa / naRijen.length) + ' van de doses weg. Dat was nodig, want ' +
+    if (ontbrekendNa > 0 && naZone >= 0.9 && naBoven < 0.05) return { regel: 'naIbuMinder', // alleen zonder dubbele doses
+      zin: 'Jij liet na de ibuprofen ' + pct(ontbrekendNa / naRijen.length) + ' van de doses weg. Dat was nodig, want ' +
         'de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen ' +
         'overslaan wordt makkelijk vergeten.' };
     if (naBoven >= 0.05) {
-      if (wegNa > 0) return { regel: 'naIbuNogTeHoog',
+      if (ontbrekendNa > 0) return { regel: 'naIbuNogTeHoog',
         zin: 'Na de ibuprofen zat de spiegel ' + pct(naBoven) + ' van de tijd boven de 1,0, want de nieren ruimden ' +
           'minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: zelf pillen overslaan is ' +
           'geen goed idee.' };

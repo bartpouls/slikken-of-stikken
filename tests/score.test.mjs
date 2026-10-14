@@ -376,11 +376,16 @@ kop('Eindverslag en praktijkzinnen');
     ['P zetpil 13 u (F 0,35)', P, op([0, 6, 13, 18], t => [t === 13 ? zetpil : slik]), 'zetpilNauwelijks'],
     ['P zetpil 14 u (F 0,9)', P, op([0, 6, 14, 18], t => [t === 14 ? zetpil : slik]), 'zetpilGoed'],
     ['P rand 6: zetpil 10 u (F 0,7) en 13 u (F 0,35)', P, op([0, 10, 13, 18], t => [t === 10 || t === 13 ? zetpil : slik]), 'zetpilWisselend',
-      'Tijdens de misselijkheid koos jij 2 keer de zetpil. De ene werkte goed, de andere nauwelijks: daar kun je niet op rekenen.'],
-    ['P zetpil 11 u en 13 u (allebei nauwelijks)', P, op([0, 11, 13, 18], t => [t === 11 || t === 13 ? zetpil : slik]), 'zetpilNauwelijks',
-      'Tijdens de misselijkheid koos jij 2 keer de zetpil. Ze werkten nauwelijks: daar kun je niet op rekenen.'],
+      'Tijdens de misselijkheid gaf jij 2 zetpillen. De ene werkte goed, de andere nauwelijks: daar kun je niet op rekenen.'],
+    ['P zetpil 11 u en 13 u (allebei nauwelijks)', P, op([0, 6, 11, 13], t => [t === 11 || t === 13 ? zetpil : slik]), 'zetpilNauwelijks',
+      'Tijdens de misselijkheid gaf jij 2 zetpillen. Ze werkten nauwelijks: daar kun je niet op rekenen.'],
+    ['P r3-6: zetpil met aantal 2 om 12 u (API)', P, op([0, 6, 12], t => [t === 12 ? { route: 'zetpil', aantal: 2 } : slik]), 'zetpilHalf',
+      'Tijdens de misselijkheid gaf jij 2 zetpillen. Ze werkten maar half: daar kun je niet op rekenen.'],
+    ['P r3-7: alleen een spuit om 12 u', P, op([12], () => [spuit]), 'veelOnder',
+      'Opa Jan zat 83% van de tijd onder de streep. Eén dosis werkt maar een paar uur: daarna komt de pijn terug.'],
     ['P spuit 12 u', P, pBots['spuit-variant'], 'spuit'],
-    ['P rand 5: alleen een spuit om 0 u', P, op([0], () => [spuit]), 'veelOnder'],
+    ['P rand 5 / r3-5: alleen 1 g spuit om 0 u', P, op([0], () => [spuit]), 'veelOnder',
+      'Opa Jan zat 83% van de tijd onder de streep. Eén dosis werkt maar een paar uur: daarna komt de pijn terug.'],
     ['P alles vroeg (0, 1, 2, 3 u)', P, op([0, 1, 2, 3], () => [slik]), 'veelOnder'],
     ['P gemiste dosis', P, pBots['gemiste dosis'], 'misselijkGemist'],
     ['P echt schema zonder blokkade (vangnet)', P, op(VIER, () => [slik]), 'goed', null, { blokkades: false }],
@@ -394,6 +399,13 @@ kop('Eindverslag en praktijkzinnen');
     ['L na ibuprofen om de andere overslaan', L, naIbuOpT(t => t >= tK && naIbuNr(t) % 2 === 0), 'naIbuTeVeelWeg'],
     ['L rand 4: dubbel na de ibuprofen (136 u)', L, (race, t) => [{ route: 'slik', aantal: t === 136 ? 2 : 1 }], 'dubbel'],
     ['L dubbel vóór de ibuprofen (48 u)', L, (race, t) => [{ route: 'slik', aantal: t === 48 ? 2 : 1 }], 'dubbel'],
+    ['L r3-1: dubbel 0 u, 120 u over, dubbel 128 u, daarna elke 3e over', L, (race, t) =>
+      t === 120 ? [] : (t === 0 || t === 128 ? [{ route: 'slik', aantal: 2 }] : (t > 128 && naIbuNr(t) % 3 === 0 ? [] : [slik])), 'dubbel',
+      'Jij gaf 2 keer een dubbele dosis en door die vóór de ibuprofen kwam de spiegel boven de 1,0. Bij lithium nooit dubbel innemen, ook niet om in te halen: te veel geeft trillen, misselijkheid en diarree.'],
+    ['L r3-2: 120 u over, dubbel 128 u, daarna elke 3e over', L, (race, t) =>
+      t === 120 ? [] : (t === 128 ? [{ route: 'slik', aantal: 2 }] : (t > 128 && naIbuNr(t) % 3 === 0 ? [] : [slik])), 'dubbel'],
+    ['L r3-4: dubbel 0 u, daarna alles slikken', L, (race, t) => [{ route: 'slik', aantal: t === 0 ? 2 : 1 }], 'dubbel',
+      'Jij gaf één keer een dubbele dosis vóór de ibuprofen en de spiegel kwam boven de 1,0: vooral na de ibuprofen, omdat de nieren minder opruimden, maar ook door het dubbel innemen. Bij lithium nooit dubbel innemen, ook niet om in te halen: te veel geeft trillen, misselijkheid en diarree.'],
     ['L na ibuprofen elke 3e overslaan', L, lBots['na de ibuprofen elke 3e overslaan'], 'naIbuMinder',
       'Jij liet na de ibuprofen 33% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten.'],
     ['L rand 2: alleen poortje 232 overslaan', L, naIbuOpT(t => t === 232), 'naIbuNogTeHoog'],
@@ -404,6 +416,11 @@ kop('Eindverslag en praktijkzinnen');
     const v = speel(c, bot, 'vast', opties).verslag();
     zinnen[v.praktijk.regel] = zinnen[v.praktijk.regel] || v.praktijk.zin;
     const ok = v.praktijk.regel === regel && (!tekst || v.praktijk.zin === tekst);
+    if (naam.startsWith('L r3') || naam.startsWith('L rand 4')) {
+      const u = v.uren, dub = v.tijdlijn.some(r => r.jij.soorten.some(x => x.aantal >= 2));
+      check(!dub || v.praktijk.regel !== 'naIbuMinder', `${naam}: geen naIbuMinder bij een dubbele dosis`);
+      console.log(`   (${naam}: uren boven 1,0 totaal ${u.boven.toFixed(2)})`);
+    }
     check(ok, `${naam}: verwacht ${regel}, kreeg ${v.praktijk.regel}: ${v.praktijk.zin}`);
     rij(naam, v.praktijk.regel, v.praktijk.zin);
   }
@@ -415,6 +432,7 @@ kop('Eindverslag en praktijkzinnen');
     check(!/(overslaan|weglaten) is (goed|slim|handig)|sla .* over\b/i.test(z), `praktijkzin ${r} prijst overslaan niet`);
   }
   check(!/pil/.test(zinnen.veelOnder), 'veelOnder route-neutraal (geen "pil")');
+  check(/nooit dubbel innemen, ook niet om in te halen/.test(zinnen.dubbel) && !/nodig|goed idee|slim/.test(zinnen.dubbel), 'dubbel-zin noemt het dubbel innemen en prijst het niet');
   check(zinnen.zetpilHalf === 'Tijdens de misselijkheid koos jij de zetpil. Die werkte maar half: daar kun je niet op rekenen.', 'voorbeeldzin zetpil woordelijk');
   check(zinnen.naIbuMinder === 'Jij liet na de ibuprofen 33% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten.', 'voorbeeldzin lithium woordelijk, percentage uit keuzes (5 van 15)');
 

@@ -155,7 +155,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 }
 .plek1 .schijf { width: 3.4rem; height: 3.4rem; }
 .plek1 .schijf b { font-size: 1.6rem; }
-/* breedtebudget: score heeft één vaste maat per rijtype (past tot -9.999);
+/* breedtebudget: score heeft één vaste maat per rijtype (past tot -99.999);
    de naam krijgt de rest en loopt zo nodig door op een tweede regel */
 .info { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: .6rem; }
 .naam {
@@ -323,6 +323,18 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   .weg { width: 2.6rem; height: 2.6rem; font-size: 1.2rem; }
 }
 
+/* beamer/laptop met minder breedte (bv. 1024x768): namen kleiner, podiumkolom iets breder */
+@media (min-width: 860px) and (max-width: 1199px) and (min-height: 500px) and (orientation: landscape) {
+  .pagina { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); column-gap: 2rem; padding-left: 2rem; padding-right: 2rem; }
+  .podium .naam { font-size: 1.5rem; }
+  .podium .plek1 .naam { font-size: 1.8rem; }
+  .rest .naam { font-size: 1.45rem; }
+  .rest .score { font-size: 1.75rem; }
+  .rang { font-size: 1.35rem; }
+  .veld-naam { flex: 1 1 8rem; }
+  .veld-score { flex: 0 0 12rem; }
+}
+
 /* heel smalle telefoon (320 px) */
 @media (max-width: 360px) {
   .rij, .info { gap: .45rem; }
@@ -404,7 +416,10 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 
   var SLEUTEL = "sos-scorebord-v1";
   var MAX_NAAM = 20;      /* spel: tot 16 tekens; wat marge voor met de hand getypte namen */
-  var MAX_SCORE = 9999;   /* bord gaat van -9.999 tot 9.999 */
+  /* Haalbaar volgens src/score.js: best +2.000 (2 races x +1.000), slechtst ongeveer -11.775
+     (paracetamol overal 2 tabletten en spuit tijdens misselijkheid -9.508, lithium overal dubbel -2.267).
+     Ruime marge: het bord gaat van -99.999 tot 99.999. */
+  var MAX_SCORE = 99999;
   var NIEUW_MS = 8000;
 
   var $ = function (id) { return document.getElementById(id); };
@@ -562,7 +577,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
     naam.title = sp.naam;
     info.appendChild(naam);
     li.appendChild(info);
-    if (sp.id === nieuwId) {
+    if (sp.id === nieuwId && bevestigId !== sp.id) {
       var verstreken = Date.now() - nieuwOp;
       if (verstreken < NIEUW_MS) {
         li.classList.add("nieuw");
@@ -658,15 +673,36 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 
     if (bevestigId) {
       var jaKnop = document.querySelector('.rij[data-id="' + bevestigId + '"] [data-actie="weg-nee"]');
-      if (jaKnop) jaKnop.focus();
+      if (jaKnop) jaKnop.focus({ preventScroll: true });
+      werkRandBij();
+      bevestigInBeeld();
     } else if (focusActie === "weg-ja" || focusActie === "weg-nee") {
       naamVeld.focus({ preventScroll: true });
     }
     werkRandBij();
   }
 
+  /* bevestigvenster helemaal in beeld: niet onder het meescrollende formulier, niet onder de rand van de lijst */
+  function bevestigInBeeld() {
+    var rij = document.querySelector('.rij[data-id="' + bevestigId + '"]');
+    if (!rij) return;
+    var venster = rij.querySelector(".bevestig") || rij, m = 8;
+    if (getComputedStyle(restEl).overflowY === "auto" && restEl.contains(rij)) {
+      var c = restEl.getBoundingClientRect(), r = venster.getBoundingClientRect();
+      if (r.bottom > c.bottom - m) restEl.scrollTop += r.bottom - c.bottom + m;
+      else if (r.top < c.top + m) restEl.scrollTop -= c.top + m - r.top;
+      return;
+    }
+    var boven = m;
+    if (getComputedStyle(formulier).position === "sticky") boven = formulier.getBoundingClientRect().bottom + m;
+    var r2 = venster.getBoundingClientRect();
+    if (r2.top < boven) window.scrollBy(0, r2.top - boven);
+    else if (r2.bottom > window.innerHeight - m) window.scrollBy(0, Math.min(r2.bottom - window.innerHeight + m, r2.top - boven));
+  }
+
   function werkRandBij() {
-    var loopt = restEl.scrollHeight - restEl.clientHeight > 2 &&
+    /* geen vervaging zolang er een bevestigvraag open staat */
+    var loopt = !bevestigId && restEl.scrollHeight - restEl.clientHeight > 2 &&
       restEl.scrollTop + restEl.clientHeight < restEl.scrollHeight - 4;
     restEl.classList.toggle("loopt-door", loopt);
   }
@@ -753,7 +789,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
         leeg: "Vul ook de totaalscore in, bijvoorbeeld 1650 of -300.",
         komma: "Alleen hele getallen, zonder komma. Bijvoorbeeld 1650 of -300.",
         geen: "Dat is geen getal. Typ de score als heel getal, bijvoorbeeld 1650 of -300.",
-        groot: "Dat getal is te groot voor dit scorebord: het gaat van -9.999 tot 9.999."
+        groot: "Dat getal is te groot voor dit scorebord: het gaat van -99.999 tot 99.999."
       }[s.fout], "fout");
       return;
     }

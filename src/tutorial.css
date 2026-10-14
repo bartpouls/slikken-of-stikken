@@ -25,7 +25,7 @@
 .tut-opa { position: relative; width: 84px; margin-bottom: -3px; }
 .tut-opa .fig { width: 100%; cursor: pointer; touch-action: manipulation; }
 .tut-maag {
-  position: absolute; left: 50%; top: 74%; width: 26px; height: 26px; pointer-events: none;
+  position: absolute; left: 50%; top: 75%; width: 30px; height: 30px; pointer-events: none;
   transform: translate(-50%, -50%) scale(.35); opacity: 0; transition: opacity .25s;
   filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, .55));
 }
@@ -65,8 +65,8 @@
 @keyframes tut-in { from { opacity: 0; transform: translateY(6px); } }
 
 /* grafiek (SVG, uit het model) */
-.tut-grafiek { flex: none; width: 100%; height: 186px; }
-.tut-grafiek svg { display: block; width: 100%; height: 100%; overflow: visible; font-family: var(--font); }
+.tut-grafiek { flex: 1 1 190px; width: 100%; min-height: 176px; max-height: 270px; }
+.tut-grafiek > svg { display: block; width: 100%; height: 100%; overflow: visible; font-family: var(--font); }
 .tut-as { font-size: 12px; font-weight: 600; fill: #6a6a72; }
 .tut-as-zone { fill: #1f9e68; font-weight: 800; }
 .tut-zone { font-size: 11.5px; font-weight: 700; fill: #1f9e68; letter-spacing: .03em; }
@@ -108,7 +108,6 @@
 @media (min-height: 760px) {
   .tut-podium { height: 160px; }
   .tut-opa { width: 96px; }
-  .tut-grafiek { height: 210px; }
   .tut-tekst { margin-top: 18px; }
 }
 @media (prefers-reduced-motion: reduce) {

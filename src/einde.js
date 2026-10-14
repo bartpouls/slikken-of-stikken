@@ -81,6 +81,20 @@
     return uit;
   }
 
+  // Paracetamol: poortjes waarop een toediening de dagteller (som in het 24-uursvenster) boven het max. bracht.
+  function leverPoortjes(c, v) {
+    var bg = c.bovengrens, uit = {};
+    if (!bg || bg.type !== 'dagteller') return uit;
+    var doses = [];
+    v.tijdlijn.forEach(function (r) { r.jij.toedieningen.forEach(function (d) { doses.push({ t: r.t, dosis: d.dosis, i: r.index }); }); });
+    doses.forEach(function (d, k) {
+      var som = 0;
+      for (var j = 0; j <= k; j++) if (doses[j].t > d.t - bg.venster - 1e-9) som += doses[j].dosis;
+      if (som > bg.maxPer24u + 1e-9) uit[d.i] = true;
+    });
+    return uit;
+  }
+
   function stemming(c, v) {
     if (c.toxisch != null && v.uren && v.uren.toxisch > 0) return 'misselijk';
     if (v.lever && v.lever.beschadigd) return 'misselijk';
@@ -97,6 +111,10 @@
   // ------------------------------------------------------------------------------------------
   function kaartHtml(i, c, v, curve) {
     var staten = curve && curve.length ? tegelStaten(c, curve) : null;
+    if (staten) {
+      var lp = leverPoortjes(c, v);
+      Object.keys(lp).forEach(function (k) { staten[k] = 'giftig'; });
+    }
     var tegels = '';
     if (staten) {
       // twee rijen: paracetamol uur 0–11 | 12–23; lithium dag 0–4 | dag 5–9 (vanaf de ibuprofen)
@@ -125,11 +143,11 @@
     cs.forEach(function (c) {
       if (!c) return;
       if (c.venster.some(function (v) { return v.hoog !== Infinity; })) heeft.boven = true;
-      if (c.toxisch != null) heeft.giftig = true;
+      if (c.toxisch != null || (c.bovengrens && c.bovengrens.type === 'dagteller')) heeft.giftig = true;
     });
     return '<ul class="eind-legenda" aria-label="Kleuren van de tegels">' +
       ['zone', 'onder', 'boven', 'giftig'].filter(function (s) { return heeft[s]; }).map(function (s) {
-        return '<li><span class="eind-tegel t-' + s + '"></span>' + TOESTAND_LABEL[s] + '</li>';
+        return '<li><span class="eind-tegel t-' + s + '"></span>' + (s === 'giftig' ? 'lever / giftig' : TOESTAND_LABEL[s]) + '</li>';
       }).join('') + '</ul>';
   }
 
@@ -300,9 +318,9 @@
       '<small>echt schema: ' + getal(v.echtSchema.aantal) + '</small></div>';
     s += '<div data-tel="dosis"><span>Totale dosis</span><b>' + esc(t.totaleDosis.tekst) + '</b></div>';
     if (t.dagteller) {
-      s += '<div data-tel="dagteller" class="' + (t.dagteller.over ? 'over' : '') + '"><span>Dagteller (hoogste 24 uur)</span>' +
+      s += '<div data-tel="dagteller" class="' + (t.dagteller.over ? 'over' : '') + '"><span>Dagteller</span>' +
         '<b>' + getal(t.dagteller.hoogste, t.dagteller.hoogste % 1 ? 1 : 0) + ' g</b>' +
-        '<small>max. ' + getal(t.dagteller.max) + ' g' + (t.dagteller.over ? ' · lever beschadigd' : '') + '</small></div>';
+        '<small>max. ' + getal(t.dagteller.max) + ' g per 24 uur' + (t.dagteller.over ? '. Lever beschadigd.' : '') + '</small></div>';
     }
     return s + '</div>';
   }
@@ -311,8 +329,8 @@
     var s = '<section class="eind-verslag" data-verslag="' + i + '" id="eind-verslag-' + i + '" aria-labelledby="eind-v-kop-' + i + '">';
     s += '<header class="eind-v-kop">' + figuurHtml(c, v, 'eind-v-fig') +
       '<div><p class="eind-kicker">Race ' + (i + 1) + ' · verslag</p>' +
-      '<h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + '</h2><p class="eind-v-wie">' + esc(c.patient) + '</p></div>' +
-      '<p class="eind-v-score"><b>' + getal(v.opbouw.totaal) + '</b><span>QALY-punten</span></p></header>';
+      '<h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + ' <span class="eind-v-wie">' + esc(c.patient) + '</span></h2>' +
+      '<p class="eind-v-score"><b>' + getal(v.opbouw.totaal) + '</b> QALY-punten</p></div></header>';
     if (curve && curve.length > 1) {
       s += '<figure class="eind-curve">' + curveSvg(c, curve) +
         '<figcaption>Jouw spiegel. Groene baan: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + ').' +
@@ -351,7 +369,7 @@
     container.innerHTML =
       '<div class="eind-binnen">' +
         '<div class="eind-held">' +
-          '<p class="eind-naam" data-eind="naam">' + esc(data.naam || '') + '</p>' +
+          '<p class="eind-naam' + (String(data.naam || '').length > 9 ? ' lang' : '') + '" data-eind="naam">' + esc(data.naam || '') + '</p>' +
           '<p class="eind-label">QALY-punten totaal</p>' +
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
           '<p class="eind-spelpunten">Spelpunten, geen echte QALY\'s.</p>' +
