@@ -13,9 +13,9 @@ window.GAUNTLET = {
     { name: "U4 Scorebord beamer", round: 4, verdict: "PENDING", evidence: "R4 gebouwd (bevestigvensters, bereik ±99.999). Gaat mee in eindcontrole", artifact: "scorebord.html" },
     { name: "U5 Racescherm + spelverloop", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: 'pijnstilling (vereenvoudigd)', contrast ≥5,25:1, melding niet over doelpoortje, keuzefeedback, terug-knopbescherming, leverschade rood. Wordt beoordeeld door B-criticus + eindcontrole", artifact: "index.html" },
     { name: "U6 Tutorial opa Jan", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: pil-vertraging zichtbaar (opa blij na ±1,4 s), y-as uitgelegd, casusbladlabel, contrast. Gaat mee in eindcontrole", artifact: "src/tutorial.js" },
-    { name: "U7 Eindverslag + eindscherm", round: 2, verdict: "FAIL", evidence: "R1: E1, E2 (0 afwijkingen, 6 spellen), E4 PASS. FAIL E3 'elk vakje 1 tablet' onwaar, 'aan Bart' nieuwe claim, leverschade niet zichtbaar; E5/E6 knop bedekt nabespreekvraag op 375×667. R2 in bouw", artifact: "src/einde.js" },
+    { name: "U7 Eindverslag + eindscherm", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: tekst gecorrigeerd, ≠-markering, leverschade rood, vraag + knop boven de vouw. Gaat mee in eindcontrole", artifact: "src/einde.js" },
     { name: "U8 Bots in telefoonscherm (B1–B6)", round: 1, verdict: "PENDING", evidence: "Bouwer schrijft bots (echte tikken, 375×667 en 390×844)", artifact: "tests/bots.mjs" },
-    { name: "Eindcheck: smoothing + A4 over het hele spel", round: 0, verdict: "PENDING", evidence: "na U5–U8", artifact: "index.html" }
+    { name: "Eindcheck: smoothing + A4 over het hele spel", round: 1, verdict: "PENDING", evidence: "Verse criticus: A4 over hele spel, naden/samenhang, harde ondergrens C, flow (snapshot 279127b)", artifact: "index.html" }
   ],
   log: [
     { round: 4, unit: "U2", verdict: "FAIL", note: "Budget op. Resterend: oorzaakzinnen kijken naar wanneer, niet naar waardoor → onder de lat, met voorgestelde fix (tegenfeitelijke run)" },
