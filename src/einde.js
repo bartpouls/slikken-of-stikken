@@ -48,7 +48,7 @@
   var TOESTAND_LABEL = { zone: 'in de zone', onder: 'te laag', boven: 'te hoog', giftig: 'giftig' };
   var SOORT_LABEL = { tablet: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', overgeslagen: 'overgeslagen', geblokkeerd: 'geblokkeerd' }; // knopnamen uit de race
   var IBU = '#ff9f43'; // ibuprofen: oranje, zoals in de race (paars is voor de poortjes)
-  var LIJN = { zone: '#7ef0c4', onder: '#ff8f80', boven: '#ffb067', giftig: '#ff5a5a' }; // zoals in de race
+  var LIJN = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', giftig: '#ff4d5e' }; // = LIJNKLEUR in de race
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -197,14 +197,18 @@
         s += '<text x="' + f(x(g.t) + 4) + '" y="' + (T - 5) + '" class="eind-svg-ibu">ibuprofen</text>';
       }
     });
-    // zone(s)
-    var v0 = c.venster[0];
-    var yHoog = v0.hoog === Infinity ? T : y(v0.hoog), yLaag = y(v0.laag);
-    s += '<rect x="' + L + '" y="' + f(yHoog) + '" width="' + pw + '" height="' + f(yLaag - yHoog) + '" fill="rgba(61,220,151,0.16)"/>';
-    s += '<line x1="' + L + '" y1="' + f(yLaag) + '" x2="' + (L + pw) + '" y2="' + f(yLaag) + '" stroke="rgba(61,220,151,0.85)" stroke-width="1.5"/>';
-    if (v0.hoog !== Infinity) {
-      s += '<line x1="' + L + '" y1="' + f(yHoog) + '" x2="' + (L + pw) + '" y2="' + f(yHoog) + '" stroke="rgba(61,220,151,0.5)" stroke-width="1"/>';
+    // het groene vlak: uit M.venster(casus, t), dus het schuift mee als het venster in de tijd verschuift
+    var M = SoS.model, n = 48, boven = [], onder = [], heeftHoog = false;
+    for (var k = 0; k <= n; k++) {
+      var tk = c.raceDuur * k / n, vk = M.venster(c, tk);
+      if (vk.hoog !== Infinity) heeftHoog = true;
+      boven.push(f(x(tk)) + ' ' + f(vk.hoog === Infinity ? T : y(vk.hoog)));
+      onder.push(f(x(tk)) + ' ' + f(y(vk.laag)));
     }
+    s += '<path d="M' + boven.join(' L') + ' L' + onder.slice().reverse().join(' L') + ' Z" fill="rgba(61,220,151,0.16)"/>';
+    s += '<path d="M' + onder.join(' L') + '" fill="none" stroke="rgba(61,220,151,0.85)" stroke-width="1.5"/>';
+    if (heeftHoog) s += '<path d="M' + boven.join(' L') + '" fill="none" stroke="rgba(61,220,151,0.5)" stroke-width="1"/>';
+    var v0 = M.venster(c, c.raceDuur); // labels rechts: het venster aan het eind van de race
     if (c.toxisch != null && c.toxisch < ymax) {
       s += '<line x1="' + L + '" y1="' + f(y(c.toxisch)) + '" x2="' + (L + pw) + '" y2="' + f(y(c.toxisch)) +
         '" stroke="rgba(255,90,90,0.7)" stroke-width="1.2" stroke-dasharray="4 4"/>';
@@ -332,7 +336,7 @@
     var tijden = perDag.map(function (e) { return e.t; });
     var lek;
     if (c.id === 'lithium') {
-      lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 pil van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
+      lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
     } else {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur).';
       // Een dosis van het echte schema tijdens de misselijkheid: dan kan opa Jan niet slikken.
@@ -406,7 +410,9 @@
     container.innerHTML =
       '<div class="eind-binnen">' +
         '<div class="eind-held">' +
-          '<p class="eind-naam" data-eind="naam">' + esc(data.naam || '') + '</p>' +
+          // twee lege zwevers houden alleen de eerste regel vrij van de dempknop (rechtsboven), symmetrisch
+          '<p class="eind-naam" data-eind="naam"><span class="eind-naam-vrij" aria-hidden="true"></span>' +
+            '<span class="eind-naam-vrij r" aria-hidden="true"></span>' + esc(data.naam || '') + '</p>' +
           '<p class="eind-label">QALY-punten totaal</p>' +
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
@@ -467,7 +473,7 @@
     // Speelnaam: 1–2 regels, alleen breken op spaties; zo nodig kleiner, maar nooit onder 32 px.
     var naamEl = container.querySelector('[data-eind="naam"]');
     function pasNaam() {
-      var max = root.innerHeight >= 800 ? 40 : 36;
+      var max = root.innerHeight >= 800 ? 40 : (root.innerHeight >= 700 ? 36 : 34);
       naamEl.style.overflowWrap = 'normal';
       for (var px = max; px >= 32; px--) {
         naamEl.style.fontSize = px + 'px';

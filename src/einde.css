@@ -67,9 +67,9 @@
 }
 /* = LIJNKLEUR in app.js (de kleur van de spiegel in de race) */
 .t-zone { background: #7ef0c4; }
-.t-onder { background: #ff8f80; }
-.t-boven { background: #ffb067; }
-.t-giftig { background: #ff5a5a; }
+.t-onder { background: #7cc4ff; }
+.t-boven { background: #ffe14d; }
+.t-giftig { background: #ff4d5e; }
 
 .eind-legenda {
   list-style: none; margin: 10px 0 0; padding: 0;
@@ -95,7 +95,8 @@
 .eind-acties .knop-wit.groot { flex: 1 1 auto; max-width: none; }
 /* dempknop van app.js: dezelfde plek als op de andere schermen (rechtsboven), maar hij scrolt mee */
 #scherm-einde > .demp { position: absolute; top: calc(var(--veilig-boven) + 6px); right: calc(var(--veilig-rechts) + 6px); }
-.eind-naam { padding: 0 50px; }
+.eind-naam-vrij { float: left; width: 46px; height: 1em; }
+.eind-naam-vrij.r { float: right; }
 .eind-scorebord { margin: 12px 0 0; font-size: 16px; line-height: 1.4; color: #2f2f35; max-width: 340px; }
 .eind-spelpunten { margin: 4px 0 0; font-size: 15px; color: #4d4d55; }
 
@@ -118,7 +119,7 @@
 .eind-svg-label.tox { fill: #ff9a9a; }
 .eind-svg-as { fill: rgba(255, 255, 255, .72); }
 .eind-svg-gebeurtenis { fill: #d6ef9a; }
-.eind-svg-ibu { fill: #ffb067; }
+.eind-svg-ibu { fill: #ff9f43; }
 
 .eind-opbouw { width: 100%; margin: 16px 0 0; border-collapse: collapse; font-size: 18px; font-variant-numeric: tabular-nums; }
 .eind-opbouw caption { text-align: left; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #5c5c64; padding-bottom: 4px; }
@@ -223,11 +224,11 @@
 }
 /* lage schermen (375×667): vraag en knop samen boven de vouw */
 @media (max-height: 700px) {
-  .eind-totaal { font-size: 64px; }
-  .eind-kaart { padding: 8px 12px 8px; }
+  .eind-totaal { font-size: 58px; }
+  .eind-kaart { padding: 7px 12px 7px; }
   .eind-kaart-score { font-size: 30px; }
   .eind-tegels { margin-top: 7px; gap: 3px; }
-  .eind-tegel { height: 19px; }
+  .eind-tegel { height: 17px; }
   .eind-legenda { margin-top: 8px; }
   .eind-vraag { margin-top: 14px; padding: 10px 14px; }
   .eind-vraag p { font-size: 21px; }

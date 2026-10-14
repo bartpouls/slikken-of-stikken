@@ -269,6 +269,8 @@
       s += '<rect x="' + Lp + '" y="' + (Tp - 4) + '" width="' + pw + '" height="' + (yz - Tp + 4) + '" fill="#3ddc97" fill-opacity=".13"/>';
       s += '<path d="M' + Lp + ' ' + yz + 'H' + (Lp + pw) + '" stroke="' + K.zone + '" stroke-width="2" stroke-dasharray="6 5"/>';
       s += '<text x="' + (Lp + pw - 4) + '" y="' + (Tp + 12) + '" text-anchor="end" class="tut-zone">' + C.zone.label + '</text>';
+      // de onderrand van het groene vlak heet "de streep" (nabespreekvraag)
+      s += '<text x="' + (Lp + pw - 4) + '" y="' + (yz + 15) + '" text-anchor="end" class="tut-zone tut-streep">streep</text>';
       // y-as: leeslabel
       s += '<text x="' + (Lp - 6) + '" y="' + (Tp - 9) + '" text-anchor="start" class="tut-eenheid">paracetamol in het bloed (mg/L)</text>';
       g.ticksY.forEach(function (c) {
@@ -339,7 +341,7 @@
       if (actief) {
         var tn = actief.sim.t, xn = X(Math.min(tn, g.T)), yn = Y(actief.sim.C);
         s += '<path d="M' + xn + ' ' + Tp + 'V' + y0 + '" stroke="#b07cff" stroke-width="2"/>';
-        s += '<circle cx="' + xn + '" cy="' + yn + '" r="5.5" fill="' + (actief.sim.C >= ZONE - 1e-9 ? '#3ddc97' : '#ff6f61') + '" stroke="' + INKT + '" stroke-width="2.5"/>';
+        s += '<circle cx="' + xn + '" cy="' + yn + '" r="5.5" fill="' + (actief.sim.C >= ZONE - 1e-9 ? '#3ddc97' : '#7cc4ff') + '" stroke="' + INKT + '" stroke-width="2.5"/>';
         s += '<text x="' + (Lp + pw + 4) + '" y="' + (Tp - 9) + '" text-anchor="end" class="tut-klok">' + ui.getal(Math.floor(tn * 10 + 1e-6) / 10, (Math.floor(tn * 10 + 1e-6) % 10) ? 1 : 0) + ' u</text>';
       }
       // toedieningen onder de as

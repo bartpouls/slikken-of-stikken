@@ -205,13 +205,14 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .lever-vul { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--geel); border-radius: 6px; transition: width .3s ease, background .3s; }
 .lever-max { position: absolute; top: 0; bottom: 0; left: 80%; width: 2px; background: rgba(255, 255, 255, .7); }
 .lever.vol .lever-vul { background: var(--koraal); }
-.lever.vol { color: var(--koraal); animation: knipper 1s ease 3; }
+.lever.vol { color: var(--koraal); } /* tekst blijft vol zichtbaar (≥ 4,5:1); alleen meter en icoon knipperen */
+.lever.vol .lever-meter, .lever.vol .lever-icoon { animation: knipper 1s ease 3; }
 .lever.vol .lever-icoon { color: var(--koraal); }
 @keyframes knipper { 50% { opacity: .35; } }
 .patient { display: flex; align-items: center; gap: 8px; margin-left: auto; white-space: nowrap; }
 .chip {
   display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px;
-  font-size: 12.5px; font-weight: 700; background: rgba(255, 159, 67, .18); color: #ffb067;
+  font-size: 12.5px; font-weight: 700; background: rgba(255, 159, 67, .18); color: #ff9f43;
   animation: inploppen .4s ease;
 }
 @keyframes inploppen { from { transform: scale(.5); opacity: 0; } }
@@ -329,7 +330,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 }
 @media (prefers-reduced-motion: reduce) {
   .scherm, .melding, .lever-vul { transition: none; }
-  .fig.wiebel, .actie.schud, .lever.vol { animation: none; }
+  .fig.wiebel, .actie.schud, .lever.vol .lever-meter, .lever.vol .lever-icoon { animation: none; }
 }
 
 </style>
@@ -529,9 +530,9 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 }
 /* = LIJNKLEUR in app.js (de kleur van de spiegel in de race) */
 .t-zone { background: #7ef0c4; }
-.t-onder { background: #ff8f80; }
-.t-boven { background: #ffb067; }
-.t-giftig { background: #ff5a5a; }
+.t-onder { background: #7cc4ff; }
+.t-boven { background: #ffe14d; }
+.t-giftig { background: #ff4d5e; }
 
 .eind-legenda {
   list-style: none; margin: 10px 0 0; padding: 0;
@@ -557,7 +558,8 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .eind-acties .knop-wit.groot { flex: 1 1 auto; max-width: none; }
 /* dempknop van app.js: dezelfde plek als op de andere schermen (rechtsboven), maar hij scrolt mee */
 #scherm-einde > .demp { position: absolute; top: calc(var(--veilig-boven) + 6px); right: calc(var(--veilig-rechts) + 6px); }
-.eind-naam { padding: 0 50px; }
+.eind-naam-vrij { float: left; width: 46px; height: 1em; }
+.eind-naam-vrij.r { float: right; }
 .eind-scorebord { margin: 12px 0 0; font-size: 16px; line-height: 1.4; color: #2f2f35; max-width: 340px; }
 .eind-spelpunten { margin: 4px 0 0; font-size: 15px; color: #4d4d55; }
 
@@ -580,7 +582,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .eind-svg-label.tox { fill: #ff9a9a; }
 .eind-svg-as { fill: rgba(255, 255, 255, .72); }
 .eind-svg-gebeurtenis { fill: #d6ef9a; }
-.eind-svg-ibu { fill: #ffb067; }
+.eind-svg-ibu { fill: #ff9f43; }
 
 .eind-opbouw { width: 100%; margin: 16px 0 0; border-collapse: collapse; font-size: 18px; font-variant-numeric: tabular-nums; }
 .eind-opbouw caption { text-align: left; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #5c5c64; padding-bottom: 4px; }
@@ -685,11 +687,11 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 }
 /* lage schermen (375×667): vraag en knop samen boven de vouw */
 @media (max-height: 700px) {
-  .eind-totaal { font-size: 64px; }
-  .eind-kaart { padding: 8px 12px 8px; }
+  .eind-totaal { font-size: 58px; }
+  .eind-kaart { padding: 7px 12px 7px; }
   .eind-kaart-score { font-size: 30px; }
   .eind-tegels { margin-top: 7px; gap: 3px; }
-  .eind-tegel { height: 19px; }
+  .eind-tegel { height: 17px; }
   .eind-legenda { margin-top: 8px; }
   .eind-vraag { margin-top: 14px; padding: 10px 14px; }
   .eind-vraag p { font-size: 21px; }
@@ -2526,6 +2528,8 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       s += '<rect x="' + Lp + '" y="' + (Tp - 4) + '" width="' + pw + '" height="' + (yz - Tp + 4) + '" fill="#3ddc97" fill-opacity=".13"/>';
       s += '<path d="M' + Lp + ' ' + yz + 'H' + (Lp + pw) + '" stroke="' + K.zone + '" stroke-width="2" stroke-dasharray="6 5"/>';
       s += '<text x="' + (Lp + pw - 4) + '" y="' + (Tp + 12) + '" text-anchor="end" class="tut-zone">' + C.zone.label + '</text>';
+      // de onderrand van het groene vlak heet "de streep" (nabespreekvraag)
+      s += '<text x="' + (Lp + pw - 4) + '" y="' + (yz + 15) + '" text-anchor="end" class="tut-zone tut-streep">streep</text>';
       // y-as: leeslabel
       s += '<text x="' + (Lp - 6) + '" y="' + (Tp - 9) + '" text-anchor="start" class="tut-eenheid">paracetamol in het bloed (mg/L)</text>';
       g.ticksY.forEach(function (c) {
@@ -2596,7 +2600,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       if (actief) {
         var tn = actief.sim.t, xn = X(Math.min(tn, g.T)), yn = Y(actief.sim.C);
         s += '<path d="M' + xn + ' ' + Tp + 'V' + y0 + '" stroke="#b07cff" stroke-width="2"/>';
-        s += '<circle cx="' + xn + '" cy="' + yn + '" r="5.5" fill="' + (actief.sim.C >= ZONE - 1e-9 ? '#3ddc97' : '#ff6f61') + '" stroke="' + INKT + '" stroke-width="2.5"/>';
+        s += '<circle cx="' + xn + '" cy="' + yn + '" r="5.5" fill="' + (actief.sim.C >= ZONE - 1e-9 ? '#3ddc97' : '#7cc4ff') + '" stroke="' + INKT + '" stroke-width="2.5"/>';
         s += '<text x="' + (Lp + pw + 4) + '" y="' + (Tp - 9) + '" text-anchor="end" class="tut-klok">' + ui.getal(Math.floor(tn * 10 + 1e-6) / 10, (Math.floor(tn * 10 + 1e-6) % 10) ? 1 : 0) + ' u</text>';
       }
       // toedieningen onder de as
@@ -2899,7 +2903,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   var TOESTAND_LABEL = { zone: 'in de zone', onder: 'te laag', boven: 'te hoog', giftig: 'giftig' };
   var SOORT_LABEL = { tablet: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', overgeslagen: 'overgeslagen', geblokkeerd: 'geblokkeerd' }; // knopnamen uit de race
   var IBU = '#ff9f43'; // ibuprofen: oranje, zoals in de race (paars is voor de poortjes)
-  var LIJN = { zone: '#7ef0c4', onder: '#ff8f80', boven: '#ffb067', giftig: '#ff5a5a' }; // zoals in de race
+  var LIJN = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', giftig: '#ff4d5e' }; // = LIJNKLEUR in de race
 
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -3048,14 +3052,18 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
         s += '<text x="' + f(x(g.t) + 4) + '" y="' + (T - 5) + '" class="eind-svg-ibu">ibuprofen</text>';
       }
     });
-    // zone(s)
-    var v0 = c.venster[0];
-    var yHoog = v0.hoog === Infinity ? T : y(v0.hoog), yLaag = y(v0.laag);
-    s += '<rect x="' + L + '" y="' + f(yHoog) + '" width="' + pw + '" height="' + f(yLaag - yHoog) + '" fill="rgba(61,220,151,0.16)"/>';
-    s += '<line x1="' + L + '" y1="' + f(yLaag) + '" x2="' + (L + pw) + '" y2="' + f(yLaag) + '" stroke="rgba(61,220,151,0.85)" stroke-width="1.5"/>';
-    if (v0.hoog !== Infinity) {
-      s += '<line x1="' + L + '" y1="' + f(yHoog) + '" x2="' + (L + pw) + '" y2="' + f(yHoog) + '" stroke="rgba(61,220,151,0.5)" stroke-width="1"/>';
+    // het groene vlak: uit M.venster(casus, t), dus het schuift mee als het venster in de tijd verschuift
+    var M = SoS.model, n = 48, boven = [], onder = [], heeftHoog = false;
+    for (var k = 0; k <= n; k++) {
+      var tk = c.raceDuur * k / n, vk = M.venster(c, tk);
+      if (vk.hoog !== Infinity) heeftHoog = true;
+      boven.push(f(x(tk)) + ' ' + f(vk.hoog === Infinity ? T : y(vk.hoog)));
+      onder.push(f(x(tk)) + ' ' + f(y(vk.laag)));
     }
+    s += '<path d="M' + boven.join(' L') + ' L' + onder.slice().reverse().join(' L') + ' Z" fill="rgba(61,220,151,0.16)"/>';
+    s += '<path d="M' + onder.join(' L') + '" fill="none" stroke="rgba(61,220,151,0.85)" stroke-width="1.5"/>';
+    if (heeftHoog) s += '<path d="M' + boven.join(' L') + '" fill="none" stroke="rgba(61,220,151,0.5)" stroke-width="1"/>';
+    var v0 = M.venster(c, c.raceDuur); // labels rechts: het venster aan het eind van de race
     if (c.toxisch != null && c.toxisch < ymax) {
       s += '<line x1="' + L + '" y1="' + f(y(c.toxisch)) + '" x2="' + (L + pw) + '" y2="' + f(y(c.toxisch)) +
         '" stroke="rgba(255,90,90,0.7)" stroke-width="1.2" stroke-dasharray="4 4"/>';
@@ -3183,7 +3191,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     var tijden = perDag.map(function (e) { return e.t; });
     var lek;
     if (c.id === 'lithium') {
-      lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 pil van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
+      lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
     } else {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur).';
       // Een dosis van het echte schema tijdens de misselijkheid: dan kan opa Jan niet slikken.
@@ -3257,7 +3265,9 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     container.innerHTML =
       '<div class="eind-binnen">' +
         '<div class="eind-held">' +
-          '<p class="eind-naam" data-eind="naam">' + esc(data.naam || '') + '</p>' +
+          // twee lege zwevers houden alleen de eerste regel vrij van de dempknop (rechtsboven), symmetrisch
+          '<p class="eind-naam" data-eind="naam"><span class="eind-naam-vrij" aria-hidden="true"></span>' +
+            '<span class="eind-naam-vrij r" aria-hidden="true"></span>' + esc(data.naam || '') + '</p>' +
           '<p class="eind-label">QALY-punten totaal</p>' +
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
@@ -3318,7 +3328,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     // Speelnaam: 1–2 regels, alleen breken op spaties; zo nodig kleiner, maar nooit onder 32 px.
     var naamEl = container.querySelector('[data-eind="naam"]');
     function pasNaam() {
-      var max = root.innerHeight >= 800 ? 40 : 36;
+      var max = root.innerHeight >= 800 ? 40 : (root.innerHeight >= 700 ? 36 : 34);
       naamEl.style.overflowWrap = 'normal';
       for (var px = max; px >= 32; px--) {
         naamEl.style.fontSize = px + 'px';
@@ -3643,6 +3653,12 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     if (h && typeof h.stop === 'function') staat.moduleStop = h.stop;
   }
 
+  // Venster als tekst, uit de casusdata (M.venster: kan in de tijd verschuiven), bv. "0,6–1,0 mmol/L".
+  function vensterTekst(c, t) {
+    var v = M.venster(c, t), e = '\u00a0' + CFG[c.id].eenheid, dec = c.id === 'lithium' ? 1 : 0;
+    return v.hoog === Infinity ? '≥\u00a0' + getal(v.laag, dec) + e : getal(v.laag, dec) + '–' + getal(v.hoog, dec) + e;
+  }
+
   // ------------------------------------------------------------------------------------------
   // 3. Intro-kaartje per race
   // ------------------------------------------------------------------------------------------
@@ -3661,7 +3677,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
          'Houd hem in het groene vlak. De ondergrens daarvan is de streep.',
          'In de race loopt de tijd van boven naar beneden. Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.']
       : ['De lijn is de spiegel: hoeveel lithium er in het bloed zit.',
-         'Houd hem in het groene vlak (0,6–1,0\u00a0mmol/L).',
+         'Houd hem in het groene vlak (' + vensterTekst(c, 0) + ').',
          'Een paars poortje om 0, 8 en 16 uur: kies Tablet (twee keer tikken = 2 tabletten) of Overslaan.'];
     var ul = $('intro-regel');
     ul.innerHTML = '';
@@ -3677,12 +3693,12 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   var CFG = {
     paracetamol: {
       secPerUur: 90 / 24, Cmax: 20, monster: 0.02, dun: 0.1,
-      ticks: [{ C: 0, t: '0' }, { C: 5, t: '5 mg/L', streep: true }, { C: 10, t: '10' }, { C: 15, t: '15' }],
+      as: [10, 15], eenheid: 'mg/L', // hulplijnen; de venstergrenzen komen uit M.venster(casus, t)
       zoneLabel: null, toxLabel: null
     },
     lithium: {
       secPerUur: 90 / 240, Cmax: 2, monster: 0.1, dun: 1,
-      ticks: [{ C: 0, t: '0' }, { C: 0.6, t: '0,6', streep: true }, { C: 1.0, t: '1,0' }, { C: 1.5, t: '1,5' }, { C: 2.0, t: '2 mmol/L', rechts: true }],
+      as: [], eenheid: 'mmol/L', // + casus.toxisch; de venstergrenzen komen uit M.venster(casus, t)
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     }
   };
@@ -3959,7 +3975,9 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     var v = M.venster(R.casus, t);
     return C < v.laag ? 'onder' : (C > v.hoog ? 'boven' : 'zone');
   }
-  var LIJNKLEUR = { zone: '#7ef0c4', onder: '#ff8f80', boven: '#ffb067', tox: '#ff5a5a' };
+  // Eén kleur per betekenis (ook op het eindscherm): groen = in de zone, blauw = te laag, geel = te hoog,
+  // rood = giftig/lever; oranje = ibuprofen, limoen = misselijk, paars = poortjes.
+  var LIJNKLEUR = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', tox: '#ff4d5e' };
   // lv = leverschade (dagteller boven het maximum): dan is de lijn rood, ook al is de spiegel "in de zone".
   function lijnKleur(C, t, lv) {
     if (lv) return LIJNKLEUR.tox;
@@ -4163,7 +4181,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
           ctx.strokeStyle = 'rgba(255,159,67,0.8)'; ctx.lineWidth = 1.5;
           ctx.beginPath(); ctx.moveTo(0, yk); ctx.lineTo(w, yk); ctx.stroke();
         }
-        ctx.fillStyle = 'rgba(255,176,103,0.95)';
+        ctx.fillStyle = '#ff9f43';
         gebeurtenisLabel('ibuprofen', Math.max(yk + 18, BOVENRAND + 4), true);
       }
     });
@@ -4325,15 +4343,26 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     function halo(tekst, x, y) {
       ctx.strokeStyle = '#000'; ctx.lineWidth = 5; ctx.strokeText(tekst, x, y); ctx.fillText(tekst, x, y);
     }
+    // as-labels: venstergrenzen uit M.venster(casus, t) (schuiven mee), giftig uit casus.toxisch, hulplijnen;
+    // de eenheid staat bij beide casussen rechts, bij het hoogste getal.
+    var v0 = M.venster(c, tm);
+    var zl = xVan(v0.laag), zr = v0.hoog === Infinity ? Rr : xVan(v0.hoog);
+    var dec = c.id === 'lithium' ? 1 : 0;
+    var fmt = function (x) { return x === 0 || x === R.cfg.Cmax ? getalKort(x, 1) : getal(x, x % 1 && !dec ? 1 : dec); };
+    var vast = [{ C: v0.laag, streep: true }];
+    if (v0.hoog !== Infinity) vast.push({ C: v0.hoog });
+    var ticks = vast.slice();
+    [0].concat(R.cfg.as, c.toxisch != null ? [c.toxisch] : []).forEach(function (x) {
+      if (vast.every(function (tk) { return Math.abs(xVan(tk.C) - xVan(x)) > 26; })) ticks.push({ C: x });
+    });
+    if (vast.every(function (tk) { return xVan(tk.C) < Rr - 70; })) ticks.push({ C: R.cfg.Cmax, rechts: true });
     ctx.font = '600 12px ' + FONT; ctx.textBaseline = 'top';
-    R.cfg.ticks.forEach(function (tk) {
+    ticks.forEach(function (tk) {
       var xt = xVan(tk.C);
       ctx.fillStyle = tk.streep ? 'rgba(126,240,196,1)' : 'rgba(255,255,255,0.72)';
       ctx.textAlign = tk.C === 0 ? 'left' : (tk.rechts ? 'right' : 'center');
-      halo(tk.t, tk.C === 0 ? xt - 2 : xt, 6);
+      halo(fmt(tk.C) + (tk.rechts ? ' ' + R.cfg.eenheid : ''), tk.C === 0 ? xt - 2 : xt, 6);
     });
-    var v0 = M.venster(c, tm);
-    var zl = xVan(v0.laag), zr = v0.hoog === Infinity ? Rr : xVan(v0.hoog);
     // "de streep" = de ondergrens van het groene vlak (zie intro race 1)
     ctx.fillStyle = 'rgba(126,240,196,1)'; ctx.textAlign = 'right';
     halo('streep →', zl - 4, 23);

@@ -194,13 +194,14 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .lever-vul { position: absolute; inset: 0 auto 0 0; width: 0; background: var(--geel); border-radius: 6px; transition: width .3s ease, background .3s; }
 .lever-max { position: absolute; top: 0; bottom: 0; left: 80%; width: 2px; background: rgba(255, 255, 255, .7); }
 .lever.vol .lever-vul { background: var(--koraal); }
-.lever.vol { color: var(--koraal); animation: knipper 1s ease 3; }
+.lever.vol { color: var(--koraal); } /* tekst blijft vol zichtbaar (≥ 4,5:1); alleen meter en icoon knipperen */
+.lever.vol .lever-meter, .lever.vol .lever-icoon { animation: knipper 1s ease 3; }
 .lever.vol .lever-icoon { color: var(--koraal); }
 @keyframes knipper { 50% { opacity: .35; } }
 .patient { display: flex; align-items: center; gap: 8px; margin-left: auto; white-space: nowrap; }
 .chip {
   display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; border-radius: 999px;
-  font-size: 12.5px; font-weight: 700; background: rgba(255, 159, 67, .18); color: #ffb067;
+  font-size: 12.5px; font-weight: 700; background: rgba(255, 159, 67, .18); color: #ff9f43;
   animation: inploppen .4s ease;
 }
 @keyframes inploppen { from { transform: scale(.5); opacity: 0; } }
@@ -318,5 +319,5 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 }
 @media (prefers-reduced-motion: reduce) {
   .scherm, .melding, .lever-vul { transition: none; }
-  .fig.wiebel, .actie.schud, .lever.vol { animation: none; }
+  .fig.wiebel, .actie.schud, .lever.vol .lever-meter, .lever.vol .lever-icoon { animation: none; }
 }

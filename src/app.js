@@ -289,6 +289,12 @@
     if (h && typeof h.stop === 'function') staat.moduleStop = h.stop;
   }
 
+  // Venster als tekst, uit de casusdata (M.venster: kan in de tijd verschuiven), bv. "0,6–1,0 mmol/L".
+  function vensterTekst(c, t) {
+    var v = M.venster(c, t), e = '\u00a0' + CFG[c.id].eenheid, dec = c.id === 'lithium' ? 1 : 0;
+    return v.hoog === Infinity ? '≥\u00a0' + getal(v.laag, dec) + e : getal(v.laag, dec) + '–' + getal(v.hoog, dec) + e;
+  }
+
   // ------------------------------------------------------------------------------------------
   // 3. Intro-kaartje per race
   // ------------------------------------------------------------------------------------------
@@ -307,7 +313,7 @@
          'Houd hem in het groene vlak. De ondergrens daarvan is de streep.',
          'In de race loopt de tijd van boven naar beneden. Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.']
       : ['De lijn is de spiegel: hoeveel lithium er in het bloed zit.',
-         'Houd hem in het groene vlak (0,6–1,0\u00a0mmol/L).',
+         'Houd hem in het groene vlak (' + vensterTekst(c, 0) + ').',
          'Een paars poortje om 0, 8 en 16 uur: kies Tablet (twee keer tikken = 2 tabletten) of Overslaan.'];
     var ul = $('intro-regel');
     ul.innerHTML = '';
@@ -323,12 +329,12 @@
   var CFG = {
     paracetamol: {
       secPerUur: 90 / 24, Cmax: 20, monster: 0.02, dun: 0.1,
-      ticks: [{ C: 0, t: '0' }, { C: 5, t: '5 mg/L', streep: true }, { C: 10, t: '10' }, { C: 15, t: '15' }],
+      as: [10, 15], eenheid: 'mg/L', // hulplijnen; de venstergrenzen komen uit M.venster(casus, t)
       zoneLabel: null, toxLabel: null
     },
     lithium: {
       secPerUur: 90 / 240, Cmax: 2, monster: 0.1, dun: 1,
-      ticks: [{ C: 0, t: '0' }, { C: 0.6, t: '0,6', streep: true }, { C: 1.0, t: '1,0' }, { C: 1.5, t: '1,5' }, { C: 2.0, t: '2 mmol/L', rechts: true }],
+      as: [], eenheid: 'mmol/L', // + casus.toxisch; de venstergrenzen komen uit M.venster(casus, t)
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     }
   };
@@ -605,7 +611,9 @@
     var v = M.venster(R.casus, t);
     return C < v.laag ? 'onder' : (C > v.hoog ? 'boven' : 'zone');
   }
-  var LIJNKLEUR = { zone: '#7ef0c4', onder: '#ff8f80', boven: '#ffb067', tox: '#ff5a5a' };
+  // Eén kleur per betekenis (ook op het eindscherm): groen = in de zone, blauw = te laag, geel = te hoog,
+  // rood = giftig/lever; oranje = ibuprofen, limoen = misselijk, paars = poortjes.
+  var LIJNKLEUR = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', tox: '#ff4d5e' };
   // lv = leverschade (dagteller boven het maximum): dan is de lijn rood, ook al is de spiegel "in de zone".
   function lijnKleur(C, t, lv) {
     if (lv) return LIJNKLEUR.tox;
@@ -809,7 +817,7 @@
           ctx.strokeStyle = 'rgba(255,159,67,0.8)'; ctx.lineWidth = 1.5;
           ctx.beginPath(); ctx.moveTo(0, yk); ctx.lineTo(w, yk); ctx.stroke();
         }
-        ctx.fillStyle = 'rgba(255,176,103,0.95)';
+        ctx.fillStyle = '#ff9f43';
         gebeurtenisLabel('ibuprofen', Math.max(yk + 18, BOVENRAND + 4), true);
       }
     });
@@ -971,15 +979,26 @@
     function halo(tekst, x, y) {
       ctx.strokeStyle = '#000'; ctx.lineWidth = 5; ctx.strokeText(tekst, x, y); ctx.fillText(tekst, x, y);
     }
+    // as-labels: venstergrenzen uit M.venster(casus, t) (schuiven mee), giftig uit casus.toxisch, hulplijnen;
+    // de eenheid staat bij beide casussen rechts, bij het hoogste getal.
+    var v0 = M.venster(c, tm);
+    var zl = xVan(v0.laag), zr = v0.hoog === Infinity ? Rr : xVan(v0.hoog);
+    var dec = c.id === 'lithium' ? 1 : 0;
+    var fmt = function (x) { return x === 0 || x === R.cfg.Cmax ? getalKort(x, 1) : getal(x, x % 1 && !dec ? 1 : dec); };
+    var vast = [{ C: v0.laag, streep: true }];
+    if (v0.hoog !== Infinity) vast.push({ C: v0.hoog });
+    var ticks = vast.slice();
+    [0].concat(R.cfg.as, c.toxisch != null ? [c.toxisch] : []).forEach(function (x) {
+      if (vast.every(function (tk) { return Math.abs(xVan(tk.C) - xVan(x)) > 26; })) ticks.push({ C: x });
+    });
+    if (vast.every(function (tk) { return xVan(tk.C) < Rr - 70; })) ticks.push({ C: R.cfg.Cmax, rechts: true });
     ctx.font = '600 12px ' + FONT; ctx.textBaseline = 'top';
-    R.cfg.ticks.forEach(function (tk) {
+    ticks.forEach(function (tk) {
       var xt = xVan(tk.C);
       ctx.fillStyle = tk.streep ? 'rgba(126,240,196,1)' : 'rgba(255,255,255,0.72)';
       ctx.textAlign = tk.C === 0 ? 'left' : (tk.rechts ? 'right' : 'center');
-      halo(tk.t, tk.C === 0 ? xt - 2 : xt, 6);
+      halo(fmt(tk.C) + (tk.rechts ? ' ' + R.cfg.eenheid : ''), tk.C === 0 ? xt - 2 : xt, 6);
     });
-    var v0 = M.venster(c, tm);
-    var zl = xVan(v0.laag), zr = v0.hoog === Infinity ? Rr : xVan(v0.hoog);
     // "de streep" = de ondergrens van het groene vlak (zie intro race 1)
     ctx.fillStyle = 'rgba(126,240,196,1)'; ctx.textAlign = 'right';
     halo('streep →', zl - 4, 23);
