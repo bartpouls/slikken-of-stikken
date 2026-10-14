@@ -14,8 +14,8 @@ window.GAUNTLET = {
     { name: "U5 Racescherm + spelverloop", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: 'pijnstilling (vereenvoudigd)', contrast ≥5,25:1, melding niet over doelpoortje, keuzefeedback, terug-knopbescherming, leverschade rood. Wordt beoordeeld door B-criticus + eindcontrole", artifact: "index.html" },
     { name: "U6 Tutorial opa Jan", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: pil-vertraging zichtbaar (opa blij na ±1,4 s), y-as uitgelegd, casusbladlabel, contrast. Gaat mee in eindcontrole", artifact: "src/tutorial.js" },
     { name: "U7 Eindverslag + eindscherm", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: tekst gecorrigeerd, ≠-markering, leverschade rood, vraag + knop boven de vouw. Gaat mee in eindcontrole", artifact: "src/einde.js" },
-    { name: "U8 Bots in telefoonscherm (B1–B6)", round: 1, verdict: "PENDING", evidence: "Bouwer schrijft bots (echte tikken, 375×667 en 390×844)", artifact: "tests/bots.mjs" },
-    { name: "Eindcheck: smoothing + A4 over het hele spel", round: 1, verdict: "FAIL", evidence: "Blind: G1 A4 hele spel PASS (0 afwijkende getallen/beweringen), G4 flow PASS (races 93 s). FAIL G3: tekst overlapt bij poortjes in race; scorebordknoppen <48 px. 10 naden. Smoothing-bouwer aan het werk", artifact: "index.html" }
+    { name: "U8 Bots in telefoonscherm (B1–B6)", round: 1, verdict: "PENDING", evidence: "Bouwerrapport: B1–B6 gehaald in beide viewports (22 runs, score scherm = model, Δ 0). Verse B-criticus controleert bots en draait opnieuw op build c9d4b25", artifact: "tests/bots.mjs" },
+    { name: "Eindcheck: smoothing + A4 over het hele spel", round: 2, verdict: "PENDING", evidence: "Smoothing pass gedaan (0 overlaps in ±22.000 frames volgens bouwer; scorebordknoppen ≥48). Verse eindcontrole ronde 2 loopt", artifact: "index.html" }
   ],
   log: [
     { round: 1, unit: "Eindcheck", verdict: "FAIL", note: "Inhoud klopt overal; overlap op beslismoment + knoppen scorebord + 10 naden → smoothing pass" },
