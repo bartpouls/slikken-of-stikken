@@ -46,7 +46,7 @@
 .eind-kaart-meer { margin-top: 2px; font-size: 15px; font-weight: 700; color: #6a3fd1; }
 
 /* tegels: één per poortje, twee rijen */
-.eind-tegels { display: flex; flex-direction: column; gap: 8px; margin-top: 9px; }
+.eind-tegels { display: flex; flex-direction: column; gap: 6px; margin-top: 9px; }
 .eind-tegelrij { display: grid; grid-template-columns: 50px 1fr; align-items: center; gap: 4px; }
 .eind-rijlabel { font-size: 14px; font-weight: 700; color: #45454c; white-space: nowrap; }
 .eind-tegelvak { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 3px; }
@@ -56,8 +56,9 @@
   animation: eind-tegel .32s ease both; animation-delay: calc(var(--i, 0) * 14ms + 150ms);
 }
 @keyframes eind-tegel { from { transform: scale(.4) rotateX(80deg); opacity: .2; } }
-.eind-tegel.m::after { /* misselijk: olijfgroen streepje onder de tegel */
-  content: ""; position: absolute; left: -2px; right: -2px; bottom: -6px; height: 4px; background: #6f8f12; border-radius: 2px;
+.eind-tegel.m::after { /* misselijk: limoen streepje in de tegel */
+  content: ""; position: absolute; left: 3px; right: 3px; bottom: 3px; height: 4px; background: #e4f59a; border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(27, 27, 31, .55);
 }
 .eind-tegel.ibu::before { /* ibuprofen: paarse streep vóór de tegel */
   content: ""; position: absolute; left: -5px; top: -4px; bottom: -4px; width: 3px; background: var(--paars-diep); border-radius: 2px;
@@ -74,7 +75,7 @@
 }
 .eind-legenda li { display: inline-flex; align-items: center; gap: 6px; }
 .eind-legenda .eind-tegel { width: 16px; height: 16px; border-radius: 4px; animation: none; }
-.eind-leg-m { width: 18px; height: 5px; border-radius: 2px; background: #6f8f12; }
+.eind-leg-m { width: 18px; height: 6px; border-radius: 2px; background: #e4f59a; box-shadow: 0 0 0 1.5px #1b1b1f; }
 .eind-leg-ibu { width: 4px; height: 18px; border-radius: 2px; background: var(--paars-diep); }
 
 .eind-vraag {
@@ -150,8 +151,8 @@
   position: absolute; top: 1px; right: 4px; font-size: 11px; font-weight: 800; color: #6a3fd1;
 }
 .eind-cel-anders {
-  position: absolute; bottom: -7px; right: -6px; width: 20px; height: 20px; border-radius: 50%;
-  display: grid; place-items: center; background: #c0362a; color: var(--wit); font-size: 15px; font-weight: 800; line-height: 1;
+  position: absolute; bottom: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%;
+  display: grid; place-items: center; background: #c0362a; color: var(--wit); font-size: 14px; font-weight: 800; line-height: 1;
 }
 .eind-cel-ic { position: relative; display: inline-flex; align-items: center; }
 .eind-cel-ic svg { width: 28px; height: 28px; filter: drop-shadow(0 0 .6px #1b1b1f) drop-shadow(0 0 .6px #1b1b1f); }
