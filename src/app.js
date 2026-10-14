@@ -790,7 +790,7 @@
 
     // opnamedepot ("onderweg"): vertraging van slikken/zetpil zichtbaar
     var ref = c.routes.slik.dosis * c.routes.slik.F;
-    var dep = R.race.sim.depot / ref;
+    var dep = R.race.sim.depot / ref, blobX = null;
     if (dep > 0.03) {
       var rB = 5 + 13 * Math.sqrt(Math.min(1.6, dep));
       // links (ver van de stip), of links náást de stip als die rechts staat ("nu"-label staat dan links)
@@ -800,6 +800,7 @@
       ctx.setLineDash([2, 5]); ctx.lineDashOffset = -(nu / 40) % 7 * (xD > xB ? 1 : -1);
       ctx.beginPath(); ctx.moveTo(xB, yN); ctx.lineTo(xD, yN); ctx.stroke();
       ctx.setLineDash([]); ctx.lineDashOffset = 0;
+      blobX = xB;
       ctx.fillStyle = 'rgba(255,225,161,0.22)';
       ctx.beginPath(); ctx.arc(xB, yN, rB, 0, 6.283); ctx.fill();
       ctx.strokeStyle = 'rgba(255,225,161,0.8)'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -863,7 +864,10 @@
     ctx.textAlign = 'left';
     if (xl + wv > Rr) { xl = xD - 12; ctx.textAlign = 'right'; }
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    ctx.fillText(waarde, xl, yN + 9);
+    // botst de waarde met het "onderweg"-bolletje? dan erboven
+    var lx0 = ctx.textAlign === 'left' ? xl : xl - wv;
+    if (blobX != null && blobX > lx0 - 30 && blobX < lx0 + wv + 30) { ctx.textBaseline = 'bottom'; ctx.fillText(waarde, xl, yN - 9); }
+    else ctx.fillText(waarde, xl, yN + 9);
 
     // rand boven: as-labels; rand onder: vervagen naar de knoppen
     var gb = ctx.createLinearGradient(0, 0, 0, BOVENRAND);

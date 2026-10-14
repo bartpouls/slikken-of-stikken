@@ -76,7 +76,9 @@
  *     zetpilHalf (F < 0,7; bij één zetpil woordelijk §3) / zetpilGoed (F ≥ 0,7) / zetpilWisselend (meerdere zetpillen
  *     met verschillend effect; bij meerdere zetpillen meervoud) · spuit (spuit tijdens misselijkheid) · veelOnder
  *     (> 1/2 van de race onder de streep gaat vóór de misselijkheidsregels; anders > 1/4 buiten de misselijkheid;
- *     route-neutraal, bij één dosis "Eén dosis werkt maar een paar uur: daarna komt de pijn terug.") · misselijkGemist ·
+ *     route-neutraal, bij één dosis "Eén dosis werkt maar een paar uur: daarna komt de pijn terug.") · nooitInZone
+ *     (doses gegeven maar 0 u in de zone: "geen moment boven de streep", zetpil(len) "werkte(n) nooit genoeg"; staat
+ *     vóór veelOnder en de zetpilregels) · misselijkGemist ·
  *     goed (vangnet; alleen bereikbaar zonder blokkade).
  *   lithium: giftigDubbel (> 1,5 na een dubbele dosis) · giftig (vangnet: met één tablet per poortje komt de
  *     spiegel nooit boven 1,5, dus in de race onbereikbaar) · niets · dubbel (zodra er ergens een dubbele dosis is:
@@ -350,20 +352,27 @@
   var ZETPIL_WERKING = ['nauwelijks', 'maar half', 'goed']; // F ≤ 0,4 · 0,4 < F < 0,7 · F ≥ 0,7
   function zetpilKlasse(F) { return F <= 0.4 ? 0 : (F < 0.7 ? 1 : 2); }
 
-  function zetpilZin(zetpillen) {
+  function zetpilZin(zetpillen, nSpuit) {
     var kl = zetpillen.map(function (x) { return zetpilKlasse(x.d.F); });
     var lo = Math.min.apply(null, kl), hi = Math.max.apply(null, kl), n = 0;
     zetpillen.forEach(function (x) { n += x.d.aantal; }); // eenheden (aantal 2 = twee zetpillen)
-    var kop = n === 1 ? 'Tijdens de misselijkheid koos jij de zetpil. '
-      : 'Tijdens de misselijkheid gaf jij ' + n + ' zetpillen. ';
     var regel = ['zetpilNauwelijks', 'zetpilHalf', 'zetpilGoed'][lo];
+    var kop, die, ze, deEne;
+    if (nSpuit) { // ook een spuit tijdens de misselijkheid: noem beide, oordeel over de zetpil
+      kop = 'Tijdens de misselijkheid gaf jij ' + (nSpuit === 1 ? 'een spuit' : nSpuit + ' spuiten') + ' en ' +
+        (n === 1 ? 'een zetpil' : n + ' zetpillen') + '. ';
+      die = 'De zetpil werkte'; ze = 'De zetpillen werkten'; deEne = 'De ene zetpil werkte ';
+    } else {
+      kop = n === 1 ? 'Tijdens de misselijkheid koos jij de zetpil. ' : 'Tijdens de misselijkheid gaf jij ' + n + ' zetpillen. ';
+      die = 'Die werkte'; ze = 'Ze werkten'; deEne = 'De ene werkte ';
+    }
     if (lo !== hi) return { regel: 'zetpilWisselend',
-      zin: kop + 'De ene werkte ' + ZETPIL_WERKING[hi] + ', ' + (n === 2 ? 'de andere ' : 'een andere ') +
+      zin: kop + deEne + ZETPIL_WERKING[hi] + ', ' + (zetpillen.length === 2 ? 'de andere ' : 'een andere ') +
         ZETPIL_WERKING[lo] + ': daar kun je niet op rekenen.' };
     if (lo === 2) return { regel: regel,
-      zin: kop + (n === 1 ? 'Die werkte' : 'Ze werkten') + ' deze keer goed, maar een zetpil werkt soms goed en ' +
+      zin: kop + (n === 1 ? die : ze) + ' deze keer goed, maar een zetpil werkt soms goed en ' +
         'soms nauwelijks: daar kun je niet op rekenen.' };
-    return { regel: regel, zin: kop + (n === 1 ? 'Die werkte ' : 'Ze werkten ') + ZETPIL_WERKING[lo] +
+    return { regel: regel, zin: kop + (n === 1 ? die : ze) + ' ' + ZETPIL_WERKING[lo] +
       ': daar kun je niet op rekenen.' };
   }
 
@@ -383,8 +392,17 @@
         zin: 'Jij gaf ' + getal(telling.dagteller.hoogste) + ' g in 24 uur, meer dan de ' + getal(telling.dagteller.max) +
           ' g die mag. Te veel paracetamol beschadigt de lever.' };
       if (!doses.length) return { regel: 'niets',
-        zin: 'Jij gaf opa Jan geen paracetamol, dus de pijn kwam terug. ' +
+        zin: 'Jij gaf opa Jan geen paracetamol, dus de pijn bleef. ' +
           'Een vast schema op vaste tijden houdt de spiegel boven de streep.' };
+      if (teller.uren.zone === 0) { // geen moment boven de streep (kan alleen met zetpillen met lage F)
+        var nZ = 0;
+        doses.forEach(function (x) { if (x.d.route === 'zetpil') nZ += x.d.aantal; });
+        return { regel: 'nooitInZone', zin: nZ
+          ? 'De spiegel kwam geen moment boven de streep: ' + (nZ === 1 ? 'jouw zetpil werkte' : 'jouw zetpillen werkten') +
+            ' nooit genoeg. Een zetpil werkt soms goed en soms nauwelijks: daar kun je niet op rekenen.'
+          : 'De spiegel kwam geen moment boven de streep, dus de pijn bleef. ' +
+            'Een vast schema op vaste tijden houdt de spiegel boven de streep.' };
+      }
       var nDoses = 0;
       doses.forEach(function (x) { nDoses += x.d.aantal; });
       var veelOnder = { regel: 'veelOnder',
@@ -392,7 +410,7 @@
           ? 'Eén dosis werkt maar een paar uur: daarna komt de pijn terug.'
           : 'Elke dosis werkt maar een paar uur: verdeel de doses over de dag.') };
       if (teller.uren.onder / T > 1 / 2) return veelOnder; // grootste deel onder de streep: dáár gaat het over
-      if (zetpillen.length) return zetpilZin(zetpillen);
+      if (zetpillen.length) return zetpilZin(zetpillen, spuiten.length);
       if (spuiten.length) return { regel: 'spuit',
         zin: 'Tijdens de misselijkheid koos jij de spuit. Een prik werkt meteen, ook als opa Jan niet kan slikken.' };
       if ((teller.uren.onder - teller.onderTijdensBlokkade) / T > 1 / 4) return veelOnder;
@@ -414,7 +432,10 @@
     var dubbelVoor = voorRijen.filter(function (r) { return tabl(r) >= 2; }).length;
     var dubbelNa = naRijen.filter(function (r) { return tabl(r) >= 2; }).length;
     var dubbel = dubbelVoor + dubbelNa;
-    var keer = function (n) { return (n === 1 ? 'één' : n) + ' keer een dubbele dosis'; };
+    var meer = rijen.some(function (r) { return tabl(r) >= 3; });
+    var keer = function (n) {
+      return (n === 1 ? 'één' : n) + ' keer ' + (meer ? 'meer dan één tablet tegelijk' : 'een dubbele dosis');
+    };
     var naZone = teller.na.zone / naDuur, naBoven = teller.na.boven / naDuur;
     var tablNa = 0;
     naRijen.forEach(function (r) { tablNa += tabl(r); });
@@ -443,7 +464,7 @@
       if (!sigV && !sigN && (bV > 0 || bN > 0)) { sigV = bV >= bN; sigN = !sigV; }
       var gevolg;
       if (teller.uren.onder > 0 && weg(rijen) > 0) gevolg = ', maar sloeg ook ' + weg(rijen) + ' van de ' + rijen.length +
-        ' doses over en de spiegel zakte onder de 0,6';
+        ' doses over: de spiegel ' + (teller.uren.boven > 0 ? 'kwam boven de 1,0 én zakte' : 'zakte') + ' onder de 0,6';
       else if (sigV && sigN) gevolg = bN >= bV
         ? ' en de spiegel kwam boven de 1,0: vooral na de ibuprofen, omdat de nieren minder opruimden, maar ook door het dubbel innemen'
         : ' en de spiegel kwam boven de 1,0: vooral door het dubbel innemen, en na de ibuprofen ook omdat de nieren minder opruimden';
@@ -451,7 +472,7 @@
       else if (sigN) gevolg = dubbelNa
         ? (dubbelVoor ? ', terwijl de nieren na de ibuprofen al minder opruimden' : ', terwijl de nieren al minder opruimden') +
           ': de spiegel kwam boven de 1,0'
-        : '; de spiegel kwam pas na de ibuprofen boven de 1,0, omdat de nieren minder opruimden';
+        : '; de spiegel kwam ' + (bV === 0 ? 'pas' : 'vooral') + ' na de ibuprofen boven de 1,0, omdat de nieren minder opruimden';
       else gevolg = '; de spiegel bleef deze keer onder de 1,0';
       return { regel: 'dubbel', zin: kopD + gevolg + '. ' + NOOIT_DUBBEL };
     }
@@ -459,8 +480,10 @@
     if (teller.uren.onder > 0 && wegVoor > 0 && (teller.voor.onder > 0 || wegNa > 0)) {
       var waar = wegNa > 0 ? 'Jij sloeg ' + (wegVoor + wegNa) + ' van de ' + rijen.length + ' doses over, vóór én na de ibuprofen,'
         : 'Jij sloeg vóór de ibuprofen ' + wegVoor + ' van de ' + voorRijen.length + ' doses over';
-      return { regel: 'overgeslagenOnder',
-        zin: waar + ' en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.' };
+      return { regel: 'overgeslagenOnder', zin: teller.uren.boven > 0
+        ? waar + ' en de spiegel zakte onder de 0,6: kans op terugval. Na de ibuprofen kwam hij ook boven de 1,0, ' +
+          'want de nieren ruimden minder op.'
+        : waar + ' en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.' };
     }
     if (ontbrekendNa > 0 && teller.na.onder > 0) return { regel: 'naIbuTeVeelWeg',
       zin: 'Jij liet na de ibuprofen ' + pct(ontbrekendNa / naRijen.length) + ' van de doses weg en de spiegel zakte ' +

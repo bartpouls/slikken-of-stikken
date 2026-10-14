@@ -389,13 +389,22 @@ kop('Eindverslag en praktijkzinnen');
     ['P alles vroeg (0, 1, 2, 3 u)', P, op([0, 1, 2, 3], () => [slik]), 'veelOnder'],
     ['P gemiste dosis', P, pBots['gemiste dosis'], 'misselijkGemist'],
     ['P echt schema zonder blokkade (vangnet)', P, op(VIER, () => [slik]), 'goed', null, { blokkades: false }],
+    ['P r4-1: alleen zetpil om 12 u (piek < 5)', P, op([12], () => [zetpil]), 'nooitInZone',
+      'De spiegel kwam geen moment boven de streep: jouw zetpil werkte nooit genoeg. Een zetpil werkt soms goed en soms nauwelijks: daar kun je niet op rekenen.'],
+    ['P r4-2: zetpillen om 1, 4, 11, 13 u', P, op([1, 4, 11, 13], () => [zetpil]), 'nooitInZone',
+      'De spiegel kwam geen moment boven de streep: jouw zetpillen werkten nooit genoeg. Een zetpil werkt soms goed en soms nauwelijks: daar kun je niet op rekenen.'],
+    ['P r4: spuit 10 u + zetpil 13 u', P, op([0, 6, 10, 13], t => [t === 10 ? spuit : (t === 13 ? zetpil : slik)]), 'zetpilNauwelijks',
+      'Tijdens de misselijkheid gaf jij een spuit en een zetpil. De zetpil werkte nauwelijks: daar kun je niet op rekenen.'],
     // lithium
+    ['L r4-3: poortje 0 over, dubbel op 48 u, daarna alles', L, (race, t) => (t === 0 ? [] : [{ route: 'slik', aantal: t === 48 ? 2 : 1 }]), 'dubbel'],
+    ['L r4: alleen na de ibuprofen slikken', L, (race, t) => (t < tK ? [] : [slik]), 'overgeslagenOnder'],
+    ['L r4: 3 tabletten op 56 u (API)', L, (race, t) => [{ route: 'slik', aantal: t === 56 ? 3 : 1 }], 'dubbel'],
     ['L elk poortje dubbel', L, lBots['elk poortje dubbel'], 'giftigDubbel'],
     ['L niets', L, lBots['niets'], 'niets'],
     ['L rand 3a: eerste 15 overslaan, daarna 1', L, (race, t) => (t === tK ? [slik] : []), 'overgeslagenOnder',
       'Jij sloeg 29 van de 30 doses over, vóór én na de ibuprofen, en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.'],
     ['L rand 3b: eerste 15 overslaan, daarna alles', L, naIbuOpT(t => t < tK), 'overgeslagenOnder',
-      'Jij sloeg vóór de ibuprofen 15 van de 15 doses over en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.'],
+      'Jij sloeg vóór de ibuprofen 15 van de 15 doses over en de spiegel zakte onder de 0,6: kans op terugval. Na de ibuprofen kwam hij ook boven de 1,0, want de nieren ruimden minder op.'],
     ['L na ibuprofen om de andere overslaan', L, naIbuOpT(t => t >= tK && naIbuNr(t) % 2 === 0), 'naIbuTeVeelWeg'],
     ['L rand 4: dubbel na de ibuprofen (136 u)', L, (race, t) => [{ route: 'slik', aantal: t === 136 ? 2 : 1 }], 'dubbel'],
     ['L dubbel vóór de ibuprofen (48 u)', L, (race, t) => [{ route: 'slik', aantal: t === 48 ? 2 : 1 }], 'dubbel'],
@@ -433,6 +442,77 @@ kop('Eindverslag en praktijkzinnen');
   }
   check(!/pil/.test(zinnen.veelOnder), 'veelOnder route-neutraal (geen "pil")');
   check(/nooit dubbel innemen, ook niet om in te halen/.test(zinnen.dubbel) && !/nodig|goed idee|slim/.test(zinnen.dubbel), 'dubbel-zin noemt het dubbel innemen en prijst het niet');
+  // Automatische zin-tegen-feit-controle: 500 willekeurige bots per race (vaste zaadwaarde).
+  {
+    let x = 20261014;
+    const rnd = () => { x = (x * 1103515245 + 12345) % 2147483648; return x / 2147483648; };
+    const fout = [], regelTelling = {};
+    const pctVan = (zin, re) => { const m = zin.match(re); return m ? Number(m[1]) : null; };
+    for (let b = 0; b < 1000; b++) {
+      const c = b < 500 ? P : L, isP = c === P;
+      const sch = [];
+      if (isP) { // 0–5 doses op willekeurige poortjes, willekeurige route
+        const n = Math.floor(rnd() * 6), tijden = new Set();
+        while (tijden.size < n) tijden.add(Math.floor(rnd() * 24));
+        for (const t of [...tijden].sort((a, b) => a - b)) sch.push({ t, route: ['slik', 'zetpil', 'spuit', 'zetpil'][Math.floor(rnd() * 4)] });
+      } else { // overslaan vóór/na apart, dubbel alleen bij een deel van de bots
+        const wegV = rnd() < 0.5 ? 0 : rnd() * 0.6, wegN = rnd() < 0.3 ? 0 : rnd() * 0.6;
+        const dub = rnd() < 0.6 ? 0 : rnd() * 0.15;
+        for (const t of M.poortjes(c)) {
+          if (rnd() < (t < 120 ? wegV : wegN)) continue;
+          const v = rnd();
+          sch.push({ t, route: 'slik', aantal: v < dub ? (v < dub * 0.15 ? 3 : 2) : 1 });
+        }
+      }
+      const r = S.scoreSchema(c, sch), v = r.verslag, z = v.praktijk.zin, u = v.uren, T = c.raceDuur;
+      const nee = wat => fout.push(`${c.id} ${JSON.stringify(sch.map(s => s.t + s.route[1] + (s.aantal > 1 ? s.aantal : '')))}: ${wat} | ${z}`);
+      const zinnenN = z.split(/[.!?](\s|$)/).filter(s => s && s.trim()).length;
+      if (zinnenN > 2 && v.praktijk.regel !== 'naIbuMinder') nee('meer dan twee zinnen');
+      if (/terug\b/.test(z) && !/terugval/.test(z) && !(u.zone > 0)) nee('"terug" zonder tijd in de zone');
+      if (/ werkt(e)? (meteen|goed|maar half)/.test(z) && u.zone === 0) nee('"werkt" zonder tijd in de zone');
+      if (/geen moment boven de streep/.test(z) !== (isP && u.zone === 0 && v.telling.totaleDosis.waarde > 0 && !v.telling.dagteller.over)) nee('"geen moment boven de streep" klopt niet');
+      if (/pas na de ibuprofen/.test(z) && r.model.C.some((C, i) => r.model.t[i] < 120 - 1e-9 && C > 1.0)) nee('"pas na" terwijl vóór t=120 al boven 1,0');
+      regelTelling[v.praktijk.regel] = (regelTelling[v.praktijk.regel] || 0) + 1;
+      if (/boven de 1,0/.test(z) && !(u.boven > 0) && !/onder de 1,0/.test(z)) nee('"boven de 1,0" zonder tijd boven');
+      if (/bleef deze keer onder de 1,0/.test(z) && u.boven > 0) nee('"bleef onder de 1,0" terwijl boven');
+      if (!isP && u.boven >= 1 && !/1,[05]/.test(z)) nee(`${u.boven.toFixed(1)} u boven 1,0 niet genoemd`);
+      if (!isP && u.onder >= 1 && !/0,6/.test(z)) nee(`${u.onder.toFixed(1)} u onder 0,6 niet genoemd`);
+      if (/onder de 0,6/.test(z) && !(u.onder > 0)) nee('"onder de 0,6" zonder tijd onder');
+      if (/boven de 1,5/.test(z) && !(u.toxisch > 0)) nee('"boven de 1,5" zonder tijd > 1,5');
+      if (!isP && u.toxisch > 0 && !/1,5/.test(z)) nee('giftig niet genoemd');
+      const p1 = pctVan(z, /zat (\d+)% van de tijd onder de streep/);
+      if (p1 != null && p1 !== Math.round(100 * u.onder / T)) nee('percentage onder de streep');
+      const g = pctVan(z, /gaf (\d+(?:,\d+)?) g in 24 uur/);
+      if (g != null && g !== v.telling.dagteller.hoogste) nee('grammen');
+      const nW = z.match(/sloeg (?:vóór de ibuprofen |ook )?(\d+) van de (\d+) doses over/);
+      if (nW) {
+        const rs = /vóór de ibuprofen \d/.test(z) ? v.tijdlijn.filter(r => r.t < 120) : v.tijdlijn;
+        if (Number(nW[1]) !== rs.filter(r => !r.jij.toedieningen.length).length || Number(nW[2]) !== rs.length) nee('aantal overgeslagen');
+      }
+      const nK = z.match(/gaf (?:na de ibuprofen )?(één|\d+) keer (een dubbele dosis|meer dan één tablet tegelijk)/);
+      if (nK) {
+        const n = nK[1] === 'één' ? 1 : Number(nK[1]);
+        const rs = /gaf na de ibuprofen/.test(z) ? v.tijdlijn.filter(r => r.t >= 120) : v.tijdlijn;
+        const echt = rs.filter(r => r.jij.toedieningen.reduce((a, d) => a + d.aantal, 0) >= 2);
+        if (n !== echt.length) nee('aantal dubbele doses');
+        if (nK[2] === 'een dubbele dosis' && echt.some(r => r.jij.aantal > 2)) nee('3+ tabletten "dubbele dosis" genoemd');
+      }
+      const pW = pctVan(z, /na de ibuprofen (\d+)% van de doses weg/);
+      if (pW != null) {
+        const na = v.tijdlijn.filter(r => r.t >= 120), tab = na.reduce((a, r) => a + r.jij.toedieningen.reduce((b, d) => b + d.aantal, 0), 0);
+        if (pW !== Math.round(100 * Math.max(0, na.length - tab) / na.length)) nee('percentage weggelaten');
+        if (v.tijdlijn.some(r => r.jij.aantal >= 2)) nee('weglaten geprezen/genoemd met dubbele dosis');
+      }
+      if (/Dat was nodig/.test(z) && v.tijdlijn.some(r => r.jij.aantal >= 2)) nee('"Dat was nodig" met dubbele dosis');
+      if (/(overslaan|weglaten) is (goed|slim|handig)/i.test(z)) nee('prijst overslaan');
+      const zp = z.match(/(\d+) zetpillen/);
+      if (zp && Number(zp[1]) !== v.tijdlijn.filter(r => r.t >= 10 && r.t < 16).reduce((a, r) => a + r.jij.toedieningen.filter(d => d.route === 'zetpil').reduce((b, d) => b + d.aantal, 0), 0) &&
+        !/geen moment/.test(z)) nee('aantal zetpillen');
+    }
+    for (const f of fout.slice(0, 10)) console.log('  ' + f);
+    console.log(`zin-tegen-feit-controle: 1000 willekeurige bots, ${fout.length} afwijkingen; regels: ${JSON.stringify(regelTelling)}`);
+    check(fout.length === 0, 'zin-tegen-feit-controle (1000 willekeurige bots)');
+  }
   check(zinnen.zetpilHalf === 'Tijdens de misselijkheid koos jij de zetpil. Die werkte maar half: daar kun je niet op rekenen.', 'voorbeeldzin zetpil woordelijk');
   check(zinnen.naIbuMinder === 'Jij liet na de ibuprofen 33% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten.', 'voorbeeldzin lithium woordelijk, percentage uit keuzes (5 van 15)');
 
