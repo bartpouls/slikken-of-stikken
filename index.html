@@ -3791,7 +3791,8 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       var extra = icoonSoort ? 30 + (aantal > 1 ? 18 : 0) : 0;
       var cx = w / 2, l1 = cx - tw / 2 - 12, r1 = cx + tw / 2 + 12 + extra;
       // komend: ≥ 90% dekking (contrast), doel: vol en helder, verleden: gedimd (geschiedenis)
-      var a = poortjeAlpha(yg, h, verleden ? 0.4 : (doel ? 1 : 0.92));
+      // verleden: lijn gedimd, label in een dof paars dat toch ≥ 4,5:1 haalt (#8a72c0 op zwart = 5,25)
+      var a = poortjeAlpha(yg, h, verleden ? (stap === 1 ? 0.4 : 1) : (doel ? 1 : 0.92));
       if (a <= 0.01) continue;
       ctx.globalAlpha = a;
       if (stap === 1) {
@@ -3805,7 +3806,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
         ctx.strokeText(label, cx, yg + 0.5);
         ctx.globalAlpha = a;
         if (doel) { ctx.shadowColor = 'rgba(176,124,255,0.95)'; ctx.shadowBlur = 14; }
-        ctx.fillStyle = doel ? '#ecdfff' : (verleden ? KLEUR.paars : '#c9a4ff');
+        ctx.fillStyle = doel ? '#ecdfff' : (verleden ? '#8a72c0' : '#c9a4ff');
         ctx.fillText(label, cx, yg + 0.5);
         ctx.shadowBlur = 0;
         if (icoonSoort) {
@@ -3816,7 +3817,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
           ctx.globalAlpha = Math.min(1, a * 2.5);
           ctx.beginPath(); ctx.arc(ix, yg, 15, 0, 6.283); ctx.fill();
           ctx.globalAlpha = a;
-          tekenIcoon(ctx, icoonSoort, ix, yg, 26 * pop);
+          tekenIcoon(ctx, icoonSoort, ix, yg, 26 * pop, verleden ? 0.55 : 1);
           if (aantal > 1) {
             ctx.font = '800 13px ' + FONT; ctx.textAlign = 'left';
             ctx.strokeText(aantal + '×', ix + 14, yg + 1);
