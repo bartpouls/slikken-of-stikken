@@ -336,12 +336,14 @@
       volgende.disabled = !aan;
       if (aan) zetFase('klaar');
     }
-    bijTik(volgende, function () {
+    // Navigatie alleen op click (einde van de tik): anders landt de click van dezelfde tik op de
+    // nieuwe knop die op die plek verschijnt.
+    volgende.addEventListener('click', function () {
       if (volgende.disabled || gestopt) return;
       ui.speel('tik');
       naarStap(stap + 1);
     });
-    bijTik(over, function () { if (!gestopt) { ui.speel('tik'); meldGereed(); } });
+    over.addEventListener('click', function () { if (!gestopt) { ui.speel('tik'); meldGereed(); } });
 
     function meldGereed() {
       if (klaarGemeld) return;
@@ -507,8 +509,9 @@
       bediening.classList.add('slot');
       zetFase('klaar');
       ui.speel('klaar');
-      bijTik(b, function () {
-        if (gestopt) return;
+      var sinds = Date.now();
+      b.addEventListener('click', function () {
+        if (gestopt || Date.now() - sinds < 350) return;
         ui.speel('tik');
         meldGereed();
       });
