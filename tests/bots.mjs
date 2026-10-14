@@ -116,7 +116,7 @@ const RUNS = [
   { id: 'r09', P: 'greedy', L: 'dubbel', tut: 'vol', naam: 'Gretig' },
   { id: 'r10', P: 'echt', L: 'elke3', tut: 'over', naam: 'Bot Echt', herhaling: 'r01' },
   // normale snelheid (geen ?speed): raceduur met de klok; daarna "Nog een keer"
-  { id: 'n01', P: 'echt', L: 'elke3', tut: 'vol', naam: 'Pilpiraat Zestien', normaal: true, opnieuw: true, herhaling: 'r01' }
+  { id: 'n01', P: 'echt', L: 'elke3', tut: 'vol', naam: 'Pilpiraat Zestig', normaal: true, opnieuw: true, herhaling: 'r01' }
 ];
 const RUNS_KORT = [RUNS[0], RUNS[3], RUNS[5]];
 
@@ -369,7 +369,7 @@ async function leesEinde(page) {
       fsNaam: fs('[data-eind="naam"]'), fsTotaal: fs('[data-eind="totaal"]'),
       rooster: [rooster(0), rooster(1)],
       regels: [regels(0), regels(1)],
-      dagteller: dag ? { over: dag.classList.contains('over'), tekst: dag.textContent.replace(/\s+/g, ' ').trim() } : null,
+      dagteller: dag ? { over: dag.classList.contains('over'), tekst: [...dag.children].map((c) => c.textContent.trim()).join(' ').replace(/\s+/g, ' ') } : null,
       praktijk: [...document.querySelectorAll('[data-zin="praktijk"]')].map((e) => e.textContent.trim()),
       vraag: (q('[data-eind="vraag"]') || {}).textContent || null
     };
@@ -726,7 +726,7 @@ resultaten.forEach((runs, vi) => {
   L.push(`- ${metingen.length} schermmetingen (${aantalKnopMetingen} knopmetingen) op: ${[...schermen].sort().join(', ')}.`);
   L.push(`- Kleinste zichtbare knop: ${minKnop ? `${minKnop.label} "${minKnop.tekst}" ${minKnop.w}×${minKnop.h} px` : '–'} (min. breedte ${minW} px, min. hoogte ${minH} px). Knoppen < 48×48: ${klein.length ? klein.join('; ') : 'geen'}: ${jn(b4a)}`);
   L.push(`- Horizontaal scrollen (scrollWidth > clientWidth op document, body of actief scherm): ${hScroll.length} van ${metingen.length} metingen; grootste scrollWidth ${maxSW} px bij clientWidth ${cw} px: ${jn(b4b)}`);
-  L.push(`- Netwerkverzoeken: vóór/tijdens het laden ${voorLaden.length} (${[...new Set(voorLaden.map((v) => v.url.replace(/\?.*/, '')))].join(', ')}); ná het laden ${naLaden.length}${naLaden.length ? ': ' + naLaden.slice(0, 8).map((v) => v.run + ' ' + v.fase + ' ' + v.url).join('; ') : ''}: ${jn(b4c)}`);
+  L.push(`- Netwerkverzoeken (${runs.length} runs, elk een verse pagina): vóór/tijdens het laden ${voorLaden.length} in totaal (${[...new Set(voorLaden.map((v) => v.url.replace(/\?.*/, '')))].join(', ')}); ná het laden ${naLaden.length}${naLaden.length ? ': ' + naLaden.slice(0, 8).map((v) => v.run + ' ' + v.fase + ' ' + v.url).join('; ') : ''}: ${jn(b4c)}`);
   L.push(`- **B4 ${vp.naam}: ${b4a && b4b && b4c ? 'gehaald' : 'niet gehaald'}**`);
   L.push('');
 
