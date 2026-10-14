@@ -34,6 +34,7 @@ const S = requireLokaal(path.join(ROOT, 'src', 'score.js'));
 if (!process.env.PLAYWRIGHT_BROWSERS_PATH) process.env.PLAYWRIGHT_BROWSERS_PATH = '/opt/pw-browsers';
 
 const KORT = process.argv.includes('--kort');
+const MAXPOG = process.argv.includes('--een') ? 1 : 3;
 const SNEL = 4; // ?speed=4 voor de strategie-runs (paracetamol: 0,94 s per poortje; lithium: 0,75 s)
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const T0_SCRIPT = Date.now();
@@ -42,6 +43,7 @@ const T0_SCRIPT = Date.now();
 // Lokale http-server: serveert alleen index.html (en logt elk verzoek dat binnenkomt).
 // ---------------------------------------------------------------------------------------------
 const HTML = readFileSync(path.join(ROOT, 'index.html'));
+const HTML_SHA = (await import('node:crypto')).createHash('sha256').update(HTML).digest('hex').slice(0, 12);
 const serverLog = [];
 const server = http.createServer((req, res) => {
   serverLog.push({ t: Date.now(), url: req.url });
@@ -176,13 +178,24 @@ async function tik(page, run, selector, opties = {}) {
     await loc.scrollIntoViewIfNeeded();
     doos = await loc.boundingBox();
   }
-  const x = doos.x + doos.width / 2, y = doos.y + doos.height / 2;
+  let x = doos.x + doos.width / 2, y = doos.y + doos.height / 2;
   if (!opties.snel) {
-    const raak = await page.evaluate(([s, x, y]) => {
-      const el = document.querySelector(s), hit = document.elementFromPoint(x, y);
-      return !!(el && hit && (el === hit || el.contains(hit)));
-    }, [selector, x, y]);
+    // Wacht (max. 2 s) tot de tik echt op deze knop landt: tijdens een schermovergang (0,35 s) ligt het
+    // oude scherm er nog boven.
+    const t0 = Date.now();
+    let raak = false;
+    while (Date.now() - t0 < 2000) {
+      raak = await page.evaluate(([s, x, y]) => {
+        const el = document.querySelector(s), hit = document.elementFromPoint(x, y);
+        return !!(el && hit && (el === hit || el.contains(hit)));
+      }, [selector, x, y]);
+      if (raak) break;
+      await sleep(50);
+      const d2 = await loc.boundingBox();
+      if (d2) { x = d2.x + d2.width / 2; y = d2.y + d2.height / 2; }
+    }
     if (!raak) run.bedekt.push({ selector, fase: run.faseNu });
+    if (Date.now() - t0 > 600) run.wachtOpRaak.push({ selector, fase: run.faseNu, ms: Date.now() - t0 });
   }
   await page.touchscreen.tap(x, y);
   run.tikken++;
@@ -388,16 +401,22 @@ async function speelRun(browser, vp, cfg, poging) {
   });
   const page = await ctx.newPage();
   const run = {
-    cfg, vp: vp.naam, poging, speed, tikken: 0, tikLog: [], scrolls: [], bedekt: [], metingen: [], tutActies: [],
+    cfg, vp: vp.naam, poging, speed, tikken: 0, tikLog: [], scrolls: [], bedekt: [], wachtOpRaak: [], metingen: [], tutActies: [],
     console: [], verzoeken: [], eersteHandeling: null, faseNu: 'laden', races: [], start: Date.now()
   };
+  let geladen = false;
+  try { return await speelRunBinnen(page, ctx, run, cfg, vp, speed, () => { geladen = true; }); }
+  catch (e) { await ctx.close().catch(() => {}); throw new Error('[' + run.faseNu + '] ' + (e && e.message || e).split('\n')[0] + ' | tikken: ' + run.tikLog.slice(-4).join(' , ')); }
+}
+
+async function speelRunBinnen(page, ctx, run, cfg, vp, speed, zetGeladen) {
   let geladen = false;
   page.on('console', (m) => { if (m.type() === 'error' || m.type() === 'warning') run.console.push({ type: m.type(), tekst: m.text(), fase: run.faseNu }); });
   page.on('pageerror', (e) => run.console.push({ type: 'pageerror', tekst: String(e), fase: run.faseNu }));
   page.on('request', (r) => run.verzoeken.push({ url: r.url().slice(0, 120), naLaden: geladen, fase: run.faseNu }));
   const url = BASIS + (cfg.normaal ? '' : `?speed=${speed}`);
   await page.goto(url, { waitUntil: 'load' });
-  geladen = true;
+  geladen = true; zetGeladen();
   run.faseNu = 'start';
   await wachtOp(page, () => window.SoS && window.SoS.debug && window.SoS.debug.fase === 'start');
   run.metingen.push(await meetScherm(page));
@@ -495,7 +514,7 @@ async function speelViewport(vp, runs) {
     for (const cfg of runs) {
       let run = null;
       const pogingen = [];
-      for (let poging = 1; poging <= 3; poging++) {
+      for (let poging = 1; poging <= MAXPOG; poging++) {
         try {
           run = await speelRun(browser, vp, cfg, poging);
         } catch (e) {
@@ -519,8 +538,9 @@ async function speelViewport(vp, runs) {
 // ---------------------------------------------------------------------------------------------
 // Draaien
 // ---------------------------------------------------------------------------------------------
-const runsTeDoen = KORT ? RUNS_KORT : RUNS;
-const vps = KORT ? [VIEWPORTS[0]] : VIEWPORTS;
+const ALLEEN = (process.argv.find((a) => a.startsWith('--run=')) || '').slice(6).split(',').filter(Boolean);
+const runsTeDoen = ALLEEN.length ? RUNS.filter((r) => ALLEEN.includes(r.id)) : (KORT ? RUNS_KORT : RUNS);
+const vps = KORT || ALLEEN.length ? [VIEWPORTS[0]] : VIEWPORTS;
 const resultaten = await Promise.all(vps.map((vp) => speelViewport(vp, runsTeDoen)));
 server.close();
 const looptijd = (Date.now() - T0_SCRIPT) / 1000;
@@ -534,7 +554,7 @@ const L = [];
 L.push('# Bots-rapport §6B — Slikken of Stikken');
 L.push('');
 L.push(`Gegenereerd door \`node tests/bots.mjs\`${KORT ? ' --kort' : ''} op ${new Date().toISOString().replace('T', ' ').slice(0, 19)} UTC. ` +
-  `Looptijd: ${nl(looptijd / 60, 1)} min. Playwright ${requireGlobaal('playwright/package.json').version}, Chromium headless (${'/opt/pw-browsers'}).`);
+  `Looptijd: ${nl(looptijd / 60, 1)} min. Playwright ${requireGlobaal('playwright/package.json').version}, Chromium headless (/opt/pw-browsers). index.html: ${(HTML.length / 1024).toFixed(1)} kB, sha256 ${HTML_SHA}… (één keer ingelezen bij de start; alle runs spelen dezelfde build).`);
 L.push('');
 L.push('**Opzet.** Het echte `index.html` (lokale http-server op 127.0.0.1) in mobiele emulatie (isMobile, hasTouch, ' +
   'Pixel-5-UA): 375×667 @2x en 390×844 @3x. De bots handelen alleen via `page.touchscreen.tap` op het midden van een zichtbare ' +
@@ -668,6 +688,8 @@ resultaten.forEach((runs, vi) => {
   } else L.push('Raceduur op normale snelheid: niet gemeten (--kort).');
   const scrolls = geldig.flatMap((r) => (r.scrolls || []).map((s) => r.cfg.id + ' ' + s.fase + ' ' + s.selector));
   const bedekt = runs.flatMap((r) => (r.bedekt || []).map((s) => r.cfg.id + ' ' + s.fase + ' ' + s.selector));
+  const wacht = runs.flatMap((r) => (r.wachtOpRaak || []).map((s) => r.cfg.id + ' ' + s.fase + ' ' + s.selector + ' ' + s.ms + ' ms'));
+  L.push(`Tikken waarbij de knop > 0,6 s nog bedekt was (bv. tijdens een schermovergang van 0,35 s; de bot wacht dan tot de knop bovenop ligt): ${wacht.length ? wacht.join('; ') : 'geen'}.`);
   L.push(`Knoppen die eerst in beeld gescrold moesten worden voor een tik: ${scrolls.length ? scrolls.join('; ') : 'geen'}. Tikken die (volgens elementFromPoint) niet op de bedoelde knop zouden landen: ${bedekt.length ? bedekt.join('; ') : 'geen'}.`);
   const minTik = Math.min(zonderNaamOver ? zonderNaamOver.tikkenTotRace1 : 99, eersteZonderNaam);
   L.push(`- Samengevat (≤ 3 tikken van openen tot spelen): eerste speelhandeling ${eersteZonderNaam} (zonder naam) / ${metNaamVol ? metNaamVol.eersteHandeling : '–'} (met naam); race 1 loopt na ${zonderNaamOver ? zonderNaamOver.tikkenTotRace1 : '–'} (Overslaan, zonder naam) / ${metNaamOver ? metNaamOver.tikkenTotRace1 : '–'} (Overslaan, met naam). Gehaald volgens de lezing "eerste speelhandeling ≤ 3": ${jn(metNaamVol && metNaamVol.eersteHandeling <= 3)}; race 1 loopt binnen 3 tikken (zonder naam, met Overslaan): ${jn(zonderNaamOver && zonderNaamOver.tikkenTotRace1 <= 3)}.`);

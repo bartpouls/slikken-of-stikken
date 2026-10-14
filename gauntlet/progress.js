@@ -15,9 +15,10 @@ window.GAUNTLET = {
     { name: "U6 Tutorial opa Jan", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: pil-vertraging zichtbaar (opa blij na ±1,4 s), y-as uitgelegd, casusbladlabel, contrast. Gaat mee in eindcontrole", artifact: "src/tutorial.js" },
     { name: "U7 Eindverslag + eindscherm", round: 2, verdict: "PENDING", evidence: "R2 gebouwd: tekst gecorrigeerd, ≠-markering, leverschade rood, vraag + knop boven de vouw. Gaat mee in eindcontrole", artifact: "src/einde.js" },
     { name: "U8 Bots in telefoonscherm (B1–B6)", round: 1, verdict: "PENDING", evidence: "Bouwer schrijft bots (echte tikken, 375×667 en 390×844)", artifact: "tests/bots.mjs" },
-    { name: "Eindcheck: smoothing + A4 over het hele spel", round: 1, verdict: "PENDING", evidence: "Verse criticus: A4 over hele spel, naden/samenhang, harde ondergrens C, flow (snapshot 279127b)", artifact: "index.html" }
+    { name: "Eindcheck: smoothing + A4 over het hele spel", round: 1, verdict: "FAIL", evidence: "Blind: G1 A4 hele spel PASS (0 afwijkende getallen/beweringen), G4 flow PASS (races 93 s). FAIL G3: tekst overlapt bij poortjes in race; scorebordknoppen <48 px. 10 naden. Smoothing-bouwer aan het werk", artifact: "index.html" }
   ],
   log: [
+    { round: 1, unit: "Eindcheck", verdict: "FAIL", note: "Inhoud klopt overal; overlap op beslismoment + knoppen scorebord + 10 naden → smoothing pass" },
     { round: 4, unit: "U2", verdict: "FAIL", note: "Budget op. Resterend: oorzaakzinnen kijken naar wanneer, niet naar waardoor → onder de lat, met voorgestelde fix (tegenfeitelijke run)" },
     { round: 1, unit: "U7", verdict: "FAIL", note: "Getallen kloppen; tekst en eerste beeld op klein scherm → R2" },
     { round: 1, unit: "U6", verdict: "FAIL", note: "Didactiek stap 1 + contrast → R2. LEAD: fez vervangen door eigen pet/hoed (te dicht bij referentie)" },
