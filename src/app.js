@@ -553,7 +553,7 @@
     if (R) {
       var gat = Math.max(84, Math.min(130, D.h * 0.22));
       R.pxPerUur = gat / R.casus.poortjes.interval;
-      R.yNu = Math.round(D.h * 0.55);
+      R.yNu = Math.round(D.h * 0.52);
       R.links = 18; R.rechts = 18;
     }
   }
@@ -793,7 +793,8 @@
     var dep = R.race.sim.depot / ref;
     if (dep > 0.03) {
       var rB = 5 + 13 * Math.sqrt(Math.min(1.6, dep));
-      var xB = L + 20;
+      // links (ver van de stip), of links náást de stip als die rechts staat ("nu"-label staat dan links)
+      var xB = xD > w / 2 ? xD - rB - 40 : L + 20;
       if (Math.abs(xB - xD) < rB + 14) xB = Math.min(Rr - 20, xD + rB + 26);
       ctx.strokeStyle = 'rgba(255,225,161,0.55)'; ctx.lineWidth = 2;
       ctx.setLineDash([2, 5]); ctx.lineDashOffset = -(nu / 40) % 7 * (xD > xB ? 1 : -1);
@@ -959,7 +960,7 @@
         } else {
           speel(k.route === 'zetpil' ? 'zetpil' : 'slik');
           var ref = c.routes.slik.dosis * c.routes.slik.F;
-          var xB = R.links + 20;
+          var xB = xVan(Cvoor) > D.w / 2 ? xVan(Cvoor) - 50 : R.links + 20;
           R.effecten.push({ type: 'slik', t0: nu, soort: k.route === 'slik' ? 'tablet' : 'zetpil', xNaar: xB, ref: ref });
         }
         if (res.lever < 0) {

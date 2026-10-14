@@ -8,16 +8,17 @@ window.GAUNTLET = {
   updated: "2026-10-14",
   units: [
     { name: "U1 Rekenmodel + casusdata (A1–A4)", round: 1, verdict: "PASS", evidence: "Blind PASS A1–A4, 0 afwijkingen; eigen RK4 in Python: max fout 4e-13, halvering 0,5000000, alle tabelregels binnen marge. Stopregel A gehaald.", artifact: "src/model.js" },
-    { name: "U2 QALY-score + rangorde headless", round: 3, verdict: "PENDING", evidence: "R3 gebouwd (zinlogica dubbel/inhaal/oorzaak). Verse criticus: 40+ scenario's en 200+ willekeurige bots", artifact: "src/score.js" },
+    { name: "U2 QALY-score + rangorde headless", round: 4, verdict: "FAIL", evidence: "R3: Q1–Q5 PASS (uitputtende zoektocht ±916.000 schema's: beste ≤4 g 828, echt 92,8%; 900 bots live=batch). Q6: 3 randgevalzinnen (0 u in zone; 'pas na'). R4 = laatste ronde", artifact: "src/score.js" },
     { name: "U3 Geluid", round: 3, verdict: "FAIL", evidence: "R3: P1,P3–P6 PASS; P2 nipt: spuit in 1/143 metingen 0,3 dB onder telefoondrempel + klik bij 48 kHz. Smaakstopregel: alleen microfix, geen nieuwe criticusronde", artifact: "src/sound.js" },
     { name: "U4 Scorebord beamer", round: 4, verdict: "PENDING", evidence: "R4 gebouwd (bevestigvensters, bereik ±99.999). Gaat mee in eindcontrole", artifact: "scorebord.html" },
     { name: "U5 Racescherm + spelverloop", round: 2, verdict: "FAIL", evidence: "R1: R1–R5 PASS (score spel = model in 9 strategieën; feedback ≤48 ms; race 93 s; 0 consolefouten). FAIL R6 zonelabel mist '(vereenvoudigd)'; R7 contrast 3,06–3,51 en overlap melding/curve over poortjes. R2 in bouw", artifact: "index.html" },
-    { name: "U6 Tutorial opa Jan", round: 1, verdict: "PENDING", evidence: "In bouw (hervat)", artifact: "src/tutorial.js" },
-    { name: "U7 Eindverslag + eindscherm", round: 1, verdict: "PENDING", evidence: "In bouw (hervat)", artifact: "src/einde.js" },
+    { name: "U6 Tutorial opa Jan", round: 1, verdict: "PENDING", evidence: "Gebouwd: 6 stappen, curves uit model, 'Overslaan'-knop. Verse criticus", artifact: "src/tutorial.js" },
+    { name: "U7 Eindverslag + eindscherm", round: 1, verdict: "PENDING", evidence: "Gebouwd: wit scherm, naam 36 px, totaal 72 px, Wordle-tegels per poortje. Verse criticus", artifact: "src/einde.js" },
     { name: "U8 Bots in telefoonscherm (B1–B6)", round: 0, verdict: "PENDING", evidence: "wacht op U5–U7", artifact: "tests/bots.mjs" },
     { name: "Eindcheck: smoothing + A4 over het hele spel", round: 0, verdict: "PENDING", evidence: "na U5–U8", artifact: "index.html" }
   ],
   log: [
+    { round: 3, unit: "U2", verdict: "FAIL", note: "Score formule definitief PASS; nog 3 zinnen in randgevallen → R4 (laatste)" },
     { round: 1, unit: "U5", verdict: "FAIL", note: "Casusbladtekst zonelabel + contrast/overlap. LEAD: paracetamol max 1 g per poortje (casusblad '1 g per keer'); lithium dubbel blijft mogelijk" },
     { round: 3, unit: "U3", verdict: "FAIL", note: "Nipt; microfix spuit (+1,5 dB, klik weg), daarna stop" },
     { round: 3, unit: "LEAD", verdict: "PENDING", note: "API-limiet onderbrak 6 agents; hervat vanuit eigen context" },

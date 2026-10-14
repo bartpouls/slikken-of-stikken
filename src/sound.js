@@ -196,9 +196,9 @@
       tone(E, { type: 'sine', f0: 1250, f1: 850, at: 0.025, dur: 0.07, gain: 0.24, a: 0.003 });
     },
     spuit: function (E) {
-      tone(E, { type: 'square', f0: 1300, f1: 2600, dur: 0.06, gain: 0.14, a: 0.003, filter: ['bandpass', 2200, 0.8] });
-      noise(E, { dur: 0.03, gain: 0.14, a: 0.002, filter: ['bandpass', 4500, 0.9] });
-      tone(E, { type: 'sine', f0: 2600, at: 0.045, dur: 0.05, gain: 0.14, a: 0.002 });
+      tone(E, { type: 'square', f0: 1300, f1: 2600, dur: 0.06, gain: 0.19, a: 0.003, filter: ['bandpass', 2200, 0.8] });
+      noise(E, { dur: 0.03, gain: 0.17, a: 0.002, filter: ['bandpass', 4500, 0.9] });
+      tone(E, { type: 'sine', f0: 2600, at: 0.045, dur: 0.05, gain: 0.19, a: 0.002 });
     },
     overslaan: function (E) {
       tone(E, { type: 'square', f0: 660, dur: 0.065, gain: 0.08, filter: ['lowpass', 2600] });
