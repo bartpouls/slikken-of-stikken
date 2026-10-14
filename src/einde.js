@@ -29,7 +29,10 @@
  *   2. Toedienverslag per race (data-verslag="0|1"): mini-curve, QALY-opbouw in vier regels + totaal,
  *      rooster met je toedieningen per poortje naast het echte schema, telling (toedienmomenten,
  *      totale dosis, dagteller), de praktijkzin en (lithium) de nabesprekingszin uit het casusblad.
- *   3. "Nog een keer" (data-actie="opnieuw") plakt onderaan in beeld; één tik.
+ *   3. "Nog een keer" (data-actie="opnieuw") direct onder de nabespreekvraag; één tik.
+ *   Dempknop (van app.js): rechtsboven zoals op de andere schermen, maar hij scrolt mee (nooit over tekst).
+ *   Tegels = lijnkleuren van de race op een zwart paneeltje; ibuprofen oranje (zoals in de race);
+ *   labels "Uur 0" / "Dag 5" zoals in de race; "≠" = neutraal grijs "anders dan schema" (geen oordeel).
  *   Alle getallen komen uit data (verslag/score) of het casusblad; dit bestand rekent niets nieuws uit,
  *   behalve de tegelkleur (welke toestand de meeste meetpunten van de eigen curve had).
  * Stabiele haken voor tests: [data-eind="naam"|"totaal"|"race-0"|"race-1"], [data-verslag="i"] met
@@ -43,7 +46,8 @@
 
   var VRAAG = 'Wat deed je toen je onder de streep zakte?';
   var TOESTAND_LABEL = { zone: 'in de zone', onder: 'te laag', boven: 'te hoog', giftig: 'giftig' };
-  var SOORT_LABEL = { tablet: 'tablet', zetpil: 'zetpil', spuit: 'spuit', overgeslagen: 'overgeslagen', geblokkeerd: 'geblokkeerd' };
+  var SOORT_LABEL = { tablet: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', overgeslagen: 'overgeslagen', geblokkeerd: 'geblokkeerd' }; // knopnamen uit de race
+  var IBU = '#ff9f43'; // ibuprofen: oranje, zoals in de race (paars is voor de poortjes)
   var LIJN = { zone: '#7ef0c4', onder: '#ff8f80', boven: '#ffb067', giftig: '#ff5a5a' }; // zoals in de race
 
   function esc(s) {
@@ -114,7 +118,7 @@
     c.gebeurtenissen.forEach(function (x) { if (x.type === type) g = x; });
     return g;
   }
-  function tijdLabel(c, t) { return c.id === 'lithium' ? 'dag ' + getal(t / 24) : 'uur ' + t; }
+  function tijdLabel(c, t) { return c.id === 'lithium' ? 'Dag ' + getal(t / 24) : 'Uur ' + t; } // als label, zoals in de race
 
   function kaartHtml(i, c, v, curve) {
     var staten = curve && curve.length ? tegelStaten(c, curve) : null;
@@ -189,8 +193,8 @@
         s += '<text x="' + f((x(g.van) + x(g.tot)) / 2) + '" y="' + (T - 5) + '" text-anchor="middle" class="eind-svg-gebeurtenis">misselijk</text>';
       } else if (g.type === 'klaring') {
         s += '<line x1="' + f(x(g.t)) + '" y1="' + T + '" x2="' + f(x(g.t)) + '" y2="' + (T + ph) +
-          '" stroke="#b07cff" stroke-width="2"/>';
-        s += '<text x="' + f(x(g.t) + 4) + '" y="' + (T - 5) + '" class="eind-svg-paars">ibuprofen</text>';
+          '" stroke="' + IBU + '" stroke-width="2"/>';
+        s += '<text x="' + f(x(g.t) + 4) + '" y="' + (T - 5) + '" class="eind-svg-ibu">ibuprofen</text>';
       }
     });
     // zone(s)
@@ -228,8 +232,8 @@
         (lb[0] === c.toxisch ? ' tox' : '') + '">' + esc(lb[1]) + '</text>';
     });
     var asTekst = c.id === 'lithium'
-      ? [[0, 'dag 0'], [c.raceDuur / 2, 'dag ' + c.raceDuur / 48], [c.raceDuur, 'dag ' + c.raceDuur / 24]]
-      : [[0, 'uur 0'], [c.raceDuur / 2, 'uur ' + c.raceDuur / 2], [c.raceDuur, 'uur ' + c.raceDuur]];
+      ? [[0, 'Dag 0'], [c.raceDuur / 2, 'Dag ' + c.raceDuur / 48], [c.raceDuur, 'Dag ' + c.raceDuur / 24]]
+      : [[0, 'Uur 0'], [c.raceDuur / 2, 'Uur ' + c.raceDuur / 2], [c.raceDuur, 'Uur ' + c.raceDuur]];
     asTekst.forEach(function (a, k) {
       var anker = k === 0 ? 'start' : (k === 2 ? 'end' : 'middle');
       s += '<text x="' + f(x(a[0])) + '" y="' + (H - 6) + '" text-anchor="' + anker + '" class="eind-svg-as">' + a[1] + '</text>';
@@ -271,7 +275,7 @@
       j.toedieningen.forEach(function (d) { n += d.aantal; });
       var anders = echt ? n !== 1 : n > 0; // afwijking van het echte schema (aantal doses op dit poortje)
       var label = r.tijdTekst + ': ' + j.tekst + (r.echt ? '; echt schema ' + r.echt : '; echt schema niets') +
-        (anders ? '; anders dan het echte schema' : '');
+        (anders ? '; anders dan schema' : '');
       return '<li class="eind-cel' + (echt ? ' echt' : '') + (misselijk ? ' misselijk' : '') + (anders ? ' anders' : '') + ' s-' + j.soort + '"' +
         ' data-anders="' + (anders ? 1 : 0) + '"' +
         ' data-poortje="' + r.index + '" data-soort="' + j.soort + '" data-tekst="' + esc(j.tekst) + '"' +
@@ -291,9 +295,9 @@
       for (var d = 0; d < dagen; d++) {
         var r0 = rijen[d * perDag];
         if (klaring && Math.abs(r0.t - klaring.t) < 1e-9) {
-          s += '<div class="eind-markering"><span>dag ' + (klaring.t / 24) + ': ibuprofen</span></div>';
+          s += '<div class="eind-markering"><span>Dag ' + (klaring.t / 24) + ': ibuprofen</span></div>';
         }
-        s += '<div class="eind-dagrij"><span class="eind-dag">dag ' + d + '</span><ul>' +
+        s += '<div class="eind-dagrij"><span class="eind-dag">Dag ' + d + '</span><ul>' +
           rijen.slice(d * perDag, (d + 1) * perDag).map(function (r) { return cel(r, false); }).join('') + '</ul></div>';
       }
       s += '</div>';
@@ -316,7 +320,7 @@
     leg.push('<li><span class="eind-leg-ic eind-leg-leeg">–</span>overgeslagen</li>');
     leg.push('<li><span class="eind-leg-echt">' + esc(rijen.filter(function (r) { return r.echt; })[0].echt) + '</span>echt schema</li>');
     if (rijen.some(function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return r.echt ? n !== 1 : n > 0; })) {
-      leg.push('<li><span class="eind-leg-anders">≠</span>anders dan het echte schema</li>');
+      leg.push('<li><span class="eind-leg-anders">≠</span>anders dan schema</li>');
     }
     if (blok) leg.push('<li><span class="eind-leg-misselijk"></span>misselijk (' + esc(blok.tijdTekst.toLowerCase()) + ')</li>');
     return s + '<ul class="eind-leg">' + leg.join('') + '</ul>';
@@ -326,9 +330,19 @@
     var sch = c.echtSchema.schema, perDag = sch.filter(function (e) { return e.t < 24; });
     var dosis = (v.tijdlijn.filter(function (r) { return r.echt; })[0] || {}).echt || '';
     var tijden = perDag.map(function (e) { return e.t; });
-    var lek = c.id === 'lithium'
-      ? perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet (' + dosis + '). Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.'
-      : perDag.length + '× per dag ' + dosis + ' (om uur ' + lijst(tijden) + ').';
+    var lek;
+    if (c.id === 'lithium') {
+      lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 pil van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
+    } else {
+      lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur).';
+      // Een dosis van het echte schema tijdens de misselijkheid: dan kan opa Jan niet slikken.
+      var blok = gebeurtenis(c, 'blokkade');
+      var inBlok = blok ? tijden.filter(function (t) { return t >= blok.van - 1e-9 && t < blok.tot - 1e-9; }) : [];
+      if (inBlok.length) {
+        lek += ' Om ' + lijst(inBlok) + ' uur is opa Jan misselijk en kan hij niet slikken: dan krijgt hij die ' + dosis +
+          ' als zetpil of prik.';
+      }
+    }
     return '<p class="eind-echt"><span class="eind-echt-kop">Echt schema</span> <b>' + esc(v.echtSchema.tekst) + '</b><br>' +
       'Dat is: ' + esc(lek) + '</p>';
   }
@@ -355,7 +369,7 @@
     var lever = leverOp(c, v), leverOoit = curve && curve.some(function (p) { return lever(p.t); });
     if (curve && curve.length > 1) {
       s += '<figure class="eind-curve">' + curveSvg(c, curve, lever) +
-        '<figcaption>Jouw spiegel. Groene baan: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + ').' +
+        '<figcaption>Jouw spiegel. Het groene vlak: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + '); de onderkant is de streep.' +
         (c.toxisch != null ? ' Rode stippellijn: giftig (' + esc(c.toxischTekst || getal(c.toxisch, 1)) + ').' : '') +
         (leverOoit ? ' Rode lijn: meer dan ' + getal(c.bovengrens.maxPer24u / 1000) + ' g in 24 uur. ' + esc(c.lekentaal.boven) : '') +
         '</figcaption></figure>';
@@ -442,11 +456,12 @@
     });
 
     // De dempknop van app.js staat vast rechtsboven en zou bij scrollen over tekst liggen: zolang het
-    // eindscherm open is, staat hij (niet vast) naast "Nog een keer". stop() zet hem terug.
+    // eindscherm open is, staat hij op dezelfde plek (rechtsboven) maar scrolt hij mee met de pagina; de
+    // speelnaam laat daar ruimte voor. stop() zet hem terug.
     var demp = root.document.getElementById('demp'), dempTerug = null;
     if (demp && demp.parentNode) {
       dempTerug = { ouder: demp.parentNode, na: demp.nextSibling };
-      container.querySelector('.eind-acties').appendChild(demp);
+      container.appendChild(demp);
     }
 
     // Speelnaam: 1–2 regels, alleen breken op spaties; zo nodig kleiner, maar nooit onder 32 px.

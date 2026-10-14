@@ -152,9 +152,16 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   font-size: 14px; color: #77777e; font-style: italic;
 }
 .intro-verhaal { margin: 14px 0 8px; font-size: 19px; line-height: 1.4; font-weight: 600; max-width: 360px; }
-.intro-regel { margin: 0 0 10px; font-size: 15.5px; line-height: 1.4; color: #3c3c43; max-width: 340px; }
-.intro-qaly { margin: 0 0 18px; font-size: 14.5px; line-height: 1.4; color: #6a6a72; max-width: 340px; }
+.intro-regel { list-style: none; margin: 0 0 10px; padding: 0; font-size: 16px; line-height: 1.38; color: #2f2f35; max-width: 350px; text-align: left; }
+.intro-regel li { position: relative; padding-left: 20px; margin: 0 0 5px; }
+.intro-regel li::before { content: ""; position: absolute; left: 3px; top: .5em; width: 9px; height: 9px; border-radius: 50%; background: var(--paars-diep); }
+.intro-qaly { margin: 2px 0 16px; padding: 9px 12px; max-width: 350px; font-size: 15.5px; line-height: 1.38; color: #2f2f35; text-align: left; background: #f1ecff; border-radius: 12px; }
 .intro-qaly:empty { display: none; }
+@media (max-height: 700px) {
+  .intro-podium { height: 118px; }
+  .intro-podium .fig { width: 90px; }
+  .intro-verhaal { margin-top: 10px; font-size: 18px; }
+}
 
 /* ---------- race ---------- */
 #scherm-race { padding: 0; overflow: hidden; font-family: var(--font); }
@@ -202,8 +209,8 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 #doek { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .melding {
-  position: absolute; left: 50%; bottom: 28px; /* ruimte voor de keuze-regel boven de knoppen */
-  width: min(92%, 380px); transform: translate(-50%, 8px);
+  position: absolute; left: 50%; top: 80px; /* boven in het podium (verleden), los van de nu-lijn en de keuzeregel */
+  width: min(92%, 380px); transform: translate(-50%, -8px);
   text-align: center; font-size: 19px; line-height: 1.35; font-weight: 600;
   color: var(--wit); text-shadow: 0 1px 12px #000, 0 0 3px #000;
   opacity: 0; transition: opacity .25s ease, transform .25s ease;
@@ -237,7 +244,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .keuze-info {
   position: absolute; left: 0; right: 0; bottom: 100%; z-index: 2;
   padding: 0 16px 4px; text-align: center;
-  font-size: 14px; font-weight: 600; color: #fff; text-shadow: 0 0 6px #000, 0 0 2px #000;
+  font-size: 17px; font-weight: 700; line-height: 1.25; color: #fff; text-shadow: 0 0 6px #000, 0 0 2px #000;
   opacity: 0; transform: translateY(4px); transition: opacity .2s, transform .2s; pointer-events: none;
 }
 .keuze-info.zicht { opacity: 1; transform: none; }

@@ -133,7 +133,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 .melding.fout { color: var(--koraal); font-weight: 600; }
 .melding.goed { color: var(--paars); font-weight: 600; }
 .melding button {
-  background: none; border: 0; padding: .2rem 0; min-height: 32px;
+  background: none; border: 0; padding: .2rem .3rem; min-height: 48px; min-width: 48px;
   color: var(--inkt); text-decoration: underline; text-underline-offset: 3px; font-weight: 600;
 }
 
@@ -198,7 +198,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 
 /* verwijderknop: onopvallend, wel groot genoeg om te tikken */
 .weg {
-  flex: none; width: 44px; height: 44px; margin-left: -.2rem;
+  flex: none; width: 48px; height: 48px; margin-left: -.2rem;
   display: grid; place-items: center;
   background: none; border: 0; border-radius: 50%;
   color: var(--stil); font-size: 1.3rem; line-height: 1;
@@ -218,7 +218,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
 .bevestig span { margin-right: auto; padding-left: .5rem; min-width: 0; white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
 .knopje {
   flex: none; white-space: nowrap;
-  min-height: 44px; padding: 0 .9rem; border-radius: 10px;
+  min-height: 48px; min-width: 48px; padding: 0 .9rem; border-radius: 10px;
   border: 1.5px solid var(--rand); background: #000; font-weight: 700;
 }
 .knopje.ja { background: var(--koraal); border-color: var(--koraal); color: #2a0b05; }
@@ -249,7 +249,7 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   color: var(--stil); font-size: 1rem;
 }
 .wis {
-  background: none; border: 0; min-height: 40px; padding: 0 .2rem;
+  background: none; border: 0; min-height: 48px; min-width: 48px; padding: 0 .5rem;
   color: var(--stil); font-size: 1rem; text-decoration: underline; text-underline-offset: 3px;
 }
 .wis:hover, .wis:focus-visible { color: var(--inkt); outline: none; }
@@ -313,14 +313,14 @@ input[aria-invalid="true"] { border-color: var(--koraal); }
   .veld-naam { flex: 1 1 18rem; }
   .veld-score { flex: 0 1 15rem; }
   .toevoegen { flex: 0 0 auto; }
-  input[type="text"], .toevoegen, .teken { font-size: 1rem; min-height: 2.6rem; }
-  .teken, .weg { min-width: 2.6rem; }
+  input[type="text"], .toevoegen, .teken { font-size: 1rem; min-height: max(48px, 2.6rem); }
+  .teken, .weg { min-width: max(48px, 2.6rem); }
   .melding, .melding:empty { display: flex; margin: 0 0 .35rem; min-height: 1.4em; }
   .voet {
     grid-area: voet; margin: .8rem 0 0; padding: .6rem 0 .7rem;
     border-top: 1px solid var(--lijn); align-self: stretch; align-items: flex-end; justify-content: flex-end;
   }
-  .weg { width: 2.6rem; height: 2.6rem; font-size: 1.2rem; }
+  .weg { width: max(48px, 2.6rem); height: max(48px, 2.6rem); font-size: 1.2rem; }
 }
 
 /* beamer/laptop met minder breedte (bv. 1024x768): namen kleiner, podiumkolom iets breder */

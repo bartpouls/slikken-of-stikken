@@ -17,14 +17,18 @@
  *   SoS.ui.KLEUR {paars, groen, koraal, geel, blauw, rood, roze, inkt, papier}
  *   Stijl: style.css (kleurvariabelen, .scherm.wit/.zwart, .knop-wit, .knop-paars, .fig).
  *
- * RACE-INTERACTIE: de tijd loopt van boven naar beneden; paarse poortjes schuiven van onder naar de
- * "nu"-lijn. De knoppen onderin kiezen wat er op het EERSTVOLGENDE poortje gebeurt (stand "gekozen",
- * icoontje op het poortje, regel "Tablet voor Uur 18" boven de knoppen); op het poortje wordt de keuze
- * toegepast (race.naar(poortjetijd), dan race.geef) en gewist. Niets gekozen = overslaan.
+ * RACE-INTERACTIE: de tijd loopt van boven naar beneden (pijltje "tijd" in de linkermarge); paarse poortjes
+ * schuiven van onder naar de "nu"-lijn. De knoppen onderin kiezen wat er op het EERSTVOLGENDE poortje gebeurt
+ * (stand "gekozen", icoontje op het poortje, regel "Tablet voor uur 18" boven de knoppen); op het poortje wordt
+ * de keuze toegepast (race.naar(poortjetijd), dan race.geef) en gewist. Niets gekozen = overslaan.
  * Paracetamol: 1 toediening (1 g) per poortje; dezelfde knop nog eens = keuze weg.
- * Lithium: tablet tot 2× per poortje ("2 tabletten voor ..."), derde tik = keuze weg.
+ * Lithium: tablet tot 2× per poortje ("2× Tablet voor ..."), derde tik = keuze weg.
  * Te laat: een tik binnen 0,3 s (echte tijd, /speed) ná een poortje telt NIET voor het volgende poortje
- * ("Te laat voor Uur 16"); tik opnieuw. SoS.debug.poortje.open = false in dat venster.
+ * ("Te laat voor uur 16"); tik opnieuw. SoS.debug.poortje.open = false in dat venster.
+ * INDELING CANVAS (geen tekst over tekst): poortlabels staan aan de kant weg van de stip (R.kant, strook
+ * R.labelMax breed); waardelabel boven de nu-lijn, "onderweg"-bolletje ernaast of eronder, buiten die strook.
+ * Meldingen staan boven in het podium (verleden), één tegelijk; labels onder een melding worden niet getekend.
+ * Termen: "het groene vlak" (de zone); de ondergrens ervan heet "de streep" (label bovenaan, intro race 1).
  * Slikken tijdens misselijkheid en de lithium-spuit worden geweigerd met de casusbladtekst (geen effect,
  * geen strafpunten). Leverschade (dagteller > 4 g): lijn en stip rood, QALY-pijl omlaag, levermeter vol.
  * Terug-knop: eerst een melding; nog een keer terug binnen 3 s verlaat het spel.
@@ -298,11 +302,16 @@
     maakFigLevend(f);
     fig.appendChild(f);
     $('intro-verhaal').textContent = c.verhaal;
-    $('intro-regel').textContent = i === 0
-      ? 'De lijn is de spiegel: hoeveel paracetamol er in het bloed zit (mg/L = milligram per liter). ' +
-        'Houd hem in het groene vlak. Elk uur een paars poortje: kies ervóór tablet, zetpil, spuit of niets.'
-      : 'De lijn is de spiegel: hoeveel lithium er in het bloed zit (mmol/L). Houd hem in het groene vlak. ' +
-        'Poortjes 3× per dag, om 0, 8 en 16 uur: tablet of overslaan.';
+    var regels = i === 0
+      ? ['De lijn is de spiegel: hoeveel paracetamol er in het bloed zit.',
+         'Houd hem in het groene vlak. De ondergrens daarvan is de streep.',
+         'In de race loopt de tijd van boven naar beneden. Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.']
+      : ['De lijn is de spiegel: hoeveel lithium er in het bloed zit.',
+         'Houd hem in het groene vlak (0,6–1,0\u00a0mmol/L).',
+         'Een paars poortje om 0, 8 en 16 uur: kies Tablet (twee keer tikken = 2 tabletten) of Overslaan.'];
+    var ul = $('intro-regel');
+    ul.innerHTML = '';
+    regels.forEach(function (r) { ul.appendChild(el('li', { text: r })); });
     $('intro-qaly').textContent = i === 0 ? S.UITLEG : '';
     staat.introIndex = i;
     naarScherm('intro', 'intro' + (i + 1));
@@ -320,7 +329,7 @@
     lithium: {
       secPerUur: 90 / 240, Cmax: 2, monster: 0.1, dun: 1,
       ticks: [{ C: 0, t: '0' }, { C: 0.6, t: '0,6', streep: true }, { C: 1.0, t: '1,0' }, { C: 1.5, t: '1,5' }, { C: 2.0, t: '2 mmol/L', rechts: true }],
-      zoneLabel: ['zone'], toxLabel: 'giftig'
+      zoneLabel: ['in de zone'], toxLabel: 'giftig'
     }
   };
   // Zonelabel letterlijk uit het casusblad: "pijnstilling (vereenvoudigd)" -> twee regels.
@@ -335,6 +344,8 @@
     }
     return 'Uur ' + Math.floor(t + 1e-9);
   }
+  // Midden in een zin: "uur 18", "dag 3 · 8 u" (als label los: "Uur 18", "Dag 3 · 8 u").
+  function inZin(label) { return label.charAt(0).toLowerCase() + label.slice(1); }
   function klokHtml(c, t) {
     t = Math.max(0, t);
     if (c.id === 'lithium') {
@@ -377,7 +388,7 @@
     bouwRaceUi();
     naarScherm('race', 'race' + (i + 1));
     meetDoek();
-    melding('Houd de lijn in het groene vlak. Kies vóór het paarse poortje.', { prio: 0, duur: AANLOOP_S + 3 });
+    melding('Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is.', { prio: 0, duur: AANLOOP_S + 3 });
     R.rafId = root.requestAnimationFrame(lus);
   }
 
@@ -472,12 +483,12 @@
       return;
     }
     if (R.g >= R.poorten.length) { keuzeInfo('Geen poortjes meer in deze race.'); return; }
-    var doelLabel = tijdLabel(c, R.poorten[R.g], true);
+    var doelLabel = inZin(tijdLabel(c, R.poorten[R.g], true));
     // Te laat: een tik vlak ná een poortje telt niet stilletjes mee voor het volgende poortje.
     if (R.laatstePoort && performance.now() - R.laatstePoort.echt < TE_LAAT_MS / SPEED) {
       flits(b, 'schud');
       speel('overslaan');
-      keuzeInfo('Te laat voor ' + R.laatstePoort.label + '. Kies opnieuw voor ' + doelLabel + '.', 'laat');
+      keuzeInfo('Te laat voor ' + inZin(R.laatstePoort.label) + '. Kies opnieuw voor ' + doelLabel + '.', 'laat');
       return;
     }
     var k = R.keuze;
@@ -485,7 +496,7 @@
     var tekst;
     if (k.route === route && k.aantal < max) {
       k.aantal++;
-      tekst = k.aantal + ' tabletten voor ' + doelLabel;
+      tekst = k.aantal + '× Tablet voor ' + doelLabel;
     } else if (k.route === route) {
       k.route = null; k.aantal = 0;
       tekst = 'Keuze gewist voor ' + doelLabel + ': niets kiezen is overslaan.';
@@ -514,8 +525,10 @@
     infoTimer = setTimeout(function () { e.classList.remove('zicht'); }, Math.max(500, 1800 / Math.min(SPEED, 4)));
   }
 
-  // ---------- meldingen (korte witte tekst in het midden) ----------
-  var meldTimer = 0;
+  // ---------- meldingen (korte witte tekst, boven in het podium, in het verleden-deel) ----------
+  // Er is er altijd hooguit één in beeld: een nieuwe melding wacht tot de vorige is uitgefaded.
+  // Zolang hij zichtbaar is, tekent het canvas geen poort- of gebeurtenislabels onder hem (R.meldVlak).
+  var meldTimer = 0, meldWissel = 0, MELD_FADE = 260;
   function melding(tekst, o) {
     o = o || {};
     if (!R) return;
@@ -525,14 +538,25 @@
     var duur = (o.duur || 2.4) * 1000 / Math.min(SPEED, 4);
     R.melding = { prio: prio, tot: nu + duur };
     var m = $('melding');
-    m.className = 'melding' + (o.soort ? ' ' + o.soort : '') + (o.fig ? ' met-fig' : '');
-    m.innerHTML = '';
-    if (o.fig) m.appendChild(el('div', { class: 'm-fig', html: o.fig }));
-    m.appendChild(el('div', { text: tekst }));
-    void m.offsetWidth;
-    m.classList.add('zicht');
-    clearTimeout(meldTimer);
-    meldTimer = setTimeout(function () { m.classList.remove('zicht'); }, duur);
+    var r = R;
+    clearTimeout(meldTimer); clearTimeout(meldWissel);
+    function toon() {
+      if (R !== r || R.klaar) return;
+      m.className = 'melding' + (o.soort ? ' ' + o.soort : '') + (o.fig ? ' met-fig' : '');
+      m.innerHTML = '';
+      if (o.fig) m.appendChild(el('div', { class: 'm-fig', html: o.fig }));
+      m.appendChild(el('div', { text: tekst }));
+      void m.offsetWidth;
+      var t0 = performance.now();
+      R.meldVlak = { top: m.offsetTop, bottom: m.offsetTop + m.offsetHeight, tot: t0 + duur + MELD_FADE + 60 };
+      m.classList.add('zicht');
+      meldTimer = setTimeout(function () { m.classList.remove('zicht'); }, duur);
+    }
+    if (m.classList.contains('zicht')) {
+      m.classList.remove('zicht');
+      if (R.meldVlak) R.meldVlak.tot = nu + MELD_FADE + 60 + 400;
+      meldWissel = setTimeout(toon, MELD_FADE);
+    } else toon();
   }
 
   // ---------- canvas ----------
@@ -562,6 +586,11 @@
       R.pxPerUur = gat / R.casus.poortjes.interval;
       R.yNu = Math.round(D.h * 0.52);
       R.links = 18; R.rechts = 18;
+      // breedste poortlabel (+ icoontje, lithium ook "2×"): zo breed is de gereserveerde labelstrook
+      ctx.font = '700 15px ' + FONT;
+      var mx = 0;
+      R.poorten.forEach(function (T) { mx = Math.max(mx, ctx.measureText(tijdLabel(R.casus, T, true)).width); });
+      R.labelMax = mx + 34 + (R.casus.id === 'lithium' ? 18 : 0);
     }
   }
 
@@ -586,12 +615,25 @@
 
   // Bovenrand (as-labels) en onderrand (knoppen): hier worden poortjes en spiegel weggevaagd.
   var BOVENRAND = 58;
+  // Poortlabels staan aan de kant WEG van de stip (R.kant: 'links' | 'rechts', met speling zodat ze niet
+  // heen en weer springen). Die strook (R.strook) is gereserveerd: de stip, het waardelabel en het
+  // "onderweg"-bolletje blijven erbuiten. Poortjes vlak bij de nu-lijn (PROX) volgen de kant altijd; verder
+  // in het verleden houden ze de kant die ze hadden. Zo ligt er nooit tekst over tekst, ook niet op het poortje.
+  var INSPRING = 8, PROX = 40;
 
   function poortjeAlpha(yg, h, basis) {
     var a = basis;
-    if (yg > h - 60) a *= Math.max(0, (h - yg) / 60) * 0.8 + 0.2;
-    if (yg < BOVENRAND + 22) a *= Math.max(0, (yg - BOVENRAND + 8) / 30);
+    // onderin: weg vóór de keuzeregel boven de knoppen
+    if (yg > h - 76) a *= Math.max(0, (h - 40 - yg) / 36);
+    // bovenin: weg vóór de as-labels en de vastgezette gebeurtenis-labels
+    if (yg < BOVENRAND + 50) a *= Math.max(0, (yg - BOVENRAND - 26) / 24);
     return a;
+  }
+
+  // Bedekt de melding (boven in het podium) deze rij? Dan geen poort- of gebeurtenislabel daar.
+  function onderMelding(y0, y1, nu) {
+    var m = R && R.meldVlak;
+    return !!(m && nu < m.tot && y1 > m.top - 10 && y0 < m.bottom + 12);
   }
 
   // stap 1: lijnen; stap 2: label (met zwarte halo) en icoontje van de keuze/toediening.
@@ -599,10 +641,18 @@
     var c = R.casus, w = D.w, h = D.h, L = R.links, Rr = w - R.rechts;
     ctx.font = '700 15px ' + FONT;
     ctx.textBaseline = 'middle';
+    R.zijde = R.zijde || [];
+    R.zijdeT = R.zijdeT || [];
     for (var g = 0; g < R.poorten.length; g++) {
       var T = R.poorten[g], yg = yVan(T);
       if (yg < -30 || yg > h + 30) continue;
       var verleden = g < R.g, doel = g === R.g;
+      if (stap === 1) {
+        var zi = R.zijde[g];
+        if (zi == null) { R.zijde[g] = R.kant; R.zijdeT[g] = -1e9; }
+        else if (zi !== R.kant && (!verleden || Math.abs(yg - R.yNu) < PROX)) { R.zijde[g] = R.kant; R.zijdeT[g] = nu; }
+      }
+      var zijde = R.zijde[g] || R.kant;
       var label = tijdLabel(c, T, true);
       var tw = ctx.measureText(label).width;
       var icoonSoort = null, aantal = 1;
@@ -613,41 +663,50 @@
         icoonSoort = gg.soort === 'slik' ? 'tablet' : (gg.soort === 'geblokkeerd' ? 'kruis' : (gg.soort === 'leeg' ? null : gg.soort));
         aantal = gg.aantal || 1;
       }
-      var extra = icoonSoort ? 30 + (aantal > 1 ? 18 : 0) : 0;
-      var cx = w / 2, l1 = cx - tw / 2 - 12, r1 = cx + tw / 2 + 12 + extra;
+      var extra = icoonSoort ? 34 + (aantal > 1 ? 18 : 0) : 0;
+      var wb = tw + extra;
+      var xs = zijde === 'links' ? L + INSPRING : Rr - INSPRING - wb; // begin van label (+ icoon)
+      var l1 = xs - 8, r1 = xs + wb + 8;
       // komend: ≥ 90% dekking (contrast), doel: vol en helder, verleden: gedimd (geschiedenis)
       // verleden: lijn gedimd, label in een dof paars dat toch ≥ 4,5:1 haalt (#8a72c0 op zwart = 5,25)
       var a = poortjeAlpha(yg, h, verleden ? (stap === 1 ? 0.4 : 1) : (doel ? 1 : 0.92));
-      if (a <= 0.01) continue;
-      ctx.globalAlpha = a;
       if (stap === 1) {
+        if (a <= 0.01) continue;
+        ctx.globalAlpha = a;
         ctx.strokeStyle = doel ? '#d9c2ff' : (verleden ? KLEUR.paars : '#c9a4ff');
         ctx.lineWidth = doel ? 2.5 : (verleden ? 1 : 1.25);
-        ctx.beginPath(); ctx.moveTo(L - 6, yg); ctx.lineTo(l1, yg); ctx.moveTo(r1, yg); ctx.lineTo(Rr + 6, yg); ctx.stroke();
+        ctx.beginPath();
+        if (l1 > L - 6) { ctx.moveTo(L - 6, yg); ctx.lineTo(l1, yg); }
+        ctx.moveTo(r1, yg); ctx.lineTo(Rr + 6, yg); ctx.stroke();
       } else {
-        ctx.textAlign = 'center';
+        // label: niet onder de melding, en na een kantwissel kort infaden (nooit half over de stip)
+        if (onderMelding(yg - 10, yg + 10, nu)) a = 0;
+        a *= Math.min(1, (nu - (R.zijdeT[g] || -1e9)) / 160);
+        if (a <= 0.01) continue;
+        ctx.globalAlpha = a;
+        ctx.textAlign = 'left';
         ctx.strokeStyle = '#000'; ctx.lineWidth = 6; ctx.lineJoin = 'round';
         ctx.globalAlpha = Math.min(1, a * 2.5); // uitsparing dekt de spiegel ook bij gedimde labels
-        ctx.strokeText(label, cx, yg + 0.5);
+        ctx.strokeText(label, xs, yg + 0.5);
         ctx.globalAlpha = a;
         if (doel) { ctx.shadowColor = 'rgba(176,124,255,0.95)'; ctx.shadowBlur = 14; }
         ctx.fillStyle = doel ? '#ecdfff' : (verleden ? '#8a72c0' : '#c9a4ff');
-        ctx.fillText(label, cx, yg + 0.5);
+        ctx.fillText(label, xs, yg + 0.5);
         ctx.shadowBlur = 0;
         if (icoonSoort) {
-          var ix = cx + tw / 2 + 12 + 14;
+          var ix = xs + tw + 19;
           var pop = 1;
-          if (doel && R.kiesT0) { var dtk = (nu - R.kiesT0) / 160; if (dtk < 1) pop = 1 + 0.35 * Math.sin(dtk * Math.PI); }
+          if (doel && R.kiesT0) { var dtk = (nu - R.kiesT0) / 160; if (dtk < 1) pop = 1 + 0.2 * Math.sin(dtk * Math.PI); }
           ctx.fillStyle = '#000';
           ctx.globalAlpha = Math.min(1, a * 2.5);
           ctx.beginPath(); ctx.arc(ix, yg, 15, 0, 6.283); ctx.fill();
           ctx.globalAlpha = a;
           tekenIcoon(ctx, icoonSoort, ix, yg, 26 * pop, verleden ? 0.55 : 1);
           if (aantal > 1) {
-            ctx.font = '800 13px ' + FONT; ctx.textAlign = 'left';
-            ctx.strokeText(aantal + '×', ix + 14, yg + 1);
+            ctx.font = '800 13px ' + FONT;
+            ctx.strokeText(aantal + '×', ix + 17, yg + 1);
             ctx.fillStyle = '#fff';
-            ctx.fillText(aantal + '×', ix + 14, yg + 1);
+            ctx.fillText(aantal + '×', ix + 17, yg + 1);
             ctx.font = '700 15px ' + FONT;
           }
         }
@@ -708,6 +767,27 @@
       ctx.setLineDash([]);
     }
 
+    // stip, kant van de poortlabels en de vrije strook
+    var C = R.race.sim.C, tm = Math.max(0, R.race.t);
+    var xD = xVan(C), yN = R.yNu, mid = (L + Rr) / 2;
+    if (R.kant == null) R.kant = xD > mid ? 'links' : 'rechts';
+    else if (R.kant === 'rechts' && xD > mid + 10) R.kant = 'links';
+    else if (R.kant === 'links' && xD < mid - 10) R.kant = 'rechts';
+    var zA = R.kant === 'links' ? L + INSPRING - 4 : Rr - INSPRING - R.labelMax - 4, zB = zA + R.labelMax + 8;
+    var vrij = function (a, b) { return b < zA - 4 || a > zB + 4; };
+    var past = function (a, b) { return a >= 2 && b <= w - 2; };
+    // gebeurtenislabels in dezelfde strook als de poortlabels (daar staat nooit iets van de stip)
+    function gebeurtenisLabel(tekst, y, metIcoon) {
+      ctx.font = '600 12px ' + FONT; ctx.textBaseline = 'top'; ctx.textAlign = 'left';
+      var bw = ctx.measureText(tekst).width + (metIcoon ? 22 : 0);
+      if (onderMelding(y - 2, y + 15, nu)) return;
+      var x0 = R.kant === 'links' ? L + INSPRING : Rr - INSPRING - bw;
+      ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+      if (metIcoon) tekenIcoon(ctx, 'doosje', x0 + 8, y + 7, 18);
+      ctx.strokeText(tekst, x0 + (metIcoon ? 22 : 0), y);
+      ctx.fillText(tekst, x0 + (metIcoon ? 22 : 0), y);
+    }
+
     // onthulde gebeurtenissen in de tijdlijn
     c.gebeurtenissen.forEach(function (g, gi) {
       if (!R.onthuld[gi]) return;
@@ -717,11 +797,9 @@
         ctx.fillStyle = 'rgba(190,230,90,0.07)';
         ctx.fillRect(0, y1, w, y2 - y1);
         ctx.fillStyle = 'rgba(200,235,120,0.9)';
-        ctx.fillRect(4, y1, 3, y2 - y1);
-        ctx.font = '600 12px ' + FONT;
-        ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-        var ym = Math.max(y1 + 6, BOVENRAND + 4);
-        if (ym < y2 - 18) ctx.fillText('misselijk', 12, ym);
+        ctx.fillRect(0, y1, 3, y2 - y1);
+        var ym = Math.max(y1 + 18, BOVENRAND + 4);
+        if (ym < y2 - 18) gebeurtenisLabel('misselijk', ym, false);
       } else if (g.type === 'klaring') {
         var yk = yVan(g.t);
         if (yk > h) return;
@@ -732,11 +810,7 @@
           ctx.beginPath(); ctx.moveTo(0, yk); ctx.lineTo(w, yk); ctx.stroke();
         }
         ctx.fillStyle = 'rgba(255,176,103,0.95)';
-        ctx.font = '600 12px ' + FONT;
-        ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-        var yl = Math.max(yk + 6, BOVENRAND + 4);
-        tekenIcoon(ctx, 'doosje', 20, yl + 7, 18);
-        ctx.fillText('ibuprofen', 32, yl);
+        gebeurtenisLabel('ibuprofen', Math.max(yk + 18, BOVENRAND + 4), true);
       }
     });
 
@@ -782,38 +856,52 @@
     // paarse poortjes, stap 2: labels + icoontjes met zwarte uitsparing (boven de spiegel)
     tekenPoortjes(nu, 2);
 
-    // nu-lijn
-    var yN = R.yNu;
+    // nu-lijn; het woord "nu" aan de rand aan de kant van de poortlabels (buiten hun strook)
     ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.lineWidth = 1;
     ctx.setLineDash([3, 6]);
     ctx.beginPath(); ctx.moveTo(0, yN); ctx.lineTo(w, yN); ctx.stroke();
     ctx.setLineDash([]);
-    var C = R.race.sim.C, tm = Math.max(0, R.race.t);
-    var xD = xVan(C);
     ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.font = '600 12px ' + FONT;
     ctx.textBaseline = 'bottom';
-    if (xD > w / 2) { ctx.textAlign = 'left'; ctx.fillText('nu', 4, yN - 4); }
+    if (R.kant === 'links') { ctx.textAlign = 'left'; ctx.fillText('nu', 4, yN - 4); }
     else { ctx.textAlign = 'right'; ctx.fillText('nu', w - 4, yN - 4); }
+
+    // indeling rond de stip: waardelabel boven de nu-lijn, naar buiten (weg van de poortlabels);
+    // past dat niet, dan naar binnen. Het "onderweg"-bolletje aan de andere kant, of voorbij het label.
+    var waarde = c.id === 'lithium' ? getal(C, 2) + ' mmol/L' : getal(C, 1) + ' mg/L';
+    ctx.font = '600 12.5px ' + FONT;
+    var wv = ctx.measureText(waarde).width;
+    var o = R.kant === 'links' ? 1 : -1;
+    var va = o > 0 ? xD + 10 : xD - 10 - wv;
+    if (!past(va, va + wv) || !vrij(va, va + wv)) va = o > 0 ? xD - 10 - wv : xD + 10;
+    var vb = va + wv, vKant = va > xD ? 1 : -1;
 
     // opnamedepot ("onderweg"): vertraging van slikken/zetpil zichtbaar
     var ref = c.routes.slik.dosis * c.routes.slik.F;
-    var dep = R.race.sim.depot / ref, blobX = null;
+    var dep = R.race.sim.depot / ref;
+    R.blob = null;
     if (dep > 0.03) {
       var rB = 5 + 13 * Math.sqrt(Math.min(1.6, dep));
-      // links (ver van de stip), of links náást de stip als die rechts staat ("nu"-label staat dan links)
-      var xB = xD > w / 2 ? xD - rB - 40 : L + 20;
-      if (Math.abs(xB - xD) < rB + 14) xB = Math.min(Rr - 20, xD + rB + 26);
+      var hw = Math.max(rB, 29); // halve breedte, met het woord "onderweg" eronder
+      // naast de stip (aan de kant zonder waardelabel, of voorbij het label); past dat niet: onder de stip
+      var kand = [xD - vKant * (rB + 26), xD + vKant * Math.max(rB + 26, (vKant > 0 ? vb - xD : xD - va) + 6 + hw)];
+      var xB = R.kant === 'links' ? Math.max(xD, zB + 8 + hw) : Math.min(xD, zA - 8 - hw), yB = yN + rB + 14;
+      for (var q = 0; q < kand.length; q++) {
+        if (kand[q] - hw >= L && kand[q] + hw <= w - 4 && vrij(kand[q] - hw, kand[q] + hw)) { xB = kand[q]; yB = yN; break; }
+      }
       ctx.strokeStyle = 'rgba(255,225,161,0.55)'; ctx.lineWidth = 2;
-      ctx.setLineDash([2, 5]); ctx.lineDashOffset = -(nu / 40) % 7 * (xD > xB ? 1 : -1);
-      ctx.beginPath(); ctx.moveTo(xB, yN); ctx.lineTo(xD, yN); ctx.stroke();
+      ctx.setLineDash([2, 5]); ctx.lineDashOffset = -(nu / 40) % 7 * (xD > xB || yB > yN ? 1 : -1);
+      ctx.beginPath(); ctx.moveTo(xB, yB); ctx.lineTo(xD, yN); ctx.stroke();
       ctx.setLineDash([]); ctx.lineDashOffset = 0;
-      blobX = xB;
+      R.blob = { x: xB, y: yB };
       ctx.fillStyle = 'rgba(255,225,161,0.22)';
-      ctx.beginPath(); ctx.arc(xB, yN, rB, 0, 6.283); ctx.fill();
+      ctx.beginPath(); ctx.arc(xB, yB, rB, 0, 6.283); ctx.fill();
       ctx.strokeStyle = 'rgba(255,225,161,0.8)'; ctx.lineWidth = 1.5; ctx.stroke();
       ctx.fillStyle = 'rgba(255,225,161,0.85)'; ctx.font = '600 11px ' + FONT;
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText('onderweg', xB, yN + rB + 4);
+      ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+      ctx.strokeText('onderweg', xB, yB + rB + 4);
+      ctx.fillText('onderweg', xB, yB + rB + 4);
     }
 
     // effecten
@@ -830,9 +918,10 @@
         return true;
       }
       if (e.type === 'slik') {
+        // het icoontje plopt in het "onderweg"-bolletje (geen vlucht over de poortlabels)
         if (dt > 0.7) return false;
-        var q = dt / 0.7, ex = w / 2 + 40 + (e.xNaar - (w / 2 + 40)) * q;
-        tekenIcoon(ctx, e.soort, ex, yN - 6 * Math.sin(q * Math.PI), 26 * (1 - 0.6 * q), 1 - q * 0.7);
+        var q2 = dt / 0.7, bl = R.blob || { x: xD, y: yN };
+        tekenIcoon(ctx, e.soort, bl.x, bl.y, 26 * (1.15 - 0.6 * q2), 1 - q2 * 0.8);
         return true;
       }
       if (e.type === 'lever') {
@@ -863,21 +952,12 @@
       ctx.fillStyle = kl;
       ctx.beginPath(); ctx.moveTo(xD + 9, yN - 6); ctx.lineTo(xD + 16, yN); ctx.lineTo(xD + 9, yN + 6); ctx.fill();
     }
-    // waarde bij de stip
-    var waarde = c.id === 'lithium' ? getal(C, 2) + ' mmol/L' : getal(C, 1) + ' mg/L';
-    ctx.font = '600 12.5px ' + FONT; ctx.textBaseline = 'top';
-    var wv = ctx.measureText(waarde).width;
-    var xl = xD + 12;
-    ctx.textAlign = 'left';
-    if (xl + wv > Rr) { xl = xD - 12; ctx.textAlign = 'right'; }
+    // waarde bij de stip (boven de nu-lijn)
+    ctx.font = '600 12.5px ' + FONT; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
-    // botst de waarde met het "onderweg"-bolletje? dan erboven
-    var lx0 = ctx.textAlign === 'left' ? xl : xl - wv;
-    var yw = yN + 9;
-    if (blobX != null && blobX > lx0 - 30 && blobX < lx0 + wv + 30) { ctx.textBaseline = 'bottom'; yw = yN - 9; }
     ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
-    ctx.strokeText(waarde, xl, yw);
-    ctx.fillText(waarde, xl, yw);
+    ctx.strokeText(waarde, va, yN - 8);
+    ctx.fillText(waarde, va, yN - 8);
 
     // rand boven: as-labels; rand onder: vervagen naar de knoppen
     var gb = ctx.createLinearGradient(0, 0, 0, BOVENRAND);
@@ -900,7 +980,10 @@
     });
     var v0 = M.venster(c, tm);
     var zl = xVan(v0.laag), zr = v0.hoog === Infinity ? Rr : xVan(v0.hoog);
-    ctx.fillStyle = 'rgba(126,240,196,1)'; ctx.textAlign = 'center';
+    // "de streep" = de ondergrens van het groene vlak (zie intro race 1)
+    ctx.fillStyle = 'rgba(126,240,196,1)'; ctx.textAlign = 'right';
+    halo('streep →', zl - 4, 23);
+    ctx.textAlign = 'center';
     ctx.font = '700 11.5px ' + FONT;
     var zx = (zl + zr) / 2 + (v0.hoog === Infinity ? 12 : 0);
     R.cfg.zoneLabel.forEach(function (regel, i) { halo(regel, zx, 23 + i * 14); });
@@ -908,6 +991,24 @@
       ctx.fillStyle = 'rgba(255,135,125,1)';
       halo(R.cfg.toxLabel, (xVan(c.toxisch) + Rr) / 2, 23);
     }
+
+    // tijd loopt naar beneden: klein pijltje in de linkermarge, onder de nu-lijn
+    var ty = yN + 22;
+    ctx.save();
+    ctx.globalAlpha = 0.8;
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 4;
+    ctx.fillStyle = '#d0d0d8';
+    ctx.translate(10, ty); ctx.rotate(Math.PI / 2);
+    ctx.font = '600 11px ' + FONT; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.strokeText('tijd', 0, 0); ctx.fillText('tijd', 0, 0);
+    var tl = ctx.measureText('tijd').width;
+    ctx.restore();
+    ctx.save();
+    ctx.globalAlpha = 0.8;
+    ctx.strokeStyle = '#d0d0d8'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
+    var ya = ty + tl + 4;
+    ctx.beginPath(); ctx.moveTo(10, ya); ctx.lineTo(10, ya + 16); ctx.moveTo(6, ya + 11); ctx.lineTo(10, ya + 16); ctx.lineTo(14, ya + 11); ctx.stroke();
+    ctx.restore();
   }
 
   // ---------- spelklok ----------

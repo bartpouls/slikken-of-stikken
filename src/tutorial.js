@@ -93,7 +93,7 @@
     var opaFig = el('div', { class: 'fig', 'data-fig': 'opa' });
     var maag = el('div', { class: 'tut-maag', html: ui.icoon('tablet'), 'aria-hidden': 'true' });
     var ballon = el('div', { class: 'tut-ballon', 'aria-hidden': 'true' });
-    var naamje = el('div', { class: 'tut-naamje', text: 'opa Jan' });
+    var naamje = el('div', { class: 'tut-naamje', text: 'Opa Jan' });
     opaWrap.appendChild(ballon); opaWrap.appendChild(opaFig); opaWrap.appendChild(maag); opaWrap.appendChild(naamje);
     var leverWrap = el('div', { class: 'tut-lever', hidden: true });
     var leverFig = el('div', { class: 'fig', html: lever('blij') });

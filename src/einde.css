@@ -2,7 +2,9 @@
  * Slikken of Stikken — src/einde.css  (eindscherm + toedienverslag). Prefix .eind- ; gedeelde stijl in style.css.
  * Stijl: wit papier met zwarte schetslijnen (Evolution of Trust, zoals start en intro), mini-curves als zwarte
  * racepaneeltjes (Universe Forecast), paarse tijdmarkering met lijn ervoor en erachter.
- * Tekstkleuren op --papier halen WCAG AA (≥ 4,5:1); tegelkleuren ≥ 3:1 tegen het papier.
+ * Tekstkleuren op --papier halen WCAG AA (≥ 4,5:1). Tegels en curve gebruiken precies de lijnkleuren van de race,
+ * op een zwart paneeltje (zoals de race); in de legenda met een inktrand. Ibuprofen is oranje (zoals in de race),
+ * paars blijft voor poortjes en tijdmarkering.
  */
 #scherm-einde { padding-bottom: 0; scroll-behavior: auto; }
 .eind-binnen { position: relative; }
@@ -49,24 +51,25 @@
 .eind-tegels { display: flex; flex-direction: column; gap: 6px; margin-top: 9px; }
 .eind-tegelrij { display: grid; grid-template-columns: 50px 1fr; align-items: center; gap: 4px; }
 .eind-rijlabel { font-size: 14px; font-weight: 700; color: #45454c; white-space: nowrap; }
-.eind-tegelvak { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 3px; }
+.eind-tegelvak { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 3px; padding: 3px; background: #000; border-radius: 8px; }
 .eind-tegel {
   position: relative;
-  display: block; height: 22px; border-radius: 5px; background: #dcd8cf;
+  display: block; height: 22px; border-radius: 4px; background: #2c2c33;
   animation: eind-tegel .32s ease both; animation-delay: calc(var(--i, 0) * 14ms + 150ms);
 }
 @keyframes eind-tegel { from { transform: scale(.4) rotateX(80deg); opacity: .2; } }
-.eind-tegel.m::after { /* misselijk: limoen streepje in de tegel */
-  content: ""; position: absolute; left: 3px; right: 3px; bottom: 3px; height: 4px; background: #e4f59a; border-radius: 2px;
-  box-shadow: 0 0 0 1px rgba(27, 27, 31, .55);
+.eind-tegel.m::after { /* misselijk: limoen streepje in de tegel (zoals de misselijk-strook in de race) */
+  content: ""; position: absolute; left: 3px; right: 3px; bottom: 3px; height: 4px; background: #c8eb78; border-radius: 2px;
+  box-shadow: 0 0 0 1.5px #000;
 }
-.eind-tegel.ibu::before { /* ibuprofen: paarse streep vóór de tegel */
-  content: ""; position: absolute; left: -5px; top: -4px; bottom: -4px; width: 3px; background: var(--paars-diep); border-radius: 2px;
+.eind-tegel.ibu::before { /* ibuprofen: oranje streep vóór de tegel */
+  content: ""; position: absolute; left: -3px; top: -3px; bottom: -3px; width: 3px; background: #ff9f43; border-radius: 2px;
 }
-.t-zone { background: #138a55; }
-.t-onder { background: #e2533f; }
-.t-boven { background: #c97a00; }
-.t-giftig { background: #6e0f2c; }
+/* = LIJNKLEUR in app.js (de kleur van de spiegel in de race) */
+.t-zone { background: #7ef0c4; }
+.t-onder { background: #ff8f80; }
+.t-boven { background: #ffb067; }
+.t-giftig { background: #ff5a5a; }
 
 .eind-legenda {
   list-style: none; margin: 10px 0 0; padding: 0;
@@ -74,9 +77,9 @@
   font-size: 16px; font-weight: 600; color: #3c3c43;
 }
 .eind-legenda li { display: inline-flex; align-items: center; gap: 6px; }
-.eind-legenda .eind-tegel { width: 16px; height: 16px; border-radius: 4px; animation: none; }
-.eind-leg-m { width: 18px; height: 6px; border-radius: 2px; background: #e4f59a; box-shadow: 0 0 0 1.5px #1b1b1f; }
-.eind-leg-ibu { width: 4px; height: 18px; border-radius: 2px; background: var(--paars-diep); }
+.eind-legenda .eind-tegel { width: 16px; height: 16px; border-radius: 4px; animation: none; box-shadow: 0 0 0 2px #000; }
+.eind-leg-m { width: 18px; height: 6px; border-radius: 2px; background: #c8eb78; box-shadow: 0 0 0 2px #000; }
+.eind-leg-ibu { width: 5px; height: 18px; border-radius: 2px; background: #ff9f43; box-shadow: 0 0 0 2px #000; }
 
 .eind-vraag {
   position: relative; width: 100%; margin: 16px 0 0; padding: 14px 16px 14px;
@@ -90,11 +93,9 @@
 .eind-vraag p { margin: 4px 0 0; font-size: 22px; font-weight: 800; line-height: 1.25; }
 .eind-acties { width: 100%; display: flex; align-items: center; gap: 10px; margin-top: 14px; }
 .eind-acties .knop-wit.groot { flex: 1 1 auto; max-width: none; }
-.eind-acties .demp { /* dempknop van app.js, hier niet vast */
-  position: static; flex: none; width: 60px; height: 60px;
-  border: 3px solid var(--inkt); border-radius: 50%; background: var(--wit); color: var(--inkt);
-}
-.eind-acties .demp svg { width: 28px; height: 28px; }
+/* dempknop van app.js: dezelfde plek als op de andere schermen (rechtsboven), maar hij scrolt mee */
+#scherm-einde > .demp { position: absolute; top: calc(var(--veilig-boven) + 6px); right: calc(var(--veilig-rechts) + 6px); }
+.eind-naam { padding: 0 50px; }
 .eind-scorebord { margin: 12px 0 0; font-size: 16px; line-height: 1.4; color: #2f2f35; max-width: 340px; }
 .eind-spelpunten { margin: 4px 0 0; font-size: 15px; color: #4d4d55; }
 
@@ -112,12 +113,12 @@
 .eind-curve { margin: 14px 0 0; }
 .eind-curve svg { display: block; width: 100%; height: auto; }
 .eind-curve figcaption { margin-top: 6px; font-size: 14px; color: #4d4d55; }
-.eind-svg-label, .eind-svg-as, .eind-svg-gebeurtenis, .eind-svg-paars { font-family: var(--font); font-size: 11.5px; font-weight: 600; }
+.eind-svg-label, .eind-svg-as, .eind-svg-gebeurtenis, .eind-svg-ibu { font-family: var(--font); font-size: 11.5px; font-weight: 600; }
 .eind-svg-label { fill: rgba(255, 255, 255, .8); }
 .eind-svg-label.tox { fill: #ff9a9a; }
 .eind-svg-as { fill: rgba(255, 255, 255, .72); }
 .eind-svg-gebeurtenis { fill: #d6ef9a; }
-.eind-svg-paars { fill: #c9a6ff; }
+.eind-svg-ibu { fill: #ffb067; }
 
 .eind-opbouw { width: 100%; margin: 16px 0 0; border-collapse: collapse; font-size: 18px; font-variant-numeric: tabular-nums; }
 .eind-opbouw caption { text-align: left; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #5c5c64; padding-bottom: 4px; }
@@ -150,9 +151,9 @@
 .eind-cel-echt {
   position: absolute; top: 1px; right: 4px; font-size: 11px; font-weight: 800; color: #6a3fd1;
 }
-.eind-cel-anders {
-  position: absolute; bottom: 2px; right: 2px; width: 18px; height: 18px; border-radius: 50%;
-  display: grid; place-items: center; background: #c0362a; color: var(--wit); font-size: 14px; font-weight: 800; line-height: 1;
+.eind-cel-anders { /* neutraal: alleen "anders dan schema", geen oordeel */
+  position: absolute; bottom: 2px; right: 3px;
+  color: #5c5c64; font-size: 15px; font-weight: 800; line-height: 1;
 }
 .eind-cel-ic { position: relative; display: inline-flex; align-items: center; }
 .eind-cel-ic svg { width: 28px; height: 28px; filter: drop-shadow(0 0 .6px #1b1b1f) drop-shadow(0 0 .6px #1b1b1f); }
@@ -169,8 +170,8 @@
 .eind-dagkop { font-size: 12.5px; font-weight: 700; color: #5c5c64; text-align: center; grid-template-columns: 54px repeat(var(--k, 3), 1fr); gap: 5px 6px; }
 .eind-dagkop span:first-child { visibility: hidden; }
 .eind-dag { font-size: 15px; font-weight: 700; color: #3c3c43; }
-.eind-markering { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; color: #6a3fd1; font-size: 15px; font-weight: 800; }
-.eind-markering::before, .eind-markering::after { content: ""; flex: 1 1 auto; height: 2px; background: var(--paars-diep); }
+.eind-markering { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; color: #a85400; font-size: 15px; font-weight: 800; }
+.eind-markering::before, .eind-markering::after { content: ""; flex: 1 1 auto; height: 3px; background: #ff9f43; }
 
 .eind-leg {
   list-style: none; margin: 10px 0 0; padding: 0;
@@ -181,7 +182,7 @@
 .eind-leg-ic svg { width: 22px; height: 22px; filter: drop-shadow(0 0 .6px #1b1b1f) drop-shadow(0 0 .6px #1b1b1f); }
 .eind-leg-leeg { font-weight: 700; color: #66666d; font-size: 17px; }
 .eind-leg-echt { padding: 0 5px; border: 2px dashed var(--paars-diep); border-radius: 6px; font-size: 11.5px; font-weight: 800; color: #6a3fd1; }
-.eind-leg-anders { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; background: #c0362a; color: var(--wit); font-weight: 800; font-size: 15px; }
+.eind-leg-anders { width: 20px; display: grid; place-items: center; color: #5c5c64; font-weight: 800; font-size: 17px; }
 .eind-leg-misselijk { width: 18px; height: 18px; border-radius: 5px; background: #eef5d8; border: 2px solid #d3cfc6; }
 
 .eind-telling { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
