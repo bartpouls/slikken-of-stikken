@@ -204,3 +204,15 @@
 @media (prefers-reduced-motion: reduce) {
   .eind-totaal, .eind-tegel { animation: none; }
 }
+/* lage schermen (375×667): vraag en knop samen boven de vouw */
+@media (max-height: 700px) {
+  .eind-totaal { font-size: 64px; }
+  .eind-kaart { padding: 8px 12px 8px; }
+  .eind-kaart-score { font-size: 30px; }
+  .eind-tegels { margin-top: 7px; gap: 3px; }
+  .eind-tegel { height: 19px; }
+  .eind-legenda { margin-top: 8px; font-size: 13.5px; }
+  .eind-vraag { margin-top: 14px; padding: 10px 14px; }
+  .eind-vraag p { font-size: 21px; }
+  .eind-voet { padding-top: 12px; padding-bottom: calc(var(--veilig-onder) + 10px); }
+}

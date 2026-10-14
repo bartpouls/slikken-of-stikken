@@ -254,7 +254,7 @@
       var yz = Y(ZONE);
       s += '<rect x="' + Lp + '" y="' + (Tp - 4) + '" width="' + pw + '" height="' + (yz - Tp + 4) + '" fill="#3ddc97" fill-opacity=".13"/>';
       s += '<path d="M' + Lp + ' ' + yz + 'H' + (Lp + pw) + '" stroke="#1f9e68" stroke-width="2" stroke-dasharray="6 5"/>';
-      s += '<text x="' + (Lp + pw - 4) + '" y="' + (yz - 6) + '" text-anchor="end" class="tut-zone">pijnstilling</text>';
+      s += '<text x="' + (Lp + pw - 4) + '" y="' + (Tp + 11) + '" text-anchor="end" class="tut-zone">pijnstilling</text>';
       // y-as
       s += '<text x="' + (Lp - 6) + '" y="' + (Tp - 9) + '" text-anchor="start" class="tut-eenheid">mg/L</text>';
       g.ticksY.forEach(function (c) {
@@ -293,7 +293,7 @@
         if (c.icoon) {
           var pk = c.p[0];
           for (var q = 0; q < c.p.length; q++) if (c.p[q][1] > pk[1] && c.p[q][0] <= g.T) pk = c.p[q];
-          var ix = X(pk[0]) + 12, iy = Y(pk[1]) - 24;
+          var ix = X(pk[0]) + 4, iy = Y(pk[1]) + 22;
           s += '<circle cx="' + ix + '" cy="' + iy + '" r="10" fill="#a9a9b2"/>';
           s += ui.icoon(c.icoon).replace('<svg ', '<svg x="' + (ix - 8) + '" y="' + (iy - 8) + '" width="16" height="16" ');
         }
@@ -445,7 +445,7 @@
         c.geef('spuit');
         c.meet();
         bijwerken(true);
-        loop(c, 3 * THALF, 2.5, function () { toonVolgende(true); });
+        loop(c, 3 * THALF, 2, function () { toonVolgende(true); });
       });
     }
 
@@ -493,7 +493,7 @@
         curves.push(c); actief = c;
         zetStemming('pijn', false);
         bijwerken(false);
-        loop(c, 3 * THALF, 3, function () {
+        loop(c, 3 * THALF, 2.5, function () {
           if (keer < 2) { wijs(b, true); zetFase('wacht'); } else toonVolgende(true);
         });
       });

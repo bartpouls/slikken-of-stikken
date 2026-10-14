@@ -70,7 +70,10 @@
         <button type="button" class="knop-paars" data-actie="verder">Verder</button>
       </div>
     </div>
-    <nav class="knoppen" id="knoppen" aria-label="Kies vóór het poortje"></nav>
+    <div class="knoppen-blok">
+      <div class="keuze-info" id="keuze-info" role="status" aria-live="polite"></div>
+      <nav class="knoppen" id="knoppen" aria-label="Kies vóór het poortje"></nav>
+    </div>
   </section>
 
   <!-- 5. Einde (module src/einde.js vult dit) -->
@@ -78,6 +81,8 @@
 
 </div>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="draai" aria-hidden="true">Draai je telefoon rechtop: dan zie je meer poortjes.</div>
 <button type="button" id="demp" class="demp" data-actie="demp" aria-label="Geluid uit" aria-pressed="false"></button>
 
 <!-- @@JS -->
