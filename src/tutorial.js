@@ -32,6 +32,13 @@
   var SoS = root.SoS = root.SoS || {};
 
   var INKT = '#1b1b1f';
+  // Tekstkleuren met contrast ≥ 4,5:1 op het papierwit (en op de lichtgroene zoneband).
+  var K = { grijs: '#6a6a72', zone: '#15784f', half: '#2a62b8', twee: '#c0392b', klok: '#6b3fd1' };
+  var SCHEMA_ICOON = '<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    [[11, 12], [29, 12], [11, 28], [29, 28]].map(function (p) {
+      return '<g transform="translate(' + (p[0] - 8) + ' ' + (p[1] - 4) + ') rotate(-30 8 4)"><rect width="16" height="8" rx="4" fill="#fff"/>' +
+        '<path d="M8 0h4a4 4 0 0 1 0 8H8z" fill="#ff8fb8"/></g>';
+    }).join('') + '</svg>';
   var KLOK_ICOON = '<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
     '<circle cx="20" cy="22" r="13" fill="none" stroke="#fff" stroke-width="3"/>' +
     '<path d="M20 13.5V22l6 4" stroke="#ffd166" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
@@ -75,7 +82,7 @@
     var el = ui.el;
     var binnen = el('div', { class: 'tut-binnen', 'data-stap': '1', 'data-fase': 'wacht' });
     var top = el('div', { class: 'tut-top' });
-    var over = el('button', { type: 'button', class: 'tut-over', 'data-tut': 'overslaan', text: 'Overslaan' });
+    var over = el('button', { type: 'button', class: 'tut-over', 'data-tut': 'overslaan', text: 'Uitleg overslaan' });
     var stippen = el('div', { class: 'tut-stippen', 'aria-hidden': 'true' });
     for (var i = 0; i < 6; i++) stippen.appendChild(el('span'));
     top.appendChild(over); top.appendChild(stippen);
@@ -123,6 +130,7 @@
       });
     }
     function flits(n, klasse) { n.classList.remove(klasse); void n.offsetWidth; n.classList.add(klasse); }
+    function druk(b) { flits(b, 'tik'); root.setTimeout(function () { b.classList.remove('tik'); }, 140); }
 
     function zetStemming(st, metBallon) {
       if (st === stemming && opaFig.innerHTML) return;
@@ -174,6 +182,7 @@
       this.gepland = (o.gepland || []).slice();   // [{t, route, o}] toedieningen die vanzelf gebeuren
       this.metingen = (o.metingen || []).slice(); // [t] momenten om een ½-staafje te meten
       this.label = o.label || null;
+      this.wacht = !!o.wacht;          // wachtstrook tot de zone (alleen tablet)
       this.dt = o.dt || 0.02;
     }
     Curve.prototype.geef = function (route, o) {
@@ -181,7 +190,7 @@
       var r = s.geef(route, o || {});
       if (route === 'spuit') this.p.push([s.t, voor]);
       this.p.push([s.t, s.C]);
-      this.doses.push({ t: s.t, route: route });
+      this.doses.push({ t: s.t, route: route, extra: !!(o && o.extra) });
       return r;
     };
     Curve.prototype.meet = function () {
@@ -208,14 +217,18 @@
     };
 
     // Laat de klok van de actieve curve lopen tot tEind (uren per seconde), daarna klaar().
+    // uurPerSec: getal, of functie(modeltijd) -> uren per seconde (stap 1: eerst langzaam).
     function loop(curve, tEind, uurPerSec, klaar) {
       root.cancelAnimationFrame(raf);
-      var t0 = curve.sim.t, start0 = 0;
+      var t = curve.sim.t, vorig = 0;
+      var tempo = typeof uurPerSec === 'function' ? uurPerSec : function () { return uurPerSec; };
       zetFase('loopt');
       function frame(nu) {
         if (gestopt) return;
-        if (!start0) start0 = nu;
-        var t = Math.min(tEind, t0 + (nu - start0) / 1000 * uurPerSec * SPEED);
+        if (!vorig) vorig = nu;
+        var dReal = Math.min(0.1, (nu - vorig) / 1000);
+        vorig = nu;
+        t = Math.min(tEind, t + dReal * tempo(t) * SPEED);
         curve.tot(t);
         bijwerken(true);
         if (t >= tEind - 1e-9) { raf = 0; if (klaar) klaar(); return; }
@@ -253,10 +266,10 @@
       // zone (≥ 5 mg/L)
       var yz = Y(ZONE);
       s += '<rect x="' + Lp + '" y="' + (Tp - 4) + '" width="' + pw + '" height="' + (yz - Tp + 4) + '" fill="#3ddc97" fill-opacity=".13"/>';
-      s += '<path d="M' + Lp + ' ' + yz + 'H' + (Lp + pw) + '" stroke="#1f9e68" stroke-width="2" stroke-dasharray="6 5"/>';
-      s += '<text x="' + (Lp + pw - 4) + '" y="' + (Tp + 11) + '" text-anchor="end" class="tut-zone">pijnstilling</text>';
-      // y-as
-      s += '<text x="' + (Lp - 6) + '" y="' + (Tp - 9) + '" text-anchor="start" class="tut-eenheid">mg/L</text>';
+      s += '<path d="M' + Lp + ' ' + yz + 'H' + (Lp + pw) + '" stroke="' + K.zone + '" stroke-width="2" stroke-dasharray="6 5"/>';
+      s += '<text x="' + (Lp + pw - 4) + '" y="' + (Tp + 12) + '" text-anchor="end" class="tut-zone">' + C.zone.label + '</text>';
+      // y-as: leeslabel
+      s += '<text x="' + (Lp - 6) + '" y="' + (Tp - 9) + '" text-anchor="start" class="tut-eenheid">paracetamol in het bloed (mg/L)</text>';
       g.ticksY.forEach(function (c) {
         s += '<text x="' + (Lp - 7) + '" y="' + (Y(c) + 4.5) + '" text-anchor="end" class="' + (c === ZONE ? 'tut-as tut-as-zone' : 'tut-as') + '">' + tekenGetal(c) + '</text>';
         if (c !== ZONE) s += '<path d="M' + Lp + ' ' + Y(c) + 'h-4" stroke="' + INKT + '" stroke-width="2"/>';
@@ -271,12 +284,27 @@
       // ½-staafjes
       staven.forEach(function (b) {
         var x = Math.max(Lp + 7, X(b.t)), yb = Y(b.C);
-        s += '<rect x="' + (x - 6) + '" y="' + yb + '" width="12" height="' + Math.max(0, y0 - yb) + '" rx="2" fill="#3d7fe0" fill-opacity=".3" stroke="#3d7fe0" stroke-width="2"/>';
+        s += '<rect x="' + (x - 6) + '" y="' + yb + '" width="12" height="' + Math.max(0, y0 - yb) + '" rx="2" fill="#3d7fe0" fill-opacity=".3" stroke="' + K.half + '" stroke-width="2"/>';
         if (b.vorige) {
           var xv = Math.max(Lp + 7, X(b.vorige.t)), yh = Y(b.vorige.C / 2);
-          s += '<path d="M' + (xv - 6) + ' ' + yh + 'H' + (x + 9) + '" stroke="#3d7fe0" stroke-width="2" stroke-dasharray="3 4"/>';
+          s += '<path d="M' + (xv - 6) + ' ' + yh + 'H' + (x + 9) + '" stroke="' + K.half + '" stroke-width="2" stroke-dasharray="3 4"/>';
           s += '<text x="' + (x + 11) + '" y="' + (yh - 4) + '" class="tut-half">½</text>';
         }
+      });
+      // Wachtstrook: van het slikken tot de spiegel de zone haalt (gemeten op de modelcurve).
+      curves.forEach(function (c) {
+        if (!c.wacht || !c.doses.length) return;
+        var td = c.doses[0].t, tz = null, tl = td;
+        for (var i = 0; i < c.p.length; i++) {
+          if (c.p[i][0] < td) continue;
+          tl = c.p[i][0];
+          if (c.p[i][1] >= ZONE - 1e-9) { tz = c.p[i][0]; break; }
+        }
+        var eind = Math.min(g.T, tz == null ? tl : tz);
+        if (eind <= td) return;
+        var kl = c.stijl === 'spook' ? '#c4c4cc' : '#ff6f61';
+        s += '<path d="M' + X(td) + ' ' + y0 + 'H' + X(eind) + '" stroke="' + kl + '" stroke-width="7" stroke-linecap="round"/>';
+        if (tz != null && tz <= g.T) s += '<path d="M' + X(tz) + ' ' + y0 + 'V' + yz + '" stroke="' + (c.stijl === 'spook' ? '#a9a9b2' : INKT) + '" stroke-width="2" stroke-dasharray="2 4"/>';
       });
       // curves
       curves.forEach(function (c) {
@@ -287,7 +315,7 @@
           d += (i ? 'L' : 'M') + X(c.p[i][0]).toFixed(1) + ' ' + Y(c.p[i][1]).toFixed(1);
         }
         var stijl = c.stijl === 'spook' ? 'stroke="#a9a9b2" stroke-width="3" stroke-dasharray="2 7"'
-          : c.stijl === 'twee' ? 'stroke="#ff6f61" stroke-width="4"'
+          : c.stijl === 'twee' ? 'stroke="#e0503f" stroke-width="4"'
           : 'stroke="' + INKT + '" stroke-width="4"';
         s += '<path d="' + d + '" ' + stijl + ' fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
         if (c.icoon) {
@@ -300,7 +328,7 @@
         if (c.label) {
           var piek = c.p[0];
           for (var j = 0; j < c.p.length; j++) if (c.p[j][1] > piek[1] && c.p[j][0] <= g.T) piek = c.p[j];
-          var kleur = c.stijl === 'twee' ? '#ff6f61' : c.stijl === 'spook' ? '#8a8a93' : INKT;
+          var kleur = c.stijl === 'twee' ? K.twee : c.stijl === 'spook' ? K.grijs : INKT;
           var lx = Math.min(Lp + pw - 12, X(piek[0]) + 4), ly = Y(piek[1]) - 9;
           s += '<circle cx="' + lx + '" cy="' + (ly - 4) + '" r="9" fill="#fff" stroke="' + kleur + '" stroke-width="2"/>';
           s += '<text x="' + lx + '" y="' + ly + '" text-anchor="middle" class="tut-label" fill="' + kleur + '">' + c.label + '</text>';
@@ -309,10 +337,9 @@
       // nu: lijn, stip en klok
       if (actief) {
         var tn = actief.sim.t, xn = X(Math.min(tn, g.T)), yn = Y(actief.sim.C);
-        s += '<path d="M' + xn + ' ' + (Tp - 4) + 'V' + y0 + '" stroke="#b07cff" stroke-width="2"/>';
+        s += '<path d="M' + xn + ' ' + Tp + 'V' + y0 + '" stroke="#b07cff" stroke-width="2"/>';
         s += '<circle cx="' + xn + '" cy="' + yn + '" r="5.5" fill="' + (actief.sim.C >= ZONE - 1e-9 ? '#3ddc97' : '#ff6f61') + '" stroke="' + INKT + '" stroke-width="2.5"/>';
-        var kx = Math.max(Lp + 46, Math.min(Lp + pw - 22, xn));
-        s += '<text x="' + kx + '" y="' + (Tp - 9) + '" text-anchor="middle" class="tut-klok">' + ui.getal(Math.floor(tn * 10 + 1e-6) / 10, (Math.floor(tn * 10 + 1e-6) % 10) ? 1 : 0) + ' u</text>';
+        s += '<text x="' + (Lp + pw + 4) + '" y="' + (Tp - 9) + '" text-anchor="end" class="tut-klok">' + ui.getal(Math.floor(tn * 10 + 1e-6) / 10, (Math.floor(tn * 10 + 1e-6) % 10) ? 1 : 0) + ' u</text>';
       }
       // toedieningen onder de as
       var gezien = {};
@@ -321,7 +348,7 @@
         c.doses.forEach(function (d) {
           var k = d.t.toFixed(2), n = gezien[k] = (gezien[k] || 0) + 1;
           var x = X(d.t) + (n - 1) * 24, y = y0 + 19;
-          s += '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + (c.stijl === 'twee' ? '#ff6f61' : INKT) + '"/>';
+          s += '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + (c.stijl === 'twee' || d.extra ? '#e0503f' : INKT) + '"/>';
           s += ui.icoon(d.route === 'slik' ? 'tablet' : d.route).replace('<svg ', '<svg x="' + (x - 9) + '" y="' + (y - 9) + '" width="18" height="18" ');
         });
       });
@@ -387,8 +414,8 @@
 
     // 1. Opa Jan heeft pijn → tablet → curve stijgt pas na even.
     function stap1() {
-      nieuweGrafiek({ T: 10, ymax: 12, ticksX: [0, 2.5, 5, 7.5, 10], ticksY: [5, 10], maag: true });
-      tabletCurve = new Curve({ stijl: 'nu', dt: 0.02 });
+      nieuweGrafiek({ T: 3, ymax: 12, ticksX: [0, 0.5, 1, 1.5, 2, 2.5, 3], ticksY: [5, 10], maag: true });
+      tabletCurve = new Curve({ stijl: 'nu', dt: 0.01, wacht: true });
       curves.push(tabletCurve); actief = tabletCurve;
       zetStemming('pijn', false);
       zetTekst('Opa Jan heeft pijn.');
@@ -396,18 +423,20 @@
       wijs(b, true);
       bijTik(b, function () {
         if (b.disabled) return;
-        uit(b); flits(b, 'tik');
+        uit(b); druk(b);
         ui.speel('slik');
         tabletCurve.geef('slik');
         zetTekst('Een pil moet eerst door je maag.');
         bijwerken(false);
-        loop(tabletCurve, 2, 0.85, function () { toonVolgende(true); });
+        // Eerst 0,25 u per seconde: zo zie je opa wachten tot de spiegel de zone haalt.
+        loop(tabletCurve, 3, function (t) { return t < 0.5 ? 0.25 : 0.9; }, function () { toonVolgende(true); });
       });
     }
 
     // 2. Curve zakt → elke 2,5 uur is de helft weg (½-staafjes op 5; 7,5; 10 u).
     function stap2() {
-      grafiek.maag = true;
+      grafiek = { T: 10, ymax: 12, ticksX: [0, 2.5, 5, 7.5, 10], ticksY: [5, 10], maag: true };
+      staven = [];
       actief = tabletCurve;
       zetTekst('Je lichaam ruimt het op: elke 2,5 uur is de helft weg.');
       tabletCurve.metingen = [2 * THALF];
@@ -418,7 +447,7 @@
       bijTik(b, function () {
         if (b.disabled || fase === 'loopt') return;
         keer++;
-        flits(b, 'tik'); ui.speel('tik');
+        druk(b); ui.speel('tik');
         wijs(b, false);
         var doel = (2 + keer) * THALF;
         tabletCurve.metingen = [doel];
@@ -429,7 +458,7 @@
 
     // 3. Spuit → meteen hoog, zakt net zo hard (½ per 2,5 uur); tabletcurve als schaduw.
     function stap3() {
-      var schaduw = { sim: tabletCurve.sim, p: tabletCurve.p, stijl: 'spook', doses: [], icoon: 'tablet' };
+      var schaduw = { sim: tabletCurve.sim, p: tabletCurve.p, stijl: 'spook', doses: tabletCurve.doses, icoon: 'tablet', wacht: true };
       nieuweGrafiek({ T: 3 * THALF, ymax: 18, ticksX: [0, 2.5, 5, 7.5], ticksY: [5, 10, 15] });
       curves.push(schaduw);
       var c = new Curve({ stijl: 'nu', dt: 0.02, metingen: [THALF, 2 * THALF, 3 * THALF] });
@@ -440,7 +469,7 @@
       wijs(b, true);
       bijTik(b, function () {
         if (b.disabled) return;
-        uit(b); flits(b, 'tik');
+        uit(b); druk(b);
         ui.speel('spuit');
         c.geef('spuit');
         c.meet();
@@ -454,20 +483,29 @@
       nieuweGrafiek({ T: 24, ymax: 20, ticksX: [0, 6, 12, 18, 24], ticksY: [5, 10, 15], maag: true, lever: true });
       laatsteDag = -1;
       zetLever(false, false);
-      var gepland = C.echtSchema.schema.map(function (d) { return { t: d.t, route: d.route, geluid: 'tik' }; });
+      var gepland = C.echtSchema.schema.map(function (d) { return { t: d.t, route: d.route, geluid: d.t ? 'slik' : null }; });
       var c = new Curve({ stijl: 'nu', dt: 0.04, gepland: gepland });
       curves.push(c); actief = c;
       zetStemming('pijn', false);
       werkLeverBij(0);
       zetTekst('Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.');
+      var sch = actieKnop('schema', '<small>volgens schema</small>4× 1 g', SCHEMA_ICOON);
+      sch.setAttribute('aria-label', 'Volgens schema: 4× 1 g');
+      sch.classList.add('tut-schema');
       var b = actieKnop('slik', 'Tablet', ui.icoon('tablet'));
       b.disabled = true;
-      loop(c, 20, 10, function () { b.disabled = false; wijs(b, true); zetFase('wacht'); });
+      wijs(sch, true);
+      bijTik(sch, function () {
+        if (sch.disabled || fase === 'loopt') return;
+        uit(sch); druk(sch);
+        ui.speel('slik');
+        loop(c, 20, 8, function () { b.disabled = false; wijs(b, true); zetFase('wacht'); });
+      });
       bijTik(b, function () {
         if (b.disabled || fase === 'loopt') return;
-        uit(b); flits(b, 'tik');
+        uit(b); druk(b);
         ui.speel('slik');
-        c.geef('slik');
+        c.geef('slik', { extra: true });
         bijwerken(false);
         loop(c, 24, 2, function () { toonVolgende(true); });
       });
@@ -484,7 +522,7 @@
       bijTik(b, function () {
         if (b.disabled || fase === 'loopt') return;
         keer++;
-        flits(b, 'tik');
+        druk(b);
         ui.speel('zetpil');
         wijs(b, false);
         if (keer >= 2) uit(b);
@@ -502,7 +540,7 @@
     // 6. Klaar? Race!
     function stap6() {
       grafiek = null; curves = []; staven = []; actief = null;
-      over.hidden = true;
+      over.style.visibility = 'hidden';
       zetStemming('blij', false);
       zetLever(false, false);
       leverTekst.textContent = '';
@@ -518,9 +556,9 @@
       bediening.classList.add('slot');
       zetFase('klaar');
       ui.speel('klaar');
-      var sinds = Date.now();
       b.addEventListener('click', function () {
-        if (gestopt || Date.now() - sinds < 350) return;
+        if (gestopt) return;
+        b.classList.add('ingedrukt');
         ui.speel('tik');
         meldGereed();
       });

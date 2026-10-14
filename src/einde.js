@@ -81,18 +81,18 @@
     return uit;
   }
 
-  // Paracetamol: poortjes waarop een toediening de dagteller (som in het 24-uursvenster) boven het max. bracht.
-  function leverPoortjes(c, v) {
-    var bg = c.bovengrens, uit = {};
-    if (!bg || bg.type !== 'dagteller') return uit;
+  // Paracetamol: leverschade zoals in de race: rood zolang de dagteller (doses in (t − 24 u, t]) boven het
+  // maximum zit. Geeft een functie t -> bool (altijd false zonder dagteller).
+  function leverOp(c, v) {
+    var bg = c.bovengrens;
+    if (!bg || bg.type !== 'dagteller') return function () { return false; };
     var doses = [];
-    v.tijdlijn.forEach(function (r) { r.jij.toedieningen.forEach(function (d) { doses.push({ t: r.t, dosis: d.dosis, i: r.index }); }); });
-    doses.forEach(function (d, k) {
+    v.tijdlijn.forEach(function (r) { r.jij.toedieningen.forEach(function (d) { doses.push({ t: r.t, dosis: d.dosis }); }); });
+    return function (t) {
       var som = 0;
-      for (var j = 0; j <= k; j++) if (doses[j].t > d.t - bg.venster - 1e-9) som += doses[j].dosis;
-      if (som > bg.maxPer24u + 1e-9) uit[d.i] = true;
-    });
-    return uit;
+      doses.forEach(function (d) { if (d.t <= t + 1e-6 && d.t > t - bg.venster + 1e-6) som += d.dosis; });
+      return som > bg.maxPer24u + 1e-9;
+    };
   }
 
   function stemming(c, v) {
@@ -109,22 +109,32 @@
   // ------------------------------------------------------------------------------------------
   // 1. Eindscherm
   // ------------------------------------------------------------------------------------------
+  function gebeurtenis(c, type) {
+    var g = null;
+    c.gebeurtenissen.forEach(function (x) { if (x.type === type) g = x; });
+    return g;
+  }
+  function tijdLabel(c, t) { return c.id === 'lithium' ? 'dag ' + getal(t / 24) : 'uur ' + t; }
+
   function kaartHtml(i, c, v, curve) {
     var staten = curve && curve.length ? tegelStaten(c, curve) : null;
-    if (staten) {
-      var lp = leverPoortjes(c, v);
-      Object.keys(lp).forEach(function (k) { staten[k] = 'giftig'; });
-    }
+    var tijden = SoS.model.poortjes(c), lever = leverOp(c, v);
+    var blok = gebeurtenis(c, 'blokkade'), ibu = gebeurtenis(c, 'klaring');
     var tegels = '';
     if (staten) {
+      tijden.forEach(function (t, k) { if (lever(t)) staten[k] = 'giftig'; });
       // twee rijen: paracetamol uur 0–11 | 12–23; lithium dag 0–4 | dag 5–9 (vanaf de ibuprofen)
       var helft = Math.ceil(staten.length / 2);
       var rij = function (van, tot) {
-        var s = '<span class="eind-tegelrij" style="--n:' + (tot - van) + '">';
+        var s = '<span class="eind-tegelrij"><span class="eind-rijlabel">' + tijdLabel(c, tijden[van]) + '</span>' +
+          '<span class="eind-tegelvak" style="--n:' + (tot - van) + '">';
         for (var k = van; k < tot; k++) {
-          s += '<span class="eind-tegel t-' + (staten[k] || 'leeg') + '" style="--i:' + k + '"></span>';
+          var t = tijden[k], extra = '';
+          if (blok && t >= blok.van - 1e-9 && t < blok.tot - 1e-9) extra += ' m';
+          if (ibu && Math.abs(t - ibu.t) < 1e-9) extra += ' ibu';
+          s += '<span class="eind-tegel t-' + (staten[k] || 'leeg') + extra + '" style="--i:' + k + '"></span>';
         }
-        return s + '</span>';
+        return s + '</span></span>';
       };
       tegels = '<span class="eind-tegels" role="img" aria-label="Per poortje: waar de spiegel zat">' +
         rij(0, helft) + rij(helft, staten.length) + '</span>';
@@ -139,22 +149,26 @@
   }
 
   function legendaHtml(cs) {
-    var heeft = { zone: true, onder: true, boven: false, giftig: false };
+    var heeft = { zone: true, onder: true, boven: false, giftig: false }, blok = false, ibu = false;
     cs.forEach(function (c) {
       if (!c) return;
       if (c.venster.some(function (v) { return v.hoog !== Infinity; })) heeft.boven = true;
       if (c.toxisch != null || (c.bovengrens && c.bovengrens.type === 'dagteller')) heeft.giftig = true;
+      if (gebeurtenis(c, 'blokkade')) blok = true;
+      if (gebeurtenis(c, 'klaring')) ibu = true;
     });
-    return '<ul class="eind-legenda" aria-label="Kleuren van de tegels">' +
-      ['zone', 'onder', 'boven', 'giftig'].filter(function (s) { return heeft[s]; }).map(function (s) {
-        return '<li><span class="eind-tegel t-' + s + '"></span>' + (s === 'giftig' ? 'lever / giftig' : TOESTAND_LABEL[s]) + '</li>';
-      }).join('') + '</ul>';
+    var li = ['zone', 'onder', 'boven', 'giftig'].filter(function (s) { return heeft[s]; }).map(function (s) {
+      return '<li><span class="eind-tegel t-' + s + '"></span>' + (s === 'giftig' ? 'lever / giftig' : TOESTAND_LABEL[s]) + '</li>';
+    });
+    if (blok) li.push('<li><span class="eind-leg-m"></span>misselijk</li>');
+    if (ibu) li.push('<li><span class="eind-leg-ibu"></span>ibuprofen</li>');
+    return '<ul class="eind-legenda" aria-label="Uitleg van de tegels">' + li.join('') + '</ul>';
   }
 
   // ------------------------------------------------------------------------------------------
   // 2. Toedienverslag
   // ------------------------------------------------------------------------------------------
-  function curveSvg(c, curve) {
+  function curveSvg(c, curve, lever) {
     if (!curve || curve.length < 2) return '';
     var W = 340, H = 132, L = 8, R = 30, T = 18, B = 22, pw = W - L - R, ph = H - T - B;
     var maxC = 0;
@@ -194,7 +208,7 @@
     // curve, gekleurd per toestand
     var stuk = null, paden = [];
     for (var i = 0; i < curve.length; i++) {
-      var p = curve[i], st = toestand(c, p.C, p.t), pt = f(x(p.t)) + ' ' + f(y(p.C));
+      var p = curve[i], st = lever(p.t) ? 'giftig' : toestand(c, p.C, p.t), pt = f(x(p.t)) + ' ' + f(y(p.C));
       if (!stuk || stuk.st !== st) {
         if (stuk) stuk.d += ' L' + pt;
         stuk = { st: st, d: 'M' + pt };
@@ -247,21 +261,25 @@
 
   function roosterHtml(c, v) {
     var M = SoS.model, rijen = v.tijdlijn;
-    var allesEcht = rijen.every(function (r) { return r.echt; });
     var blok = null;
     c.gebeurtenissen.forEach(function (g) { if (g.type === 'blokkade') blok = g; });
     var klaring = null;
     c.gebeurtenissen.forEach(function (g) { if (g.type === 'klaring') klaring = g; });
     var cel = function (r, metTijd) {
       var j = r.jij, misselijk = blok && r.t >= blok.van - 1e-9 && r.t < blok.tot - 1e-9;
-      var echt = r.echt && !allesEcht;
-      var label = r.tijdTekst + ': ' + j.tekst + (r.echt ? '; echt schema ' + r.echt : '');
-      return '<li class="eind-cel' + (echt ? ' echt' : '') + (misselijk ? ' misselijk' : '') + ' s-' + j.soort + '"' +
+      var echt = !!r.echt, n = 0;
+      j.toedieningen.forEach(function (d) { n += d.aantal; });
+      var anders = echt ? n !== 1 : n > 0; // afwijking van het echte schema (aantal doses op dit poortje)
+      var label = r.tijdTekst + ': ' + j.tekst + (r.echt ? '; echt schema ' + r.echt : '; echt schema niets') +
+        (anders ? '; anders dan het echte schema' : '');
+      return '<li class="eind-cel' + (echt ? ' echt' : '') + (misselijk ? ' misselijk' : '') + (anders ? ' anders' : '') + ' s-' + j.soort + '"' +
+        ' data-anders="' + (anders ? 1 : 0) + '"' +
         ' data-poortje="' + r.index + '" data-soort="' + j.soort + '" data-tekst="' + esc(j.tekst) + '"' +
         ' aria-label="' + esc(label) + '">' +
         (metTijd ? '<span class="eind-cel-uur" aria-hidden="true">' + r.t + '</span>' : '') +
         celInhoud(r) +
-        (echt ? '<span class="eind-cel-echt" aria-hidden="true">' + esc(r.echt) + '</span>' : '') + '</li>';
+        (echt ? '<span class="eind-cel-echt" aria-hidden="true">' + esc(r.echt) + '</span>' : '') +
+        (anders ? '<span class="eind-cel-anders" aria-hidden="true">≠</span>' : '') + '</li>';
     };
     var s = '';
     if (c.id === 'lithium') {
@@ -296,7 +314,10 @@
     });
     if (komtVoor.geblokkeerd) leg.push('<li><span class="eind-leg-ic">' + ic('kruis') + '</span>geblokkeerd (wilde slikken, maar misselijk)</li>');
     leg.push('<li><span class="eind-leg-ic eind-leg-leeg">–</span>overgeslagen</li>');
-    if (!allesEcht) leg.push('<li><span class="eind-leg-echt">' + esc(rijen.filter(function (r) { return r.echt; })[0].echt) + '</span>echt schema</li>');
+    leg.push('<li><span class="eind-leg-echt">' + esc(rijen.filter(function (r) { return r.echt; })[0].echt) + '</span>echt schema</li>');
+    if (rijen.some(function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return r.echt ? n !== 1 : n > 0; })) {
+      leg.push('<li><span class="eind-leg-anders">≠</span>anders dan het echte schema</li>');
+    }
     if (blok) leg.push('<li><span class="eind-leg-misselijk"></span>misselijk (' + esc(blok.tijdTekst.toLowerCase()) + ')</li>');
     return s + '<ul class="eind-leg">' + leg.join('') + '</ul>';
   }
@@ -306,10 +327,10 @@
     var dosis = (v.tijdlijn.filter(function (r) { return r.echt; })[0] || {}).echt || '';
     var tijden = perDag.map(function (e) { return e.t; });
     var lek = c.id === 'lithium'
-      ? perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur). Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.'
+      ? perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet (' + dosis + '). Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.'
       : perDag.length + '× per dag ' + dosis + ' (om uur ' + lijst(tijden) + ').';
     return '<p class="eind-echt"><span class="eind-echt-kop">Echt schema</span> <b>' + esc(v.echtSchema.tekst) + '</b><br>' +
-      'Dat is: ' + esc(lek) + (c.id === 'lithium' ? ' In het rooster: elk vakje 1 tablet.' : '') + '</p>';
+      'Dat is: ' + esc(lek) + '</p>';
   }
 
   function tellingHtml(v) {
@@ -331,10 +352,12 @@
       '<div><p class="eind-kicker">Race ' + (i + 1) + ' · verslag</p>' +
       '<h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + ' <span class="eind-v-wie">' + esc(c.patient) + '</span></h2>' +
       '<p class="eind-v-score"><b>' + getal(v.opbouw.totaal) + '</b> QALY-punten</p></div></header>';
+    var lever = leverOp(c, v), leverOoit = curve && curve.some(function (p) { return lever(p.t); });
     if (curve && curve.length > 1) {
-      s += '<figure class="eind-curve">' + curveSvg(c, curve) +
+      s += '<figure class="eind-curve">' + curveSvg(c, curve, lever) +
         '<figcaption>Jouw spiegel. Groene baan: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + ').' +
         (c.toxisch != null ? ' Rode stippellijn: giftig (' + esc(c.toxischTekst || getal(c.toxisch, 1)) + ').' : '') +
+        (leverOoit ? ' Rode lijn: meer dan ' + getal(c.bovengrens.maxPer24u / 1000) + ' g in 24 uur. ' + esc(c.lekentaal.boven) : '') +
         '</figcaption></figure>';
     }
     s += opbouwHtml(v);
@@ -369,18 +392,20 @@
     container.innerHTML =
       '<div class="eind-binnen">' +
         '<div class="eind-held">' +
-          '<p class="eind-naam' + (String(data.naam || '').length > 9 ? ' lang' : '') + '" data-eind="naam">' + esc(data.naam || '') + '</p>' +
+          '<p class="eind-naam" data-eind="naam">' + esc(data.naam || '') + '</p>' +
           '<p class="eind-label">QALY-punten totaal</p>' +
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
-          '<p class="eind-spelpunten">Spelpunten, geen echte QALY\'s.</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
           legendaHtml(cs) +
           '<div class="eind-vraag"><span class="eind-vraag-kop">Nabespreken</span>' +
             '<p data-eind="vraag">' + VRAAG + '</p></div>' +
-          '<p class="eind-scorebord">Geef je speelnaam en totaal door aan Bart: hij zet je op het scorebord in de zaal.</p>' +
+          '<div class="eind-acties"><button type="button" class="knop-wit groot" data-actie="opnieuw">Nog een keer</button></div>' +
+          '<p class="eind-scorebord">Laat je naam en totaal op het scorebord zetten.</p>' +
+          '<p class="eind-spelpunten">QALY-punten zijn spelpunten, geen echte QALY\'s.</p>' +
         '</div>' +
         verslagen +
-        '<div class="eind-voet"><button type="button" class="knop-wit groot" data-actie="opnieuw">Nog een keer</button></div>' +
+        '<div class="eind-voet"><button type="button" class="knop-wit" data-actie="naar-boven">' +
+          '<span aria-hidden="true">↑</span>&nbsp;Terug naar je score</button></div>' +
       '</div>';
 
     var bezig = false;
@@ -410,6 +435,36 @@
       });
     });
 
+    luister(container.querySelector('[data-actie="naar-boven"]'), 'click', function () {
+      ui.speel('tik');
+      var glad = !(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      container.scrollTo({ top: 0, behavior: glad ? 'smooth' : 'auto' });
+    });
+
+    // De dempknop van app.js staat vast rechtsboven en zou bij scrollen over tekst liggen: zolang het
+    // eindscherm open is, staat hij (niet vast) naast "Nog een keer". stop() zet hem terug.
+    var demp = root.document.getElementById('demp'), dempTerug = null;
+    if (demp && demp.parentNode) {
+      dempTerug = { ouder: demp.parentNode, na: demp.nextSibling };
+      container.querySelector('.eind-acties').appendChild(demp);
+    }
+
+    // Speelnaam: 1–2 regels, alleen breken op spaties; zo nodig kleiner, maar nooit onder 32 px.
+    var naamEl = container.querySelector('[data-eind="naam"]');
+    function pasNaam() {
+      var max = root.innerHeight >= 800 ? 40 : 36;
+      naamEl.style.overflowWrap = 'normal';
+      for (var px = max; px >= 32; px--) {
+        naamEl.style.fontSize = px + 'px';
+        var regels = Math.round(naamEl.offsetHeight / (px * 1.08));
+        if (naamEl.scrollWidth <= naamEl.clientWidth + 1 && regels <= 2) return;
+      }
+      naamEl.style.fontSize = '32px';
+      naamEl.style.overflowWrap = 'anywhere'; // één woord dat zelfs op 32 px niet past
+    }
+    pasNaam();
+    luister(root, 'resize', pasNaam);
+
     container.scrollTop = 0;
     ui.speel('klaar');
     return {
@@ -417,6 +472,11 @@
         bezig = true;
         weg.forEach(function (f) { f(); });
         weg = [];
+        if (dempTerug && demp) {
+          try { dempTerug.ouder.insertBefore(demp, dempTerug.na && dempTerug.na.parentNode === dempTerug.ouder ? dempTerug.na : null); }
+          catch (e) { /* negeer */ }
+          dempTerug = null;
+        }
       }
     };
   }

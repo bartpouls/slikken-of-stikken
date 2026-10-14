@@ -334,10 +334,10 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 }
 
 /* bovenrand: overslaan · stippen · (ruimte voor dempknop) */
-.tut-top { flex: none; display: grid; grid-template-columns: 96px 1fr 96px; align-items: center; min-height: 44px; margin-top: -6px; }
+.tut-top { flex: none; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; min-height: 44px; margin-top: -6px; }
 .tut-over {
   justify-self: start; min-height: 48px; min-width: 48px; padding: 0 8px 0 0;
-  background: none; border: 0; color: #8a8a93; font-family: var(--font-rond); font-size: 15px;
+  background: none; border: 0; color: #6a6a72; font-family: var(--font-rond); font-size: 14.5px; text-align: left;
   text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px;
 }
 .tut-stippen { display: flex; justify-content: center; gap: 8px; }
@@ -354,14 +354,14 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .tut-opa { position: relative; width: 90px; margin-bottom: -3px; }
 .tut-opa .fig { width: 100%; cursor: pointer; touch-action: manipulation; }
 .tut-maag {
-  position: absolute; left: 50%; top: 74%; width: 28px; height: 28px; padding: 3px; pointer-events: none;
+  position: absolute; left: 50%; top: 74%; width: 32px; height: 32px; padding: 3px; pointer-events: none;
   border-radius: 50%; background: #ffe8ef; border: 2px solid var(--inkt);
   transform: translate(-50%, -50%) scale(.35); opacity: 0; transition: opacity .25s;
 }
 .tut-maag svg { width: 100%; height: 100%; display: block; }
 .tut-naamje {
   position: absolute; right: calc(100% + 2px); top: 34px; white-space: nowrap;
-  font-size: 13px; color: #8a8a93; pointer-events: none;
+  font-size: 13px; color: #6a6a72; pointer-events: none;
 }
 .tut-naamje::after { content: "↘"; margin-left: 2px; }
 .tut-ballon {
@@ -380,7 +380,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .tut-meter-max { position: absolute; top: 0; bottom: 0; left: 80%; width: 2px; background: var(--inkt); }
 .tut-meter-tekst { font-size: 13px; font-weight: 700; color: #45454c; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .tut-lever.vol .tut-meter-vul { background: var(--koraal); }
-.tut-lever.vol .tut-meter-tekst { color: #d2453a; }
+.tut-lever.vol .tut-meter-tekst { color: #b02a20; }
 .tut-lever.vol .tut-meter { animation: tut-knipper .5s ease 3; }
 @keyframes tut-knipper { 50% { opacity: .35; } }
 
@@ -395,14 +395,14 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 @keyframes tut-in { from { opacity: 0; transform: translateY(6px); } }
 
 /* grafiek (SVG, uit het model) */
-.tut-grafiek { flex: 1 1 190px; width: 100%; min-height: 176px; max-height: 320px; }
+.tut-grafiek { flex: 1 1 190px; width: 100%; min-height: 176px; max-height: 440px; }
 .tut-grafiek > svg { display: block; width: 100%; height: 100%; overflow: visible; font-family: var(--font); }
 .tut-as { font-size: 12px; font-weight: 600; fill: #6a6a72; }
-.tut-as-zone { fill: #1f9e68; font-weight: 800; }
-.tut-zone { font-size: 11.5px; font-weight: 700; fill: #1f9e68; letter-spacing: .03em; paint-order: stroke; stroke: #e6f6ee; stroke-width: 4px; stroke-linejoin: round; }
-.tut-eenheid { font-size: 11px; font-weight: 600; fill: #8a8a93; }
-.tut-half { font-size: 17px; font-weight: 800; fill: #3d7fe0; }
-.tut-klok { font-size: 13px; font-weight: 800; fill: var(--paars-diep); font-variant-numeric: tabular-nums; }
+.tut-as-zone { fill: #15784f; font-weight: 800; }
+.tut-zone { font-size: 11.5px; font-weight: 700; fill: #15784f; letter-spacing: .02em; paint-order: stroke; stroke: #e6f6ee; stroke-width: 4px; stroke-linejoin: round; }
+.tut-eenheid { font-size: 12px; font-weight: 700; fill: #6a6a72; }
+.tut-half { font-size: 17px; font-weight: 800; fill: #2a62b8; }
+.tut-klok { font-size: 13px; font-weight: 800; fill: #6b3fd1; font-variant-numeric: tabular-nums; }
 .tut-label { font-size: 12px; font-weight: 800; }
 
 /* bediening: raceknop(pen) links, Verder rechts */
@@ -413,6 +413,9 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .tut-acties { display: flex; gap: 10px; }
 .tut-actie { flex: none; width: 96px; min-height: 76px; }
 .tut-actie:disabled { opacity: .35; cursor: default; }
+.tut-actie.tut-schema { width: 112px; }
+.tut-actie small { display: block; font-size: 11px; font-weight: 600; opacity: .8; line-height: 1.1; }
+.tut-actie span { text-align: center; line-height: 1.15; }
 .tut-actie.tut-wijs::before {
   content: ""; position: absolute; inset: -9px; border: 3px dashed var(--inkt); border-radius: 26px;
   animation: tut-puls 1.1s ease-in-out infinite; pointer-events: none;
@@ -436,9 +439,13 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 .tut-race { font-size: 24px; }
 
 @media (min-height: 760px) {
-  .tut-podium { height: 160px; }
+  .tut-podium { height: 170px; }
   .tut-opa { width: 96px; }
   .tut-tekst { margin-top: 18px; }
+}
+/* liggend op een telefoon: ruimte voor de draai-hint bovenaan (style.css .draai) */
+@media (orientation: landscape) and (max-height: 500px) and (pointer: coarse) {
+  .tut-top { margin-top: 34px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .tut-actie.tut-wijs::before, .tut-tekst.nieuw, .tut-lever.vol .tut-meter { animation: none; }
@@ -2259,6 +2266,13 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   var SoS = root.SoS = root.SoS || {};
 
   var INKT = '#1b1b1f';
+  // Tekstkleuren met contrast ≥ 4,5:1 op het papierwit (en op de lichtgroene zoneband).
+  var K = { grijs: '#6a6a72', zone: '#15784f', half: '#2a62b8', twee: '#c0392b', klok: '#6b3fd1' };
+  var SCHEMA_ICOON = '<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+    [[11, 12], [29, 12], [11, 28], [29, 28]].map(function (p) {
+      return '<g transform="translate(' + (p[0] - 8) + ' ' + (p[1] - 4) + ') rotate(-30 8 4)"><rect width="16" height="8" rx="4" fill="#fff"/>' +
+        '<path d="M8 0h4a4 4 0 0 1 0 8H8z" fill="#ff8fb8"/></g>';
+    }).join('') + '</svg>';
   var KLOK_ICOON = '<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
     '<circle cx="20" cy="22" r="13" fill="none" stroke="#fff" stroke-width="3"/>' +
     '<path d="M20 13.5V22l6 4" stroke="#ffd166" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>' +
@@ -2302,7 +2316,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     var el = ui.el;
     var binnen = el('div', { class: 'tut-binnen', 'data-stap': '1', 'data-fase': 'wacht' });
     var top = el('div', { class: 'tut-top' });
-    var over = el('button', { type: 'button', class: 'tut-over', 'data-tut': 'overslaan', text: 'Overslaan' });
+    var over = el('button', { type: 'button', class: 'tut-over', 'data-tut': 'overslaan', text: 'Uitleg overslaan' });
     var stippen = el('div', { class: 'tut-stippen', 'aria-hidden': 'true' });
     for (var i = 0; i < 6; i++) stippen.appendChild(el('span'));
     top.appendChild(over); top.appendChild(stippen);
@@ -2350,6 +2364,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       });
     }
     function flits(n, klasse) { n.classList.remove(klasse); void n.offsetWidth; n.classList.add(klasse); }
+    function druk(b) { flits(b, 'tik'); root.setTimeout(function () { b.classList.remove('tik'); }, 140); }
 
     function zetStemming(st, metBallon) {
       if (st === stemming && opaFig.innerHTML) return;
@@ -2401,6 +2416,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       this.gepland = (o.gepland || []).slice();   // [{t, route, o}] toedieningen die vanzelf gebeuren
       this.metingen = (o.metingen || []).slice(); // [t] momenten om een ½-staafje te meten
       this.label = o.label || null;
+      this.wacht = !!o.wacht;          // wachtstrook tot de zone (alleen tablet)
       this.dt = o.dt || 0.02;
     }
     Curve.prototype.geef = function (route, o) {
@@ -2408,7 +2424,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       var r = s.geef(route, o || {});
       if (route === 'spuit') this.p.push([s.t, voor]);
       this.p.push([s.t, s.C]);
-      this.doses.push({ t: s.t, route: route });
+      this.doses.push({ t: s.t, route: route, extra: !!(o && o.extra) });
       return r;
     };
     Curve.prototype.meet = function () {
@@ -2435,14 +2451,18 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     };
 
     // Laat de klok van de actieve curve lopen tot tEind (uren per seconde), daarna klaar().
+    // uurPerSec: getal, of functie(modeltijd) -> uren per seconde (stap 1: eerst langzaam).
     function loop(curve, tEind, uurPerSec, klaar) {
       root.cancelAnimationFrame(raf);
-      var t0 = curve.sim.t, start0 = 0;
+      var t = curve.sim.t, vorig = 0;
+      var tempo = typeof uurPerSec === 'function' ? uurPerSec : function () { return uurPerSec; };
       zetFase('loopt');
       function frame(nu) {
         if (gestopt) return;
-        if (!start0) start0 = nu;
-        var t = Math.min(tEind, t0 + (nu - start0) / 1000 * uurPerSec * SPEED);
+        if (!vorig) vorig = nu;
+        var dReal = Math.min(0.1, (nu - vorig) / 1000);
+        vorig = nu;
+        t = Math.min(tEind, t + dReal * tempo(t) * SPEED);
         curve.tot(t);
         bijwerken(true);
         if (t >= tEind - 1e-9) { raf = 0; if (klaar) klaar(); return; }
@@ -2480,10 +2500,10 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       // zone (≥ 5 mg/L)
       var yz = Y(ZONE);
       s += '<rect x="' + Lp + '" y="' + (Tp - 4) + '" width="' + pw + '" height="' + (yz - Tp + 4) + '" fill="#3ddc97" fill-opacity=".13"/>';
-      s += '<path d="M' + Lp + ' ' + yz + 'H' + (Lp + pw) + '" stroke="#1f9e68" stroke-width="2" stroke-dasharray="6 5"/>';
-      s += '<text x="' + (Lp + pw - 4) + '" y="' + (Tp + 11) + '" text-anchor="end" class="tut-zone">pijnstilling</text>';
-      // y-as
-      s += '<text x="' + (Lp - 6) + '" y="' + (Tp - 9) + '" text-anchor="start" class="tut-eenheid">mg/L</text>';
+      s += '<path d="M' + Lp + ' ' + yz + 'H' + (Lp + pw) + '" stroke="' + K.zone + '" stroke-width="2" stroke-dasharray="6 5"/>';
+      s += '<text x="' + (Lp + pw - 4) + '" y="' + (Tp + 12) + '" text-anchor="end" class="tut-zone">' + C.zone.label + '</text>';
+      // y-as: leeslabel
+      s += '<text x="' + (Lp - 6) + '" y="' + (Tp - 9) + '" text-anchor="start" class="tut-eenheid">paracetamol in het bloed (mg/L)</text>';
       g.ticksY.forEach(function (c) {
         s += '<text x="' + (Lp - 7) + '" y="' + (Y(c) + 4.5) + '" text-anchor="end" class="' + (c === ZONE ? 'tut-as tut-as-zone' : 'tut-as') + '">' + tekenGetal(c) + '</text>';
         if (c !== ZONE) s += '<path d="M' + Lp + ' ' + Y(c) + 'h-4" stroke="' + INKT + '" stroke-width="2"/>';
@@ -2498,12 +2518,27 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       // ½-staafjes
       staven.forEach(function (b) {
         var x = Math.max(Lp + 7, X(b.t)), yb = Y(b.C);
-        s += '<rect x="' + (x - 6) + '" y="' + yb + '" width="12" height="' + Math.max(0, y0 - yb) + '" rx="2" fill="#3d7fe0" fill-opacity=".3" stroke="#3d7fe0" stroke-width="2"/>';
+        s += '<rect x="' + (x - 6) + '" y="' + yb + '" width="12" height="' + Math.max(0, y0 - yb) + '" rx="2" fill="#3d7fe0" fill-opacity=".3" stroke="' + K.half + '" stroke-width="2"/>';
         if (b.vorige) {
           var xv = Math.max(Lp + 7, X(b.vorige.t)), yh = Y(b.vorige.C / 2);
-          s += '<path d="M' + (xv - 6) + ' ' + yh + 'H' + (x + 9) + '" stroke="#3d7fe0" stroke-width="2" stroke-dasharray="3 4"/>';
+          s += '<path d="M' + (xv - 6) + ' ' + yh + 'H' + (x + 9) + '" stroke="' + K.half + '" stroke-width="2" stroke-dasharray="3 4"/>';
           s += '<text x="' + (x + 11) + '" y="' + (yh - 4) + '" class="tut-half">½</text>';
         }
+      });
+      // Wachtstrook: van het slikken tot de spiegel de zone haalt (gemeten op de modelcurve).
+      curves.forEach(function (c) {
+        if (!c.wacht || !c.doses.length) return;
+        var td = c.doses[0].t, tz = null, tl = td;
+        for (var i = 0; i < c.p.length; i++) {
+          if (c.p[i][0] < td) continue;
+          tl = c.p[i][0];
+          if (c.p[i][1] >= ZONE - 1e-9) { tz = c.p[i][0]; break; }
+        }
+        var eind = Math.min(g.T, tz == null ? tl : tz);
+        if (eind <= td) return;
+        var kl = c.stijl === 'spook' ? '#c4c4cc' : '#ff6f61';
+        s += '<path d="M' + X(td) + ' ' + y0 + 'H' + X(eind) + '" stroke="' + kl + '" stroke-width="7" stroke-linecap="round"/>';
+        if (tz != null && tz <= g.T) s += '<path d="M' + X(tz) + ' ' + y0 + 'V' + yz + '" stroke="' + (c.stijl === 'spook' ? '#a9a9b2' : INKT) + '" stroke-width="2" stroke-dasharray="2 4"/>';
       });
       // curves
       curves.forEach(function (c) {
@@ -2514,7 +2549,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
           d += (i ? 'L' : 'M') + X(c.p[i][0]).toFixed(1) + ' ' + Y(c.p[i][1]).toFixed(1);
         }
         var stijl = c.stijl === 'spook' ? 'stroke="#a9a9b2" stroke-width="3" stroke-dasharray="2 7"'
-          : c.stijl === 'twee' ? 'stroke="#ff6f61" stroke-width="4"'
+          : c.stijl === 'twee' ? 'stroke="#e0503f" stroke-width="4"'
           : 'stroke="' + INKT + '" stroke-width="4"';
         s += '<path d="' + d + '" ' + stijl + ' fill="none" stroke-linecap="round" stroke-linejoin="round"/>';
         if (c.icoon) {
@@ -2527,7 +2562,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
         if (c.label) {
           var piek = c.p[0];
           for (var j = 0; j < c.p.length; j++) if (c.p[j][1] > piek[1] && c.p[j][0] <= g.T) piek = c.p[j];
-          var kleur = c.stijl === 'twee' ? '#ff6f61' : c.stijl === 'spook' ? '#8a8a93' : INKT;
+          var kleur = c.stijl === 'twee' ? K.twee : c.stijl === 'spook' ? K.grijs : INKT;
           var lx = Math.min(Lp + pw - 12, X(piek[0]) + 4), ly = Y(piek[1]) - 9;
           s += '<circle cx="' + lx + '" cy="' + (ly - 4) + '" r="9" fill="#fff" stroke="' + kleur + '" stroke-width="2"/>';
           s += '<text x="' + lx + '" y="' + ly + '" text-anchor="middle" class="tut-label" fill="' + kleur + '">' + c.label + '</text>';
@@ -2536,10 +2571,9 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       // nu: lijn, stip en klok
       if (actief) {
         var tn = actief.sim.t, xn = X(Math.min(tn, g.T)), yn = Y(actief.sim.C);
-        s += '<path d="M' + xn + ' ' + (Tp - 4) + 'V' + y0 + '" stroke="#b07cff" stroke-width="2"/>';
+        s += '<path d="M' + xn + ' ' + Tp + 'V' + y0 + '" stroke="#b07cff" stroke-width="2"/>';
         s += '<circle cx="' + xn + '" cy="' + yn + '" r="5.5" fill="' + (actief.sim.C >= ZONE - 1e-9 ? '#3ddc97' : '#ff6f61') + '" stroke="' + INKT + '" stroke-width="2.5"/>';
-        var kx = Math.max(Lp + 46, Math.min(Lp + pw - 22, xn));
-        s += '<text x="' + kx + '" y="' + (Tp - 9) + '" text-anchor="middle" class="tut-klok">' + ui.getal(Math.floor(tn * 10 + 1e-6) / 10, (Math.floor(tn * 10 + 1e-6) % 10) ? 1 : 0) + ' u</text>';
+        s += '<text x="' + (Lp + pw + 4) + '" y="' + (Tp - 9) + '" text-anchor="end" class="tut-klok">' + ui.getal(Math.floor(tn * 10 + 1e-6) / 10, (Math.floor(tn * 10 + 1e-6) % 10) ? 1 : 0) + ' u</text>';
       }
       // toedieningen onder de as
       var gezien = {};
@@ -2548,7 +2582,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
         c.doses.forEach(function (d) {
           var k = d.t.toFixed(2), n = gezien[k] = (gezien[k] || 0) + 1;
           var x = X(d.t) + (n - 1) * 24, y = y0 + 19;
-          s += '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + (c.stijl === 'twee' ? '#ff6f61' : INKT) + '"/>';
+          s += '<circle cx="' + x + '" cy="' + y + '" r="11" fill="' + (c.stijl === 'twee' || d.extra ? '#e0503f' : INKT) + '"/>';
           s += ui.icoon(d.route === 'slik' ? 'tablet' : d.route).replace('<svg ', '<svg x="' + (x - 9) + '" y="' + (y - 9) + '" width="18" height="18" ');
         });
       });
@@ -2614,8 +2648,8 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 
     // 1. Opa Jan heeft pijn → tablet → curve stijgt pas na even.
     function stap1() {
-      nieuweGrafiek({ T: 10, ymax: 12, ticksX: [0, 2.5, 5, 7.5, 10], ticksY: [5, 10], maag: true });
-      tabletCurve = new Curve({ stijl: 'nu', dt: 0.02 });
+      nieuweGrafiek({ T: 3, ymax: 12, ticksX: [0, 0.5, 1, 1.5, 2, 2.5, 3], ticksY: [5, 10], maag: true });
+      tabletCurve = new Curve({ stijl: 'nu', dt: 0.01, wacht: true });
       curves.push(tabletCurve); actief = tabletCurve;
       zetStemming('pijn', false);
       zetTekst('Opa Jan heeft pijn.');
@@ -2623,18 +2657,20 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       wijs(b, true);
       bijTik(b, function () {
         if (b.disabled) return;
-        uit(b); flits(b, 'tik');
+        uit(b); druk(b);
         ui.speel('slik');
         tabletCurve.geef('slik');
         zetTekst('Een pil moet eerst door je maag.');
         bijwerken(false);
-        loop(tabletCurve, 2, 0.85, function () { toonVolgende(true); });
+        // Eerst 0,25 u per seconde: zo zie je opa wachten tot de spiegel de zone haalt.
+        loop(tabletCurve, 3, function (t) { return t < 0.5 ? 0.25 : 0.9; }, function () { toonVolgende(true); });
       });
     }
 
     // 2. Curve zakt → elke 2,5 uur is de helft weg (½-staafjes op 5; 7,5; 10 u).
     function stap2() {
-      grafiek.maag = true;
+      grafiek = { T: 10, ymax: 12, ticksX: [0, 2.5, 5, 7.5, 10], ticksY: [5, 10], maag: true };
+      staven = [];
       actief = tabletCurve;
       zetTekst('Je lichaam ruimt het op: elke 2,5 uur is de helft weg.');
       tabletCurve.metingen = [2 * THALF];
@@ -2645,7 +2681,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       bijTik(b, function () {
         if (b.disabled || fase === 'loopt') return;
         keer++;
-        flits(b, 'tik'); ui.speel('tik');
+        druk(b); ui.speel('tik');
         wijs(b, false);
         var doel = (2 + keer) * THALF;
         tabletCurve.metingen = [doel];
@@ -2656,7 +2692,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 
     // 3. Spuit → meteen hoog, zakt net zo hard (½ per 2,5 uur); tabletcurve als schaduw.
     function stap3() {
-      var schaduw = { sim: tabletCurve.sim, p: tabletCurve.p, stijl: 'spook', doses: [], icoon: 'tablet' };
+      var schaduw = { sim: tabletCurve.sim, p: tabletCurve.p, stijl: 'spook', doses: tabletCurve.doses, icoon: 'tablet', wacht: true };
       nieuweGrafiek({ T: 3 * THALF, ymax: 18, ticksX: [0, 2.5, 5, 7.5], ticksY: [5, 10, 15] });
       curves.push(schaduw);
       var c = new Curve({ stijl: 'nu', dt: 0.02, metingen: [THALF, 2 * THALF, 3 * THALF] });
@@ -2667,7 +2703,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       wijs(b, true);
       bijTik(b, function () {
         if (b.disabled) return;
-        uit(b); flits(b, 'tik');
+        uit(b); druk(b);
         ui.speel('spuit');
         c.geef('spuit');
         c.meet();
@@ -2681,20 +2717,29 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       nieuweGrafiek({ T: 24, ymax: 20, ticksX: [0, 6, 12, 18, 24], ticksY: [5, 10, 15], maag: true, lever: true });
       laatsteDag = -1;
       zetLever(false, false);
-      var gepland = C.echtSchema.schema.map(function (d) { return { t: d.t, route: d.route, geluid: 'tik' }; });
+      var gepland = C.echtSchema.schema.map(function (d) { return { t: d.t, route: d.route, geluid: d.t ? 'slik' : null }; });
       var c = new Curve({ stijl: 'nu', dt: 0.04, gepland: gepland });
       curves.push(c); actief = c;
       zetStemming('pijn', false);
       werkLeverBij(0);
       zetTekst('Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.');
+      var sch = actieKnop('schema', '<small>volgens schema</small>4× 1 g', SCHEMA_ICOON);
+      sch.setAttribute('aria-label', 'Volgens schema: 4× 1 g');
+      sch.classList.add('tut-schema');
       var b = actieKnop('slik', 'Tablet', ui.icoon('tablet'));
       b.disabled = true;
-      loop(c, 20, 10, function () { b.disabled = false; wijs(b, true); zetFase('wacht'); });
+      wijs(sch, true);
+      bijTik(sch, function () {
+        if (sch.disabled || fase === 'loopt') return;
+        uit(sch); druk(sch);
+        ui.speel('slik');
+        loop(c, 20, 8, function () { b.disabled = false; wijs(b, true); zetFase('wacht'); });
+      });
       bijTik(b, function () {
         if (b.disabled || fase === 'loopt') return;
-        uit(b); flits(b, 'tik');
+        uit(b); druk(b);
         ui.speel('slik');
-        c.geef('slik');
+        c.geef('slik', { extra: true });
         bijwerken(false);
         loop(c, 24, 2, function () { toonVolgende(true); });
       });
@@ -2711,7 +2756,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       bijTik(b, function () {
         if (b.disabled || fase === 'loopt') return;
         keer++;
-        flits(b, 'tik');
+        druk(b);
         ui.speel('zetpil');
         wijs(b, false);
         if (keer >= 2) uit(b);
@@ -2729,7 +2774,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     // 6. Klaar? Race!
     function stap6() {
       grafiek = null; curves = []; staven = []; actief = null;
-      over.hidden = true;
+      over.style.visibility = 'hidden';
       zetStemming('blij', false);
       zetLever(false, false);
       leverTekst.textContent = '';
@@ -2745,9 +2790,9 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       bediening.classList.add('slot');
       zetFase('klaar');
       ui.speel('klaar');
-      var sinds = Date.now();
       b.addEventListener('click', function () {
-        if (gestopt || Date.now() - sinds < 350) return;
+        if (gestopt) return;
+        b.classList.add('ingedrukt');
         ui.speel('tik');
         meldGereed();
       });
@@ -2863,18 +2908,18 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     return uit;
   }
 
-  // Paracetamol: poortjes waarop een toediening de dagteller (som in het 24-uursvenster) boven het max. bracht.
-  function leverPoortjes(c, v) {
-    var bg = c.bovengrens, uit = {};
-    if (!bg || bg.type !== 'dagteller') return uit;
+  // Paracetamol: leverschade zoals in de race: rood zolang de dagteller (doses in (t − 24 u, t]) boven het
+  // maximum zit. Geeft een functie t -> bool (altijd false zonder dagteller).
+  function leverOp(c, v) {
+    var bg = c.bovengrens;
+    if (!bg || bg.type !== 'dagteller') return function () { return false; };
     var doses = [];
-    v.tijdlijn.forEach(function (r) { r.jij.toedieningen.forEach(function (d) { doses.push({ t: r.t, dosis: d.dosis, i: r.index }); }); });
-    doses.forEach(function (d, k) {
+    v.tijdlijn.forEach(function (r) { r.jij.toedieningen.forEach(function (d) { doses.push({ t: r.t, dosis: d.dosis }); }); });
+    return function (t) {
       var som = 0;
-      for (var j = 0; j <= k; j++) if (doses[j].t > d.t - bg.venster - 1e-9) som += doses[j].dosis;
-      if (som > bg.maxPer24u + 1e-9) uit[d.i] = true;
-    });
-    return uit;
+      doses.forEach(function (d) { if (d.t <= t + 1e-6 && d.t > t - bg.venster + 1e-6) som += d.dosis; });
+      return som > bg.maxPer24u + 1e-9;
+    };
   }
 
   function stemming(c, v) {
@@ -2891,22 +2936,32 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   // ------------------------------------------------------------------------------------------
   // 1. Eindscherm
   // ------------------------------------------------------------------------------------------
+  function gebeurtenis(c, type) {
+    var g = null;
+    c.gebeurtenissen.forEach(function (x) { if (x.type === type) g = x; });
+    return g;
+  }
+  function tijdLabel(c, t) { return c.id === 'lithium' ? 'dag ' + getal(t / 24) : 'uur ' + t; }
+
   function kaartHtml(i, c, v, curve) {
     var staten = curve && curve.length ? tegelStaten(c, curve) : null;
-    if (staten) {
-      var lp = leverPoortjes(c, v);
-      Object.keys(lp).forEach(function (k) { staten[k] = 'giftig'; });
-    }
+    var tijden = SoS.model.poortjes(c), lever = leverOp(c, v);
+    var blok = gebeurtenis(c, 'blokkade'), ibu = gebeurtenis(c, 'klaring');
     var tegels = '';
     if (staten) {
+      tijden.forEach(function (t, k) { if (lever(t)) staten[k] = 'giftig'; });
       // twee rijen: paracetamol uur 0–11 | 12–23; lithium dag 0–4 | dag 5–9 (vanaf de ibuprofen)
       var helft = Math.ceil(staten.length / 2);
       var rij = function (van, tot) {
-        var s = '<span class="eind-tegelrij" style="--n:' + (tot - van) + '">';
+        var s = '<span class="eind-tegelrij"><span class="eind-rijlabel">' + tijdLabel(c, tijden[van]) + '</span>' +
+          '<span class="eind-tegelvak" style="--n:' + (tot - van) + '">';
         for (var k = van; k < tot; k++) {
-          s += '<span class="eind-tegel t-' + (staten[k] || 'leeg') + '" style="--i:' + k + '"></span>';
+          var t = tijden[k], extra = '';
+          if (blok && t >= blok.van - 1e-9 && t < blok.tot - 1e-9) extra += ' m';
+          if (ibu && Math.abs(t - ibu.t) < 1e-9) extra += ' ibu';
+          s += '<span class="eind-tegel t-' + (staten[k] || 'leeg') + extra + '" style="--i:' + k + '"></span>';
         }
-        return s + '</span>';
+        return s + '</span></span>';
       };
       tegels = '<span class="eind-tegels" role="img" aria-label="Per poortje: waar de spiegel zat">' +
         rij(0, helft) + rij(helft, staten.length) + '</span>';
@@ -2921,22 +2976,26 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
   }
 
   function legendaHtml(cs) {
-    var heeft = { zone: true, onder: true, boven: false, giftig: false };
+    var heeft = { zone: true, onder: true, boven: false, giftig: false }, blok = false, ibu = false;
     cs.forEach(function (c) {
       if (!c) return;
       if (c.venster.some(function (v) { return v.hoog !== Infinity; })) heeft.boven = true;
       if (c.toxisch != null || (c.bovengrens && c.bovengrens.type === 'dagteller')) heeft.giftig = true;
+      if (gebeurtenis(c, 'blokkade')) blok = true;
+      if (gebeurtenis(c, 'klaring')) ibu = true;
     });
-    return '<ul class="eind-legenda" aria-label="Kleuren van de tegels">' +
-      ['zone', 'onder', 'boven', 'giftig'].filter(function (s) { return heeft[s]; }).map(function (s) {
-        return '<li><span class="eind-tegel t-' + s + '"></span>' + (s === 'giftig' ? 'lever / giftig' : TOESTAND_LABEL[s]) + '</li>';
-      }).join('') + '</ul>';
+    var li = ['zone', 'onder', 'boven', 'giftig'].filter(function (s) { return heeft[s]; }).map(function (s) {
+      return '<li><span class="eind-tegel t-' + s + '"></span>' + (s === 'giftig' ? 'lever / giftig' : TOESTAND_LABEL[s]) + '</li>';
+    });
+    if (blok) li.push('<li><span class="eind-leg-m"></span>misselijk</li>');
+    if (ibu) li.push('<li><span class="eind-leg-ibu"></span>ibuprofen</li>');
+    return '<ul class="eind-legenda" aria-label="Uitleg van de tegels">' + li.join('') + '</ul>';
   }
 
   // ------------------------------------------------------------------------------------------
   // 2. Toedienverslag
   // ------------------------------------------------------------------------------------------
-  function curveSvg(c, curve) {
+  function curveSvg(c, curve, lever) {
     if (!curve || curve.length < 2) return '';
     var W = 340, H = 132, L = 8, R = 30, T = 18, B = 22, pw = W - L - R, ph = H - T - B;
     var maxC = 0;
@@ -2976,7 +3035,7 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     // curve, gekleurd per toestand
     var stuk = null, paden = [];
     for (var i = 0; i < curve.length; i++) {
-      var p = curve[i], st = toestand(c, p.C, p.t), pt = f(x(p.t)) + ' ' + f(y(p.C));
+      var p = curve[i], st = lever(p.t) ? 'giftig' : toestand(c, p.C, p.t), pt = f(x(p.t)) + ' ' + f(y(p.C));
       if (!stuk || stuk.st !== st) {
         if (stuk) stuk.d += ' L' + pt;
         stuk = { st: st, d: 'M' + pt };
@@ -3029,21 +3088,25 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
 
   function roosterHtml(c, v) {
     var M = SoS.model, rijen = v.tijdlijn;
-    var allesEcht = rijen.every(function (r) { return r.echt; });
     var blok = null;
     c.gebeurtenissen.forEach(function (g) { if (g.type === 'blokkade') blok = g; });
     var klaring = null;
     c.gebeurtenissen.forEach(function (g) { if (g.type === 'klaring') klaring = g; });
     var cel = function (r, metTijd) {
       var j = r.jij, misselijk = blok && r.t >= blok.van - 1e-9 && r.t < blok.tot - 1e-9;
-      var echt = r.echt && !allesEcht;
-      var label = r.tijdTekst + ': ' + j.tekst + (r.echt ? '; echt schema ' + r.echt : '');
-      return '<li class="eind-cel' + (echt ? ' echt' : '') + (misselijk ? ' misselijk' : '') + ' s-' + j.soort + '"' +
+      var echt = !!r.echt, n = 0;
+      j.toedieningen.forEach(function (d) { n += d.aantal; });
+      var anders = echt ? n !== 1 : n > 0; // afwijking van het echte schema (aantal doses op dit poortje)
+      var label = r.tijdTekst + ': ' + j.tekst + (r.echt ? '; echt schema ' + r.echt : '; echt schema niets') +
+        (anders ? '; anders dan het echte schema' : '');
+      return '<li class="eind-cel' + (echt ? ' echt' : '') + (misselijk ? ' misselijk' : '') + (anders ? ' anders' : '') + ' s-' + j.soort + '"' +
+        ' data-anders="' + (anders ? 1 : 0) + '"' +
         ' data-poortje="' + r.index + '" data-soort="' + j.soort + '" data-tekst="' + esc(j.tekst) + '"' +
         ' aria-label="' + esc(label) + '">' +
         (metTijd ? '<span class="eind-cel-uur" aria-hidden="true">' + r.t + '</span>' : '') +
         celInhoud(r) +
-        (echt ? '<span class="eind-cel-echt" aria-hidden="true">' + esc(r.echt) + '</span>' : '') + '</li>';
+        (echt ? '<span class="eind-cel-echt" aria-hidden="true">' + esc(r.echt) + '</span>' : '') +
+        (anders ? '<span class="eind-cel-anders" aria-hidden="true">≠</span>' : '') + '</li>';
     };
     var s = '';
     if (c.id === 'lithium') {
@@ -3078,7 +3141,10 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     });
     if (komtVoor.geblokkeerd) leg.push('<li><span class="eind-leg-ic">' + ic('kruis') + '</span>geblokkeerd (wilde slikken, maar misselijk)</li>');
     leg.push('<li><span class="eind-leg-ic eind-leg-leeg">–</span>overgeslagen</li>');
-    if (!allesEcht) leg.push('<li><span class="eind-leg-echt">' + esc(rijen.filter(function (r) { return r.echt; })[0].echt) + '</span>echt schema</li>');
+    leg.push('<li><span class="eind-leg-echt">' + esc(rijen.filter(function (r) { return r.echt; })[0].echt) + '</span>echt schema</li>');
+    if (rijen.some(function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return r.echt ? n !== 1 : n > 0; })) {
+      leg.push('<li><span class="eind-leg-anders">≠</span>anders dan het echte schema</li>');
+    }
     if (blok) leg.push('<li><span class="eind-leg-misselijk"></span>misselijk (' + esc(blok.tijdTekst.toLowerCase()) + ')</li>');
     return s + '<ul class="eind-leg">' + leg.join('') + '</ul>';
   }
@@ -3088,10 +3154,10 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     var dosis = (v.tijdlijn.filter(function (r) { return r.echt; })[0] || {}).echt || '';
     var tijden = perDag.map(function (e) { return e.t; });
     var lek = c.id === 'lithium'
-      ? perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur). Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.'
+      ? perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet (' + dosis + '). Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.'
       : perDag.length + '× per dag ' + dosis + ' (om uur ' + lijst(tijden) + ').';
     return '<p class="eind-echt"><span class="eind-echt-kop">Echt schema</span> <b>' + esc(v.echtSchema.tekst) + '</b><br>' +
-      'Dat is: ' + esc(lek) + (c.id === 'lithium' ? ' In het rooster: elk vakje 1 tablet.' : '') + '</p>';
+      'Dat is: ' + esc(lek) + '</p>';
   }
 
   function tellingHtml(v) {
@@ -3113,10 +3179,12 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       '<div><p class="eind-kicker">Race ' + (i + 1) + ' · verslag</p>' +
       '<h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + ' <span class="eind-v-wie">' + esc(c.patient) + '</span></h2>' +
       '<p class="eind-v-score"><b>' + getal(v.opbouw.totaal) + '</b> QALY-punten</p></div></header>';
+    var lever = leverOp(c, v), leverOoit = curve && curve.some(function (p) { return lever(p.t); });
     if (curve && curve.length > 1) {
-      s += '<figure class="eind-curve">' + curveSvg(c, curve) +
+      s += '<figure class="eind-curve">' + curveSvg(c, curve, lever) +
         '<figcaption>Jouw spiegel. Groene baan: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + ').' +
         (c.toxisch != null ? ' Rode stippellijn: giftig (' + esc(c.toxischTekst || getal(c.toxisch, 1)) + ').' : '') +
+        (leverOoit ? ' Rode lijn: meer dan ' + getal(c.bovengrens.maxPer24u / 1000) + ' g in 24 uur. ' + esc(c.lekentaal.boven) : '') +
         '</figcaption></figure>';
     }
     s += opbouwHtml(v);
@@ -3151,18 +3219,20 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
     container.innerHTML =
       '<div class="eind-binnen">' +
         '<div class="eind-held">' +
-          '<p class="eind-naam' + (String(data.naam || '').length > 9 ? ' lang' : '') + '" data-eind="naam">' + esc(data.naam || '') + '</p>' +
+          '<p class="eind-naam" data-eind="naam">' + esc(data.naam || '') + '</p>' +
           '<p class="eind-label">QALY-punten totaal</p>' +
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
-          '<p class="eind-spelpunten">Spelpunten, geen echte QALY\'s.</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
           legendaHtml(cs) +
           '<div class="eind-vraag"><span class="eind-vraag-kop">Nabespreken</span>' +
             '<p data-eind="vraag">' + VRAAG + '</p></div>' +
-          '<p class="eind-scorebord">Geef je speelnaam en totaal door aan Bart: hij zet je op het scorebord in de zaal.</p>' +
+          '<div class="eind-acties"><button type="button" class="knop-wit groot" data-actie="opnieuw">Nog een keer</button></div>' +
+          '<p class="eind-scorebord">Laat je naam en totaal op het scorebord zetten.</p>' +
+          '<p class="eind-spelpunten">QALY-punten zijn spelpunten, geen echte QALY\'s.</p>' +
         '</div>' +
         verslagen +
-        '<div class="eind-voet"><button type="button" class="knop-wit groot" data-actie="opnieuw">Nog een keer</button></div>' +
+        '<div class="eind-voet"><button type="button" class="knop-wit" data-actie="naar-boven">' +
+          '<span aria-hidden="true">↑</span>&nbsp;Terug naar je score</button></div>' +
       '</div>';
 
     var bezig = false;
@@ -3192,6 +3262,36 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
       });
     });
 
+    luister(container.querySelector('[data-actie="naar-boven"]'), 'click', function () {
+      ui.speel('tik');
+      var glad = !(root.matchMedia && root.matchMedia('(prefers-reduced-motion: reduce)').matches);
+      container.scrollTo({ top: 0, behavior: glad ? 'smooth' : 'auto' });
+    });
+
+    // De dempknop van app.js staat vast rechtsboven en zou bij scrollen over tekst liggen: zolang het
+    // eindscherm open is, staat hij (niet vast) naast "Nog een keer". stop() zet hem terug.
+    var demp = root.document.getElementById('demp'), dempTerug = null;
+    if (demp && demp.parentNode) {
+      dempTerug = { ouder: demp.parentNode, na: demp.nextSibling };
+      container.querySelector('.eind-acties').appendChild(demp);
+    }
+
+    // Speelnaam: 1–2 regels, alleen breken op spaties; zo nodig kleiner, maar nooit onder 32 px.
+    var naamEl = container.querySelector('[data-eind="naam"]');
+    function pasNaam() {
+      var max = root.innerHeight >= 800 ? 40 : 36;
+      naamEl.style.overflowWrap = 'normal';
+      for (var px = max; px >= 32; px--) {
+        naamEl.style.fontSize = px + 'px';
+        var regels = Math.round(naamEl.offsetHeight / (px * 1.08));
+        if (naamEl.scrollWidth <= naamEl.clientWidth + 1 && regels <= 2) return;
+      }
+      naamEl.style.fontSize = '32px';
+      naamEl.style.overflowWrap = 'anywhere'; // één woord dat zelfs op 32 px niet past
+    }
+    pasNaam();
+    luister(root, 'resize', pasNaam);
+
     container.scrollTop = 0;
     ui.speel('klaar');
     return {
@@ -3199,6 +3299,11 @@ body.donker .demp { color: rgba(255, 255, 255, .7); }
         bezig = true;
         weg.forEach(function (f) { f(); });
         weg = [];
+        if (dempTerug && demp) {
+          try { dempTerug.ouder.insertBefore(demp, dempTerug.na && dempTerug.na.parentNode === dempTerug.ouder ? dempTerug.na : null); }
+          catch (e) { /* negeer */ }
+          dempTerug = null;
+        }
       }
     };
   }
