@@ -866,8 +866,11 @@
     ctx.fillStyle = 'rgba(255,255,255,0.85)';
     // botst de waarde met het "onderweg"-bolletje? dan erboven
     var lx0 = ctx.textAlign === 'left' ? xl : xl - wv;
-    if (blobX != null && blobX > lx0 - 30 && blobX < lx0 + wv + 30) { ctx.textBaseline = 'bottom'; ctx.fillText(waarde, xl, yN - 9); }
-    else ctx.fillText(waarde, xl, yN + 9);
+    var yw = yN + 9;
+    if (blobX != null && blobX > lx0 - 30 && blobX < lx0 + wv + 30) { ctx.textBaseline = 'bottom'; yw = yN - 9; }
+    ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+    ctx.strokeText(waarde, xl, yw);
+    ctx.fillText(waarde, xl, yw);
 
     // rand boven: as-labels; rand onder: vervagen naar de knoppen
     var gb = ctx.createLinearGradient(0, 0, 0, BOVENRAND);
