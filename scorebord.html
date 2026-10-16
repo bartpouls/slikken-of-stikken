@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
+<meta name="color-scheme" content="dark">
+<title>Scorebord · Slikken of Stikken</title>
+<link rel="icon" href="data:,">
+<style>
+/*
+  Scorebord voor de beamer (Slikken of Stikken, ouderdag 2026).
+  Volledig zelfstandig: geen externe bestanden, geen netwerk.
+  Opslag: alleen localStorage van deze browser (sleutel "sos-scorebord-v1"),
+  met terugval op geheugen als opslag niet mag.
+*/
+:root {
+  --bg: #000;
+  --inkt: #fff;
+  --zacht: #cfcfcf;
+  --stil: #a6a6a6;
+  --halo: 0 0 2px #000, 0 0 6px #000, 0 0 12px #000;
+  --lijn: rgba(255, 255, 255, .14);
+  --paars: #b48cff;
+  --paars-diep: #8f63f5;
+  --paars-gloed: rgba(180, 140, 255, .34);
+  --goud: #f7c548;
+  --goud-schaduw: #d99a21;
+  --zilver: #d3dbea;
+  --zilver-schaduw: #9ea9bf;
+  --brons: #ea9358;
+  --brons-schaduw: #b8622d;
+  --koraal: #ff8c7a;
+  --veld: #111;
+  --rand: rgba(255, 255, 255, .26);
+  /* basismaat: groeit mee met het scherm (1920x1080 -> 23,8px, 1280x720 -> 15,8px) */
+  font-size: clamp(15px, min(1.25vw, 2.2vh), 28px);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--inkt); }
+body {
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+  line-height: 1.3;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  overflow-wrap: anywhere;
+}
+#sterren {
+  position: fixed; inset: 0; width: 100%; height: 100%;
+  z-index: 0; pointer-events: none; display: block;
+}
+.pagina {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column;
+  padding: 1rem 16px 2rem;
+  max-width: 100%;
+  /* zwarte halo: sterren achter tekst worden gedimd */
+  text-shadow: var(--halo);
+}
+button, input { font: inherit; color: inherit; text-shadow: none; }
+.wis, .melding button { text-shadow: var(--halo); }
+button { cursor: pointer; }
+.verborgen {
+  position: absolute !important; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+
+/* ---------- kop ---------- */
+.kop { text-align: center; order: 1; }
+.kop h1 {
+  margin: .4rem 0 .2rem;
+  font-size: min(2.3rem, 7.6vw); font-weight: 700; letter-spacing: -.01em;
+  white-space: nowrap; max-width: 100%;
+  display: inline-flex; align-items: center; gap: .45em;
+}
+.kop h1 svg { width: 1.05em; height: 1.05em; flex: none; }
+.markering {
+  display: flex; align-items: center; gap: 1rem;
+  margin: .5rem 0 .35rem;
+  color: var(--paars); font-weight: 600; font-size: 1.3rem;
+}
+.markering::before, .markering::after {
+  content: ""; flex: 1 1 0; height: 1.5px; min-width: 1rem;
+  background: var(--paars); opacity: .75;
+}
+.markering span { white-space: nowrap; }
+.uitleg { margin: 0 auto; max-width: 46rem; color: var(--zacht); font-size: 1.15rem; }
+
+/* ---------- invoer ---------- */
+.invoer {
+  order: 2;
+  position: sticky; top: 0; z-index: 5;
+  margin: 1rem -16px 0; padding: .75rem 16px .8rem;
+  background: #000;
+  border-bottom: 1px solid var(--lijn);
+}
+.velden { display: flex; flex-wrap: wrap; gap: .6rem; align-items: flex-end; }
+.veld { display: flex; flex-direction: column; gap: .25rem; min-width: 0; }
+.veld label { font-size: .85rem; color: var(--zacht); letter-spacing: .02em; }
+.veld-naam { flex: 1 1 100%; }
+.veld-score { flex: 1 1 11rem; }
+.scorerij { display: flex; gap: .4rem; }
+input[type="text"] {
+  width: 100%; min-width: 0; min-height: 48px;
+  padding: .55rem .8rem; font-size: max(16px, 1.1rem);
+  background: var(--veld); border: 1.5px solid var(--rand); border-radius: 12px;
+  outline: none; transition: border-color .2s, box-shadow .2s;
+}
+input[type="text"]::placeholder { color: #9a9a9a; opacity: 1; }
+input[type="text"]:focus { border-color: var(--paars); box-shadow: 0 0 0 3px var(--paars-gloed); }
+input[aria-invalid="true"] { border-color: var(--koraal); }
+.teken {
+  flex: none; min-width: 48px; min-height: 48px; padding: 0 .6rem;
+  border-radius: 12px; border: 1.5px solid var(--rand); background: var(--veld);
+  font-size: 1.1rem; font-weight: 700;
+}
+.teken:hover, .teken:focus-visible { border-color: var(--paars); outline: none; }
+.toevoegen {
+  flex: 1 0 auto; min-height: 48px; padding: 0 1.3rem;
+  border: 0; border-radius: 12px; background: var(--paars); color: #140a2b;
+  font-weight: 700; font-size: max(16px, 1.1rem);
+  transition: background .2s, transform .1s;
+}
+.toevoegen:hover { background: #c4a3ff; }
+.toevoegen:active { transform: scale(.97); }
+.toevoegen:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.melding {
+  min-height: 1.5em; margin: 0 0 .5rem; font-size: 1rem; color: var(--zacht);
+  display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .8rem;
+}
+.melding:empty { display: none; }
+.melding > span { min-width: 0; overflow-wrap: anywhere; }
+.melding.fout { color: var(--koraal); font-weight: 600; }
+.melding.goed { color: var(--paars); font-weight: 600; }
+.melding button {
+  background: none; border: 0; padding: .2rem .3rem; min-height: 48px; min-width: 48px;
+  color: var(--inkt); text-decoration: underline; text-underline-offset: 3px; font-weight: 600;
+}
+
+/* ---------- podium (top 3) ---------- */
+.podium { order: 3; margin-top: 1.4rem; }
+.podium ol, .rest ol { list-style: none; margin: 0; padding: 0; }
+.rij {
+  position: relative;
+  display: flex; align-items: center; gap: .6rem;
+  min-width: 0; max-width: 100%; border-radius: 18px;
+}
+.podium .rij { padding: .45rem .4rem; margin-bottom: .35rem; }
+.schijf { position: relative; flex: none; width: 2.9rem; height: 2.9rem; }
+.schijf svg { position: absolute; inset: -18%; width: 136%; height: 136%; overflow: visible; }
+.schijf b {
+  position: absolute; inset: 0; display: grid; place-items: center;
+  font-size: 1.25rem; font-weight: 700; color: #1b1206;
+  font-variant-numeric: tabular-nums; text-shadow: none;
+}
+.plek1 .schijf { width: 3.4rem; height: 3.4rem; }
+.plek1 .schijf b { font-size: 1.6rem; }
+/* breedtebudget: score heeft één vaste maat per rijtype (past tot -99.999);
+   de naam krijgt de rest en breekt zo nodig over twee regels (nooit afgekapt, geen ellips).
+   Podium: naam boven, score eronder (zoals op de beamer), zodat ook 20 brede tekens in twee regels passen. */
+.info { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: .6rem; }
+.naam {
+  flex: 1 1 auto; min-width: 4rem;
+  font-weight: 600; line-height: 1.12;
+  white-space: normal; overflow-wrap: anywhere; word-break: break-word;
+  display: block; overflow: visible;
+}
+.podium .info { flex-direction: column; align-items: flex-start; gap: .1rem; }
+.podium .naam { min-width: 0; max-width: 100%; }
+.podium .score { text-align: left; }
+.score {
+  flex: none; font-weight: 700; font-variant-numeric: tabular-nums; letter-spacing: -.01em;
+  text-align: right; white-space: nowrap; line-height: 1.05;
+}
+.score.negatief { color: var(--koraal); }
+.podium .naam { font-size: 1.25rem; }
+.podium .score { font-size: 1.75rem; }
+.podium .plek1 .naam { font-size: 1.35rem; }
+.podium .plek1 .score { font-size: 2rem; color: var(--goud); }
+.podium .plek2 .score { color: var(--zilver); }
+.podium .plek3 .score { color: var(--brons); }
+.podium .score.negatief { color: var(--koraal); }
+.rij.vrij .naam { color: var(--stil); font-weight: 500; font-style: italic; }
+.rij.vrij .schijf svg { opacity: .3; }
+.rij.vrij .schijf b { color: var(--zacht); }
+
+/* ---------- rest van de lijst ---------- */
+.rest { order: 4; margin-top: .6rem; min-width: 0; }
+.rest .rij { padding: .5rem .4rem; border-radius: 12px; }
+.rest .rij + .rij::before {
+  content: ""; position: absolute; left: .6rem; right: .6rem; top: 0;
+  border-top: 1px dashed var(--lijn); pointer-events: none;
+}
+.rest .rij.nieuw::before, .rest .rij.nieuw + .rij::before { display: none; }
+.rang {
+  flex: none; min-width: 2.2ch; text-align: right;
+  color: var(--paars); font-weight: 600; font-variant-numeric: tabular-nums; font-size: 1.15rem;
+}
+.rest .naam { font-size: 1.15rem; }
+.rest .score { font-size: 1.3rem; }
+.leeg { color: var(--stil); text-align: center; margin: 1.5rem 0; font-size: 1.05rem; }
+
+/* verwijderknop: onopvallend, wel groot genoeg om te tikken */
+.weg {
+  flex: none; width: 50px; height: 50px; margin-left: -.2rem; /* ≥ 48 px, ook tijdens het verschuiven van regels */
+  display: grid; place-items: center;
+  background: none; border: 0; border-radius: 50%;
+  color: var(--stil); font-size: 1.3rem; line-height: 1;
+  transition: background .2s, color .2s;
+}
+.weg:hover, .weg:focus-visible { background: rgba(255, 255, 255, .1); color: var(--inkt); outline: none; }
+
+/* bevestigen per regel */
+.bevestig {
+  position: absolute; top: 0; left: 0; right: 0; min-height: 100%; z-index: 2;
+  display: flex; align-items: center; justify-content: flex-end; gap: .5rem;
+  padding: .35rem .5rem; border-radius: inherit;
+  background: #160d2c;
+  border: 1.5px solid var(--paars);
+  font-size: 1rem;
+}
+.bevestig span { margin-right: auto; padding-left: .5rem; min-width: 0; white-space: normal; overflow-wrap: anywhere; line-height: 1.15; }
+.knopje {
+  flex: none; white-space: nowrap;
+  min-height: 50px; min-width: 50px; padding: 0 .9rem; border-radius: 10px;
+  border: 1.5px solid var(--rand); background: #000; font-weight: 700;
+}
+.knopje.ja { background: var(--koraal); border-color: var(--koraal); color: #2a0b05; }
+.knopje:hover, .knopje:focus-visible { outline: 2px solid #fff; outline-offset: 1px; }
+
+/* nieuwe regel licht even op */
+.nieuw { animation: oplichten 4.5s ease-out both; }
+.nieuw .score { animation: pop .7s cubic-bezier(.2, 1.6, .4, 1) both; }
+.nieuwlabel {
+  position: absolute; top: 0; right: 3.2rem; transform: translateY(-50%); z-index: 1;
+  padding: .05rem .55rem; border-radius: 999px; pointer-events: none;
+  background: var(--paars); color: #140a2b; font-size: .8rem; font-weight: 700;
+  letter-spacing: .03em; text-shadow: none; white-space: nowrap;
+  animation: vervaag 8s ease-in forwards;
+}
+@keyframes oplichten {
+  0%   { background: rgba(180, 140, 255, .28); box-shadow: 0 0 0 2px var(--paars), 0 0 2.2rem rgba(180, 140, 255, .6); }
+  55%  { background: rgba(180, 140, 255, .14); box-shadow: 0 0 0 2px var(--paars), 0 0 1.2rem rgba(180, 140, 255, .3); }
+  100% { background: rgba(180, 140, 255, 0); box-shadow: 0 0 0 2px rgba(180, 140, 255, 0), 0 0 0 rgba(180, 140, 255, 0); }
+}
+@keyframes pop { 0% { transform: scale(.7); } 100% { transform: scale(1); } }
+@keyframes vervaag { 0%, 75% { opacity: 1; } 100% { opacity: 0; } }
+
+/* ---------- voet ---------- */
+.voet {
+  order: 5; margin-top: 1.5rem;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .4rem 1rem;
+  color: var(--stil); font-size: 1rem;
+}
+.wis {
+  background: none; border: 0; min-height: 48px; min-width: 48px; padding: 0 .5rem;
+  color: var(--stil); font-size: 1rem; text-decoration: underline; text-underline-offset: 3px;
+}
+.wis:hover, .wis:focus-visible { color: var(--inkt); outline: none; }
+.wisvraag { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; color: var(--inkt); font-size: 1rem; }
+
+/* ---------- beamer / breed scherm ---------- */
+@media (min-width: 860px) and (min-height: 500px) and (orientation: landscape) {
+  body { height: 100vh; height: 100dvh; overflow: hidden; }
+  .pagina {
+    height: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: "kop kop" "podium rest" "invoer voet";
+    column-gap: 3.2rem;
+    padding: 1.1rem 3rem 0;
+  }
+  .kop { grid-area: kop; }
+  .kop h1 { font-size: 2.6rem; margin-top: 0; }
+  .markering { margin: .45rem 0 .25rem; }
+  .podium {
+    grid-area: podium; margin-top: 1rem; min-height: 0;
+    display: flex; flex-direction: column; justify-content: flex-start;
+  }
+  .podium .rij { padding: .55rem .9rem; margin-bottom: .55rem; gap: 1.2rem; }
+  .naam { min-width: 6rem; display: block; overflow: visible; -webkit-line-clamp: unset; }
+  /* podium op de beamer: naam boven, score eronder, zodat namen tot 16 tekens heel blijven */
+  .podium .info { flex-direction: column; align-items: flex-start; gap: .05rem; }
+  .podium .naam { min-width: 0; max-width: 100%; }
+  .podium .score { text-align: left; }
+  .uitleg { font-size: 1.25rem; max-width: none; }
+  .schijf { width: 4.4rem; height: 4.4rem; }
+  .schijf b { font-size: 1.8rem; }
+  .plek1 .schijf { width: 5.8rem; height: 5.8rem; }
+  .plek1 .schijf b { font-size: 2.4rem; }
+  .podium .naam { font-size: 1.8rem; }
+  .podium .score { font-size: 2.6rem; }
+  .podium .plek1 .naam { font-size: 2.2rem; }
+  .podium .plek1 .score { font-size: 3.4rem; }
+  .rest {
+    grid-area: rest; margin: .5rem -.8rem 0; padding: .5rem .8rem 1rem; min-height: 0;
+    overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain;
+    scrollbar-width: thin; scrollbar-color: rgba(180, 140, 255, .5) transparent;
+  }
+  .rest.loopt-door {
+    -webkit-mask-image: linear-gradient(#000 calc(100% - 3rem), transparent);
+    mask-image: linear-gradient(#000 calc(100% - 3rem), transparent);
+  }
+  .rest .rij { padding: .45rem .7rem; gap: 1.1rem; }
+  .rest .info { gap: 1.1rem; }
+  .nieuwlabel { right: 4rem; }
+  .rang { font-size: 1.55rem; min-width: 2.4ch; }
+  .rest .naam { font-size: 1.75rem; }
+  .rest .score { font-size: 2.05rem; }
+  .leeg { margin-top: 2.5rem; font-size: 1.2rem; }
+  .invoer {
+    grid-area: invoer; position: static; margin: .8rem 0 0; padding: .6rem 0 .5rem;
+    background: transparent; border-top: 1px solid var(--lijn); border-bottom: 0;
+  }
+  .velden { flex-wrap: nowrap; }
+  .veld-naam { flex: 1 1 18rem; }
+  .veld-score { flex: 0 1 15rem; }
+  .toevoegen { flex: 0 0 auto; }
+  input[type="text"], .toevoegen, .teken { font-size: 1rem; min-height: max(48px, 2.6rem); }
+  .teken { min-width: max(48px, 2.6rem); }
+  .melding, .melding:empty { display: flex; margin: 0 0 .35rem; min-height: 1.4em; }
+  .voet {
+    grid-area: voet; margin: .8rem 0 0; padding: .6rem 0 .7rem;
+    border-top: 1px solid var(--lijn); align-self: stretch; align-items: flex-end; justify-content: flex-end;
+  }
+  .weg { width: max(50px, 2.6rem); height: max(50px, 2.6rem); font-size: 1.2rem; }
+}
+
+/* beamer/laptop met minder breedte (bv. 1024x768): namen kleiner, podiumkolom iets breder */
+@media (min-width: 860px) and (max-width: 1199px) and (min-height: 500px) and (orientation: landscape) {
+  .pagina { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); column-gap: 2rem; padding-left: 2rem; padding-right: 2rem; }
+  .podium .naam { font-size: 1.5rem; }
+  .podium .plek1 .naam { font-size: 1.8rem; }
+  .rest .naam { font-size: 1.45rem; }
+  .rest .score { font-size: 1.75rem; }
+  .rang { font-size: 1.35rem; }
+  .veld-naam { flex: 1 1 8rem; }
+  .veld-score { flex: 0 0 12rem; }
+}
+
+/* heel smalle telefoon (320 px) */
+@media (max-width: 360px) {
+  .rij, .info { gap: .45rem; }
+  .schijf { width: 2.5rem; height: 2.5rem; }
+  .plek1 .schijf { width: 2.8rem; height: 2.8rem; }
+  .schijf b { font-size: 1.1rem; }
+  .plek1 .schijf b { font-size: 1.35rem; }
+  .podium .naam, .podium .plek1 .naam { font-size: 1.1rem; }
+  .podium .score { font-size: 1.5rem; }
+  .podium .plek1 .score { font-size: 1.7rem; }
+  .rest .naam { font-size: 1.05rem; }
+  .rest .score { font-size: 1.15rem; }
+  .rang { font-size: 1.05rem; }
+  .kop h1 { font-size: 1.75rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition: none !important; }
+  .nieuw { animation: none; background: rgba(180, 140, 255, .2); box-shadow: 0 0 0 2px var(--paars); }
+}
+</style>
+</head>
+<body>
+<canvas id="sterren" aria-hidden="true"></canvas>
+
+<div class="pagina">
+  <header class="kop">
+    <h1>
+      <svg viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+        <g transform="rotate(-35 32 32)">
+          <rect x="6" y="20" width="52" height="24" rx="12" fill="#f3eefe"/>
+          <path d="M18 20h14v24H18a12 12 0 0 1 0-24z" fill="#b48cff"/>
+          <rect x="12" y="24" width="14" height="4" rx="2" fill="#fff" opacity=".55"/>
+          <rect x="31" y="20" width="2" height="24" fill="#8f63f5" opacity=".5"/>
+        </g>
+      </svg>
+      <span>Slikken of Stikken</span>
+    </h1>
+    <p class="markering"><span>Scorebord · QALY-punten</span></p>
+    <p class="uitleg">Een QALY is een jaar in goede gezondheid. Dit zijn spelpunten, geen echte QALY's.</p>
+  </header>
+
+  <form class="invoer" id="invoer" novalidate autocomplete="off">
+    <p class="melding" id="melding" role="status" aria-live="polite"></p>
+    <div class="velden">
+      <div class="veld veld-naam">
+        <label for="naam">Speelnaam</label>
+        <input type="text" id="naam" name="naam" maxlength="20" placeholder="Bijvoorbeeld Sam" enterkeyhint="next" spellcheck="false">
+      </div>
+      <div class="veld veld-score">
+        <label for="score">Totaal QALY-punten</label>
+        <div class="scorerij">
+          <input type="text" id="score" name="score" inputmode="numeric" maxlength="12" placeholder="1650 of -300" enterkeyhint="done">
+          <button type="button" class="teken" id="teken" aria-label="Plus of min omdraaien" title="Plus of min omdraaien">±</button>
+        </div>
+      </div>
+      <button type="submit" class="toevoegen">Toevoegen</button>
+    </div>
+  </form>
+
+  <section class="podium" aria-label="Top 3">
+    <ol id="top3"></ol>
+  </section>
+
+  <section class="rest" id="rest" aria-label="Plek 4 en verder">
+    <ol id="lijst"></ol>
+    <p class="leeg" id="leeg"></p>
+  </section>
+
+  <footer class="voet" id="voet">
+    <span id="telling"></span>
+    <span id="wisplek"><button type="button" class="wis" id="wis">Alles wissen</button></span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var SLEUTEL = "sos-scorebord-v1";
+  var MAX_NAAM = 20;      /* spel: tot 16 tekens; wat marge voor met de hand getypte namen */
+  /* Haalbaar volgens src/score.js: best +2.000 (2 races x +1.000), slechtst ongeveer -11.775
+     (paracetamol overal 2 tabletten en spuit tijdens misselijkheid -9.508, lithium overal dubbel -2.267).
+     Ruime marge: het bord gaat van -99.999 tot 99.999. */
+  var MAX_SCORE = 99999;
+  var NIEUW_MS = 8000;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var formulier = $("invoer"), naamVeld = $("naam"), scoreVeld = $("score");
+  var meldingEl = $("melding"), top3El = $("top3"), lijstEl = $("lijst"), restEl = $("rest");
+  var leegEl = $("leeg"), tellingEl = $("telling"), wisplek = $("wisplek");
+
+  /* ---------- opslag (alleen lokaal; alles in try/catch) ---------- */
+  var opslag = null;
+  try {
+    var proef = "__sos_proef__";
+    window.localStorage.setItem(proef, "1");
+    window.localStorage.removeItem(proef);
+    opslag = window.localStorage;
+  } catch (e) { opslag = null; }
+  var opslagWerkt = !!opslag;
+
+  function geldig(sp) {
+    return sp && typeof sp.naam === "string" && sp.naam.trim() !== "" &&
+      typeof sp.score === "number" && isFinite(sp.score) && Math.floor(sp.score) === sp.score &&
+      Math.abs(sp.score) <= MAX_SCORE;
+  }
+  function laad() {
+    if (!opslag) return [];
+    try {
+      var ruw = opslag.getItem(SLEUTEL);
+      if (!ruw) return [];
+      var data = JSON.parse(ruw);
+      if (!Array.isArray(data)) return [];
+      return data.filter(geldig).map(function (sp, i) {
+        return {
+          id: typeof sp.id === "string" ? sp.id : "o" + i + "_" + Date.now().toString(36),
+          naam: schoonNaam(sp.naam),
+          score: sp.score,
+          t: typeof sp.t === "number" ? sp.t : i
+        };
+      });
+    } catch (e) { return []; }
+  }
+  function bewaar() {
+    if (!opslag) return;
+    try {
+      opslag.setItem(SLEUTEL, JSON.stringify(spelers));
+      opslagWerkt = true;
+    } catch (e) { opslagWerkt = false; }
+  }
+
+  var spelers = laad();
+  var nieuwId = null, nieuwOp = 0;
+  var bevestigId = null, bevestigTimer = 0;
+  var wisVraagOpen = false, wisTimer = 0;
+  var vorige = null; /* voor ongedaan maken */
+
+  /* ---------- hulpjes ---------- */
+  function schoonNaam(s) {
+    return String(s).replace(/[\u0000-\u001f\u007f]/g, "").replace(/\s+/g, " ").trim().slice(0, MAX_NAAM);
+  }
+  var getalOpmaak = (function () {
+    try { return new Intl.NumberFormat("nl-NL", { maximumFractionDigits: 0 }); } catch (e) { return null; }
+  })();
+  function opmaak(n) {
+    var abs = getalOpmaak ? getalOpmaak.format(Math.abs(n)) : String(Math.abs(n));
+    return (n < 0 ? "−" : "") + abs;
+  }
+  function leesScore(ruw) {
+    var s = String(ruw).replace(/\s+/g, "").replace(/[−–—]/g, "-");
+    if (s === "") return { fout: "leeg" };
+    if (/^[+-]?\d{1,3}(\.\d{3})+$/.test(s)) s = s.replace(/\./g, "");
+    if (/^[+-]?\d*[.,]\d+$/.test(s)) return { fout: "komma" };
+    if (!/^[+-]?\d+$/.test(s)) return { fout: "geen" };
+    var n = parseInt(s, 10);
+    if (Math.abs(n) > MAX_SCORE) return { fout: "groot" };
+    return { waarde: n === 0 ? 0 : n };
+  }
+  function maak(tag, klas, tekst) {
+    var el = document.createElement(tag);
+    if (klas) el.className = klas;
+    if (tekst != null) el.textContent = tekst;
+    return el;
+  }
+  function gesorteerd() {
+    return spelers.slice().sort(function (a, b) { return b.score - a.score || a.t - b.t; });
+  }
+  function nieuweId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  }
+
+  /* ---------- meldingen ---------- */
+  var meldTimer = 0;
+  function meld(tekst, soort, actie) {
+    clearTimeout(meldTimer);
+    meldingEl.className = "melding" + (soort ? " " + soort : "");
+    meldingEl.textContent = "";
+    if (tekst) meldingEl.appendChild(maak("span", "", tekst));
+    if (actie) {
+      var knop = maak("button", "", actie.label);
+      knop.type = "button";
+      knop.addEventListener("click", actie.doe);
+      meldingEl.appendChild(knop);
+    }
+    if (tekst && soort !== "fout") {
+      meldTimer = setTimeout(function () { meld(""); }, actie ? 15000 : 7000);
+    }
+  }
+
+  /* ---------- illustraties ---------- */
+  var SVGNS = "http://www.w3.org/2000/svg";
+  var KLEUR = {
+    1: ["#f7c548", "#d99a21"],
+    2: ["#d3dbea", "#9ea9bf"],
+    3: ["#ea9358", "#b8622d"]
+  };
+  function svgEl(tag, attrs) {
+    var el = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) el.setAttribute(k, attrs[k]);
+    return el;
+  }
+  function sterretje(cx, cy, r, kleur) {
+    var d = "M" + cx + " " + (cy - r) +
+      " Q" + cx + " " + cy + " " + (cx + r) + " " + cy +
+      " Q" + cx + " " + cy + " " + cx + " " + (cy + r) +
+      " Q" + cx + " " + cy + " " + (cx - r) + " " + cy +
+      " Q" + cx + " " + cy + " " + cx + " " + (cy - r) + "Z";
+    return svgEl("path", { d: d, fill: kleur });
+  }
+  /* platte 'planeet' met rangnummer, kleur per plek */
+  function maakSchijf(plek, rang) {
+    var w = maak("span", "schijf");
+    var kl = KLEUR[plek] || KLEUR[3];
+    var svg = svgEl("svg", { viewBox: "0 0 100 100", "aria-hidden": "true", focusable: "false" });
+    svg.appendChild(svgEl("circle", { cx: 50, cy: 50, r: 37, fill: kl[1] }));
+    svg.appendChild(svgEl("circle", { cx: 46, cy: 46, r: 32, fill: kl[0] }));
+    svg.appendChild(svgEl("circle", { cx: 63, cy: 36, r: 5, fill: kl[1], opacity: ".45" }));
+    svg.appendChild(svgEl("circle", { cx: 33, cy: 64, r: 3.5, fill: kl[1], opacity: ".4" }));
+    svg.appendChild(svgEl("circle", { cx: 36, cy: 30, r: 7, fill: "#fff", opacity: ".22" }));
+    if (plek === 1) {
+      svg.appendChild(sterretje(90, 18, 8, "#f7c548"));
+      svg.appendChild(sterretje(10, 30, 5, "#b48cff"));
+      svg.appendChild(sterretje(88, 80, 4.5, "#ffffff"));
+    }
+    w.appendChild(svg);
+    w.appendChild(maak("b", "", String(rang)));
+    return w;
+  }
+
+  /* ---------- tekenen ---------- */
+  function maakRij(sp, rang, plek, opPodium) {
+    var li = maak("li", "rij" + (opPodium ? " plek" + plek : ""));
+    li.dataset.id = sp.id;
+    if (opPodium) li.appendChild(maakSchijf(plek, rang));
+    else li.appendChild(maak("span", "rang", String(rang)));
+    li.appendChild(maak("span", "verborgen", "Plek " + rang + ": "));
+    var info = maak("span", "info");
+    var naam = maak("span", "naam", sp.naam);
+    naam.title = sp.naam;
+    info.appendChild(naam);
+    li.appendChild(info);
+    if (sp.id === nieuwId && bevestigId !== sp.id) {
+      var verstreken = Date.now() - nieuwOp;
+      if (verstreken < NIEUW_MS) {
+        li.classList.add("nieuw");
+        li.style.animationDelay = (-verstreken) + "ms";
+        var lab = maak("span", "nieuwlabel", "nieuw");
+        lab.style.animationDelay = (-verstreken) + "ms";
+        lab.setAttribute("aria-hidden", "true");
+        lab.addEventListener("animationend", function () { if (this.parentNode) this.parentNode.removeChild(this); });
+        li.appendChild(lab);
+      }
+    }
+    var sc = maak("span", "score" + (sp.score < 0 ? " negatief" : ""), opmaak(sp.score));
+    if (sp.id === nieuwId && Date.now() - nieuwOp < 700) sc.style.animationDelay = (-(Date.now() - nieuwOp)) + "ms";
+    info.appendChild(sc);
+    li.appendChild(maak("span", "verborgen", " QALY-punten"));
+    var weg = maak("button", "weg", "×");
+    weg.type = "button";
+    weg.dataset.actie = "weg";
+    weg.setAttribute("aria-label", "Verwijder " + sp.naam);
+    weg.title = "Regel verwijderen";
+    li.appendChild(weg);
+    if (bevestigId === sp.id) {
+      var b = maak("div", "bevestig");
+      b.appendChild(maak("span", "", sp.naam + " weghalen?"));
+      var ja = maak("button", "knopje ja", "Ja, weg");
+      ja.type = "button"; ja.dataset.actie = "weg-ja";
+      var nee = maak("button", "knopje", "Nee");
+      nee.type = "button"; nee.dataset.actie = "weg-nee";
+      b.appendChild(ja); b.appendChild(nee);
+      li.appendChild(b);
+    }
+    return li;
+  }
+  function maakVrij(plek) {
+    var li = maak("li", "rij vrij plek" + plek);
+    li.appendChild(maakSchijf(plek, plek));
+    var info = maak("span", "info");
+    info.appendChild(maak("span", "naam", "nog vrij"));
+    li.appendChild(info);
+    return li;
+  }
+
+  function teken() {
+    /* posities onthouden voor een zachte schuif (FLIP) */
+    var oud = {};
+    var bestaande = document.querySelectorAll(".rij[data-id]");
+    for (var i = 0; i < bestaande.length; i++) {
+      oud[bestaande[i].dataset.id] = bestaande[i].getBoundingClientRect().top;
+    }
+    var focusActie = document.activeElement && document.activeElement.dataset ? document.activeElement.dataset.actie : null;
+
+    var lijst = gesorteerd();
+    var rangen = [];
+    for (var j = 0; j < lijst.length; j++) {
+      rangen[j] = (j > 0 && lijst[j].score === lijst[j - 1].score) ? rangen[j - 1] : j + 1;
+    }
+
+    top3El.textContent = "";
+    lijstEl.textContent = "";
+    for (var p = 0; p < 3; p++) {
+      if (lijst[p]) top3El.appendChild(maakRij(lijst[p], rangen[p], Math.min(rangen[p], 3), true));
+      else top3El.appendChild(maakVrij(p + 1));
+    }
+    for (var r = 3; r < lijst.length; r++) {
+      lijstEl.appendChild(maakRij(lijst[r], rangen[r], 0, false));
+    }
+
+    leegEl.textContent = lijst.length === 0 ? "Nog niemand op het bord. Vul een speelnaam en een score in."
+      : lijst.length <= 3 ? "Plek 4 en verder komen hier." : "";
+    leegEl.hidden = lijst.length > 3;
+
+    var n = lijst.length;
+    tellingEl.textContent = (n === 1 ? "1 speler" : n + " spelers") +
+      (opslagWerkt ? " · bewaard in deze browser" : " · let op: deze browser bewaart niets, de lijst verdwijnt bij herladen");
+    tekenWis();
+
+    /* FLIP */
+    var bewegen = !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (bewegen) {
+      var nu = document.querySelectorAll(".rij[data-id]");
+      for (var k = 0; k < nu.length; k++) {
+        var id = nu[k].dataset.id;
+        if (!(id in oud)) continue;
+        var dy = oud[id] - nu[k].getBoundingClientRect().top;
+        if (Math.abs(dy) < 1) continue;
+        nu[k].style.transform = "translateY(" + dy + "px)";
+        nu[k].style.transition = "none";
+        nu[k].getBoundingClientRect();
+        nu[k].style.transition = "transform .55s cubic-bezier(.2,.8,.2,1)";
+        nu[k].style.transform = "";
+      }
+    }
+
+    if (bevestigId) {
+      var jaKnop = document.querySelector('.rij[data-id="' + bevestigId + '"] [data-actie="weg-nee"]');
+      if (jaKnop) jaKnop.focus({ preventScroll: true });
+      werkRandBij();
+      bevestigInBeeld();
+    } else if (focusActie === "weg-ja" || focusActie === "weg-nee") {
+      naamVeld.focus({ preventScroll: true });
+    }
+    werkRandBij();
+  }
+
+  /* bevestigvenster helemaal in beeld: niet onder het meescrollende formulier, niet onder de rand van de lijst */
+  function bevestigInBeeld() {
+    var rij = document.querySelector('.rij[data-id="' + bevestigId + '"]');
+    if (!rij) return;
+    var venster = rij.querySelector(".bevestig") || rij, m = 8;
+    if (getComputedStyle(restEl).overflowY === "auto" && restEl.contains(rij)) {
+      var c = restEl.getBoundingClientRect(), r = venster.getBoundingClientRect();
+      if (r.bottom > c.bottom - m) restEl.scrollTop += r.bottom - c.bottom + m;
+      else if (r.top < c.top + m) restEl.scrollTop -= c.top + m - r.top;
+      return;
+    }
+    var boven = m;
+    if (getComputedStyle(formulier).position === "sticky") boven = formulier.getBoundingClientRect().bottom + m;
+    var r2 = venster.getBoundingClientRect();
+    if (r2.top < boven) window.scrollBy(0, r2.top - boven);
+    else if (r2.bottom > window.innerHeight - m) window.scrollBy(0, Math.min(r2.bottom - window.innerHeight + m, r2.top - boven));
+  }
+
+  function werkRandBij() {
+    /* geen vervaging zolang er een bevestigvraag open staat */
+    var loopt = !bevestigId && restEl.scrollHeight - restEl.clientHeight > 2 &&
+      restEl.scrollTop + restEl.clientHeight < restEl.scrollHeight - 4;
+    restEl.classList.toggle("loopt-door", loopt);
+  }
+  restEl.addEventListener("scroll", werkRandBij, { passive: true });
+
+  function tekenWis() {
+    wisplek.textContent = "";
+    if (wisVraagOpen && spelers.length) {
+      var v = maak("span", "wisvraag");
+      v.appendChild(maak("span", "", "Hele scorebord wissen?"));
+      var ja = maak("button", "knopje ja", "Ja, alles wissen");
+      ja.type = "button"; ja.id = "wis-ja";
+      var nee = maak("button", "knopje", "Nee");
+      nee.type = "button"; nee.id = "wis-nee";
+      ja.addEventListener("click", wisAlles);
+      nee.addEventListener("click", function () { sluitWisVraag(true); });
+      v.appendChild(ja); v.appendChild(nee);
+      wisplek.appendChild(v);
+    } else {
+      wisVraagOpen = false;
+      var k = maak("button", "wis", "Alles wissen");
+      k.type = "button"; k.id = "wis";
+      k.disabled = spelers.length === 0;
+      k.hidden = spelers.length === 0;
+      k.addEventListener("click", openWisVraag);
+      wisplek.appendChild(k);
+    }
+  }
+  function openWisVraag() {
+    wisVraagOpen = true;
+    tekenWis();
+    var nee = $("wis-nee");
+    if (nee) nee.focus();
+    clearTimeout(wisTimer);
+    wisTimer = setTimeout(function () { sluitWisVraag(false); }, 10000);
+  }
+  function sluitWisVraag(focusTerug) {
+    clearTimeout(wisTimer);
+    if (!wisVraagOpen) return;
+    wisVraagOpen = false;
+    tekenWis();
+    if (focusTerug) { var w = $("wis"); if (w) w.focus(); }
+  }
+  function wisAlles() {
+    clearTimeout(wisTimer);
+    vorige = spelers.slice();
+    spelers = [];
+    wisVraagOpen = false;
+    bevestigId = null;
+    nieuwId = null;
+    bewaar();
+    teken();
+    naamVeld.focus({ preventScroll: true });
+    meld("Scorebord gewist.", "", { label: "Ongedaan maken", doe: herstel });
+  }
+  function herstel() {
+    if (!vorige) return;
+    spelers = vorige;
+    vorige = null;
+    bewaar();
+    teken();
+    meld("Teruggezet.", "goed");
+    naamVeld.focus({ preventScroll: true });
+  }
+
+  /* ---------- toevoegen ---------- */
+  function markeerFout(veld) {
+    naamVeld.removeAttribute("aria-invalid");
+    scoreVeld.removeAttribute("aria-invalid");
+    if (veld) { veld.setAttribute("aria-invalid", "true"); veld.focus(); }
+  }
+  formulier.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var naam = schoonNaam(naamVeld.value);
+    if (!naam) {
+      markeerFout(naamVeld);
+      meld("Vul eerst een speelnaam in.", "fout");
+      return;
+    }
+    var s = leesScore(scoreVeld.value);
+    if (s.fout) {
+      markeerFout(scoreVeld);
+      meld({
+        leeg: "Vul ook de totaalscore in, bijvoorbeeld 1650 of -300.",
+        komma: "Alleen hele getallen, zonder komma. Bijvoorbeeld 1650 of -300.",
+        geen: "Dat is geen getal. Typ de score als heel getal, bijvoorbeeld 1650 of -300.",
+        groot: "Dat getal is te groot voor dit scorebord: het gaat van -99.999 tot 99.999."
+      }[s.fout], "fout");
+      return;
+    }
+    markeerFout(null);
+    var dubbel = spelers.some(function (sp) { return sp.naam.toLowerCase() === naam.toLowerCase(); });
+    var sp = { id: nieuweId(), naam: naam, score: s.waarde, t: Date.now() };
+    spelers.push(sp);
+    nieuwId = sp.id;
+    nieuwOp = Date.now();
+    bevestigId = null;
+    vorige = null;
+    bewaar();
+    teken();
+
+    var lijst = gesorteerd(), plek = 0;
+    for (var i = 0; i < lijst.length; i++) {
+      if (lijst[i].score === sp.score) { plek = i + 1; break; }
+    }
+    meld("Erbij: " + naam + ", plek " + plek + "." + (dubbel ? " Let op: deze naam stond er al." : ""), "goed");
+    naamVeld.value = "";
+    scoreVeld.value = "";
+    naamVeld.focus({ preventScroll: true });
+
+    var rij = document.querySelector('.rij[data-id="' + sp.id + '"]');
+    if (rij && rij.parentNode === lijstEl) {
+      var glad = !window.matchMedia || !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      try { rij.scrollIntoView({ block: "nearest", behavior: glad ? "smooth" : "auto" }); }
+      catch (e2) { rij.scrollIntoView(false); }
+      /* op de beamer (lijst scrolt zelf): na het oplichten terug naar boven */
+      if (getComputedStyle(restEl).overflowY === "auto") {
+        var gestart = Date.now();
+        clearTimeout(terugTimer);
+        terugTimer = setTimeout(function () {
+          if (handmatigOp > gestart || bevestigId) return;
+          try { restEl.scrollTo({ top: 0, behavior: glad ? "smooth" : "auto" }); }
+          catch (e3) { restEl.scrollTop = 0; }
+        }, 5000);
+      }
+    }
+  });
+
+  var terugTimer = 0, handmatigOp = 0;
+  ["wheel", "touchstart", "pointerdown", "keydown"].forEach(function (t) {
+    restEl.addEventListener(t, function () { handmatigOp = Date.now(); }, { passive: true });
+  });
+
+  [naamVeld, scoreVeld].forEach(function (v) {
+    v.addEventListener("input", function () {
+      if (v.getAttribute("aria-invalid")) {
+        v.removeAttribute("aria-invalid");
+        if (meldingEl.classList.contains("fout")) meld("");
+      }
+    });
+  });
+
+  $("teken").addEventListener("click", function () {
+    var w = scoreVeld.value.trim();
+    if (/^[-−–]/.test(w)) w = w.replace(/^[-−–]\s*/, "");
+    else w = "-" + w.replace(/^\+\s*/, "");
+    scoreVeld.value = w;
+    scoreVeld.focus();
+    try { scoreVeld.setSelectionRange(w.length, w.length); } catch (e) {}
+  });
+
+  /* ---------- verwijderen (met korte bevestiging) ---------- */
+  document.addEventListener("click", function (e) {
+    var knop = e.target.closest ? e.target.closest("[data-actie]") : null;
+    if (!knop) return;
+    var rij = knop.closest(".rij");
+    var id = rij ? rij.dataset.id : null;
+    if (!id) return;
+    var actie = knop.dataset.actie;
+    if (actie === "weg") {
+      bevestigId = id;
+      clearTimeout(bevestigTimer);
+      bevestigTimer = setTimeout(function () { if (bevestigId === id) { bevestigId = null; teken(); } }, 8000);
+      teken();
+    } else if (actie === "weg-nee") {
+      bevestigId = null;
+      teken();
+    } else if (actie === "weg-ja") {
+      var weg = null;
+      vorige = spelers.slice();
+      spelers = spelers.filter(function (sp) { if (sp.id === id) { weg = sp; return false; } return true; });
+      bevestigId = null;
+      if (nieuwId === id) nieuwId = null;
+      bewaar();
+      teken();
+      if (weg) meld(weg.naam + " (" + opmaak(weg.score) + ") is weggehaald.", "", { label: "Ongedaan maken", doe: herstel });
+    }
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (bevestigId) { bevestigId = null; teken(); }
+    if (wisVraagOpen) sluitWisVraag(true);
+  });
+
+  /* andere tab van dezelfde browser past de lijst aan */
+  window.addEventListener("storage", function (e) {
+    if (e.key !== SLEUTEL && e.key !== null) return;
+    spelers = laad();
+    teken();
+  });
+
+  /* ---------- sterrenhemel (vaste reeks, geen toeval per keer) ---------- */
+  var doek = $("sterren");
+  function rng(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  function tekenSterren() {
+    var ctx;
+    try { ctx = doek.getContext("2d"); } catch (e) { return; }
+    if (!ctx) return;
+    var w = window.innerWidth, h = window.innerHeight;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    doek.width = Math.round(w * dpr);
+    doek.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var r = rng(28112026);
+    var kleuren = ["#ffffff", "#ffffff", "#ffffff", "#ffffff", "#a9d8ff", "#ffb48f", "#ffd970", "#f59ad6", "#b48cff"];
+    var aantal = Math.min(1100, Math.round(w * h / 2300));
+    for (var i = 0; i < aantal; i++) {
+      var x = r() * w, y = r() * h;
+      var kleur = kleuren[Math.floor(r() * kleuren.length)];
+      var straal = 0.7 + r() * r() * 1.8;
+      ctx.globalAlpha = 0.45 + r() * 0.55;
+      ctx.fillStyle = kleur;
+      ctx.beginPath();
+      ctx.arc(x, y, straal, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    /* een paar platte vierpuntssterretjes */
+    var vonken = Math.round(aantal / 45);
+    for (var v = 0; v < vonken; v++) {
+      var vx = r() * w, vy = r() * h, s = 2.5 + r() * 3;
+      ctx.globalAlpha = 0.5 + r() * 0.4;
+      ctx.fillStyle = kleuren[Math.floor(r() * kleuren.length)];
+      ctx.beginPath();
+      ctx.moveTo(vx, vy - s);
+      ctx.quadraticCurveTo(vx, vy, vx + s, vy);
+      ctx.quadraticCurveTo(vx, vy, vx, vy + s);
+      ctx.quadraticCurveTo(vx, vy, vx - s, vy);
+      ctx.quadraticCurveTo(vx, vy, vx, vy - s);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+  }
+  var resizeTimer = 0;
+  window.addEventListener("resize", function () {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () { tekenSterren(); werkRandBij(); }, 120);
+  });
+
+  tekenSterren();
+  teken();
+  if (!opslag) meld("Deze browser staat opslaan niet toe: de lijst werkt, maar verdwijnt bij herladen.");
+  try { naamVeld.focus({ preventScroll: true }); } catch (e) {}
+})();
+</script>
+</body>
+</html>

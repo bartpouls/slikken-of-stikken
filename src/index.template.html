@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Slikken of Stikken: houd de spiegel van een geneesmiddel in het groene vlak. Vereenvoudigd model voor onderwijs, geen doseeradvies.">
+<title>Slikken of Stikken</title>
+<link rel="icon" href="data:,">
+<!-- @@CSS -->
+</head>
+<body>
+<div id="app">
+
+  <!-- 1. Start: speelnaam + Start (EoT-stijl, wit) -->
+  <section id="scherm-start" class="scherm wit" data-scherm="start" aria-labelledby="titel">
+    <div class="start-binnen">
+      <div class="start-figuren" aria-hidden="true">
+        <div class="fig" data-fig="opa"></div>
+        <div class="fig" data-fig="vries"></div>
+      </div>
+      <h1 id="titel" class="titel">Slikken <span>of</span> Stikken</h1>
+      <p class="ondertitel">Houd de spiegel van een geneesmiddel in het groene vlak.</p>
+      <form id="start-form" class="start-form" autocomplete="off" novalidate>
+        <label for="naam" class="label">Jouw speelnaam</label>
+        <input id="naam" name="naam" data-veld="naam" type="text" maxlength="16" placeholder="bv. Pilpiraat" enterkeyhint="go" autocapitalize="words" spellcheck="false">
+        <button type="submit" class="knop-wit groot" data-actie="start">Start</button>
+      </form>
+      <p class="kleintje">Vereenvoudigd model voor onderwijs. Geen doseeradvies.</p>
+    </div>
+  </section>
+
+  <!-- 2. Tutorial (module src/tutorial.js vult dit) -->
+  <section id="scherm-tutorial" class="scherm wit" data-scherm="tutorial"></section>
+
+  <!-- 3. Intro-kaartje per race (EoT-stijl) -->
+  <section id="scherm-intro" class="scherm wit" data-scherm="intro">
+    <div class="intro-binnen">
+      <p class="intro-kop" id="intro-kop">Race 1</p>
+      <div class="intro-podium" id="intro-fig" aria-hidden="true"></div>
+      <p class="intro-verhaal" id="intro-verhaal"></p>
+      <ul class="intro-regel" id="intro-regel"></ul>
+      <p class="intro-qaly" id="intro-qaly"></p>
+      <button type="button" class="knop-wit groot" data-actie="start-race">Start race</button>
+    </div>
+  </section>
+
+  <!-- 4. Race (Universe-Forecast-stijl, zwart) -->
+  <section id="scherm-race" class="scherm zwart" data-scherm="race">
+    <header class="race-kop">
+      <div class="klok" id="klok" aria-live="off">Uur 0</div>
+      <div class="qaly" id="qaly"><span class="qaly-label">QALY</span><span class="qaly-getal" id="qaly-getal">0</span><span class="qaly-trend" id="qaly-trend" aria-hidden="true"></span></div>
+    </header>
+    <div class="race-rij" id="race-rij">
+      <div class="lever" id="lever" hidden>
+        <svg class="lever-icoon" viewBox="0 0 32 24" aria-hidden="true"><path d="M3 9c0-5 6-7 13-7 7 0 13 2 13 5 0 6-8 15-16 15C7 22 3 15 3 9z" fill="currentColor"/></svg>
+        <span class="lever-tekst" id="lever-tekst">0 g van max. 4 g</span>
+        <span class="lever-meter" aria-hidden="true"><span class="lever-vul" id="lever-vul"></span><span class="lever-max"></span></span>
+      </div>
+      <div class="patient" id="patient"></div>
+    </div>
+    <div class="podium" id="podium">
+      <canvas id="doek" aria-label="Tijdlijn met de spiegel"></canvas>
+      <div class="melding" id="melding" role="status" aria-live="polite"></div>
+      <div class="finish" id="finish" hidden>
+        <p class="finish-kop">Race klaar</p>
+        <p class="finish-label">QALY-punten</p>
+        <p class="finish-getal" id="finish-getal">0</p>
+        <button type="button" class="knop-paars" data-actie="verder">Verder</button>
+      </div>
+    </div>
+    <div class="knoppen-blok">
+      <div class="keuze-info" id="keuze-info" role="status" aria-live="polite"></div>
+      <nav class="knoppen" id="knoppen" aria-label="Kies vóór het poortje"></nav>
+    </div>
+  </section>
+
+  <!-- 5. Einde (module src/einde.js vult dit) -->
+  <section id="scherm-einde" class="scherm wit" data-scherm="einde"></section>
+
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="draai" aria-hidden="true">Draai je telefoon rechtop: dan zie je meer poortjes.</div>
+<button type="button" id="demp" class="demp" data-actie="demp" aria-label="Geluid uit" aria-pressed="false"></button>
+
+<!-- @@JS -->
+</body>
+</html>
