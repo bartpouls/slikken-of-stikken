@@ -1,0 +1,46 @@
+
+### 375x667 — S5 fout tikken / wisselen / wissen per stap
+  stap slik@0: na 3 foute tikken + 2,5 s: klok -0.8 -> -0.8, bevroren true, wijs=slik, doel 0:niets:open=true, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+     goed getikt: bevroren false "Tablet voor uur 0"; vlak voor het poortje gewisseld naar spuit: klok -0.107 (1,5 s later nog steeds vóór 0: true), bevroren true, wijs=slik, doel 0:spuit:open=true, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 0: niets kiezen is overslaan." bevroren true, wijs=slik, klok -0.107
+     daarna goed: poortje 0 gaf slik, zin "Een pil moet eerst door je maag."
+  stap niets@2: na 3 foute tikken + 2,5 s: klok 1.5 -> 1.5, bevroren true, wijs=niets, doel 2:spuit:open=true, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+     goed getikt: bevroren false "Niets voor uur 2"; vlak voor het poortje gewisseld naar spuit: klok 1.887 (1,5 s later nog steeds vóór 2: true), bevroren true, wijs=niets, doel 2:spuit:open=true, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 2: niets kiezen is overslaan." bevroren true, wijs=niets, klok 1.887
+     daarna goed: poortje 2 gaf niets, zin "Je lichaam ruimt het op: elke 2,5 uur is de helft weg."
+  stap spuit@5: na 3 foute tikken + 2,5 s: klok 4.4 -> 4.4, bevroren true, wijs=spuit, doel 5:niets:open=true, zin "Au. De pijn komt terug."
+     goed getikt: bevroren false "Spuit voor uur 5"; vlak voor het poortje gewisseld naar slik: klok 4.889 (1,5 s later nog steeds vóór 5: true), bevroren true, wijs=spuit, doel 5:slik:open=true, zin "Au. De pijn komt terug."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 5: niets kiezen is overslaan." bevroren true, wijs=spuit, klok 4.889
+     daarna goed: poortje 5 gaf spuit, zin "Een prik werkt meteen, maar zakt net zo hard."
+  stap slik@9: na 3 foute tikken + 2,5 s: klok 8.5 -> 8.5, bevroren true, wijs=slik, doel 9:niets:open=true, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+     goed getikt: bevroren false "Tablet voor uur 9"; vlak voor het poortje gewisseld naar spuit: klok 8.887 (1,5 s later nog steeds vóór 9: true), bevroren true, wijs=slik, doel 9:spuit:open=true, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 9: niets kiezen is overslaan." bevroren true, wijs=slik, klok 8.887
+     daarna goed: poortje 9 gaf slik, zin "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd."
+  stap zetpil@13: na 3 foute tikken + 2,5 s: klok 12.5 -> 12.5, bevroren true, wijs=zetpil, doel 13:niets:open=true, zin "Slikken lukt niet altijd: kies nu een zetpil."
+     goed getikt: bevroren false "Zetpil voor uur 13"; vlak voor het poortje gewisseld naar spuit: klok 12.887 (1,5 s later nog steeds vóór 13: true), bevroren true, wijs=zetpil, doel 13:spuit:open=true, zin "Slikken lukt niet altijd: kies nu een zetpil."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 13: niets kiezen is overslaan." bevroren true, wijs=zetpil, klok 12.887
+     daarna goed: poortje 13 gaf zetpil, zin "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan."
+  klaar: gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg dagteller 4000 tutorialDuur 92.25 consolefouten 0
+
+### 390x844 — S5 fout tikken / wisselen / wissen per stap
+  stap slik@0: na 3 foute tikken + 2,5 s: klok -0.8 -> -0.8, bevroren true, wijs=slik, doel 0:niets:open=true, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+     goed getikt: bevroren false "Tablet voor uur 0"; vlak voor het poortje gewisseld naar spuit: klok -0.107 (1,5 s later nog steeds vóór 0: true), bevroren true, wijs=slik, doel 0:spuit:open=true, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 0: niets kiezen is overslaan." bevroren true, wijs=slik, klok -0.107
+     daarna goed: poortje 0 gaf slik, zin "Een pil moet eerst door je maag."
+  stap niets@2: na 3 foute tikken + 2,5 s: klok 1.5 -> 1.5, bevroren true, wijs=niets, doel 2:spuit:open=true, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+     goed getikt: bevroren false "Niets voor uur 2"; vlak voor het poortje gewisseld naar spuit: klok 1.887 (1,5 s later nog steeds vóór 2: true), bevroren true, wijs=niets, doel 2:spuit:open=true, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 2: niets kiezen is overslaan." bevroren true, wijs=niets, klok 1.887
+     daarna goed: poortje 2 gaf niets, zin "Je lichaam ruimt het op: elke 2,5 uur is de helft weg."
+  stap spuit@5: na 3 foute tikken + 2,5 s: klok 4.4 -> 4.4, bevroren true, wijs=spuit, doel 5:niets:open=true, zin "Au. De pijn komt terug."
+     goed getikt: bevroren false "Spuit voor uur 5"; vlak voor het poortje gewisseld naar slik: klok 4.893 (1,5 s later nog steeds vóór 5: true), bevroren true, wijs=spuit, doel 5:slik:open=true, zin "Au. De pijn komt terug."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 5: niets kiezen is overslaan." bevroren true, wijs=spuit, klok 4.893
+     daarna goed: poortje 5 gaf spuit, zin "Een prik werkt meteen, maar zakt net zo hard."
+  stap slik@9: na 3 foute tikken + 2,5 s: klok 8.5 -> 8.5, bevroren true, wijs=slik, doel 9:niets:open=true, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+     goed getikt: bevroren false "Tablet voor uur 9"; vlak voor het poortje gewisseld naar spuit: klok 8.887 (1,5 s later nog steeds vóór 9: true), bevroren true, wijs=slik, doel 9:spuit:open=true, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 9: niets kiezen is overslaan." bevroren true, wijs=slik, klok 8.887
+     daarna goed: poortje 9 gaf slik, zin "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd."
+  stap zetpil@13: na 3 foute tikken + 2,5 s: klok 12.5 -> 12.5, bevroren true, wijs=zetpil, doel 13:niets:open=true, zin "Slikken lukt niet altijd: kies nu een zetpil."
+     goed getikt: bevroren false "Zetpil voor uur 13"; vlak voor het poortje gewisseld naar spuit: klok 12.887 (1,5 s later nog steeds vóór 13: true), bevroren true, wijs=zetpil, doel 13:spuit:open=true, zin "Slikken lukt niet altijd: kies nu een zetpil."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 13: niets kiezen is overslaan." bevroren true, wijs=zetpil, klok 12.887
+     daarna goed: poortje 13 gaf zetpil, zin "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan."
+  klaar: gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg dagteller 4000 tutorialDuur 92.37069999999996 consolefouten 0
