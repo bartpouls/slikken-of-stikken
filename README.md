@@ -7,9 +7,12 @@ Een farmacokinetiek-race voor de telefoon: houd de spiegel van een geneesmiddel 
 - Bouwopdracht en casusblad: [docs/bouwopdracht.md](docs/bouwopdracht.md)
 - Prompt voor de bouwsessie: [docs/prompt-claude-code.md](docs/prompt-claude-code.md) (v1) en [docs/prompt-fable.md](docs/prompt-fable.md) (v2)
 - Voortgang en beoordelingen van de bouw: [gauntlet/progress.html](gauntlet/progress.html), botsrapport in [gauntlet/artefacten/bots-rapport.md](gauntlet/artefacten/bots-rapport.md)
+- Schermafbeeldingen per scherm en per tutorialstap (390 × 844): [gauntlet/schermen/index.html](gauntlet/schermen/index.html)
 
 ## Voor wie eraan bouwt
 
-De broncode staat in `src/`; `node tools/build.mjs` voegt alles samen tot `index.html`. Tests: `node tests/model.test.mjs` (rekenmodel tegen het casusblad), `node tests/score.test.mjs` (QALY-punten en eindverslag) en `node tests/bots.mjs` (automatische spelers in een telefoonscherm, ±12 min, vraagt Playwright).
+De broncode staat in `src/`; `node tools/build.mjs` voegt alles samen tot `index.html`. Tests: `node tests/model.test.mjs` (rekenmodel tegen het casusblad), `node tests/score.test.mjs` (QALY-punten en eindverslag) en `node tests/bots.mjs` (automatische spelers in een telefoonscherm, ±12 min, vraagt Playwright). `node tools/schermen.mjs` maakt de schermafbeeldingen opnieuw.
+
+De oefenronde (tutorial) is geen apart scherm: `src/tutorial.js` is alleen een draaiboek (wanneer staat de klok stil, welke knop, welke zin) dat de race-motor in `src/app.js` afspeelt op het gewone racescherm.
 
 Vereenvoudigd model voor onderwijs. Geen doseeradvies.
