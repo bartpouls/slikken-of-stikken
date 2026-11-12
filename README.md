@@ -5,7 +5,7 @@ Een farmacokinetiek-race voor de telefoon: houd de spiegel van een geneesmiddel 
 - **Spel:** [index.html](index.html) — één zelfstandig bestand, werkt zonder internet na het laden.
 - **Scorebord voor de beamer:** [scorebord.html](scorebord.html) — namen en totalen blijven alleen in die browser bewaard.
 - Bouwopdracht en casusblad: [docs/bouwopdracht.md](docs/bouwopdracht.md)
-- Prompt voor de bouwsessie: [docs/prompt-claude-code.md](docs/prompt-claude-code.md)
+- Prompt voor de bouwsessie: [docs/prompt-claude-code.md](docs/prompt-claude-code.md) (v1) en [docs/prompt-fable.md](docs/prompt-fable.md) (v2)
 - Voortgang en beoordelingen van de bouw: [gauntlet/progress.html](gauntlet/progress.html), botsrapport in [gauntlet/artefacten/bots-rapport.md](gauntlet/artefacten/bots-rapport.md)
 
 ## Voor wie eraan bouwt

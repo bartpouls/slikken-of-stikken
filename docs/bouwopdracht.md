@@ -1,4 +1,6 @@
-# Slikken of Stikken — bouwopdracht v1 (ouderdag 28 november 2026)
+# Slikken of Stikken — bouwopdracht v2 (ouderdag 28 november 2026)
+
+**Wat is nieuw in v2:** tutorial en race zijn één geheel (§3 Flow stap 2, §6C), en de beleving heeft één stijl voor alle schermen (§6D). Rekenmodel, casusblad en de drempels in §6A en §6B zijn ongewijzigd.
 
 Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor het rekenmodel: het spel neemt ze letterlijk over. Afwijken mag alleen na akkoord van Bart Pouls (inhoudelijk eigenaar).
 
@@ -9,7 +11,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 - **Waar:** ouderdag geneeskunde, blok van 12,5 minuten: ±2 min uitleg, tutorial, race 1, race 2, ±3 min nabespreking.
 - **Prestatieprobleem (wat doen spelers straks anders):** ze snappen dat (1) een pil tijd nodig heeft voordat hij werkt, (2) het lichaam een middel in een vast tempo opruimt (halfwaardetijd), (3) meer niet beter is, en (4) een ander middel de spiegel ongemerkt kan opdrijven.
 
-## 2. Scope v1
+## 2. Scope
 
 **Wel:**
 - Eén HTML-pagina, mobiel eerst (staand), werkt zonder installatie, account of server, en zonder internet na het laden. Geen externe bestanden of CDN's.
@@ -37,13 +39,15 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 ### Flow
 
 1. **Start:** speelnaam (alias), één knop "Start". Binnen 3 tikken aan het spelen.
-2. **Tutorial (paracetamol, slik / spuit / zetpil):** een verhaal in korte stappen. Elke stap: één nieuw begrip, maximaal één zin tekst, en de speler doet het zelf:
-   1. "Opa Jan heeft pijn." → slik → curve stijgt pas na even: *een pil moet eerst door je maag.*
+2. **Tutorial (paracetamol, slik / spuit / zetpil): het echte racescherm, met begeleiding.** De tutorial is geen apart schermpje met eigen tekeningen, maar de race zelf: dezelfde tijdlijn van boven naar beneden, dezelfde poortjes, knoppen, zone, streep, QALY-stand, dagteller en levermeter. Het verschil: de klok staat stil tot de speler de gevraagde actie doet, en er staat één zin uitleg in beeld. Wie de tutorial gedaan heeft, heeft elke handeling uit race 1 al één keer zelf gedaan, op precies dezelfde manier. Elke stap: één nieuw begrip, maximaal één zin tekst, en de speler doet het zelf:
+   1. "Opa Jan heeft pijn." → speler kiest tablet voor het eerstvolgende poortje → curve stijgt pas na even: *een pil moet eerst door je maag.* (Zo leert de speler meteen hoe poortjes werken: je kiest vooruit, op het poortje gebeurt het.)
    2. Curve zakt → *je lichaam ruimt het op: elke 2,5 uur is de helft weg.*
    3. Spuit → *een prik werkt meteen, maar zakt net zo hard.*
    4. Dagteller → *meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.*
    5. Zetpil → *een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.*
    6. "Klaar? Race!"
+
+   De plotwendingen (misselijkheid in race 1, ibuprofen en de geweigerde lithiumprik in race 2) komen bewust niet in de tutorial: dat zijn verrassingen. De tutorial duurt hoogstens ±2 minuten en is over te slaan.
 3. **Race 1: paracetamol** (tablet, zetpil of spuit, met misselijkheid; zie casusblad).
 4. **Race 2: lithium** (tablet of overslaan; de spuitknop is er wel, maar lithium bestaat niet als injectie; zie casusblad).
 5. **Eindscherm** (zie §2), groot en leesbaar op 2 meter, één tik "Nog een keer".
@@ -158,11 +162,26 @@ Automatische spelers (bots) spelen het echte spel in een telefoonscherm (375 × 
 
 Maximaal 2 rondes, tenzij de drempels nog niet gehaald zijn.
 
-### C. Beleving — type: smaak
+### C. Samenhang tutorial en race — type: bewijs met vooraf afgesproken drempels
 
-Eén bouwronde, één verse controle op A en B, daarna de correctielijst van Bart. Schermafbeeldingen van de twee hoofdreferenties staan in `docs/referenties/` (met bronvermelding in `docs/referenties/README.md`) en zijn leidend als de sites niet te openen zijn. Stijlkeuze: **verhaal en tutorial in de stijl van The Evolution of Trust** (wit, zwarte schetslijnen, simpele figuurtjes met een gekleurd hoedje: opa Jan en mevrouw De Vries); **de races in de stijl van Universe Forecast** (zwart met gekleurde sterretjes, platte illustraties, paarse tijdmarkeringen met een lijn ervoor en erachter, korte witte tekst in het midden). Overweeg de tijd van boven naar beneden te laten lopen, zoals de tijdlijn van Universe Forecast: dat past bij een staand telefoonscherm. Referenties (patronen overnemen, niets kopiëren):
+Gecontroleerd met schermafbeeldingen en bots in 375 × 667 en 390 × 844. Poortcriteria:
+1. **Eén tekencode.** Tutorial en race tekenen tijdlijn, curve, zone, poortjes, knoppen, klok, QALY-stand, dagteller en levermeter met dezelfde code. Er is geen aparte tutorialversie van die onderdelen.
+2. **Nul zichtbare verschillen.** Een criticus legt per tutorialstap een schermafbeelding naast een vergelijkbaar moment uit race 1 en telt de verschillen in: richting van de tijd, achtergrond, kleuren (zone, streep, curve, poortjes), knoppen (vorm, plaats, icoon, tekst), lettertype en plaats van klok, QALY-stand, dagteller en levermeter. Drempel: 0. Toegestaan verschil: de uitlegzin, de stilstaande klok en een markering van de knop die de speler nu moet gebruiken.
+3. **Volledig en niets extra.** Elke knop en elk schermonderdeel van race 1 komt in de tutorial voor, en de speler heeft elke knop zelf gebruikt via het poortjesmechanisme. De tutorial bevat niets wat race 1 niet heeft. Uitzondering: de plotwendingen (§3 Flow stap 2).
+4. **Te volgen zonder hulp.** Een bot die alleen tikt op de knop die de uitleg aanwijst, komt met echte tikken door de hele tutorial, in beide schermmaten. Bij direct reageren duurt de tutorial hoogstens 2 minuten (zonder `?speed`).
+5. **Race 2 sluit aan.** Wat in race 2 anders is dan in race 1 (overslaan, 2× tablet per poortje), staat in één zin per verschil op het introkaartje van race 2.
+
+Maximaal 2 rondes, tenzij de drempels nog niet gehaald zijn.
+
+### D. Beleving — type: smaak
+
+Eén bouwronde, één verse controle op A, B en C, daarna de correctielijst van Bart. Schermafbeeldingen van de twee hoofdreferenties staan in `docs/referenties/` (met bronvermelding in `docs/referenties/README.md`) en zijn leidend als de sites niet te openen zijn.
+
+Stijlkeuze: **één stijl voor alle schermen** (start, tutorial, introkaartjes, races en eindscherm): de stijl van Universe Forecast (zwart met gekleurde sterretjes, platte illustraties, paarse tijdmarkeringen met een lijn ervoor en erachter, korte witte tekst in het midden), met de tijd van boven naar beneden. Opa Jan en mevrouw De Vries blijven herkenbaar aan hun gekleurde hoedje, maar zijn zo getekend dat ze in die wereld passen. De tutorial ziet eruit als het spel, omdat hij het spel is.
+
+Referenties (patronen overnemen, niets kopiëren):
 - **Uitstraling:** Universe Forecast van Neal Agarwal (neal.fun/universe-forecast) — rustige, grote typografie, veel lucht, alles beweegt soepel, één ding tegelijk in beeld.
-- **Verhaal en uitleg:** The Evolution of Trust van Nicky Case (ncase.me/trust) — een verhaal in korte hoofdstukken, één begrip per stap, leren door te doen; figuurtjes die reageren als je ze aanraakt of aanwijst.
+- **Uitleg (didactisch patroon, niet de vormgeving):** The Evolution of Trust van Nicky Case (ncase.me/trust) — een verhaal in korte hoofdstukken, één begrip per stap, leren door te doen; figuurtjes die reageren als je ze aanraakt of aanwijst.
 - **Geluid:** Flappy Bird — korte, droge blips bij elke actie en een duidelijk "au"-geluid bij een fout.
 - **Gebeurtenis:** The Password Game van Neal Agarwal (neal.fun/password-game) — een plotwending, geen foutmelding.
 - **Eindscherm:** Wordle — in één blik te snappen, leuk om te laten zien.
