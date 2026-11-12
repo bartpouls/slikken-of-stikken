@@ -375,7 +375,7 @@
     var race = S.maakRace(c, gids ? { blokkades: false } : undefined);
     R = {
       i: i, casus: c, cfg: cfg, race: race,
-      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, i: 0, bevroren: false, actief: false, wijsVanaf: 0, t0: performance.now(), duur: null } : null,
+      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, vol: gids.vol, i: 0, bevroren: false, actief: false, wijsVanaf: 0, t0: performance.now(), duur: null } : null,
       stemming: null,
       poorten: M.poortjes(c), g: 0,
       keuze: { route: null, aantal: 0, poging: false },
@@ -540,6 +540,14 @@
   // Een stap begint: de zin komt in beeld. Daarna bepaalt gidsControle of de klok moet wachten.
   function gidsStap() {
     var G = R.gids, st = G.stappen[G.i];
+    // Nooit om een dosis vragen die de dagteller boven het maximum brengt (kan alleen als de speler zelf
+    // iets extra gaf): dan vervalt de stap, met één zin waarom.
+    var bg = R.casus.bovengrens, route = R.casus.routes[st.knop];
+    if (route && bg && bg.type === 'dagteller' && R.race.sim.dagteller(st.op > 0 ? R.poorten[st.poortje] : 0) + route.dosis > bg.maxPer24u + 1e-9) {
+      melding(R.gids.vol, {});
+      G.i++;
+      return;
+    }
     G.actief = true;
     var onder = zoneVan(R.race.sim.C, Math.max(0, R.race.t)) === 'onder';
     var zin = st.zin;

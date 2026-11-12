@@ -19,6 +19,8 @@
  *                als in de race: de speler kan wisselen of zijn keuze wissen; dan wacht de klok opnieuw.
  *       poortje  index van dat poortje (controle: de motor weigert een draaiboek dat niet klopt)
  *       daarna   de ene zin die verschijnt op het moment dat het poortje de keuze uitvoert
+ *   vol       de zin als een gevraagde dosis de dagteller boven het maximum zou brengen (kan alleen als de
+ *             speler zelf iets extra gaf): de stap vervalt dan, de oefenronde vraagt nooit om een overdosis
  *   klaar     { kop, label, knop }: tekst op het eindkaartje (zelfde kaartje als "Race klaar" na een race)
  * }
  * De plotwendingen (misselijkheid, ibuprofen, geweigerde lithiumprik) zitten er bewust niet in: de
@@ -49,6 +51,7 @@
       { op: 12.5, zin: 'Slikken lukt niet altijd: kies nu een zetpil.', knop: 'zetpil', poortje: 13,
         daarna: 'Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.' }
     ],
+    vol: 'De dagteller is vol: opa Jan krijgt vandaag niets meer.',
     klaar: { kop: 'Klaar?', label: 'QALY-punten in de oefenronde', knop: 'Race!' }
   };
 })(typeof window !== 'undefined' ? window : null);
