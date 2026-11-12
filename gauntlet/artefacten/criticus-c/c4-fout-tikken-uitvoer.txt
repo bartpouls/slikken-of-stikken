@@ -14,3 +14,10 @@
 375x667 RACE 1 | Spuit | keuze=spuit | keuzeregel="Spuit voor uur 0"
 375x667 RACE 1 | dan Zetpil (wisselen) | keuze=zetpil | keuzeregel="Zetpil voor uur 0"
 390x844 | stap 1 stil, tik op Zetpil (niet gemarkeerd) | klok -0.80 bevroren=true keuze=null | keuzeregel="Kies nu Tablet." | zin="Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+390x844 | 4 s niets doen: klok staat nog stil? | klok -0.80 bevroren=true keuze=null | keuzeregel="" | zin="Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+390x844 | tik op dempknop | klok -0.80 bevroren=true keuze=null | keuzeregel="" | zin="Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+390x844 | tik op gemarkeerde Tablet | klok -0.72 bevroren=false keuze=slik | keuzeregel="Tablet voor uur 0" | zin="Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+390x844 | nog een keer Tablet (in race 1 = keuze wissen) | klok -0.63 bevroren=false keuze=slik | keuzeregel="Even kijken wat er gebeurt." | zin="Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+390x844 | tik op Niets terwijl klok loopt | klok -0.50 bevroren=false keuze=slik | keuzeregel="Even kijken wat er gebeurt." | zin="Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+390x844 | na poortje 0 | klok 0.30 bevroren=false keuze=null | keuzeregel="" | zin="Een pil moet eerst door je maag."
+390x844 | gegeven op poortje 0: slik
