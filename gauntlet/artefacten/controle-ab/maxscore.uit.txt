@@ -1,0 +1,9 @@
+172773 schema's; beste (exact): [
+  { s: 828, sch: '0s 5s 11s 16z' },
+  { s: 823, sch: '0s 5s 11s 16z' },
+  { s: 820, sch: '0s 4s 11s 16z' },
+  { s: 818, sch: '0s 6s 11s 16z' },
+  { s: 818, sch: '0s 6s 11s 16z' }
+]
+echt (12 u spuit): 768 = 92.8% van het maximum met 4 doses
+echt (12 u zetpil): 736 = 88.9%

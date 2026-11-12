@@ -1,0 +1,349 @@
+
+================ 375x667 — consolefouten: 0
+INTRO 1: {
+ "kop": "Race 1 · Paracetamol",
+ "verhaal": "Opa Jan (70 kg) heeft net een nieuwe heup. De pijn moet weg, zijn lever moet heel blijven.",
+ "regels": [
+  "Houd de spiegel in het groene vlak, boven de streep.",
+  "Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.",
+  "Maximaal 4 gram per dag: daarboven raakt de lever beschadigd."
+ ],
+ "qaly": "Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY's.",
+ "knop": "Start race",
+ "scrollt": false,
+ "knopOnder": 598,
+ "hoogte": 667
+}
+INTRO 2: {
+ "kop": "Race 2 · Lithium",
+ "verhaal": "Mevrouw De Vries (70 kg) gebruikt al jaren lithium tegen stemmingsschommelingen. Halverwege heeft ze rugpijn en koopt ze ibuprofen bij de drogist.",
+ "regels": [
+  "Het groene vlak heeft nu ook een bovenkant: 0,6–1,0 mmol/L.",
+  "Poortjes komen 3× per dag: om 0, 8 en 16 uur.",
+  "Niets heet hier Overslaan.",
+  "Tik twee keer op Tablet voor 2 tabletten op één poortje.",
+  "Geen zetpil en geen dagteller; wel een giftige grens: boven 1,5 mmol/L."
+ ],
+ "qaly": "",
+ "knop": "Start race",
+ "scrollt": false,
+ "knopOnder": 618,
+ "hoogte": 667
+}
+--- stap1a: 7 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,170,345,96.9"
+   .keuze-info.rect: tutorial="0,571,375,4" race="0,549.8,375,25.3"
+   .keuze-info.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=17px; fontWeight=700; color=rgb(255, 255, 255); opacity=0" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=17px; fontWeight=700; 
+   .knoppen_lijst.0.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.0.wijs: tutorial="1" race=""
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+   .tekst.melding: tutorial="Opa Jan heeft pijn: kies een tablet voor het eerste poortje." race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+--- stap1b: 4 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,170,345,96.9"
+   .knoppen_lijst.0.rect: tutorial="12.5,579.4,80.8,75.1" race="13.2,580.1,79.4,73.8"
+   .knoppen_lijst.0.icoonRect: tutorial="36.1,589.8,33.6,33.6" race="36.4,590.3,33,33"
+   .tekst.melding: tutorial="Opa Jan heeft pijn: kies een tablet voor het eerste poortje." race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+--- stap1c: 2 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,45.6" race="15,170,345,96.9"
+   .tekst.melding: tutorial="Een pil moet eerst door je maag." race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+--- stap2a: 7 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,162,345,96.9"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeigh
+   .knoppen_lijst.3.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.3.wijs: tutorial="1" race=""
+   .knoppen_lijst.3.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+   .tekst.melding: tutorial="De pijn is weg: kies Niets om een poortje over te slaan." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding"
+--- stap2b: 7 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,162,345,96.9"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeigh
+   .knoppen_lijst.3.rect: tutorial="282.4,580.1,79.4,73.8" race="281.7,579.5,80.8,75.1"
+   .knoppen_lijst.3.icoonRect: tutorial="305.6,590.3,33,33" race="305.3,589.8,33.6,33.6"
+   .tekst.qaly: tutorial="QALY50▲" race="QALY51▲"
+   .tekst.melding: tutorial="De pijn is weg: kies Niets om een poortje over te slaan." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding"
+--- stap2c: 4 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,162,345,96.9"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeigh
+   .tekst.melding: tutorial="Je lichaam ruimt het op: elke 2,5 uur is de helft weg." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding"
+--- stap3a: 3 DOM-verschillen
+   .knoppen_lijst.2.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.2.wijs: tutorial="1" race=""
+   .knoppen_lijst.2.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+--- stap3b: 1 DOM-verschillen
+   .knoppen_lijst.2.rect: tutorial="192,579.4,80.8,75.1" race="192,579.5,80.8,75.1"
+--- stap3c: 4 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,162,345,45.6"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeigh
+   .tekst.melding: tutorial="Een prik werkt meteen, maar zakt net zo hard." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding au"
+--- stap4a: 7 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,162,345,45.6"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeigh
+   .knoppen_lijst.0.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.0.wijs: tutorial="1" race=""
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+   .tekst.melding: tutorial="Elke gram telt mee in de dagteller linksboven: kies weer een tablet." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding au"
+--- stap4b: 5 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,162,345,45.6"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeigh
+   .tekst.qaly: tutorial="QALY312▲" race="QALY313▲"
+   .tekst.melding: tutorial="Elke gram telt mee in de dagteller linksboven: kies weer een tablet." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding au"
+--- stap4c: 7 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,170,345,91.7"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeigh
+   .knoppen_lijst.0.tekst: tutorial="Tablet" race="Misselijk"
+   .knoppen_lijst.0.klasse: tutorial="actie" race="actie geblokkeerd"
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; borderTopStyle=solid; anima
+   .tekst.melding: tutorial="Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." race="Opa is misselijk na de narcose."
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding wending met-fig zicht"
+--- stap5a: 10 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,162,345,91.7"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeigh
+   .knoppen_lijst.0.tekst: tutorial="Tablet" race="Misselijk"
+   .knoppen_lijst.0.klasse: tutorial="actie" race="actie geblokkeerd"
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; borderTopStyle=solid; anima
+   .knoppen_lijst.1.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.1.wijs: tutorial="1" race=""
+   .knoppen_lijst.1.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+   .tekst.melding: tutorial="Slikken lukt niet altijd: kies nu een zetpil." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding wending met-fig"
+--- stap5b: 8 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,71.3" race="15,162,345,91.7"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeigh
+   .knoppen_lijst.0.tekst: tutorial="Tablet" race="Misselijk"
+   .knoppen_lijst.0.klasse: tutorial="actie" race="actie geblokkeerd"
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; borderTopStyle=solid; anima
+   .tekst.qaly: tutorial="QALY479▲" race="QALY480▲"
+   .tekst.melding: tutorial="Slikken lukt niet altijd: kies nu een zetpil." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding wending met-fig"
+--- stap5c: 7 DOM-verschillen
+   .melding.rect: tutorial="15,170,345,96.9" race="15,162,345,91.7"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeigh
+   .knoppen_lijst.0.tekst: tutorial="Tablet" race="Misselijk"
+   .knoppen_lijst.0.klasse: tutorial="actie" race="actie geblokkeerd"
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; borderTopStyle=solid; anima
+   .tekst.melding: tutorial="Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding wending met-fig"
+--- eindkaartje: 7 DOM-verschillen
+   .qaly-trend.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=400; color=rgb(61, 220, 151)" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=400; color=rgb(25
+   .melding.rect: tutorial="15,162,345,96.9" race="15,162,345,45.6"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=0" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeigh
+   .tekst.klok: tutorial="Uur 16" race="Uur 24"
+   .tekst.qaly: tutorial="QALY620▲" race="QALY560▼"
+   .tekst.meldingKlasse: tutorial="melding" race="melding au"
+   .tekst.finish: tutorial="Klaar? | QALY-punten in de oefenronde | 620 | Race!" race="Race klaar | QALY-punten | 560 | Verder"
+--- race2_tov_race1_begin: 28 DOM-verschillen
+   .klok.rect: tutorial="16,15.5,68.8,31" race="16,15.5,111.8,31"
+   .lever.rect: tutorial="16,62.5,217.6,17" race="0,0,0,0"
+   .lever.zichtbaar: tutorial=true race=false
+   .lever-icoon.rect: tutorial="16,62.5,22,17" race="0,0,0,0"
+   .lever-tekst.rect: tutorial="46,62.5,109.6,17" race="0,0,0,0"
+   .lever-tekst.zichtbaar: tutorial=true race=false
+   .lever-meter.rect: tutorial="163.6,66,70,10" race="0,0,0,0"
+   .lever-meter.zichtbaar: tutorial=true race=false
+   .lever-max.rect: tutorial="219.6,66,2,10" race="0,0,0,0"
+   .lever-max.stijl: tutorial="backgroundColor=rgba(255, 255, 255, 0.7); left=56px" race="backgroundColor=rgba(255, 255, 255, 0.7); left=80%"
+   .lever-max.zichtbaar: tutorial=true race=false
+   .patient.rect: tutorial="265.7,56,93.3,30" race="199.2,56,159.8,30"
+   .patient-naam.rect: tutorial="303.7,62.5,55.3,17" race="237.2,62.5,121.8,17"
+   .patient-kop.rect: tutorial="265.7,56,30,30" race="199.2,56,30,30"
+   .knoppen_lijst.0.rect: tutorial="12,579,81.8,76" race="12,579,111.7,76"
+   .knoppen_lijst.0.icoonRect: tutorial="35.9,589.5,34,34" race="50.8,589.5,34,34"
+   .knoppen_lijst.1.actie: tutorial="zetpil" race="niets"
+   .knoppen_lijst.1.tekst: tutorial="Zetpil" race="Overslaan"
+   .knoppen_lijst.1.rect: tutorial="101.8,579,81.8,76" race="131.7,579,111.7,76"
+   .knoppen_lijst.1.icoon: tutorial="348:aria-hidden=\"true\"><g transform=\"rotate(-35 20 20)\"><path d=" race="266:aria-hidden=\"true\"><circle cx=\"20\" cy=\"20\" r=\"12\" fill=\"none"
+   .knoppen_lijst.1.icoonRect: tutorial="125.6,589.5,34,34" race="170.5,589.5,34,34"
+   .knoppen_lijst.2.rect: tutorial="191.5,579,81.8,76" race="251.3,579,111.7,76"
+   .knoppen_lijst.2.icoonRect: tutorial="215.4,589.5,34,34" race="290.2,589.5,34,34"
+   .knoppen_lijst.3: tutorial={"actie":"niets","tekst":"Niets","rect":"281.3,579,81.8,76","klasse":"actie","wijs":"","stijl":"fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; 
+   .tekst.klok: tutorial="Uur 0" race="Dag 0· 0 u"
+   .tekst.lever: tutorial="0 g van max. 4 g" race="(verborgen)"
+   .tekst.leverVul: tutorial="0%" race="80%"
+   .tekst.patient: tutorial="Opa Jan" race="Mevrouw De Vries"
+RACE 2:
+L2-tablet-1x: keuzeregel="Tablet voor dag 0" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=slik×1 badge=✓
+L3-tablet-2x: keuzeregel="2× Tablet voor dag 0" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=slik×2 badge=2×
+L4-tablet-3e-tik: keuzeregel="Keuze gewist voor dag 0: niets kiezen is overslaan." melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=null×0 badge=
+L5-overslaan: keuzeregel="" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=null×0 badge=
+L6-overslaan-2e-tik: keuzeregel="Te laat voor dag 0. Kies opnieuw voor dag 0 · 8 u." melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=null×0 badge=
+L7-tablet: keuzeregel="Tablet voor dag 0 · 8 u" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=slik×1 badge=✓
+L7b-tablet-2x: keuzeregel="2× Tablet voor dag 0 · 8 u" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=slik×2 badge=2×
+L9-spuit: keuzeregel="2× Tablet voor dag 0 · 8 u" melding="Lithium bestaat niet als prik. Slikken of stikken!" keuze=slik×2 badge=
+
+================ 390x844 — consolefouten: 0
+INTRO 1: {
+ "kop": "Race 1 · Paracetamol",
+ "verhaal": "Opa Jan (70 kg) heeft net een nieuwe heup. De pijn moet weg, zijn lever moet heel blijven.",
+ "regels": [
+  "Houd de spiegel in het groene vlak, boven de streep.",
+  "Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.",
+  "Maximaal 4 gram per dag: daarboven raakt de lever beschadigd."
+ ],
+ "qaly": "Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY's.",
+ "knop": "Start race",
+ "scrollt": false,
+ "knopOnder": 738,
+ "hoogte": 844
+}
+INTRO 2: {
+ "kop": "Race 2 · Lithium",
+ "verhaal": "Mevrouw De Vries (70 kg) gebruikt al jaren lithium tegen stemmingsschommelingen. Halverwege heeft ze rugpijn en koopt ze ibuprofen bij de drogist.",
+ "regels": [
+  "Het groene vlak heeft nu ook een bovenkant: 0,6–1,0 mmol/L.",
+  "Poortjes komen 3× per dag: om 0, 8 en 16 uur.",
+  "Niets heet hier Overslaan.",
+  "Tik twee keer op Tablet voor 2 tabletten op één poortje.",
+  "Geen zetpil en geen dagteller; wel een giftige grens: boven 1,5 mmol/L."
+ ],
+ "qaly": "",
+ "knop": "Start race",
+ "scrollt": false,
+ "knopOnder": 764,
+ "hoogte": 844
+}
+--- stap1a: 7 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,170,358.8,101"
+   .keuze-info.rect: tutorial="0,740,390,4" race="0,718.8,390,25.3"
+   .keuze-info.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=17px; fontWeight=700; color=rgb(255, 255, 255); opacity=0" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=17px; fontWeight=700; 
+   .knoppen_lijst.0.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.0.wijs: tutorial="1" race=""
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+   .tekst.melding: tutorial="Opa Jan heeft pijn: kies een tablet voor het eerste poortje." race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+--- stap1b: 2 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,170,358.8,101"
+   .tekst.melding: tutorial="Opa Jan heeft pijn: kies een tablet voor het eerste poortje." race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+--- stap1c: 2 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,47" race="15.6,170,358.8,101"
+   .tekst.melding: tutorial="Een pil moet eerst door je maag." race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+--- stap2a: 7 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,162,358.8,101"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeigh
+   .knoppen_lijst.3.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.3.wijs: tutorial="1" race=""
+   .knoppen_lijst.3.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+   .tekst.melding: tutorial="De pijn is weg: kies Niets om een poortje over te slaan." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding"
+--- stap2b: 5 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,162,358.8,101"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeigh
+   .tekst.qaly: tutorial="QALY50▲" race="QALY51▲"
+   .tekst.melding: tutorial="De pijn is weg: kies Niets om een poortje over te slaan." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding"
+--- stap2c: 4 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,162,358.8,101"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeigh
+   .tekst.melding: tutorial="Je lichaam ruimt het op: elke 2,5 uur is de helft weg." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding"
+--- stap3a: 3 DOM-verschillen
+   .knoppen_lijst.2.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.2.wijs: tutorial="1" race=""
+   .knoppen_lijst.2.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+--- stap3b: 0 DOM-verschillen
+--- stap3c: 4 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,162,358.8,47"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeigh
+   .tekst.melding: tutorial="Een prik werkt meteen, maar zakt net zo hard." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding au"
+--- stap4a: 7 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,162,358.8,47"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeigh
+   .knoppen_lijst.0.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.0.wijs: tutorial="1" race=""
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+   .tekst.melding: tutorial="Elke gram telt mee in de dagteller linksboven: kies weer een tablet." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding au"
+--- stap4b: 7 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,162,358.8,47"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeigh
+   .knoppen_lijst.0.rect: tutorial="12.5,748.5,84.5,83" race="13.2,749.2,83,81.6"
+   .knoppen_lijst.0.icoonRect: tutorial="38,761.8,33.6,33.6" race="38.2,762.3,33,33"
+   .tekst.qaly: tutorial="QALY312▲" race="QALY314▲"
+   .tekst.melding: tutorial="Elke gram telt mee in de dagteller linksboven: kies weer een tablet." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding au"
+--- stap4c: 7 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,101" race="15.6,170,358.8,91.7"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeigh
+   .knoppen_lijst.0.tekst: tutorial="Tablet" race="Misselijk"
+   .knoppen_lijst.0.klasse: tutorial="actie" race="actie geblokkeerd"
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; borderTopStyle=solid; anima
+   .tekst.melding: tutorial="Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." race="Opa is misselijk na de narcose."
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding wending met-fig zicht"
+--- stap5a: 10 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,162,358.8,91.7"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeigh
+   .knoppen_lijst.0.tekst: tutorial="Tablet" race="Misselijk"
+   .knoppen_lijst.0.klasse: tutorial="actie" race="actie geblokkeerd"
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; borderTopStyle=solid; anima
+   .knoppen_lijst.1.klasse: tutorial="actie wijs" race="actie"
+   .knoppen_lijst.1.wijs: tutorial="1" race=""
+   .knoppen_lijst.1.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; borderTopStyle=solid; animationNam
+   .tekst.melding: tutorial="Slikken lukt niet altijd: kies nu een zetpil." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding wending met-fig"
+--- stap5b: 8 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,74" race="15.6,162,358.8,91.7"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeigh
+   .knoppen_lijst.0.tekst: tutorial="Tablet" race="Misselijk"
+   .knoppen_lijst.0.klasse: tutorial="actie" race="actie geblokkeerd"
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; borderTopStyle=solid; anima
+   .tekst.qaly: tutorial="QALY479▲" race="QALY480▲"
+   .tekst.melding: tutorial="Slikken lukt niet altijd: kies nu een zetpil." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding wending met-fig"
+--- stap5c: 7 DOM-verschillen
+   .melding.rect: tutorial="15.6,170,358.8,101" race="15.6,162,358.8,91.7"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=1" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeigh
+   .knoppen_lijst.0.tekst: tutorial="Tablet" race="Misselijk"
+   .knoppen_lijst.0.klasse: tutorial="actie" race="actie geblokkeerd"
+   .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; borderTopStyle=solid; anima
+   .tekst.melding: tutorial="Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." race=""
+   .tekst.meldingKlasse: tutorial="melding zicht" race="melding wending met-fig"
+--- eindkaartje: 7 DOM-verschillen
+   .qaly-trend.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=400; color=rgb(61, 220, 151)" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=400; color=rgb(25
+   .melding.rect: tutorial="15.6,162,358.8,101" race="15.6,162,358.8,47"
+   .melding.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); top=80px; opacity=0" race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeigh
+   .tekst.klok: tutorial="Uur 16" race="Uur 24"
+   .tekst.qaly: tutorial="QALY620▲" race="QALY560▼"
+   .tekst.meldingKlasse: tutorial="melding" race="melding au"
+   .tekst.finish: tutorial="Klaar? | QALY-punten in de oefenronde | 620 | Race!" race="Race klaar | QALY-punten | 560 | Verder"
+--- race2_tov_race1_begin: 28 DOM-verschillen
+   .klok.rect: tutorial="16,15.5,68.8,31" race="16,15.5,111.8,31"
+   .lever.rect: tutorial="16,62.5,217.6,17" race="0,0,0,0"
+   .lever.zichtbaar: tutorial=true race=false
+   .lever-icoon.rect: tutorial="16,62.5,22,17" race="0,0,0,0"
+   .lever-tekst.rect: tutorial="46,62.5,109.6,17" race="0,0,0,0"
+   .lever-tekst.zichtbaar: tutorial=true race=false
+   .lever-meter.rect: tutorial="163.6,66,70,10" race="0,0,0,0"
+   .lever-meter.zichtbaar: tutorial=true race=false
+   .lever-max.rect: tutorial="219.6,66,2,10" race="0,0,0,0"
+   .lever-max.stijl: tutorial="backgroundColor=rgba(255, 255, 255, 0.7); left=56px" race="backgroundColor=rgba(255, 255, 255, 0.7); left=80%"
+   .lever-max.zichtbaar: tutorial=true race=false
+   .patient.rect: tutorial="280.7,56,93.3,30" race="214.2,56,159.8,30"
+   .patient-naam.rect: tutorial="318.7,62.5,55.3,17" race="252.2,62.5,121.8,17"
+   .patient-kop.rect: tutorial="280.7,56,30,30" race="214.2,56,30,30"
+   .knoppen_lijst.0.rect: tutorial="12,748,85.5,84" race="12,748,116.7,84"
+   .knoppen_lijst.0.icoonRect: tutorial="37.8,761.5,34,34" race="53.3,761.5,34,34"
+   .knoppen_lijst.1.actie: tutorial="zetpil" race="niets"
+   .knoppen_lijst.1.tekst: tutorial="Zetpil" race="Overslaan"
+   .knoppen_lijst.1.rect: tutorial="105.5,748,85.5,84" race="136.7,748,116.7,84"
+   .knoppen_lijst.1.icoon: tutorial="348:aria-hidden=\"true\"><g transform=\"rotate(-35 20 20)\"><path d=" race="266:aria-hidden=\"true\"><circle cx=\"20\" cy=\"20\" r=\"12\" fill=\"none"
+   .knoppen_lijst.1.icoonRect: tutorial="131.3,761.5,34,34" race="178,761.5,34,34"
+   .knoppen_lijst.2.rect: tutorial="199,748,85.5,84" race="261.3,748,116.7,84"
+   .knoppen_lijst.2.icoonRect: tutorial="224.8,761.5,34,34" race="302.7,761.5,34,34"
+   .knoppen_lijst.3: tutorial={"actie":"niets","tekst":"Niets","rect":"292.5,748,85.5,84","klasse":"actie","wijs":"","stijl":"fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; 
+   .tekst.klok: tutorial="Uur 0" race="Dag 0· 0 u"
+   .tekst.lever: tutorial="0 g van max. 4 g" race="(verborgen)"
+   .tekst.leverVul: tutorial="0%" race="80%"
+   .tekst.patient: tutorial="Opa Jan" race="Mevrouw De Vries"
+RACE 2:
+L2-tablet-1x: keuzeregel="Tablet voor dag 0" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=slik×1 badge=✓
+L3-tablet-2x: keuzeregel="2× Tablet voor dag 0" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=slik×2 badge=2×
+L4-tablet-3e-tik: keuzeregel="Keuze gewist voor dag 0: niets kiezen is overslaan." melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=null×0 badge=
+L5-overslaan: keuzeregel="" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=null×0 badge=
+L6-overslaan-2e-tik: keuzeregel="Te laat voor dag 0. Kies opnieuw voor dag 0 · 8 u." melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=null×0 badge=
+L7-tablet: keuzeregel="Tablet voor dag 0 · 8 u" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=slik×1 badge=✓
+L7b-tablet-2x: keuzeregel="2× Tablet voor dag 0 · 8 u" melding="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." keuze=slik×2 badge=2×
+L9-spuit: keuzeregel="2× Tablet voor dag 0 · 8 u" melding="Lithium bestaat niet als prik. Slikken of stikken!" keuze=slik×2 badge=

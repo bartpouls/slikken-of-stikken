@@ -1,0 +1,143 @@
+
+===== a-375-tut (375×667, speed 4) =====
+tikken tot eerste speelhandeling: 3 | tot race 1 loopt: 9 | tutorial s: 18.351 stappen 5 | alle tikken: 47
+race 1 [slik 0/6/18 + zetpil 12] finish=736 duur=23.3s spel=[23.277] maxC=11.810 dagteller=4 g van max. 4 g extra=
+race 2 [alles slikken] finish=628 duur=23.3s spel=[23.277,23.280799999999815] maxC=1.203 dagteller=4 g van max. 4 g extra=
+knopmetingen: 121 | kleinste w: 48 h: 48 | <48: []
+h-scroll: 0 van 26 
+netwerk laden: 1 | na laden: 0 
+console: 0 
+opm: 
+nogEenKeer: {"tikken":1,"fase":"race1","klok":[-0.39116373333333365,-0.07127040000000649],"naamVoor":"Controleur Zesti","naamNa":"Controleur Zesti"}
+einde0 naam {"px":34,"tekst":"Controleur Zesti","h":73.4375,"w":335,"sw":335,"cw":335} totaal {"px":58,"tekst":"1.364","h":58,"w":159.546875,"sw":160,"cw":160} r0 736 r1 628
+    zone=+748 laag=−12 hoog=0 giftig=0 totaal=736 | Toedien­momenten 4 echt schema: 4 ; Totale dosis 4 g ; Dagteller 4 g max. 4 g per 24 uur | Tijdens de misselijkheid koos jij de zetpil. Die werkte maar half: daar kun je niet op rekenen.
+    zone=+633 laag=0 hoog=−5 giftig=0 totaal=628 | Toedien­momenten 30 echt schema: 30 ; Totale dosis 12.000 mg | Jij gaf na de ibuprofen gewoon alle doses en de spiegel kroop boven de 1,0, want de nieren ruimden minder op. In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.
+contrast onder norm (DOM-tekst): 27
+   tutorial: "Klaar?" 1.02 (20px, rgb(176, 124, 255) op 0,0,0/finish, op 0.02)
+   tutorial: "QALY-punten in de oefenronde" 1.02 (15px, rgba(255, 255, 255, 0.74) op 0,0,0/finish, op 0.02)
+   tutorial: "620" 1.03 (64px, rgb(255, 255, 255) op 0,0,0/finish, op 0.02)
+   tutorial: "Race!" 1.03 (20px, rgb(255, 255, 255) op 138,85,240/knop-paars, op 0.02)
+   race1: "Uur 0" 1.05 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.03)
+   race1: "QALY" 1.03 (12px, rgba(255, 255, 255, 0.55) op 0,0,0/DIV, op 0.03)
+   race1: "0" 1.05 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.03)
+   race1: "0 g van max. 4 g" 1.04 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.03)
+   race1: "Opa Jan" 1.04 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.03)
+   race1: "Tik een knop vóór het paarse poortje: wa" 1 (19px, rgb(255, 255, 255) op 0,0,0/DIV, op 0)
+   race1: "Tablet" 1.07 (14px, rgb(255, 255, 255) op 18,18,25/actie tik gekozen, op 0.03)
+   race1: "Zetpil" 1.07 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.03)
+   race1: "Spuit" 1.07 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.03)
+   race1: "Niets" 1.07 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.03)
+   race1: "Verder" 2.96 (20px, rgb(255, 255, 255) op 138,85,240/knop-paars, op 0.68)
+   race2: "Dag 0" 1.49 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.17)
+   race2: "· 0 u" 1.24 (17px, rgba(255, 255, 255, 0.65) op 0,0,0/DIV, op 0.17)
+   race2: "QALY" 1.18 (12px, rgba(255, 255, 255, 0.55) op 0,0,0/DIV, op 0.17)
+   race2: "0" 1.49 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.17)
+   race2: "Mevrouw De Vries" 1.32 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.17)
+   race2: "Tik een knop vóór het paarse poortje: wa" 1.08 (19px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.05)
+   race2: "Tablet voor dag 0" 1.02 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0.01)
+   race2: "Tablet" 1.69 (14px, rgb(255, 255, 255) op 23,21,32/actie tik gekozen, op 0.17)
+   race2: "Overslaan" 1.66 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.17)
+   race2: "Spuit" 1.66 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.17)
+   race2: "Tablet voor dag 5" 1.23 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0.13)
+   race2: "Verder" 2.96 (20px, rgb(255, 255, 255) op 138,85,240/knop-paars, op 0.68)
+
+===== b-390-over (390×844, speed 4) =====
+tikken tot eerste speelhandeling: undefined | tot race 1 loopt: 2 | tutorial s: undefined stappen undefined | alle tikken: 45
+race 1 [slik 0/6/18, 12 gemist (+ poging slik op 11)] finish=418 duur=23.3s spel=[23.284299999999813] maxC=11.383 dagteller=3 g van max. 4 g extra=11:slik
+race 2 [na ibuprofen elke 3e overslaan (+ spuit-tik op poortje 2)] finish=1.000 duur=23.3s spel=[23.284299999999813,23.276600000000094] maxC=0.948 dagteller=3 g van max. 4 g extra=2:spuit
+race 1 [1 g spuit om 0 (na Nog een keer)] finish=−428 duur=22.6s spel=undefined maxC=15.807 dagteller= extra=
+race 2 [niets] finish=−710 duur=23.3s spel=[23.271899999999906,23.277899999999907] maxC=0.764 dagteller=1 g van max. 4 g extra=
+knopmetingen: 127 | kleinste w: 48 h: 48 | <48: []
+h-scroll: 0 van 29 
+netwerk laden: 1 | na laden: 0 
+console: 0 
+opm: 
+nogEenKeer: {"tikken":1,"fase":"race1","klok":[-0.3911680000000012,-0.053354666666670894],"naamVoor":"Speler 21","naamNa":"Speler 21"}
+einde0 naam {"px":40,"tekst":"Speler 21","h":43.1875,"w":350,"sw":350,"cw":350} totaal {"px":80,"tekst":"1.418","h":80,"w":220.0625,"sw":220,"cw":220} r0 418 r1 1.000
+    zone=+541 laag=−123 hoog=0 giftig=0 totaal=418 | Toedien­momenten 3 echt schema: 4 ; Totale dosis 3 g ; Dagteller 3 g max. 4 g per 24 uur | Tijdens de misselijkheid kreeg opa Jan geen paracetamol, en de pijn kwam terug. Kan iemand niet slikken, dan kan het ook als zetpil of prik.
+    zone=+1.000 laag=0 hoog=0 giftig=0 totaal=1.000 | Toedien­momenten 25 echt schema: 30 ; Totale dosis 10.000 mg | Jij liet na de ibuprofen 33% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten.
+einde1 naam {"px":40,"tekst":"Speler 21","h":43.1875,"w":350,"sw":350,"cw":350} totaal {"px":80,"tekst":"−1.138","h":80,"w":270.09375,"sw":270,"cw":270} r0 −428 r1 −710
+    zone=+174 laag=−602 hoog=0 giftig=0 totaal=−428 | Toedien­momenten 1 echt schema: 4 ; Totale dosis 1 g ; Dagteller 1 g max. 4 g per 24 uur | Opa Jan zat 83% van de tijd onder de streep. Eén dosis werkt maar een paar uur: daarna komt de pijn terug.
+    zone=+35 laag=−745 hoog=0 giftig=0 totaal=−710 | Toedien­momenten 0 echt schema: 30 ; Totale dosis 0 mg | Jij gaf mevrouw De Vries geen lithium en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.
+contrast onder norm (DOM-tekst): 25
+   race1: "QALY" 1.73 (12px, rgba(255, 255, 255, 0.55) op 0,0,0/DIV, op 0.38)
+   race1: "0 g van max. 4 g" 2.44 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.38)
+   race1: "Opa Jan" 2.44 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.38)
+   race1: "Tik een knop vóór het paarse poortje: wa" 1.79 (20px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.22)
+   race1: "Tablet voor uur 0" 1.04 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0.03)
+   race1: "Tablet" 3.59 (15px, rgb(255, 255, 255) op 23,21,32/actie tik gekozen, op 0.38)
+   race1: "Zetpil" 3.59 (15px, rgb(255, 255, 255) op 18,18,25/actie, op 0.38)
+   race1: "Spuit" 3.59 (15px, rgb(255, 255, 255) op 18,18,25/actie, op 0.38)
+   race1: "Niets" 3.59 (15px, rgb(255, 255, 255) op 18,18,25/actie, op 0.38)
+   race1: "Tablet voor uur 0" 1.02 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0.02)
+   race2: "Dag 0" 1.16 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.09)
+   race2: "· 0 u" 1.09 (17px, rgba(255, 255, 255, 0.65) op 0,0,0/DIV, op 0.09)
+   race2: "QALY" 1.08 (12px, rgba(255, 255, 255, 0.55) op 0,0,0/DIV, op 0.09)
+   race2: "0" 1.16 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.09)
+   race2: "Mevrouw De Vries" 1.12 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.09)
+   race2: "Tik een knop vóór het paarse poortje: wa" 1.02 (20px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.01)
+   race2: "Tablet" 1.25 (15px, rgb(255, 255, 255) op 18,18,25/actie tik gekozen, op 0.09)
+   race2: "Overslaan" 1.25 (15px, rgb(255, 255, 255) op 18,18,25/actie, op 0.09)
+   race2: "Spuit" 1.25 (15px, rgb(255, 255, 255) op 18,18,25/actie, op 0.09)
+   race2: "Tablet voor dag 0" 1 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0)
+   race2: "ibuprofen" 1.03 (12.5px, rgb(255, 159, 67) op 0,0,0/DIV, op 0.03)
+   race2: "Mevrouw De Vries koopt ibuprofen bij de " 1.08 (21px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.05)
+   race2: "Tablet voor dag 5" 1.05 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0.04)
+   race2: "Verder" 2.96 (20px, rgb(255, 255, 255) op 138,85,240/knop-paars, op 0.68)
+   race2: "Verder" 2.75 (20px, rgb(255, 255, 255) op 138,85,240/knop-paars, op 0.63)
+
+===== c-375-over (375×667, speed 4) =====
+tikken tot eerste speelhandeling: undefined | tot race 1 loopt: 2 | tutorial s: undefined stappen undefined | alle tikken: 103
+race 1 [niets] finish=−1.000 duur=23.3s spel=[23.277699999999722] maxC=0.000 dagteller=0 g van max. 4 g extra=
+race 2 [elk poortje dubbel] finish=−2.267 duur=23.3s spel=[23.277699999999722,23.279200000000188] maxC=2.405 dagteller=0 g van max. 4 g extra=
+race 1 [slik 0/6/18 + spuit 12 (na Nog een keer)] finish=768 duur=22.6s spel=undefined maxC=19.520 dagteller= extra=
+race 2 [alles slikken] finish=628 duur=23.3s spel=[23.27010000000009,23.278399999999905] maxC=1.204 dagteller=4 g van max. 4 g extra=
+knopmetingen: 140 | kleinste w: 48 h: 48 | <48: []
+h-scroll: 0 van 31 
+netwerk laden: 1 | na laden: 0 
+console: 0 
+opm: 
+nogEenKeer: {"tikken":1,"fase":"race1","klok":[-0.3734613333333361,-0.05346133333333599],"naamVoor":"Speler 70","naamNa":"Speler 70"}
+einde0 naam {"px":34,"tekst":"Speler 70","h":36.71875,"w":335,"sw":335,"cw":335} totaal {"px":58,"tekst":"−3.267","h":58,"w":195.828125,"sw":196,"cw":196} r0 −1.000 r1 −2.267
+    zone=0 laag=−1.000 hoog=0 giftig=0 totaal=−1.000 | Toedien­momenten 0 echt schema: 4 ; Totale dosis 0 g ; Dagteller 0 g max. 4 g per 24 uur | Jij gaf opa Jan geen paracetamol, dus de pijn bleef. Een vast schema op vaste tijden houdt de spiegel boven de streep.
+    zone=+18 laag=0 hoog=−758 giftig=−1.527 totaal=−2.267 | Toedien­momenten 30 echt schema: 30 ; Totale dosis 24.000 mg | Jij gaf 30 keer een dubbele dosis en de spiegel kwam boven de 1,5: giftig. Bij lithium liggen goed en giftig dicht bij elkaar, dus nooit dubbel innemen, ook niet om in te halen.
+einde1 naam {"px":34,"tekst":"Speler 70","h":36.71875,"w":335,"sw":335,"cw":335} totaal {"px":58,"tekst":"1.396","h":58,"w":159.546875,"sw":160,"cw":160} r0 768 r1 628
+    zone=+779 laag=−11 hoog=0 giftig=0 totaal=768 | Toedien­momenten 4 echt schema: 4 ; Totale dosis 4 g ; Dagteller 4 g max. 4 g per 24 uur | Tijdens de misselijkheid koos jij de spuit. Een prik werkt meteen, ook als opa Jan niet kan slikken.
+    zone=+633 laag=0 hoog=−5 giftig=0 totaal=628 | Toedien­momenten 30 echt schema: 30 ; Totale dosis 12.000 mg | Jij gaf na de ibuprofen gewoon alle doses en de spiegel kroop boven de 1,0, want de nieren ruimden minder op. In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.
+contrast onder norm (DOM-tekst): 35
+   race1: "Uur 0" 1.16 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.09)
+   race1: "QALY" 1.08 (12px, rgba(255, 255, 255, 0.55) op 0,0,0/DIV, op 0.09)
+   race1: "0" 1.16 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.09)
+   race1: "0 g van max. 4 g" 1.12 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.09)
+   race1: "Opa Jan" 1.12 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.09)
+   race1: "Tik een knop vóór het paarse poortje: wa" 1.02 (19px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.01)
+   race1: "Tablet" 1.25 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.09)
+   race1: "Zetpil" 1.25 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.09)
+   race1: "Spuit" 1.25 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.09)
+   race1: "Niets" 1.25 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.09)
+   race2: "Dag 0" 1.5 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.17)
+   race2: "· 0 u" 1.24 (17px, rgba(255, 255, 255, 0.65) op 0,0,0/DIV, op 0.17)
+   race2: "QALY" 1.18 (12px, rgba(255, 255, 255, 0.55) op 0,0,0/DIV, op 0.17)
+   race2: "0" 1.25 (26px, rgb(255, 143, 132) op 0,0,0/DIV, op 0.17)
+   race2: "Mevrouw De Vries" 1.32 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.17)
+   race2: "Tik een knop vóór het paarse poortje: wa" 1.08 (19px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.05)
+   race2: "2× Tablet voor dag 0" 1.05 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0.04)
+   race2: "Tablet" 1.73 (14px, rgb(255, 255, 255) op 37,31,53/actie gekozen tik, op 0.17)
+   race2: "Overslaan" 1.66 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.17)
+   race2: "Spuit" 1.66 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.17)
+   race2: "2× Tablet voor dag 0" 1 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0)
+   race2: "2× Tablet voor dag 5" 3.2 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0.42)
+   race2: "Verder" 2.96 (20px, rgb(255, 255, 255) op 138,85,240/knop-paars, op 0.68)
+   race2: "Dag 0" 1.05 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.03)
+   race2: "· 0 u" 1.03 (17px, rgba(255, 255, 255, 0.65) op 0,0,0/DIV, op 0.03)
+   race2: "QALY" 1.03 (12px, rgba(255, 255, 255, 0.55) op 0,0,0/DIV, op 0.03)
+   race2: "0" 1.05 (26px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.03)
+   race2: "Mevrouw De Vries" 1.04 (14px, rgba(255, 255, 255, 0.78) op 0,0,0/DIV, op 0.03)
+   race2: "Tik een knop vóór het paarse poortje: wa" 1 (19px, rgb(255, 255, 255) op 0,0,0/DIV, op 0)
+   race2: "Tablet" 1.07 (14px, rgb(255, 255, 255) op 18,18,25/actie tik gekozen, op 0.03)
+   race2: "Overslaan" 1.07 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.03)
+   race2: "Spuit" 1.07 (14px, rgb(255, 255, 255) op 18,18,25/actie, op 0.03)
+   race2: "ibuprofen" 1.03 (12.5px, rgb(255, 159, 67) op 0,0,0/DIV, op 0.03)
+   race2: "Mevrouw De Vries koopt ibuprofen bij de " 1.08 (21px, rgb(255, 255, 255) op 0,0,0/DIV, op 0.05)
+   race2: "Tablet voor dag 5" 1.11 (17px, rgb(230, 212, 255) op 0,0,0/DIV, op 0.08)
+klaar-abc
