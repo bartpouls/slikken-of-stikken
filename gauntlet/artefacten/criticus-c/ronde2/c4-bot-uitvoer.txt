@@ -1,0 +1,84 @@
+375x667 duur 65.46579999999993 wand 65.765 start slik@klok-0.80 niets@klok1.50 spuit@klok4.40 slik@klok8.50 zetpil@klok12.50 Race! | gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg | dag 4000 | fouten 0 | Klaar? | QALY-punten in de oefenronde | 620 | Race!
+    melding klok -0.8 C 0 dag 0 "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." melding zicht
+    keuze-info klok -0.8 C 0 dag 0 "Tablet voor uur 0" keuze-info zicht gekozen
+    keuze-info klok -0.32 C 0 dag 0 "" keuze-info gekozen
+    melding klok 0 C 0 dag 1000 "" melding
+    melding klok 0.07 C 1.33 dag 1000 "Een pil moet eerst door je maag." melding zicht
+    melding klok 1.5 C 9.18 dag 1000 "" melding
+    melding klok 1.5 C 9.18 dag 1000 "De pijn is weg: kies Niets om een poortje over te slaan." melding zicht
+    keuze-info klok 1.5 C 9.18 dag 1000 "Niets voor uur 2" keuze-info zicht gekozen
+    keuze-info klok 1.98 C 8.72 dag 1000 "" keuze-info gekozen
+    melding klok 2 C 8.68 dag 1000 "" melding
+    melding klok 2.07 C 8.59 dag 1000 "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." melding zicht
+    melding klok 4.3 C 5 dag 1000 "" melding
+    melding klok 4.37 C 4.9 dag 1000 "Au. De pijn komt terug." melding au zicht
+    keuze-info klok 4.4 C 4.86 dag 1000 "Spuit voor uur 5" keuze-info zicht gekozen
+    keuze-info klok 4.88 C 4.27 dag 1000 "" keuze-info gekozen
+    melding klok 5 C 20 dag 2000 "" melding au
+    melding klok 5.07 C 19.62 dag 2000 "Een prik werkt meteen, maar zakt net zo hard." melding zicht
+    melding klok 8.5 C 7.58 dag 2000 "" melding
+    melding klok 8.5 C 7.58 dag 2000 "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." melding zicht
+    keuze-info klok 8.5 C 7.58 dag 2000 "Tablet voor uur 9" keuze-info zicht gekozen
+    keuze-info klok 8.98 C 6.65 dag 2000 "" keuze-info gekozen
+    melding klok 9 C 6.6 dag 3000 "" melding
+    melding klok 9.07 C 7.73 dag 3000 "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." melding zicht
+    melding klok 12.5 C 8.69 dag 3000 "" melding
+    melding klok 12.5 C 8.69 dag 3000 "Slikken lukt niet altijd: kies nu een zetpil." melding zicht
+    keuze-info klok 12.5 C 8.69 dag 3000 "Zetpil voor uur 13" keuze-info zicht gekozen
+    keuze-info klok 12.98 C 7.65 dag 3000 "" keuze-info gekozen
+    melding klok 13 C 7.6 dag 4000 "" melding
+    melding klok 13.07 C 7.57 dag 4000 "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." melding zicht
+    melding klok 16 C 5.43 dag 4000 "" melding
+Race 1 · Paracetamol
+
+Opa Jan (70 kg) heeft net een nieuwe heup. De pijn moet weg, zijn lever moet heel blijven.
+
+Houd de spiegel in het groene vlak, boven de streep.
+Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.
+Maximaal 4 gram per dag: daarboven raakt de lever beschadigd.
+
+Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY's.
+
+Start race { sh: 667, ch: 667, sw: 375, cw: 375 }
+390x844 duur 65.504 wand 65.784 start slik@klok-0.80 niets@klok1.50 spuit@klok4.40 slik@klok8.50 zetpil@klok12.50 Race! | gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg | dag 4000 | fouten 0 | Klaar? | QALY-punten in de oefenronde | 620 | Race!
+    melding klok -0.8 C 0 dag 0 "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." melding zicht
+    keuze-info klok -0.8 C 0 dag 0 "Tablet voor uur 0" keuze-info zicht gekozen
+    keuze-info klok -0.32 C 0 dag 0 "" keuze-info gekozen
+    melding klok 0 C 0 dag 1000 "" melding
+    melding klok 0.07 C 1.33 dag 1000 "Een pil moet eerst door je maag." melding zicht
+    melding klok 1.5 C 9.18 dag 1000 "" melding
+    melding klok 1.5 C 9.18 dag 1000 "De pijn is weg: kies Niets om een poortje over te slaan." melding zicht
+    keuze-info klok 1.5 C 9.18 dag 1000 "Niets voor uur 2" keuze-info zicht gekozen
+    keuze-info klok 1.98 C 8.72 dag 1000 "" keuze-info gekozen
+    melding klok 2 C 8.68 dag 1000 "" melding
+    melding klok 2.07 C 8.59 dag 1000 "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." melding zicht
+    melding klok 4.3 C 5 dag 1000 "" melding
+    melding klok 4.37 C 4.9 dag 1000 "Au. De pijn komt terug." melding au zicht
+    keuze-info klok 4.4 C 4.86 dag 1000 "Spuit voor uur 5" keuze-info zicht gekozen
+    keuze-info klok 4.88 C 4.27 dag 1000 "" keuze-info gekozen
+    melding klok 5 C 20 dag 2000 "" melding au
+    melding klok 5.07 C 19.62 dag 2000 "Een prik werkt meteen, maar zakt net zo hard." melding zicht
+    melding klok 8.5 C 7.58 dag 2000 "" melding
+    melding klok 8.5 C 7.58 dag 2000 "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." melding zicht
+    keuze-info klok 8.5 C 7.58 dag 2000 "Tablet voor uur 9" keuze-info zicht gekozen
+    keuze-info klok 8.98 C 6.65 dag 2000 "" keuze-info gekozen
+    melding klok 9 C 6.6 dag 3000 "" melding
+    melding klok 9.07 C 7.73 dag 3000 "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." melding zicht
+    melding klok 12.5 C 8.69 dag 3000 "" melding
+    melding klok 12.5 C 8.69 dag 3000 "Slikken lukt niet altijd: kies nu een zetpil." melding zicht
+    keuze-info klok 12.5 C 8.69 dag 3000 "Zetpil voor uur 13" keuze-info zicht gekozen
+    keuze-info klok 12.98 C 7.64 dag 3000 "" keuze-info gekozen
+    melding klok 13 C 7.6 dag 4000 "" melding
+    melding klok 13.07 C 7.57 dag 4000 "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." melding zicht
+    melding klok 16 C 5.43 dag 4000 "" melding
+Race 1 · Paracetamol
+
+Opa Jan (70 kg) heeft net een nieuwe heup. De pijn moet weg, zijn lever moet heel blijven.
+
+Houd de spiegel in het groene vlak, boven de streep.
+Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.
+Maximaal 4 gram per dag: daarboven raakt de lever beschadigd.
+
+Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY's.
+
+Start race { sh: 844, ch: 844, sw: 390, cw: 390 }

@@ -1,0 +1,171 @@
+
+### 375x667 — S1 één extra spuit op poortje 1
+  afwijkende tik: spuit voor poortje 1 op klok 0.25
+  foto klok 1.6: {"klok":1.61,"C":22.5,"dag":2000,"lever":"lever tel","leverTekst":"2 g van max. 4 g","zin":"De pijn is weg: kies Niets om een poortje over te slaan.","portret":"niet-misselijk","qaly":"QALY49▲","gegeven":"slik,spuit","fase":"tutorial","klaar":false}
+  foto klok 4.5: {"klok":4.5,"C":10.7,"dag":2000,"lever":"lever tel","leverTekst":"2 g van max. 4 g","zin":"Kies nu de spuit.","portret":"niet-misselijk","qaly":"QALY170▲","gegeven":"slik,spuit,niets,leeg,leeg","fase":"tutorial","klaar":false}
+  foto klok 8.6: {"klok":8.6,"C":9.3,"dag":3000,"lever":"lever tel","leverTekst":"3 g van max. 4 g","zin":"Elke gram telt mee in de dagteller linksboven: kies weer een tablet.","portret":"niet-misselijk","qaly":"QALY341▲","gegeven":"slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg","fase":"tutorial","klaar":false}
+  foto klok 9.3: {"klok":9.31,"C":12.4,"dag":4000,"lever":"lever tel","leverTekst":"4 g van max. 4 g","zin":"Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.","portret":"niet-misselijk","qaly":"QALY370▲","gegeven":"slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik","fase":"tutorial","klaar":false}
+  foto klok 12.6: {"klok":12.6,"C":9.1,"dag":4000,"lever":"lever tel","leverTekst":"4 g van max. 4 g","zin":"Slikken lukt niet altijd: kies nu een zetpil.","portret":"niet-misselijk","qaly":"QALY507▲","gegeven":"slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg","fase":"tutorial","klaar":false}
+  foto klok 13.3: {"klok":13.31,"C":8,"dag":5000,"lever":"lever vol tel","leverTekst":"5 g van max. 4 g","zin":"Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.","portret":"misselijk","qaly":"QALY−713▼","gegeven":"slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil","fase":"tutorial","klaar":false}
+  foto klok 15: {"klok":15,"C":6.6,"dag":5000,"lever":"lever vol tel","leverTekst":"5 g van max. 4 g","zin":"Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.","portret":"misselijk","qaly":"QALY−643▼","gegeven":"slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg","fase":"tutorial","klaar":false}
+  einde na 64.9 s: {"klok":16,"C":5.7,"dag":5000,"lever":"lever vol tel","leverTekst":"5 g van max. 4 g","zin":"(geen)","portret":"misselijk","qaly":"QALY−601▼","gegeven":"slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg","fase":"tutorial","klaar":true} | eindkaartje: Klaar? | QALY-punten in de oefenronde | −601 | Race! | consolefouten 0
+     ZIN   klok -0.8 C 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     keuze klok -0.8 C 0 dagteller 0 g: "Tablet voor uur 0" [gekozen]
+     ZIN   klok 0.07 C 1.24 dagteller 1 g: "Een pil moet eerst door je maag." []
+     keuze klok 0.27 C 4.26 dagteller 1 g: "Spuit voor uur 1" [gekozen]
+     ZIN   klok 1.5 C 22.99 dagteller 2 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     keuze klok 1.5 C 22.99 dagteller 2 g: "Niets voor uur 2" [gekozen]
+     ZIN   klok 2.07 C 20.4 dagteller 2 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN   klok 4.4 C 11.05 dagteller 2 g: "Kies nu de spuit." []
+     keuze klok 4.4 C 11.05 dagteller 2 g: "Spuit voor uur 5" [gekozen]
+     ZIN   klok 5.07 C 24.75 dagteller 3 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN   klok 8.5 C 9.57 dagteller 3 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     keuze klok 8.5 C 9.57 dagteller 3 g: "Tablet voor uur 9" [gekozen]
+     ZIN   klok 9.07 C 9.42 dagteller 4 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN   klok 12.5 C 9.34 dagteller 4 g: "Slikken lukt niet altijd: kies nu een zetpil." []
+     keuze klok 12.5 C 9.34 dagteller 4 g: "Zetpil voor uur 13" [gekozen]
+     ZIN   klok 13 C 8.17 dagteller 5 g: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." []
+
+### 390x844 — S2 één extra zetpil op poortje 7
+  afwijkende tik: zetpil voor poortje 7 op klok 6.25
+  foto klok 8.6: {"klok":8.61,"C":11.2,"dag":3000,"lever":"lever tel","leverTekst":"3 g van max. 4 g","zin":"Elke gram telt mee in de dagteller linksboven: kies weer een tablet.","portret":"niet-misselijk","qaly":"QALY312▲","gegeven":"slik,leeg,niets,leeg,leeg,spuit,leeg,zetpil,leeg","fase":"tutorial","klaar":false}
+  foto klok 9.3: {"klok":9.3,"C":14.5,"dag":4000,"lever":"lever tel","leverTekst":"4 g van max. 4 g","zin":"Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.","portret":"niet-misselijk","qaly":"QALY341▲","gegeven":"slik,leeg,niets,leeg,leeg,spuit,leeg,zetpil,leeg,slik","fase":"tutorial","klaar":false}
+  foto klok 12.6: {"klok":12.6,"C":10.3,"dag":4000,"lever":"lever tel","leverTekst":"4 g van max. 4 g","zin":"Slikken lukt niet altijd: kies nu een zetpil.","portret":"niet-misselijk","qaly":"QALY478▲","gegeven":"slik,leeg,niets,leeg,leeg,spuit,leeg,zetpil,leeg,slik,leeg,leeg,leeg","fase":"tutorial","klaar":false}
+  foto klok 13.3: {"klok":13.31,"C":9,"dag":5000,"lever":"lever vol tel","leverTekst":"5 g van max. 4 g","zin":"Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.","portret":"misselijk","qaly":"QALY−743▼","gegeven":"slik,leeg,niets,leeg,leeg,spuit,leeg,zetpil,leeg,slik,leeg,leeg,leeg,zetpil","fase":"tutorial","klaar":false}
+  foto klok 15: {"klok":15.01,"C":7.2,"dag":5000,"lever":"lever vol tel","leverTekst":"5 g van max. 4 g","zin":"Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.","portret":"misselijk","qaly":"QALY−672▼","gegeven":"slik,leeg,niets,leeg,leeg,spuit,leeg,zetpil,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg","fase":"tutorial","klaar":false}
+  einde na 64.9 s: {"klok":16,"C":6.2,"dag":5000,"lever":"lever vol tel","leverTekst":"5 g van max. 4 g","zin":"(geen)","portret":"misselijk","qaly":"QALY−630▼","gegeven":"slik,leeg,niets,leeg,leeg,spuit,leeg,zetpil,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg","fase":"tutorial","klaar":true} | eindkaartje: Klaar? | QALY-punten in de oefenronde | −630 | Race! | consolefouten 0
+     ZIN   klok -0.8 C 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     keuze klok -0.8 C 0 dagteller 0 g: "Tablet voor uur 0" [gekozen]
+     ZIN   klok 0.07 C 1.33 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN   klok 1.5 C 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     keuze klok 1.5 C 9.18 dagteller 1 g: "Niets voor uur 2" [gekozen]
+     ZIN   klok 2.07 C 8.59 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN   klok 4.37 C 4.9 dagteller 1 g: "Au. De pijn komt terug." [au]
+     keuze klok 4.4 C 4.86 dagteller 1 g: "Spuit voor uur 5" [gekozen]
+     ZIN   klok 5.07 C 19.62 dagteller 2 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     keuze klok 6.26 C 14.11 dagteller 2 g: "Zetpil voor uur 7" [gekozen]
+     ZIN   klok 8.5 C 11.34 dagteller 3 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     keuze klok 8.5 C 11.34 dagteller 3 g: "Tablet voor uur 9" [gekozen]
+     ZIN   klok 9.07 C 11.52 dagteller 4 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN   klok 12.5 C 10.59 dagteller 4 g: "Slikken lukt niet altijd: kies nu een zetpil." []
+     keuze klok 12.5 C 10.59 dagteller 4 g: "Zetpil voor uur 13" [gekozen]
+     ZIN   klok 13 C 9.27 dagteller 5 g: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." []
+
+### 375x667 — S3 tablet op elk niet-gevraagd poortje
+  afwijkende tik: slik voor poortje 1 op klok 0.25
+  foto klok 1.6: {"klok":1.6,"C":16.4,"dag":2000,"lever":"lever tel","leverTekst":"2 g van max. 4 g","zin":"De pijn is weg: kies Niets om een poortje over te slaan.","portret":"niet-misselijk","qaly":"QALY49▲","gegeven":"slik,slik","fase":"tutorial","klaar":false}
+  afwijkende tik: slik voor poortje 3 op klok 2.25
+  afwijkende tik: slik voor poortje 4 op klok 3.26
+  foto klok 4.5: {"klok":4.51,"C":26.7,"dag":4000,"lever":"lever tel","leverTekst":"4 g van max. 4 g","zin":"Kies nu de spuit.","portret":"niet-misselijk","qaly":"QALY170▲","gegeven":"slik,slik,niets,slik,slik","fase":"tutorial","klaar":false}
+  afwijkende tik: slik voor poortje 6 op klok 5.25
+  foto klok 5.3: {"klok":5.3,"C":40.8,"dag":5000,"lever":"lever vol tel","leverTekst":"5 g van max. 4 g","zin":"Een prik werkt meteen, maar zakt net zo hard.","portret":"misselijk","qaly":"QALY−1.047▼","gegeven":"slik,slik,niets,slik,slik,spuit","fase":"tutorial","klaar":false}
+  afwijkende tik: slik voor poortje 7 op klok 6.25
+  afwijkende tik: slik voor poortje 8 op klok 7.26
+  foto klok 8.6: {"klok":8.6,"C":41.6,"dag":8000,"lever":"lever vol tel","leverTekst":"8 g van max. 4 g","zin":"Elke gram telt mee in de dagteller linksboven: kies weer een tablet.","portret":"misselijk","qaly":"QALY−1.659▼","gegeven":"slik,slik,niets,slik,slik,spuit,slik,slik,slik","fase":"tutorial","klaar":false}
+  afwijkende tik: slik voor poortje 10 op klok 9.25
+  foto klok 9.3: {"klok":9.31,"C":43,"dag":9000,"lever":"lever vol tel","leverTekst":"9 g van max. 4 g","zin":"Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.","portret":"misselijk","qaly":"QALY−1.880▼","gegeven":"slik,slik,niets,slik,slik,spuit,slik,slik,slik,slik","fase":"tutorial","klaar":false}
+  afwijkende tik: slik voor poortje 11 op klok 10.26
+  afwijkende tik: slik voor poortje 12 op klok 11.26
+  foto klok 12.6: {"klok":12.61,"C":46.7,"dag":12000,"lever":"lever vol tel","leverTekst":"12 g van max. 4 g","zin":"Slikken lukt niet altijd: kies nu een zetpil.","portret":"misselijk","qaly":"QALY−2.493▼","gegeven":"slik,slik,niets,slik,slik,spuit,slik,slik,slik,slik,slik,slik,slik","fase":"tutorial","klaar":false}
+  afwijkende tik: slik voor poortje 14 op klok 13.26
+  foto klok 13.3: {"klok":13.3,"C":43,"dag":13000,"lever":"lever vol tel","leverTekst":"13 g van max. 4 g","zin":"Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.","portret":"misselijk","qaly":"QALY−2.714▼","gegeven":"slik,slik,niets,slik,slik,spuit,slik,slik,slik,slik,slik,slik,slik,zetpil","fase":"tutorial","klaar":false}
+  afwijkende tik: slik voor poortje 15 op klok 14.25
+  foto klok 15: {"klok":15,"C":38.9,"dag":15000,"lever":"lever vol tel","leverTekst":"15 g van max. 4 g","zin":"Te veel paracetamol beschadigt de lever.","portret":"misselijk","qaly":"QALY−3.143▼","gegeven":"slik,slik,niets,slik,slik,spuit,slik,slik,slik,slik,slik,slik,slik,zetpil,slik,slik","fase":"tutorial","klaar":false}
+  afwijkende tik: slik voor poortje 16 op klok 15.25
+  einde na 64.9 s: {"klok":16,"C":41.1,"dag":16000,"lever":"lever vol tel","leverTekst":"16 g van max. 4 g","zin":"(geen)","portret":"misselijk","qaly":"QALY−3.351▼","gegeven":"slik,slik,niets,slik,slik,spuit,slik,slik,slik,slik,slik,slik,slik,zetpil,slik,slik,slik","fase":"tutorial","klaar":true} | eindkaartje: Klaar? | QALY-punten in de oefenronde | −3.351 | Race! | consolefouten 0
+     ZIN   klok -0.8 C 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     keuze klok -0.8 C 0 dagteller 0 g: "Tablet voor uur 0" [gekozen]
+     ZIN   klok 0.07 C 1.33 dagteller 1 g: "Een pil moet eerst door je maag." []
+     keuze klok 0.26 C 4.19 dagteller 1 g: "Tablet voor uur 1" [gekozen]
+     ZIN   klok 1.5 C 15.77 dagteller 2 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     keuze klok 1.5 C 15.77 dagteller 2 g: "Niets voor uur 2" [gekozen]
+     ZIN   klok 2.07 C 17.56 dagteller 2 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     keuze klok 2.26 C 17.46 dagteller 2 g: "Tablet voor uur 3" [gekozen]
+     keuze klok 3.26 C 19.06 dagteller 3 g: "Tablet voor uur 4" [gekozen]
+     ZIN   klok 4.4 C 26.14 dagteller 4 g: "Kies nu de spuit." []
+     keuze klok 4.4 C 26.14 dagteller 4 g: "Spuit voor uur 5" [gekozen]
+     ZIN   klok 5 C 42.95 dagteller 5 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     keuze klok 5.26 C 41.12 dagteller 5 g: "Tablet voor uur 6" [gekozen]
+     ZIN   klok 6.07 C 35.74 dagteller 6 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     keuze klok 6.26 C 36.99 dagteller 6 g: "Tablet voor uur 7" [gekozen]
+     keuze klok 7.27 C 38.64 dagteller 7 g: "Tablet voor uur 8" [gekozen]
+     ZIN   klok 8.5 C 41.64 dagteller 8 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     keuze klok 8.5 C 41.64 dagteller 8 g: "Tablet voor uur 9" [gekozen]
+     ZIN   klok 9 C 40.22 dagteller 9 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     keuze klok 9.26 C 42.81 dagteller 9 g: "Tablet voor uur 10" [gekozen]
+     ZIN   klok 10.07 C 42.7 dagteller 10 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     keuze klok 10.26 C 44.31 dagteller 10 g: "Tablet voor uur 11" [gekozen]
+     keuze klok 11.26 C 45.5 dagteller 11 g: "Tablet voor uur 12" [gekozen]
+     ZIN   klok 12.5 C 46.84 dagteller 12 g: "Slikken lukt niet altijd: kies nu een zetpil." []
+     keuze klok 12.5 C 46.84 dagteller 12 g: "Zetpil voor uur 13" [gekozen]
+     ZIN   klok 13 C 44.78 dagteller 13 g: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." []
+     keuze klok 13.26 C 43.27 dagteller 13 g: "Tablet voor uur 14" [gekozen]
+     ZIN   klok 14.07 C 38.46 dagteller 14 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     keuze klok 14.26 C 39.84 dagteller 14 g: "Tablet voor uur 15" [gekozen]
+     keuze klok 15.26 C 41.61 dagteller 15 g: "Tablet voor uur 16" [gekozen]
+
+### 375x667 — S4 Niets vooraf gekozen voor poortje 2
+  afwijkende tik: niets voor poortje 2 op klok 1.16
+  foto klok 1.6: {"klok":1.6,"C":9.1,"dag":1000,"lever":"lever tel","leverTekst":"1 g van max. 4 g","zin":"De pijn is weg: kies Niets om een poortje over te slaan.","portret":"niet-misselijk","qaly":"QALY49▲","gegeven":"slik,leeg","fase":"tutorial","klaar":false}
+  einde na 64.5 s: {"klok":16,"C":5.4,"dag":4000,"lever":"lever tel","leverTekst":"4 g van max. 4 g","zin":"(geen)","portret":"niet-misselijk","qaly":"QALY620▲","gegeven":"slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg","fase":"tutorial","klaar":true} | eindkaartje: Klaar? | QALY-punten in de oefenronde | 620 | Race! | consolefouten 0
+     ZIN   klok -0.8 C 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     keuze klok -0.8 C 0 dagteller 0 g: "Tablet voor uur 0" [gekozen]
+     ZIN   klok 0.07 C 1.24 dagteller 1 g: "Een pil moet eerst door je maag." []
+     keuze klok 1.17 C 9.1 dagteller 1 g: "Niets voor uur 2" [gekozen]
+     ZIN   klok 1.57 C 9.14 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN   klok 2.07 C 8.59 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN   klok 4.37 C 4.9 dagteller 1 g: "Au. De pijn komt terug." [au]
+     keuze klok 4.4 C 4.86 dagteller 1 g: "Spuit voor uur 5" [gekozen]
+     ZIN   klok 5.07 C 19.62 dagteller 2 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN   klok 8.5 C 7.58 dagteller 2 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     keuze klok 8.5 C 7.58 dagteller 2 g: "Tablet voor uur 9" [gekozen]
+     ZIN   klok 9.07 C 7.73 dagteller 3 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN   klok 12.5 C 8.69 dagteller 3 g: "Slikken lukt niet altijd: kies nu een zetpil." []
+     keuze klok 12.5 C 8.69 dagteller 3 g: "Zetpil voor uur 13" [gekozen]
+     ZIN   klok 13.07 C 7.57 dagteller 4 g: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." []
+
+### 375x667 — S5 fout tikken / wisselen / wissen per stap
+  stap slik@0: na 3 foute tikken + 2,5 s: klok -0.8 -> -0.8, bevroren true, wijs=slik, doel 0:niets:open=true, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+     goed getikt: bevroren false "Tablet voor uur 0"; vlak voor het poortje gewisseld naar spuit: klok -0.111 (1,5 s later nog steeds vóór 0: true), bevroren true, wijs=slik, doel 0:spuit:open=true, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 0: niets kiezen is overslaan." bevroren true, wijs=slik, klok -0.111
+     daarna goed: poortje 0 gaf slik, zin "Een pil moet eerst door je maag."
+  stap niets@2: na 3 foute tikken + 2,5 s: klok 1.5 -> 1.5, bevroren true, wijs=niets, doel 2:spuit:open=true, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+     goed getikt: bevroren false "Niets voor uur 2"; vlak voor het poortje gewisseld naar spuit: klok 1.891 (1,5 s later nog steeds vóór 2: true), bevroren true, wijs=niets, doel 2:spuit:open=true, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 2: niets kiezen is overslaan." bevroren true, wijs=niets, klok 1.891
+     daarna goed: poortje 2 gaf niets, zin "Je lichaam ruimt het op: elke 2,5 uur is de helft weg."
+  stap spuit@5: na 3 foute tikken + 2,5 s: klok 4.4 -> 4.4, bevroren true, wijs=spuit, doel 5:niets:open=true, zin "Au. De pijn komt terug."
+     goed getikt: bevroren false "Spuit voor uur 5"; vlak voor het poortje gewisseld naar slik: klok 4.893 (1,5 s later nog steeds vóór 5: true), bevroren true, wijs=spuit, doel 5:slik:open=true, zin "Au. De pijn komt terug."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 5: niets kiezen is overslaan." bevroren true, wijs=spuit, klok 4.893
+     daarna goed: poortje 5 gaf spuit, zin "Een prik werkt meteen, maar zakt net zo hard."
+  stap slik@9: na 3 foute tikken + 2,5 s: klok 8.5 -> 8.5, bevroren true, wijs=slik, doel 9:niets:open=true, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+     goed getikt: bevroren false "Tablet voor uur 9"; vlak voor het poortje gewisseld naar spuit: klok 8.887 (1,5 s later nog steeds vóór 9: true), bevroren true, wijs=slik, doel 9:spuit:open=true, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 9: niets kiezen is overslaan." bevroren true, wijs=slik, klok 8.887
+     daarna goed: poortje 9 gaf slik, zin "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd."
+  stap zetpil@13: na 3 foute tikken + 2,5 s: klok 12.5 -> 12.5, bevroren true, wijs=zetpil, doel 13:niets:open=true, zin "Slikken lukt niet altijd: kies nu een zetpil."
+     goed getikt: bevroren false "Zetpil voor uur 13"; vlak voor het poortje gewisseld naar spuit: klok 12.887 (1,5 s later nog steeds vóór 13: true), bevroren true, wijs=zetpil, doel 13:spuit:open=true, zin "Slikken lukt niet altijd: kies nu een zetpil."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 13: niets kiezen is overslaan." bevroren true, wijs=zetpil, klok 12.887
+     daarna goed: poortje 13 gaf zetpil, zin "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan."
+  klaar: gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg dagteller 4000 tutorialDuur 92.40030000000004 consolefouten 0
+
+### 390x844 — S5 fout tikken / wisselen / wissen per stap
+  stap slik@0: na 3 foute tikken + 2,5 s: klok -0.8 -> -0.8, bevroren true, wijs=slik, doel 0:niets:open=true, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+     goed getikt: bevroren false "Tablet voor uur 0"; vlak voor het poortje gewisseld naar spuit: klok -0.107 (1,5 s later nog steeds vóór 0: true), bevroren true, wijs=slik, doel 0:spuit:open=true, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 0: niets kiezen is overslaan." bevroren true, wijs=slik, klok -0.107
+     daarna goed: poortje 0 gaf slik, zin "Een pil moet eerst door je maag."
+  stap niets@2: na 3 foute tikken + 2,5 s: klok 1.5 -> 1.5, bevroren true, wijs=niets, doel 2:spuit:open=true, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+     goed getikt: bevroren false "Niets voor uur 2"; vlak voor het poortje gewisseld naar spuit: klok 1.887 (1,5 s later nog steeds vóór 2: true), bevroren true, wijs=niets, doel 2:spuit:open=true, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 2: niets kiezen is overslaan." bevroren true, wijs=niets, klok 1.887
+     daarna goed: poortje 2 gaf niets, zin "Je lichaam ruimt het op: elke 2,5 uur is de helft weg."
+  stap spuit@5: na 3 foute tikken + 2,5 s: klok 4.4 -> 4.4, bevroren true, wijs=spuit, doel 5:niets:open=true, zin "Au. De pijn komt terug."
+     goed getikt: bevroren false "Spuit voor uur 5"; vlak voor het poortje gewisseld naar slik: klok 4.893 (1,5 s later nog steeds vóór 5: true), bevroren true, wijs=spuit, doel 5:slik:open=true, zin "Au. De pijn komt terug."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 5: niets kiezen is overslaan." bevroren true, wijs=spuit, klok 4.893
+     daarna goed: poortje 5 gaf spuit, zin "Een prik werkt meteen, maar zakt net zo hard."
+  stap slik@9: na 3 foute tikken + 2,5 s: klok 8.5 -> 8.5, bevroren true, wijs=slik, doel 9:niets:open=true, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+     goed getikt: bevroren false "Tablet voor uur 9"; vlak voor het poortje gewisseld naar spuit: klok 8.887 (1,5 s later nog steeds vóór 9: true), bevroren true, wijs=slik, doel 9:spuit:open=true, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 9: niets kiezen is overslaan." bevroren true, wijs=slik, klok 8.887
+     daarna goed: poortje 9 gaf slik, zin "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd."
+  stap zetpil@13: na 3 foute tikken + 2,5 s: klok 12.5 -> 12.5, bevroren true, wijs=zetpil, doel 13:niets:open=true, zin "Slikken lukt niet altijd: kies nu een zetpil."
+     goed getikt: bevroren false "Zetpil voor uur 13"; vlak voor het poortje gewisseld naar spuit: klok 12.887 (1,5 s later nog steeds vóór 13: true), bevroren true, wijs=zetpil, doel 13:spuit:open=true, zin "Slikken lukt niet altijd: kies nu een zetpil."
+     zelfde knop nog eens (wissen): "Keuze gewist voor uur 13: niets kiezen is overslaan." bevroren true, wijs=zetpil, klok 12.887
+     daarna goed: poortje 13 gaf zetpil, zin "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan."
+  klaar: gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg dagteller 4000 tutorialDuur 92.57859999999987 consolefouten 0

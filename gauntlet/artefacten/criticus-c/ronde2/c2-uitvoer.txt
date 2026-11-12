@@ -1,0 +1,380 @@
+375x667 tut: consolefouten 0 
+375x667 race: consolefouten 0 
+
+== 375x667 m1a: tutorial klok -0.8 C 0 dag 0 | race klok -0.8 C 0 dag 0
+   zin tutorial: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." [melding zicht] @15,170,345,71.3 | race: "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." [melding zicht] @15,162,345,96.9
+   meldingstijl gelijk: true | QALY tut 0 race 0
+   DOM-verschillen: 4
+     .knoppen_lijst.0.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0) 0px 0px 0px 8.98411px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; bo
+     .los.melding: tutorial="Opa Jan heeft pijn: kies een tablet voor het eerste poortje." | race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,96.9"
+   pixelbanden (css-px, drempel 90/765): y20-40: 3638px (x 18–292) ; y40-60: 125px (x 24–288) ; y60-80: 4097px (x 18–358) ; y80-100: 734px (x 17–353) ; y100-120: 6211px (x 17–356) ; y120-140: 2213px (x 48–287) ; y140-160: 2269px (x 20–350) ; y160-180: 1756px (x 48–359) ; y180-200: 11332px (x 27–343) ; y200-220: 9831px (x 36–349) ; y220-240: 9453px (x 11–375) ; y240-260: 4648px (x 15–369) ; y260-280: 1047px (x 80–315) ; y280-300: 3614px (x 29–347) ; y300-320: 866px (x 20–354) ; y320-340: 4992px (x 0–374) ; y340-360: 2054px (x 0–374) ; y360-380: 3333px (x 4–370) ; y380-400: 2343px (x 0–360) ; y400-420: 811px (x 0–361) ; y420-440: 9136px (x 12–363) ; y440-460: 3184px (x 33–339) ; y460-480: 3227px (x 34–356) ; y480-500: 1289px (x 20–346) ; y500-520: 12958px (x 6–341) ; y520-540: 24892px (x 28–348) ; y540-560: 24637px (x 24–348) ; y560-580: 12814px (x 5–339) ; y580-600: 1160px (x 12–331) ; y600-620: 4075px (x 12–367) ; y620-640: 3052px (x 12–367) ; y640-660: 1321px (x 12–338) ; y660-680: 34px (x 44–375)
+
+== 375x667 m1b: tutorial klok -0.76 C 0 dag 0 | race klok -0.69 C 0 dag 0
+   zin tutorial: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." [melding zicht] @15,170,345,71.3 | race: "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." [melding zicht] @15,170,345,96.9
+   meldingstijl gelijk: true | QALY tut 0 race 0
+   DOM-verschillen: 5
+     .keuze-info.rect: tutorial="0,546,375,25.3" | race="0,546.3,375,25.3"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .los.melding: tutorial="Opa Jan heeft pijn: kies een tablet voor het eerste poortje." | race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,170,345,96.9"
+     .debug.klok: tutorial=-0.76 | race=-0.69
+   pixelbanden (css-px, drempel 90/765): y120-140: 66px (x 346–350) ; y140-160: 374px (x 20–359) ; y160-180: 330px (x 30–359) ; y180-200: 9131px (x 30–343) ; y200-220: 4541px (x 11–333) ; y220-240: 4548px (x 11–375) ; y240-260: 4288px (x 15–365) ; y260-280: 530px (x 79–315) ; y280-300: 258px (x 50–341) ; y300-320: 394px (x 20–374) ; y320-340: 411px (x 20–374) ; y340-360: 285px (x 47–370) ; y360-380: 149px (x 47–370) ; y380-400: 541px (x 16–361) ; y400-420: 8264px (x 11–363) ; y420-440: 1689px (x 12–363) ; y440-460: 242px (x 33–341) ; y460-480: 345px (x 20–355) ; y480-500: 209px (x 20–346) ; y500-520: 2357px (x 5–363) ; y520-540: 807px (x 12–363) ; y540-560: 289px (x 149–334)
+
+== 375x667 m1c: tutorial klok 0.25 C 4.07 dag 1000 | race klok 0.25 C 4.07 dag 1000
+   zin tutorial: "Een pil moet eerst door je maag." [melding zicht] @15,170,345,45.6 | race: "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." [melding zicht] @15,170,345,96.9
+   meldingstijl gelijk: true | QALY tut −4 race −4
+   DOM-verschillen: 2
+     .los.melding: tutorial="Een pil moet eerst door je maag." | race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+     .los.meldingRect: tutorial="15,170,345,45.6" | race="15,170,345,96.9"
+   pixelbanden (css-px, drempel 90/765): y160-180: 28px (x 63–103) ; y180-200: 8976px (x 42–333) ; y200-220: 4051px (x 42–333) ; y220-240: 4114px (x 42–334) ; y240-260: 4063px (x 80–282) ; y260-280: 40px (x 80–195) ; y300-320: 10px (x 18–33) ; y320-340: 84px (x 97–129) ; y340-360: 84px (x 97–129) ; y380-400: 2px (x 104–104) ; y460-480: 1px (x 298–298)
+
+== 375x667 m2a: tutorial klok 1.5 C 9.18 dag 1000 | race klok 1.5 C 9.18 dag 1000
+   zin tutorial: "De pijn is weg: kies Niets om een poortje over te slaan." [melding zicht] @15,170,345,71.3 | race: "" [melding] @15,162,345,96.9
+   meldingstijl gelijk: true | QALY tut 45 race 45
+   DOM-verschillen: 5
+     .knoppen_lijst.3.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.3.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.396) 0px 0px 0px 2.48266px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px
+     .los.melding: tutorial="De pijn is weg: kies Niets om een poortje over te slaan." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,96.9"
+   pixelbanden (css-px, drempel 90/765): y120-140: 19px (x 156–322) ; y140-160: 246px (x 50–331) ; y160-180: 134px (x 14–364) ; y180-200: 7882px (x 14–361) ; y200-220: 3470px (x 20–332) ; y220-240: 2973px (x 47–374) ; y240-260: 387px (x 135–370) ; y260-280: 380px (x 20–361) ; y280-300: 2927px (x 12–363) ; y300-320: 237px (x 11–326) ; y320-340: 811px (x 41–348) ; y340-360: 559px (x 16–316) ; y360-380: 145px (x 24–293) ; y380-400: 5357px (x 1–363) ; y400-420: 28px (x 0–279) ; y420-440: 147px (x 60–325) ; y440-460: 248px (x 6–333) ; y460-480: 148px (x 0–334) ; y480-500: 4115px (x 12–363) ; y500-520: 518px (x 20–359) ; y520-540: 83px (x 30–305) ; y540-560: 26px (x 64–237) ; y560-580: 584px (x 290–354) ; y580-600: 944px (x 280–364) ; y600-620: 560px (x 280–364) ; y620-640: 566px (x 280–364) ; y640-660: 1351px (x 280–364)
+
+== 375x667 m2b: tutorial klok 1.54 C 9.16 dag 1000 | race klok 1.58 C 9.14 dag 1000
+   zin tutorial: "De pijn is weg: kies Niets om een poortje over te slaan." [melding zicht] @15,170,345,71.3 | race: "" [melding] @15,162,345,96.9
+   meldingstijl gelijk: true | QALY tut 46 race 48
+   DOM-verschillen: 7
+     .knoppen_lijst.3.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .los.melding: tutorial="De pijn is weg: kies Niets om een poortje over te slaan." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,96.9"
+     .los.qaly: tutorial="46" | race="48"
+     .debug.klok: tutorial=1.54 | race=1.58
+     .debug.C: tutorial=9.16 | race=9.14
+   pixelbanden (css-px, drempel 90/765): y20-40: 646px (x 277–292) ; y40-60: 33px (x 279–288) ; y120-140: 47px (x 156–332) ; y140-160: 357px (x 50–322) ; y160-180: 723px (x 17–365) ; y180-200: 8141px (x 27–364) ; y200-220: 3509px (x 20–367) ; y220-240: 3253px (x 47–374) ; y240-260: 676px (x 141–342) ; y260-280: 2170px (x 12–363) ; y280-300: 1929px (x 12–363) ; y300-320: 317px (x 11–348) ; y320-340: 1993px (x 41–348) ; y340-360: 1388px (x 16–215) ; y360-380: 807px (x 17–346) ; y380-400: 6978px (x 0–363) ; y400-420: 93px (x 59–279) ; y420-440: 240px (x 60–325) ; y440-460: 383px (x 6–333) ; y460-480: 291px (x 0–350) ; y480-500: 4821px (x 12–363) ; y500-520: 355px (x 20–359) ; y520-540: 158px (x 30–305) ; y540-560: 60px (x 64–237)
+
+== 375x667 m2c: tutorial klok 2.25 C 8.3 dag 1000 | race klok 2.25 C 8.3 dag 1000
+   zin tutorial: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." [melding zicht] @15,170,345,71.3 | race: "" [melding] @15,162,345,96.9
+   meldingstijl gelijk: true | QALY tut 76 race 76
+   DOM-verschillen: 3
+     .los.melding: tutorial="Je lichaam ruimt het op: elke 2,5 uur is de helft weg." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,96.9"
+   pixelbanden (css-px, drempel 90/765): y120-140: 12px (x 63–64) ; y140-160: 191px (x 108–278) ; y160-180: 239px (x 21–331) ; y180-200: 7373px (x 40–370) ; y200-220: 4826px (x 12–374) ; y220-240: 2356px (x 102–360) ; y240-260: 9px (x 161–237) ; y260-280: 22px (x 11–348) ; y280-300: 148px (x 131–341) ; y300-320: 1407px (x 12–363) ; y320-340: 107px (x 16–315) ; y340-360: 74px (x 25–234) ; y380-400: 6px (x 184–325) ; y400-420: 1366px (x 12–363) ; y420-440: 44px (x 0–349) ; y440-460: 188px (x 6–359) ; y460-480: 225px (x 27–274) ; y480-500: 91px (x 31–311) ; y500-520: 51px (x 12–369) ; y520-540: 140px (x 67–369)
+
+== 375x667 m3a: tutorial klok 4.4 C 4.86 dag 1000 | race klok 4.4 C 4.86 dag 1000
+   zin tutorial: "Au. De pijn komt terug." [melding au zicht] @15,170,345,45.6 | race: "Au. De pijn komt terug." [melding au zicht] @15,170,345,45.6
+   meldingstijl gelijk: true | QALY tut 161 race 161
+   DOM-verschillen: 2
+     .knoppen_lijst.2.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.2.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.008) 0px 0px 0px 8.85384px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px
+   pixelbanden (css-px, drempel 90/765): y120-140: 16px (x 235–348) ; y140-160: 274px (x 120–348) ; y160-180: 242px (x 11–341) ; y180-200: 412px (x 12–363) ; y200-220: 76px (x 17–316) ; y220-240: 274px (x 16–346) ; y240-260: 169px (x 117–272) ; y260-280: 213px (x 16–326) ; y280-300: 3310px (x 12–363) ; y300-320: 895px (x 24–350) ; y320-340: 999px (x 0–359) ; y340-360: 700px (x 30–309) ; y360-380: 741px (x 59–369) ; y380-400: 387px (x 11–369) ; y400-420: 5439px (x 6–363) ; y420-440: 248px (x 15–333) ; y440-460: 202px (x 126–311) ; y460-480: 300px (x 44–375) ; y480-500: 135px (x 75–332) ; y500-520: 4198px (x 12–363) ; y520-540: 134px (x 47–323) ; y540-560: 36px (x 47–278) ; y560-580: 218px (x 205–260) ; y580-600: 683px (x 192–318) ; y600-620: 320px (x 192–273) ; y620-640: 328px (x 192–273) ; y640-660: 795px (x 192–273)
+
+== 375x667 m3b: tutorial klok 4.44 C 4.81 dag 1000 | race klok 4.48 C 4.77 dag 1000
+   zin tutorial: "Au. De pijn komt terug." [melding au zicht] @15,170,345,45.6 | race: "Au. De pijn komt terug." [melding au zicht] @15,170,345,45.6
+   meldingstijl gelijk: true | QALY tut 161 race 161
+   DOM-verschillen: 3
+     .knoppen_lijst.2.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .debug.klok: tutorial=4.44 | race=4.48
+     .debug.C: tutorial=4.81 | race=4.77
+   pixelbanden (css-px, drempel 90/765): y120-140: 76px (x 229–348) ; y140-160: 441px (x 120–341) ; y160-180: 414px (x 11–341) ; y180-200: 114px (x 12–363) ; y200-220: 198px (x 16–316) ; y220-240: 433px (x 41–346) ; y240-260: 288px (x 17–257) ; y260-280: 356px (x 16–326) ; y280-300: 4099px (x 12–363) ; y300-320: 402px (x 0–358) ; y320-340: 1336px (x 0–359) ; y340-360: 368px (x 30–309) ; y360-380: 220px (x 59–369) ; y380-400: 7821px (x 6–363) ; y400-420: 966px (x 5–317) ; y420-440: 380px (x 15–333) ; y440-460: 379px (x 44–311) ; y460-480: 360px (x 44–375) ; y480-500: 1761px (x 12–363) ; y500-520: 3016px (x 12–363) ; y520-540: 267px (x 47–331) ; y540-560: 7px (x 276–278) ; y560-580: 4px (x 20–21)
+
+== 375x667 m3c: tutorial klok 5.25 C 18.66 dag 2000 | race klok 5.25 C 18.66 dag 2000
+   zin tutorial: "Een prik werkt meteen, maar zakt net zo hard." [melding zicht] @15,170,345,71.3 | race: "" [melding au] @15,162,345,45.6
+   meldingstijl gelijk: false | QALY tut 172 race 172
+   DOM-verschillen: 4
+     .los.melding: tutorial="Een prik werkt meteen, maar zakt net zo hard." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding au"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,45.6"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 210, 204); letterSpacing=normal; textAlign=center"
+   pixelbanden (css-px, drempel 90/765): y140-160: 201px (x 79–293) ; y160-180: 188px (x 102–316) ; y180-200: 7678px (x 17–340) ; y200-220: 4301px (x 12–363) ; y220-240: 1421px (x 16–240) ; y240-260: 194px (x 20–355) ; y260-280: 65px (x 93–359) ; y280-300: 181px (x 0–325) ; y300-320: 2938px (x 0–363) ; y320-340: 954px (x 67–369) ; y340-360: 237px (x 27–341) ; y360-380: 170px (x 16–332) ; y380-400: 259px (x 6–333) ; y400-420: 2665px (x 12–363) ; y420-440: 295px (x 45–375) ; y440-460: 103px (x 75–310) ; y460-480: 61px (x 71–332) ; y480-500: 40px (x 47–305) ; y500-520: 90px (x 47–370) ; y520-540: 612px (x 12–363) ; y540-560: 22px (x 63–360)
+
+== 375x667 m4a: tutorial klok 8.5 C 7.58 dag 2000 | race klok 8.5 C 7.58 dag 2000
+   zin tutorial: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." [melding zicht] @15,170,345,71.3 | race: "" [melding au] @15,162,345,45.6
+   meldingstijl gelijk: false | QALY tut 307 race 307
+   DOM-verschillen: 6
+     .knoppen_lijst.0.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.004) 0px 0px 0px 8.93598px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px
+     .los.melding: tutorial="Elke gram telt mee in de dagteller linksboven: kies weer een tablet." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding au"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,45.6"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 210, 204); letterSpacing=normal; textAlign=center"
+   pixelbanden (css-px, drempel 90/765): y20-40: 651px (x 277–292) ; y40-60: 37px (x 279–289) ; y140-160: 408px (x 0–355) ; y160-180: 685px (x 14–333) ; y180-200: 8356px (x 14–339) ; y200-220: 5009px (x 0–331) ; y220-240: 3678px (x 39–336) ; y240-260: 265px (x 24–334) ; y260-280: 374px (x 44–375) ; y280-300: 3222px (x 12–363) ; y300-320: 272px (x 6–326) ; y320-340: 873px (x 6–332) ; y340-360: 226px (x 139–370) ; y360-380: 335px (x 20–361) ; y380-400: 5558px (x 12–363) ; y400-420: 195px (x 130–367) ; y420-440: 148px (x 229–365) ; y440-460: 172px (x 11–374) ; y460-480: 136px (x 11–354) ; y480-500: 3865px (x 12–363) ; y500-520: 291px (x 103–346) ; y520-540: 187px (x 100–350) ; y540-560: 20px (x 155–359) ; y560-580: 222px (x 25–81) ; y580-600: 686px (x 12–94) ; y600-620: 320px (x 12–94) ; y620-640: 328px (x 12–94) ; y640-660: 802px (x 12–94)
+
+== 375x667 m4b: tutorial klok 8.54 C 7.5 dag 2000 | race klok 8.58 C 7.43 dag 2000
+   zin tutorial: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." [melding zicht] @15,170,345,71.3 | race: "" [melding au] @15,162,345,45.6
+   meldingstijl gelijk: false | QALY tut 309 race 310
+   DOM-verschillen: 8
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .los.melding: tutorial="Elke gram telt mee in de dagteller linksboven: kies weer een tablet." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding au"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,45.6"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 210, 204); letterSpacing=normal; textAlign=center"
+     .los.qaly: tutorial="309" | race="310"
+     .debug.klok: tutorial=8.54 | race=8.58
+     .debug.C: tutorial=7.5 | race=7.43
+   pixelbanden (css-px, drempel 90/765): y20-40: 1405px (x 260–292) ; y40-60: 76px (x 261–291) ; y120-140: 39px (x 133–188) ; y140-160: 757px (x 0–356) ; y160-180: 698px (x 13–333) ; y180-200: 8069px (x 16–339) ; y200-220: 5056px (x 0–331) ; y220-240: 3757px (x 39–336) ; y240-260: 441px (x 24–334) ; y260-280: 2134px (x 12–375) ; y280-300: 2292px (x 12–363) ; y300-320: 485px (x 6–326) ; y320-340: 1766px (x 5–332) ; y340-360: 514px (x 33–370) ; y360-380: 728px (x 20–361) ; y380-400: 6988px (x 12–363) ; y400-420: 297px (x 130–367) ; y420-440: 257px (x 47–365) ; y440-460: 296px (x 11–374) ; y460-480: 183px (x 62–354) ; y480-500: 4639px (x 12–363) ; y500-520: 100px (x 103–346) ; y520-540: 297px (x 100–350) ; y540-560: 244px (x 41–359) ; y560-580: 93px (x 122–254)
+
+== 375x667 m4c: tutorial klok 9.25 C 10.23 dag 3000 | race klok 9.25 C 10.23 dag 3000
+   zin tutorial: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." [melding zicht] @15,170,345,71.3 | race: "Opa is misselijk na de narcose." [melding wending met-fig zicht] @15,170,345,91.7
+   meldingstijl gelijk: false | QALY tut 338 race 338
+   DOM-verschillen: 7
+     .knoppen_lijst.0.tekst: tutorial="Tablet" | race="Misselijk"
+     .knoppen_lijst.0.klasse: tutorial="actie" | race="actie geblokkeerd"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; animationName=none; boxShadow=none; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(11, 11, 16); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 
+     .los.melding: tutorial="Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." | race="Opa is misselijk na de narcose."
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig zicht"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,170,345,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+   pixelbanden (css-px, drempel 90/765): y120-140: 4px (x 15–264) ; y140-160: 226px (x 54–333) ; y160-180: 139px (x 50–225) ; y180-200: 8124px (x 27–335) ; y200-220: 9643px (x 12–363) ; y220-240: 6923px (x 24–375) ; y240-260: 689px (x 46–374) ; y260-280: 216px (x 74–326) ; y280-300: 91px (x 132–301) ; y300-320: 1779px (x 6–370) ; y320-340: 2499px (x 72–361) ; y340-360: 905px (x 20–341) ; y360-380: 1272px (x 62–367) ; y380-400: 140px (x 130–342) ; y400-420: 2605px (x 0–364) ; y420-440: 720px (x 0–373) ; y440-460: 965px (x 0–354) ; y460-480: 312px (x 0–343) ; y480-500: 337px (x 0–350) ; y500-520: 320px (x 0–359) ; y520-540: 867px (x 0–363) ; y540-560: 251px (x 0–369) ; y560-580: 111px (x 0–80) ; y580-600: 514px (x 13–93) ; y600-620: 1420px (x 12–94) ; y620-640: 1523px (x 12–94) ; y640-660: 509px (x 13–93)
+
+== 375x667 m5a: tutorial klok 12.5 C 8.69 dag 3000 | race klok 12.5 C 8.69 dag 3000
+   zin tutorial: "Slikken lukt niet altijd: kies nu een zetpil." [melding zicht] @15,170,345,71.3 | race: "" [melding wending met-fig] @15,162,345,91.7
+   meldingstijl gelijk: false | QALY tut 474 race 474
+   DOM-verschillen: 10
+     .knoppen_lijst.0.tekst: tutorial="Tablet" | race="Misselijk"
+     .knoppen_lijst.0.klasse: tutorial="actie" | race="actie geblokkeerd"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; animationName=none; boxShadow=none; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(11, 11, 16); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 
+     .knoppen_lijst.1.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.1.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.482) 0px 0px 0px 1.09079px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px
+     .tekst.portret: tutorial=887 | race=914
+     .los.melding: tutorial="Slikken lukt niet altijd: kies nu een zetpil." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+   pixelbanden (css-px, drempel 90/765): y20-40: 594px (x 277–292) ; y40-60: 42px (x 280–290) ; y60-80: 133px (x 272–292) ; y80-100: 72px (x 275–293) ; y120-140: 117px (x 0–333) ; y140-160: 1165px (x 0–361) ; y160-180: 1606px (x 0–341) ; y180-200: 8658px (x 0–341) ; y200-220: 2253px (x 0–307) ; y220-240: 1700px (x 0–367) ; y240-260: 492px (x 0–342) ; y260-280: 508px (x 0–343) ; y280-300: 3397px (x 0–374) ; y300-320: 490px (x 0–374) ; y320-340: 1151px (x 0–369) ; y340-360: 452px (x 0–348) ; y360-380: 289px (x 0–264) ; y380-400: 5621px (x 0–363) ; y400-420: 368px (x 0–279) ; y420-440: 387px (x 0–257) ; y440-460: 334px (x 0–274) ; y460-480: 329px (x 0–285) ; y480-500: 4078px (x 0–363) ; y500-520: 640px (x 0–333) ; y520-540: 315px (x 0–334) ; y540-560: 284px (x 0–173) ; y560-580: 549px (x 0–173) ; y580-600: 1298px (x 13–184) ; y600-620: 1820px (x 12–184) ; y620-640: 1931px (x 12–184) ; y640-660: 1601px (x 13–184)
+
+== 375x667 m5b: tutorial klok 12.54 C 8.59 dag 3000 | race klok 12.59 C 8.48 dag 3000
+   zin tutorial: "Slikken lukt niet altijd: kies nu een zetpil." [melding zicht] @15,170,345,71.3 | race: "" [melding wending met-fig] @15,162,345,91.7
+   meldingstijl gelijk: false | QALY tut 476 race 478
+   DOM-verschillen: 13
+     .keuze-info.rect: tutorial="0,546.1,375,25.3" | race="0,546.3,375,25.3"
+     .knoppen_lijst.0.tekst: tutorial="Tablet" | race="Misselijk"
+     .knoppen_lijst.0.klasse: tutorial="actie" | race="actie geblokkeerd"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; animationName=none; boxShadow=none; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(11, 11, 16); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 
+     .knoppen_lijst.1.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .tekst.portret: tutorial=887 | race=914
+     .los.melding: tutorial="Slikken lukt niet altijd: kies nu een zetpil." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig"
+     .los.meldingRect: tutorial="15,170,345,71.3" | race="15,162,345,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+     .los.qaly: tutorial="476" | race="478"
+     .debug.klok: tutorial=12.54 | race=12.59
+     .debug.C: tutorial=8.59 | race=8.48
+   pixelbanden (css-px, drempel 90/765): y20-40: 303px (x 277–292) ; y40-60: 11px (x 280–289) ; y60-80: 133px (x 272–292) ; y80-100: 72px (x 275–293) ; y120-140: 196px (x 0–333) ; y140-160: 1692px (x 0–361) ; y160-180: 1216px (x 0–332) ; y180-200: 8363px (x 0–341) ; y200-220: 2167px (x 0–307) ; y220-240: 1843px (x 0–367) ; y240-260: 980px (x 0–342) ; y260-280: 2804px (x 0–363) ; y280-300: 2826px (x 0–374) ; y300-320: 914px (x 0–365) ; y320-340: 2421px (x 0–369) ; y340-360: 720px (x 0–349) ; y360-380: 930px (x 0–349) ; y380-400: 8041px (x 0–363) ; y400-420: 443px (x 0–279) ; y420-440: 653px (x 0–257) ; y440-460: 493px (x 0–274) ; y460-480: 477px (x 0–285) ; y480-500: 5010px (x 0–363) ; y500-520: 610px (x 0–333) ; y520-540: 509px (x 0–333) ; y540-560: 322px (x 0–257) ; y560-580: 111px (x 0–80) ; y580-600: 514px (x 13–93) ; y600-620: 1404px (x 12–94) ; y620-640: 1523px (x 12–94) ; y640-660: 509px (x 13–93)
+
+== 375x667 m5c: tutorial klok 13.25 C 7.49 dag 4000 | race klok 13.25 C 7.49 dag 4000
+   zin tutorial: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." [melding zicht] @15,170,345,96.9 | race: "" [melding wending met-fig] @15,162,345,91.7
+   meldingstijl gelijk: false | QALY tut 505 race 505
+   DOM-verschillen: 8
+     .knoppen_lijst.0.tekst: tutorial="Tablet" | race="Misselijk"
+     .knoppen_lijst.0.klasse: tutorial="actie" | race="actie geblokkeerd"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; animationName=none; boxShadow=none; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=14px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(11, 11, 16); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 
+     .tekst.portret: tutorial=887 | race=914
+     .los.melding: tutorial="Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig"
+     .los.meldingRect: tutorial="15,170,345,96.9" | race="15,162,345,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+   pixelbanden (css-px, drempel 90/765): y60-80: 133px (x 272–292) ; y80-100: 72px (x 275–293) ; y120-140: 108px (x 0–3) ; y140-160: 977px (x 0–326) ; y160-180: 708px (x 0–327) ; y180-200: 6760px (x 0–317) ; y200-220: 7191px (x 0–363) ; y220-240: 4479px (x 0–345) ; y240-260: 1743px (x 0–358) ; y260-280: 354px (x 0–186) ; y280-300: 281px (x 0–369) ; y300-320: 1625px (x 0–363) ; y320-340: 308px (x 0–308) ; y340-360: 310px (x 0–264) ; y360-380: 260px (x 0–214) ; y380-400: 263px (x 0–257) ; y400-420: 1411px (x 0–363) ; y420-440: 246px (x 0–205) ; y440-460: 247px (x 0–275) ; y460-480: 248px (x 0–96) ; y480-500: 240px (x 0–3) ; y500-520: 257px (x 0–325) ; y520-540: 285px (x 0–347) ; y540-560: 240px (x 0–3) ; y560-580: 111px (x 0–80) ; y580-600: 514px (x 13–93) ; y600-620: 1420px (x 12–94) ; y620-640: 1523px (x 12–94) ; y640-660: 509px (x 13–93)
+
+== 375x667 m6: tutorial klok 15.5 C 5.84 dag 4000 | race klok 15.5 C 5.84 dag 4000
+   zin tutorial: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." [melding zicht] @15,170,345,96.9 | race: "" [melding wending met-fig] @15,162,345,91.7
+   meldingstijl gelijk: false | QALY tut 599 race 599
+   DOM-verschillen: 5
+     .tekst.portret: tutorial=887 | race=914
+     .los.melding: tutorial="Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig"
+     .los.meldingRect: tutorial="15,170,345,96.9" | race="15,162,345,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=19px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+   pixelbanden (css-px, drempel 90/765): y60-80: 133px (x 272–292) ; y80-100: 72px (x 275–293) ; y120-140: 108px (x 0–3) ; y140-160: 905px (x 0–326) ; y160-180: 580px (x 0–327) ; y180-200: 6673px (x 0–317) ; y200-220: 5182px (x 0–345) ; y220-240: 4620px (x 0–353) ; y240-260: 1885px (x 0–314) ; y260-280: 294px (x 0–325) ; y280-300: 1630px (x 0–363) ; y300-320: 240px (x 0–3) ; y320-340: 305px (x 0–151) ; y340-360: 306px (x 0–193) ; y360-380: 243px (x 0–49) ; y380-400: 1284px (x 0–363) ; y400-420: 2px (x 80–82) ; y460-480: 2px (x 168–170) ; y480-500: 1348px (x 12–363) ; y500-520: 96px (x 283–326) ; y520-540: 1px (x 141–141)
+390x844 tut: consolefouten 0 
+390x844 race: consolefouten 0 
+
+== 390x844 m1a: tutorial klok -0.8 C 0 dag 0 | race klok -0.8 C 0 dag 0
+   zin tutorial: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." [melding zicht] @15.6,170,358.8,74 | race: "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." [melding zicht] @15.6,162,358.8,101
+   meldingstijl gelijk: true | QALY tut 0 race 0
+   DOM-verschillen: 4
+     .knoppen_lijst.0.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.004) 0px 0px 0px 8.93559px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px
+     .los.melding: tutorial="Opa Jan heeft pijn: kies een tablet voor het eerste poortje." | race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,101"
+   pixelbanden (css-px, drempel 90/765): y20-40: 3585px (x 18–307) ; y40-60: 118px (x 24–303) ; y60-80: 3954px (x 18–373) ; y80-100: 714px (x 17–368) ; y100-120: 3962px (x 17–371) ; y120-140: 2268px (x 52–297) ; y140-160: 388px (x 0–364) ; y160-180: 465px (x 21–346) ; y180-200: 12582px (x 32–373) ; y200-220: 7962px (x 2–357) ; y220-240: 6374px (x 42–349) ; y240-260: 4387px (x 65–335) ; y260-280: 492px (x 11–390) ; y280-300: 460px (x 16–390) ; y300-320: 5405px (x 51–379) ; y320-340: 2202px (x 43–341) ; y340-360: 4505px (x 8–381) ; y360-380: 4898px (x 61–368) ; y380-400: 414px (x 7–389) ; y400-420: 1913px (x 7–389) ; y420-440: 1583px (x 9–390) ; y440-460: 470px (x 4–385) ; y460-480: 1144px (x 7–350) ; y480-500: 610px (x 6–388) ; y500-520: 528px (x 17–375) ; y520-540: 9486px (x 12–378) ; y540-560: 638px (x 3–339) ; y560-580: 416px (x 12–350) ; y580-600: 908px (x 33–362) ; y600-620: 937px (x 21–374) ; y620-640: 735px (x 36–374) ; y640-660: 2077px (x 6–378) ; y660-680: 3214px (x 7–383) ; y680-700: 235px (x 146–347) ; y700-720: 2952px (x 56–346) ; y720-740: 148px (x 270–349) ; y740-760: 2844px (x 13–330) ; y760-780: 2570px (x 12–358) ; y780-800: 2306px (x 12–357) ; y800-820: 4076px (x 12–358) ; y820-840: 880px (x 13–333) ; y840-860: 9px (x 297–299)
+
+== 390x844 m1b: tutorial klok -0.76 C 0 dag 0 | race klok -0.69 C 0 dag 0
+   zin tutorial: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." [melding zicht] @15.6,170,358.8,74 | race: "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." [melding zicht] @15.6,170,358.8,101
+   meldingstijl gelijk: true | QALY tut 0 race 0
+   DOM-verschillen: 5
+     .keuze-info.rect: tutorial="0,715.1,390,25.3" | race="0,715.3,390,25.3"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .los.melding: tutorial="Opa Jan heeft pijn: kies een tablet voor het eerste poortje." | race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,170,358.8,101"
+     .debug.klok: tutorial=-0.76 | race=-0.69
+   pixelbanden (css-px, drempel 90/765): y120-140: 16px (x 49–194) ; y140-160: 186px (x 48–364) ; y160-180: 325px (x 21–373) ; y180-200: 9786px (x 32–373) ; y200-220: 3980px (x 32–357) ; y220-240: 5590px (x 42–349) ; y240-260: 4873px (x 11–335) ; y260-280: 429px (x 12–390) ; y280-300: 387px (x 16–384) ; y300-320: 335px (x 94–379) ; y320-340: 462px (x 123–327) ; y340-360: 416px (x 52–354) ; y360-380: 163px (x 61–368) ; y380-400: 369px (x 21–389) ; y400-420: 303px (x 21–389) ; y420-440: 252px (x 73–355) ; y440-460: 158px (x 49–385) ; y460-480: 112px (x 230–296) ; y480-500: 498px (x 17–375) ; y500-520: 5347px (x 12–378) ; y520-540: 5235px (x 12–378) ; y540-560: 462px (x 14–329) ; y560-580: 229px (x 107–350) ; y580-600: 307px (x 62–370) ; y600-620: 210px (x 21–370) ; y620-640: 132px (x 156–312) ; y640-660: 5174px (x 6–378) ; y660-680: 108px (x 245–346) ; y680-700: 374px (x 168–347) ; y700-720: 292px (x 57–323) ; y720-740: 20px (x 48–271)
+
+== 390x844 m1c: tutorial klok 0.25 C 4.07 dag 1000 | race klok 0.25 C 4.07 dag 1000
+   zin tutorial: "Een pil moet eerst door je maag." [melding zicht] @15.6,170,358.8,47 | race: "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is." [melding zicht] @15.6,170,358.8,101
+   meldingstijl gelijk: true | QALY tut −4 race −4
+   DOM-verschillen: 2
+     .los.melding: tutorial="Een pil moet eerst door je maag." | race="Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+     .los.meldingRect: tutorial="15.6,170,358.8,47" | race="15.6,170,358.8,101"
+   pixelbanden (css-px, drempel 90/765): y140-160: 6px (x 193–346) ; y160-180: 41px (x 106–248) ; y180-200: 9660px (x 12–384) ; y200-220: 3437px (x 42–390) ; y220-240: 5037px (x 16–349) ; y240-260: 4695px (x 95–295) ; y260-280: 50px (x 107–233) ; y280-300: 32px (x 52–289) ; y300-320: 24px (x 83–275) ; y320-340: 56px (x 21–368) ; y340-360: 2px (x 387–389) ; y360-380: 26px (x 208–355) ; y380-400: 1540px (x 12–385) ; y400-420: 1443px (x 29–326) ; y420-440: 924px (x 65–375) ; y440-460: 1168px (x 106–246) ; y460-480: 26px (x 18–329) ; y480-500: 3px (x 35–36) ; y500-520: 94px (x 108–362) ; y520-540: 2666px (x 12–378) ; y540-560: 6px (x 78–80) ; y560-580: 10px (x 21–304) ; y580-600: 10px (x 309–312) ; y600-620: 12px (x 288–338) ; y620-640: 29px (x 6–347) ; y640-660: 2155px (x 12–378) ; y660-680: 52px (x 0–347) ; y680-700: 4px (x 226–236)
+
+== 390x844 m2a: tutorial klok 1.5 C 9.18 dag 1000 | race klok 1.5 C 9.18 dag 1000
+   zin tutorial: "De pijn is weg: kies Niets om een poortje over te slaan." [melding zicht] @15.6,170,358.8,74 | race: "" [melding] @15.6,162,358.8,101
+   meldingstijl gelijk: true | QALY tut 45 race 45
+   DOM-verschillen: 5
+     .knoppen_lijst.3.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.3.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.424) 0px 0px 0px 2.08749px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px
+     .los.melding: tutorial="De pijn is weg: kies Niets om een poortje over te slaan." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding"
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,101"
+   pixelbanden (css-px, drempel 90/765): y120-140: 48px (x 46–97) ; y140-160: 64px (x 229–390) ; y160-180: 240px (x 65–345) ; y180-200: 7537px (x 39–351) ; y200-220: 2292px (x 56–379) ; y220-240: 6435px (x 12–378) ; y240-260: 638px (x 33–361) ; y260-280: 521px (x 21–382) ; y280-300: 521px (x 49–389) ; y300-320: 300px (x 135–385) ; y320-340: 245px (x 152–211) ; y340-360: 497px (x 21–375) ; y360-380: 2858px (x 12–378) ; y380-400: 250px (x 12–329) ; y400-420: 263px (x 45–362) ; y420-440: 425px (x 17–362) ; y440-460: 318px (x 136–242) ; y460-480: 41px (x 25–360) ; y480-500: 5600px (x 12–378) ; y500-520: 18px (x 0–370) ; y520-540: 27px (x 62–290) ; y540-560: 57px (x 62–338) ; y560-580: 144px (x 192–347) ; y580-600: 210px (x 6–347) ; y600-620: 317px (x 0–347) ; y620-640: 4285px (x 12–378) ; y640-660: 148px (x 21–356) ; y660-680: 176px (x 21–373) ; y680-700: 85px (x 32–317) ; y700-720: 22px (x 67–246) ; y740-760: 1107px (x 293–378) ; y760-780: 488px (x 292–379) ; y780-800: 480px (x 292–379) ; y800-820: 488px (x 292–379) ; y820-840: 1104px (x 293–378)
+
+== 390x844 m2b: tutorial klok 1.54 C 9.16 dag 1000 | race klok 1.57 C 9.14 dag 1000
+   zin tutorial: "De pijn is weg: kies Niets om een poortje over te slaan." [melding zicht] @15.6,170,358.8,74 | race: "" [melding] @15.6,162,358.8,101
+   meldingstijl gelijk: true | QALY tut 46 race 48
+   DOM-verschillen: 8
+     .keuze-info.rect: tutorial="0,715.3,390,25.3" | race="0,715.1,390,25.3"
+     .knoppen_lijst.3.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(159, 112, 230, 0.282); borderRadius=18px; borderTopColor=rgb(178, 128, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .los.melding: tutorial="De pijn is weg: kies Niets om een poortje over te slaan." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding"
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,101"
+     .los.qaly: tutorial="46" | race="48"
+     .debug.klok: tutorial=1.54 | race=1.57
+     .debug.C: tutorial=9.16 | race=9.14
+   pixelbanden (css-px, drempel 90/765): y20-40: 651px (x 292–307) ; y40-60: 37px (x 294–304) ; y120-140: 25px (x 79–389) ; y140-160: 182px (x 162–390) ; y160-180: 276px (x 61–345) ; y180-200: 7587px (x 39–351) ; y200-220: 2749px (x 56–379) ; y220-240: 6527px (x 12–378) ; y240-260: 1341px (x 21–361) ; y260-280: 1074px (x 21–382) ; y280-300: 1083px (x 49–389) ; y300-320: 692px (x 142–385) ; y320-340: 497px (x 21–375) ; y340-360: 4275px (x 12–378) ; y360-380: 344px (x 99–341) ; y380-400: 345px (x 12–329) ; y400-420: 1111px (x 43–362) ; y420-440: 724px (x 17–355) ; y440-460: 662px (x 154–241) ; y460-480: 619px (x 14–360) ; y480-500: 7589px (x 12–378) ; y500-520: 83px (x 0–370) ; y520-540: 82px (x 62–290) ; y540-560: 174px (x 190–338) ; y560-580: 234px (x 192–347) ; y580-600: 299px (x 6–311) ; y600-620: 4769px (x 0–378) ; y620-640: 369px (x 155–364) ; y640-660: 332px (x 21–373) ; y660-680: 193px (x 28–316) ; y680-700: 166px (x 32–317) ; y700-720: 77px (x 67–246)
+
+== 390x844 m2c: tutorial klok 2.25 C 8.3 dag 1000 | race klok 2.25 C 8.3 dag 1000
+   zin tutorial: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." [melding zicht] @15.6,170,358.8,74 | race: "" [melding] @15.6,162,358.8,101
+   meldingstijl gelijk: true | QALY tut 76 race 76
+   DOM-verschillen: 3
+     .los.melding: tutorial="Je lichaam ruimt het op: elke 2,5 uur is de helft weg." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding"
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,101"
+   pixelbanden (css-px, drempel 90/765): y20-40: 714px (x 292–307) ; y40-60: 40px (x 294–304) ; y140-160: 285px (x 31–318) ; y160-180: 257px (x 66–215) ; y180-200: 7910px (x 39–350) ; y200-220: 2921px (x 43–346) ; y220-240: 3189px (x 21–382) ; y240-260: 195px (x 165–389) ; y260-280: 647px (x 83–389) ; y280-300: 105px (x 207–375) ; y300-320: 62px (x 99–302) ; y320-340: 15px (x 35–329) ; y340-360: 14px (x 12–361) ; y360-380: 111px (x 217–355) ; y380-400: 183px (x 43–335) ; y400-420: 433px (x 17–333) ; y420-440: 254px (x 157–304) ; y440-460: 312px (x 78–243) ; y460-480: 3px (x 21–22) ; y500-520: 3px (x 191–248) ; y520-540: 1343px (x 12–378) ; y540-560: 112px (x 48–346) ; y560-580: 119px (x 0–363) ; y580-600: 102px (x 104–356) ; y600-620: 159px (x 21–373) ; y620-640: 185px (x 28–323) ; y640-660: 1243px (x 12–378) ; y660-680: 5px (x 67–315) ; y680-700: 138px (x 12–384) ; y700-720: 4px (x 70–314)
+
+== 390x844 m3a: tutorial klok 4.4 C 4.86 dag 1000 | race klok 4.4 C 4.86 dag 1000
+   zin tutorial: "Au. De pijn komt terug." [melding au zicht] @15.6,170,358.8,47 | race: "Au. De pijn komt terug." [melding au zicht] @15.6,170,358.8,47
+   meldingstijl gelijk: true | QALY tut 161 race 161
+   DOM-verschillen: 2
+     .knoppen_lijst.2.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.2.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.016) 0px 0px 0px 8.7376px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px;
+   pixelbanden (css-px, drempel 90/765): y140-160: 333px (x 161–389) ; y160-180: 233px (x 35–389) ; y180-200: 37px (x 358–362) ; y200-220: 272px (x 83–355) ; y220-240: 265px (x 12–340) ; y240-260: 3709px (x 12–378) ; y260-280: 169px (x 21–329) ; y280-300: 251px (x 17–296) ; y300-320: 139px (x 124–360) ; y320-340: 193px (x 17–266) ; y340-360: 189px (x 78–339) ; y360-380: 3628px (x 12–378) ; y380-400: 470px (x 91–369) ; y400-420: 1100px (x 0–364) ; y420-440: 574px (x 74–356) ; y440-460: 1042px (x 0–373) ; y460-480: 144px (x 56–312) ; y480-500: 191px (x 32–341) ; y500-520: 5679px (x 11–384) ; y520-540: 192px (x 6–248) ; y540-560: 172px (x 153–292) ; y560-580: 208px (x 16–347) ; y580-600: 241px (x 61–323) ; y600-620: 82px (x 46–316) ; y620-640: 5118px (x 12–390) ; y640-660: 176px (x 47–363) ; y660-680: 85px (x 48–345) ; y680-700: 127px (x 157–319) ; y700-720: 53px (x 74–361) ; y720-740: 8px (x 286–289) ; y740-760: 778px (x 200–284) ; y760-780: 338px (x 199–285) ; y780-800: 320px (x 199–285) ; y800-820: 338px (x 199–285) ; y820-840: 778px (x 200–284)
+
+== 390x844 m3b: tutorial klok 4.44 C 4.81 dag 1000 | race klok 4.48 C 4.77 dag 1000
+   zin tutorial: "Au. De pijn komt terug." [melding au zicht] @15.6,170,358.8,47 | race: "Au. De pijn komt terug." [melding au zicht] @15.6,170,358.8,47
+   meldingstijl gelijk: true | QALY tut 161 race 161
+   DOM-verschillen: 3
+     .knoppen_lijst.2.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .debug.klok: tutorial=4.44 | race=4.48
+     .debug.C: tutorial=4.81 | race=4.77
+   pixelbanden (css-px, drempel 90/765): y140-160: 705px (x 158–389) ; y160-180: 480px (x 35–379) ; y180-200: 88px (x 328–362) ; y200-220: 455px (x 12–355) ; y220-240: 3181px (x 12–378) ; y240-260: 622px (x 21–350) ; y260-280: 342px (x 21–329) ; y280-300: 480px (x 17–296) ; y300-320: 302px (x 122–360) ; y320-340: 354px (x 17–267) ; y340-360: 516px (x 78–340) ; y360-380: 3742px (x 12–378) ; y380-400: 320px (x 48–290) ; y400-420: 1252px (x 0–364) ; y420-440: 475px (x 75–373) ; y440-460: 294px (x 0–347) ; y460-480: 232px (x 32–312) ; y480-500: 7753px (x 12–378) ; y500-520: 1646px (x 6–384) ; y520-540: 293px (x 6–249) ; y540-560: 241px (x 94–292) ; y560-580: 367px (x 16–347) ; y580-600: 448px (x 61–323) ; y600-620: 243px (x 46–341) ; y620-640: 4977px (x 12–390) ; y640-660: 254px (x 47–363) ; y660-680: 178px (x 48–345) ; y680-700: 139px (x 157–361) ; y700-720: 163px (x 73–335) ; y720-740: 8px (x 49–51)
+
+== 390x844 m3c: tutorial klok 5.25 C 18.66 dag 2000 | race klok 5.25 C 18.66 dag 2000
+   zin tutorial: "Een prik werkt meteen, maar zakt net zo hard." [melding zicht] @15.6,170,358.8,74 | race: "" [melding au] @15.6,162,358.8,47
+   meldingstijl gelijk: false | QALY tut 172 race 172
+   DOM-verschillen: 4
+     .los.melding: tutorial="Een prik werkt meteen, maar zakt net zo hard." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding au"
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,47"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 210, 204); letterSpacing=normal; textAlign=center"
+   pixelbanden (css-px, drempel 90/765): y140-160: 58px (x 137–355) ; y160-180: 85px (x 106–134) ; y180-200: 8079px (x 35–356) ; y200-220: 2154px (x 51–354) ; y220-240: 2018px (x 106–251) ; y240-260: 70px (x 248–340) ; y260-280: 639px (x 303–341) ; y300-320: 27px (x 17–80) ; y320-340: 48px (x 21–339) ; y340-360: 92px (x 48–356) ; y360-380: 7px (x 372–373) ; y380-400: 1066px (x 21–373) ; y400-420: 91px (x 32–346) ; y420-440: 102px (x 32–268) ; y440-460: 66px (x 62–312) ; y460-480: 103px (x 28–347) ; y480-500: 75px (x 6–248) ; y500-520: 222px (x 6–248) ; y520-540: 1243px (x 12–378) ; y540-560: 66px (x 132–302) ; y560-580: 208px (x 46–390) ; y580-600: 42px (x 173–258) ; y600-620: 29px (x 78–314) ; y620-640: 24px (x 157–343) ; y640-660: 1242px (x 12–378) ; y660-680: 57px (x 259–289) ; y700-720: 4px (x 21–22)
+
+== 390x844 m4a: tutorial klok 8.5 C 7.58 dag 2000 | race klok 8.5 C 7.58 dag 2000
+   zin tutorial: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." [melding zicht] @15.6,170,358.8,74 | race: "" [melding au] @15.6,162,358.8,47
+   meldingstijl gelijk: false | QALY tut 307 race 307
+   DOM-verschillen: 6
+     .knoppen_lijst.0.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.498) 0px 0px 0px 0.829971px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18p
+     .los.melding: tutorial="Elke gram telt mee in de dagteller linksboven: kies weer een tablet." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding au"
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,47"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 210, 204); letterSpacing=normal; textAlign=center"
+   pixelbanden (css-px, drempel 90/765): y20-40: 651px (x 292–307) ; y40-60: 37px (x 294–304) ; y120-140: 19px (x 48–177) ; y140-160: 244px (x 21–296) ; y160-180: 303px (x 106–290) ; y180-200: 8436px (x 17–384) ; y200-220: 4238px (x 11–369) ; y220-240: 7606px (x 0–378) ; y240-260: 345px (x 15–347) ; y260-280: 191px (x 16–339) ; y280-300: 282px (x 79–321) ; y300-320: 180px (x 28–234) ; y320-340: 186px (x 25–347) ; y340-360: 419px (x 67–347) ; y360-380: 2967px (x 12–378) ; y380-400: 243px (x 46–390) ; y400-420: 751px (x 77–338) ; y420-440: 269px (x 6–361) ; y440-460: 52px (x 99–345) ; y460-480: 20px (x 157–316) ; y480-500: 5603px (x 12–385) ; y500-520: 281px (x 47–362) ; y520-540: 163px (x 21–375) ; y540-560: 104px (x 136–335) ; y560-580: 139px (x 135–382) ; y580-600: 75px (x 48–379) ; y600-620: 339px (x 178–389) ; y620-640: 4081px (x 12–389) ; y640-660: 70px (x 65–367) ; y660-680: 42px (x 138–329) ; y680-700: 13px (x 108–329) ; y700-720: 6px (x 125–210) ; y740-760: 892px (x 13–97) ; y760-780: 398px (x 12–98) ; y780-800: 400px (x 12–98) ; y800-820: 398px (x 12–98) ; y820-840: 893px (x 13–97)
+
+== 390x844 m4b: tutorial klok 8.54 C 7.51 dag 2000 | race klok 8.58 C 7.43 dag 2000
+   zin tutorial: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." [melding zicht] @15.6,170,358.8,74 | race: "" [melding au] @15.6,162,358.8,47
+   meldingstijl gelijk: false | QALY tut 309 race 310
+   DOM-verschillen: 8
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .los.melding: tutorial="Elke gram telt mee in de dagteller linksboven: kies weer een tablet." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding au"
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,47"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 210, 204); letterSpacing=normal; textAlign=center"
+     .los.qaly: tutorial="309" | race="310"
+     .debug.klok: tutorial=8.54 | race=8.58
+     .debug.C: tutorial=7.51 | race=7.43
+   pixelbanden (css-px, drempel 90/765): y20-40: 719px (x 292–307) ; y40-60: 38px (x 293–306) ; y120-140: 64px (x 48–177) ; y140-160: 582px (x 21–296) ; y160-180: 542px (x 32–283) ; y180-200: 8390px (x 17–384) ; y200-220: 4315px (x 11–370) ; y220-240: 6559px (x 0–378) ; y240-260: 674px (x 57–347) ; y260-280: 477px (x 0–311) ; y280-300: 610px (x 28–322) ; y300-320: 419px (x 28–234) ; y320-340: 448px (x 25–347) ; y340-360: 4378px (x 12–378) ; y360-380: 312px (x 162–339) ; y380-400: 504px (x 46–390) ; y400-420: 1663px (x 6–361) ; y420-440: 630px (x 6–361) ; y440-460: 164px (x 157–345) ; y460-480: 699px (x 157–336) ; y480-500: 7514px (x 12–385) ; y500-520: 575px (x 35–375) ; y520-540: 271px (x 21–375) ; y540-560: 256px (x 137–382) ; y560-580: 225px (x 135–382) ; y580-600: 221px (x 48–379) ; y600-620: 5519px (x 12–389) ; y620-640: 317px (x 12–368) ; y640-660: 80px (x 65–275) ; y660-680: 100px (x 138–329) ; y680-700: 26px (x 107–109) ; y700-720: 73px (x 124–360)
+
+== 390x844 m4c: tutorial klok 9.25 C 10.23 dag 3000 | race klok 9.25 C 10.23 dag 3000
+   zin tutorial: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." [melding zicht] @15.6,170,358.8,101 | race: "Opa is misselijk na de narcose." [melding wending met-fig zicht] @15.6,170,358.8,91.7
+   meldingstijl gelijk: false | QALY tut 338 race 338
+   DOM-verschillen: 7
+     .knoppen_lijst.0.tekst: tutorial="Tablet" | race="Misselijk"
+     .knoppen_lijst.0.klasse: tutorial="actie" | race="actie geblokkeerd"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; animationName=none; boxShadow=none; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(11, 11, 16); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 
+     .los.melding: tutorial="Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." | race="Opa is misselijk na de narcose."
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig zicht"
+     .los.meldingRect: tutorial="15.6,170,358.8,101" | race="15.6,170,358.8,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+   pixelbanden (css-px, drempel 90/765): y140-160: 27px (x 13–283) ; y160-180: 16px (x 206–285) ; y180-200: 8026px (x 0–350) ; y200-220: 7554px (x 40–345) ; y220-240: 5972px (x 16–296) ; y240-260: 3493px (x 46–339) ; y260-280: 1148px (x 12–378) ; y280-300: 3px (x 212–214) ; y300-320: 18px (x 25–27) ; y320-340: 13px (x 163–312) ; y340-360: 33px (x 46–203) ; y360-380: 63px (x 49–315) ; y380-400: 1167px (x 12–378) ; y400-420: 1385px (x 6–326) ; y420-440: 1149px (x 80–315) ; y440-460: 1141px (x 70–385) ; y460-480: 110px (x 169–375) ; y480-500: 156px (x 21–345) ; y500-520: 15px (x 144–333) ; y520-540: 1445px (x 0–378) ; y540-560: 1112px (x 0–361) ; y560-580: 248px (x 0–304) ; y580-600: 286px (x 0–194) ; y600-620: 278px (x 0–368) ; y620-640: 243px (x 0–151) ; y640-660: 2071px (x 0–378) ; y660-680: 240px (x 0–3) ; y680-700: 246px (x 0–356) ; y700-720: 240px (x 0–3) ; y720-740: 132px (x 0–3) ; y740-760: 291px (x 17–96) ; y760-780: 1016px (x 12–98) ; y780-800: 847px (x 12–98) ; y800-820: 1950px (x 12–98) ; y820-840: 295px (x 14–93)
+
+== 390x844 m5a: tutorial klok 12.5 C 8.69 dag 3000 | race klok 12.5 C 8.69 dag 3000
+   zin tutorial: "Slikken lukt niet altijd: kies nu een zetpil." [melding zicht] @15.6,170,358.8,74 | race: "" [melding wending met-fig] @15.6,162,358.8,91.7
+   meldingstijl gelijk: false | QALY tut 474 race 474
+   DOM-verschillen: 10
+     .knoppen_lijst.0.tekst: tutorial="Tablet" | race="Misselijk"
+     .knoppen_lijst.0.klasse: tutorial="actie" | race="actie geblokkeerd"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; animationName=none; boxShadow=none; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(11, 11, 16); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 
+     .knoppen_lijst.1.klasse: tutorial="actie wijs" | race="actie"
+     .knoppen_lijst.1.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgb(255, 255, 255); borderTopWidth=2px; animationName=wijs; boxShadow=rgba(255, 255, 255, 0.514) 0px 0px 0px 0.605359px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18p
+     .tekst.portret: tutorial=887 | race=914
+     .los.melding: tutorial="Slikken lukt niet altijd: kies nu een zetpil." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig"
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+   pixelbanden (css-px, drempel 90/765): y60-80: 133px (x 287–307) ; y80-100: 72px (x 290–308) ; y120-140: 128px (x 0–180) ; y140-160: 1069px (x 0–390) ; y160-180: 648px (x 0–342) ; y180-200: 8661px (x 0–356) ; y200-220: 2065px (x 0–362) ; y220-240: 4857px (x 0–385) ; y240-260: 466px (x 0–375) ; y260-280: 445px (x 0–375) ; y280-300: 428px (x 0–345) ; y300-320: 522px (x 0–345) ; y320-340: 436px (x 0–319) ; y340-360: 682px (x 0–382) ; y360-380: 3209px (x 0–378) ; y380-400: 424px (x 0–350) ; y400-420: 982px (x 0–335) ; y420-440: 444px (x 0–389) ; y440-460: 296px (x 0–364) ; y460-480: 318px (x 0–373) ; y480-500: 5803px (x 0–378) ; y500-520: 278px (x 0–384) ; y520-540: 342px (x 0–384) ; y540-560: 281px (x 0–223) ; y560-580: 309px (x 0–237) ; y580-600: 302px (x 0–290) ; y600-620: 573px (x 0–340) ; y620-640: 4277px (x 0–378) ; y640-660: 368px (x 0–296) ; y660-680: 310px (x 0–286) ; y680-700: 296px (x 0–370) ; y700-720: 277px (x 0–346) ; y720-740: 132px (x 0–3) ; y740-760: 1173px (x 17–190) ; y760-780: 1414px (x 12–191) ; y780-800: 1247px (x 12–191) ; y800-820: 2348px (x 12–191) ; y820-840: 1178px (x 14–190)
+
+== 390x844 m5b: tutorial klok 12.54 C 8.59 dag 3000 | race klok 12.57 C 8.53 dag 3000
+   zin tutorial: "Slikken lukt niet altijd: kies nu een zetpil." [melding zicht] @15.6,170,358.8,74 | race: "" [melding wending met-fig] @15.6,162,358.8,91.7
+   meldingstijl gelijk: false | QALY tut 476 race 477
+   DOM-verschillen: 12
+     .knoppen_lijst.0.tekst: tutorial="Tablet" | race="Misselijk"
+     .knoppen_lijst.0.klasse: tutorial="actie" | race="actie geblokkeerd"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; animationName=none; boxShadow=none; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(11, 11, 16); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 
+     .knoppen_lijst.1.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgba(172, 121, 249, 0.263); borderRadius=18px; borderTopColor=rgb(177, 125, 255); borderTopWidth=2px; animationName=none; boxShadow=rgba(176, 124, 255, 0.22) 0px 0px 0px 3px, rgba(176, 124, 255, 0.45) 0px 0px 22px 0px; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); ba
+     .tekst.portret: tutorial=887 | race=914
+     .los.melding: tutorial="Slikken lukt niet altijd: kies nu een zetpil." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig"
+     .los.meldingRect: tutorial="15.6,170,358.8,74" | race="15.6,162,358.8,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+     .los.qaly: tutorial="476" | race="477"
+     .debug.klok: tutorial=12.54 | race=12.57
+     .debug.C: tutorial=8.59 | race=8.53
+   pixelbanden (css-px, drempel 90/765): y20-40: 303px (x 292–307) ; y40-60: 11px (x 295–304) ; y60-80: 133px (x 287–307) ; y80-100: 72px (x 290–308) ; y120-140: 226px (x 0–321) ; y140-160: 1342px (x 0–390) ; y160-180: 884px (x 0–342) ; y180-200: 8810px (x 0–362) ; y200-220: 2483px (x 0–362) ; y220-240: 4345px (x 0–385) ; y240-260: 1001px (x 0–375) ; y260-280: 807px (x 0–355) ; y280-300: 931px (x 0–345) ; y300-320: 1112px (x 0–333) ; y320-340: 874px (x 0–318) ; y340-360: 4838px (x 0–382) ; y360-380: 918px (x 0–356) ; y380-400: 757px (x 0–350) ; y400-420: 2040px (x 0–379) ; y420-440: 875px (x 0–389) ; y440-460: 477px (x 0–364) ; y460-480: 1126px (x 0–373) ; y480-500: 7693px (x 0–378) ; y500-520: 377px (x 0–384) ; y520-540: 487px (x 0–274) ; y540-560: 392px (x 0–237) ; y560-580: 400px (x 0–211) ; y580-600: 495px (x 0–290) ; y600-620: 5238px (x 0–378) ; y620-640: 408px (x 0–340) ; y640-660: 660px (x 0–354) ; y660-680: 425px (x 0–370) ; y680-700: 424px (x 0–370) ; y700-720: 375px (x 0–347) ; y720-740: 132px (x 0–3) ; y740-760: 291px (x 17–96) ; y760-780: 1016px (x 12–98) ; y780-800: 847px (x 12–98) ; y800-820: 1950px (x 12–98) ; y820-840: 295px (x 14–93)
+
+== 390x844 m5c: tutorial klok 13.25 C 7.49 dag 4000 | race klok 13.25 C 7.49 dag 4000
+   zin tutorial: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." [melding zicht] @15.6,170,358.8,101 | race: "" [melding wending met-fig] @15.6,162,358.8,91.7
+   meldingstijl gelijk: false | QALY tut 505 race 505
+   DOM-verschillen: 8
+     .knoppen_lijst.0.tekst: tutorial="Tablet" | race="Misselijk"
+     .knoppen_lijst.0.klasse: tutorial="actie" | race="actie geblokkeerd"
+     .knoppen_lijst.0.stijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(18, 18, 25); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 0.16); borderTopWidth=2px; animationName=none; boxShadow=none; opacity=1" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=15px; fontWeight=600; color=rgb(255, 255, 255); backgroundColor=rgb(11, 11, 16); borderRadius=18px; borderTopColor=rgba(255, 255, 255, 
+     .tekst.portret: tutorial=887 | race=914
+     .los.melding: tutorial="Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig"
+     .los.meldingRect: tutorial="15.6,170,358.8,101" | race="15.6,162,358.8,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+   pixelbanden (css-px, drempel 90/765): y60-80: 133px (x 287–307) ; y80-100: 72px (x 290–308) ; y120-140: 108px (x 0–3) ; y140-160: 900px (x 0–361) ; y160-180: 578px (x 0–342) ; y180-200: 7205px (x 0–385) ; y200-220: 4381px (x 0–360) ; y220-240: 5766px (x 0–361) ; y240-260: 2161px (x 0–344) ; y260-280: 1868px (x 0–378) ; y280-300: 261px (x 0–318) ; y300-320: 249px (x 0–316) ; y320-340: 240px (x 0–3) ; y340-360: 242px (x 0–163) ; y360-380: 244px (x 0–79) ; y380-400: 824px (x 0–378) ; y400-420: 255px (x 0–372) ; y420-440: 369px (x 0–264) ; y440-460: 244px (x 0–384) ; y460-480: 249px (x 0–273) ; y480-500: 251px (x 0–51) ; y500-520: 254px (x 0–67) ; y520-540: 1455px (x 0–378) ; y540-560: 249px (x 0–274) ; y560-580: 246px (x 0–267) ; y580-600: 246px (x 0–179) ; y600-620: 242px (x 0–232) ; y620-640: 251px (x 0–285) ; y640-660: 2056px (x 0–378) ; y660-680: 241px (x 0–344) ; y680-700: 240px (x 0–3) ; y700-720: 240px (x 0–3) ; y720-740: 132px (x 0–3) ; y740-760: 291px (x 17–96) ; y760-780: 1016px (x 12–98) ; y780-800: 847px (x 12–98) ; y800-820: 1950px (x 12–98) ; y820-840: 295px (x 14–93)
+
+== 390x844 m6: tutorial klok 15.5 C 5.84 dag 4000 | race klok 15.5 C 5.84 dag 4000
+   zin tutorial: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." [melding zicht] @15.6,170,358.8,101 | race: "" [melding wending met-fig] @15.6,162,358.8,91.7
+   meldingstijl gelijk: false | QALY tut 599 race 599
+   DOM-verschillen: 5
+     .tekst.portret: tutorial=887 | race=914
+     .los.melding: tutorial="Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." | race=""
+     .los.meldingKlasse: tutorial="melding zicht" | race="melding wending met-fig"
+     .los.meldingRect: tutorial="15.6,170,358.8,101" | race="15.6,162,358.8,91.7"
+     .los.meldingStijl: tutorial="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=20px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=center" | race="fontFamily=system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif; fontSize=21px; fontWeight=600; color=rgb(255, 255, 255); letterSpacing=normal; textAlign=left"
+   pixelbanden (css-px, drempel 90/765): y60-80: 133px (x 287–307) ; y80-100: 72px (x 290–308) ; y120-140: 108px (x 0–3) ; y140-160: 920px (x 0–341) ; y160-180: 539px (x 0–342) ; y180-200: 6919px (x 0–356) ; y200-220: 4292px (x 0–360) ; y220-240: 8043px (x 0–378) ; y240-260: 2021px (x 0–372) ; y260-280: 329px (x 0–384) ; y280-300: 244px (x 0–70) ; y300-320: 264px (x 0–273) ; y320-340: 261px (x 0–51) ; y340-360: 247px (x 0–367) ; y360-380: 863px (x 0–378) ; y380-400: 245px (x 0–155) ; y400-420: 241px (x 0–16) ; y420-440: 387px (x 0–289) ; y440-460: 249px (x 0–247) ; y460-480: 250px (x 0–248) ; y480-500: 1362px (x 0–378) ; y520-540: 7px (x 197–227) ; y540-560: 9px (x 132–295) ; y560-580: 27px (x 49–346) ; y580-600: 11px (x 178–180) ; y600-620: 18px (x 163–361) ; y620-640: 1833px (x 12–389) ; y640-660: 18px (x 67–170) ; y700-720: 1px (x 301–301)
