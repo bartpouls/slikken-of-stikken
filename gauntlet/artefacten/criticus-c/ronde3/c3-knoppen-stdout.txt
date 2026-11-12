@@ -1,0 +1,100 @@
+375x667 tut: klok na reeks 0.27, gegeven slik, consolefouten 0
+375x667 race: klok na reeks 0.26, gegeven slik, consolefouten 0
+  GELIJK  *1 eerste tik Zetpil
+      tutorial: "Zetpil voor uur 0" [keuze-info zicht gekozen] doel 0:zetpil:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Zetpil voor uur 0" [keuze-info zicht gekozen] doel 0:zetpil:open=true | klok -0.778
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[gekozen,true,badge=✓] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  *2 tweede tik Zetpil (wissen)
+      tutorial: "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.716
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  3 Spuit
+      tutorial: "Spuit voor uur 0" [keuze-info zicht gekozen] doel 0:spuit:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Spuit voor uur 0" [keuze-info zicht gekozen] doel 0:spuit:open=true | klok -0.667
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[gekozen,true,badge=✓] niets:Niets[-,false,badge=]
+  GELIJK  *4 wisselen naar Niets
+      tutorial: "Niets voor uur 0" [keuze-info zicht gekozen] doel 0:niets:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Niets voor uur 0" [keuze-info zicht gekozen] doel 0:niets:open=true | klok -0.644
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[gekozen,true,badge=✓]
+  GELIJK  5 Niets nog eens (wissen)
+      tutorial: "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.596
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  6 Tablet
+      tutorial: "Tablet voor uur 0" [keuze-info zicht gekozen] doel 0:slik:open=true | klok -0.782 bevroren false wijs= | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Tablet voor uur 0" [keuze-info zicht gekozen] doel 0:slik:open=true | klok -0.573
+      knoppen (beide): slik:Tablet[gekozen,true,badge=✓] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  *7 Tablet nog eens (wissen)
+      tutorial: "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.778 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.551
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  8 Tablet
+      tutorial: "Tablet voor uur 0" [keuze-info zicht gekozen] doel 0:slik:open=true | klok -0.76 bevroren false wijs= | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Tablet voor uur 0" [keuze-info zicht gekozen] doel 0:slik:open=true | klok -0.507
+      knoppen (beide): slik:Tablet[gekozen,true,badge=✓] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  *9 Spuit direct na poortje 0
+      tutorial: "Te laat voor uur 0. Kies opnieuw voor uur 1." [keuze-info zicht laat] doel 1:null:open=false | klok 0.031 bevroren false wijs= | zin: (geen)
+      race 1  : "Te laat voor uur 0. Kies opnieuw voor uur 1." [keuze-info zicht laat] doel 1:null:open=false | klok 0.027
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  *10 Spuit terwijl klok loopt
+      tutorial: "Spuit voor uur 1" [keuze-info zicht gekozen] doel 1:spuit:open=true | klok 0.2 bevroren false wijs= | zin: Een pil moet eerst door je maag.
+      race 1  : "Spuit voor uur 1" [keuze-info zicht gekozen] doel 1:spuit:open=true | klok 0.196
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[gekozen,true,badge=✓] niets:Niets[-,false,badge=]
+  GELIJK  11 wisselen naar Zetpil
+      tutorial: "Zetpil voor uur 1" [keuze-info zicht gekozen] doel 1:zetpil:open=true | klok 0.244 bevroren false wijs= | zin: Een pil moet eerst door je maag.
+      race 1  : "Zetpil voor uur 1" [keuze-info zicht gekozen] doel 1:zetpil:open=true | klok 0.24
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[gekozen,true,badge=✓] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  12 Zetpil nog eens (wissen)
+      tutorial: "Keuze gewist voor uur 1: niets kiezen is overslaan." [keuze-info zicht gewist] doel 1:null:open=true | klok 0.267 bevroren false wijs= | zin: Een pil moet eerst door je maag.
+      race 1  : "Keuze gewist voor uur 1: niets kiezen is overslaan." [keuze-info zicht gewist] doel 1:null:open=true | klok 0.262
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+390x844 tut: klok na reeks 0.26, gegeven slik, consolefouten 0
+390x844 race: klok na reeks 0.27, gegeven slik, consolefouten 0
+  GELIJK  *1 eerste tik Zetpil
+      tutorial: "Zetpil voor uur 0" [keuze-info zicht gekozen] doel 0:zetpil:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Zetpil voor uur 0" [keuze-info zicht gekozen] doel 0:zetpil:open=true | klok -0.769
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[gekozen,true,badge=✓] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  *2 tweede tik Zetpil (wissen)
+      tutorial: "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.693
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  3 Spuit
+      tutorial: "Spuit voor uur 0" [keuze-info zicht gekozen] doel 0:spuit:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Spuit voor uur 0" [keuze-info zicht gekozen] doel 0:spuit:open=true | klok -0.644
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[gekozen,true,badge=✓] niets:Niets[-,false,badge=]
+  GELIJK  *4 wisselen naar Niets
+      tutorial: "Niets voor uur 0" [keuze-info zicht gekozen] doel 0:niets:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Niets voor uur 0" [keuze-info zicht gekozen] doel 0:niets:open=true | klok -0.618
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[gekozen,true,badge=✓]
+  GELIJK  5 Niets nog eens (wissen)
+      tutorial: "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.8 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.569
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  6 Tablet
+      tutorial: "Tablet voor uur 0" [keuze-info zicht gekozen] doel 0:slik:open=true | klok -0.782 bevroren false wijs= | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Tablet voor uur 0" [keuze-info zicht gekozen] doel 0:slik:open=true | klok -0.547
+      knoppen (beide): slik:Tablet[gekozen,true,badge=✓] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  *7 Tablet nog eens (wissen)
+      tutorial: "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.778 bevroren true wijs=slik | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Keuze gewist voor uur 0: niets kiezen is overslaan." [keuze-info zicht gewist] doel 0:null:open=true | klok -0.524
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  8 Tablet
+      tutorial: "Tablet voor uur 0" [keuze-info zicht gekozen] doel 0:slik:open=true | klok -0.76 bevroren false wijs= | zin: Opa Jan heeft pijn: kies een tablet voor het eerste poortje.
+      race 1  : "Tablet voor uur 0" [keuze-info zicht gekozen] doel 0:slik:open=true | klok -0.476
+      knoppen (beide): slik:Tablet[gekozen,true,badge=✓] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  *9 Spuit direct na poortje 0
+      tutorial: "Te laat voor uur 0. Kies opnieuw voor uur 1." [keuze-info zicht laat] doel 1:null:open=false | klok 0.027 bevroren false wijs= | zin: (geen)
+      race 1  : "Te laat voor uur 0. Kies opnieuw voor uur 1." [keuze-info zicht laat] doel 1:null:open=false | klok 0.031
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  *10 Spuit terwijl klok loopt
+      tutorial: "Spuit voor uur 1" [keuze-info zicht gekozen] doel 1:spuit:open=true | klok 0.196 bevroren false wijs= | zin: Een pil moet eerst door je maag.
+      race 1  : "Spuit voor uur 1" [keuze-info zicht gekozen] doel 1:spuit:open=true | klok 0.2
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[gekozen,true,badge=✓] niets:Niets[-,false,badge=]
+  GELIJK  11 wisselen naar Zetpil
+      tutorial: "Zetpil voor uur 1" [keuze-info zicht gekozen] doel 1:zetpil:open=true | klok 0.24 bevroren false wijs= | zin: Een pil moet eerst door je maag.
+      race 1  : "Zetpil voor uur 1" [keuze-info zicht gekozen] doel 1:zetpil:open=true | klok 0.249
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[gekozen,true,badge=✓] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]
+  GELIJK  12 Zetpil nog eens (wissen)
+      tutorial: "Keuze gewist voor uur 1: niets kiezen is overslaan." [keuze-info zicht gewist] doel 1:null:open=true | klok 0.262 bevroren false wijs= | zin: Een pil moet eerst door je maag.
+      race 1  : "Keuze gewist voor uur 1: niets kiezen is overslaan." [keuze-info zicht gewist] doel 1:null:open=true | klok 0.271
+      knoppen (beide): slik:Tablet[-,false,badge=] zetpil:Zetpil[-,false,badge=] spuit:Spuit[-,false,badge=] niets:Niets[-,false,badge=]

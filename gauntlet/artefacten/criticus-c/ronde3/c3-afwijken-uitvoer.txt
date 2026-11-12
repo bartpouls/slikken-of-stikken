@@ -1,0 +1,401 @@
+
+### A1 (375x667) — één extra spuit op poortje 1 (vroeg)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.00 (1 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: spuit voor poortje 1 op klok 0.25 (dagteller 1 g)
+  dagteller 1 -> 2 g op klok 1.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 2 g, spiegel 22.99, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 2 g, spiegel 11.05, zin "Kies nu de spuit."
+  dagteller 2 -> 3 g op klok 5.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING slik voor poortje 9 op klok 8.50, dagteller 3 g, spiegel 9.57, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+  dagteller 3 -> 4 g op klok 9.01 (4 g van max. 4 g; lever-klasse "lever tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.2 spiegel 3.33 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 22.99 dagteller 2 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 19.74 dagteller 2 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 11.05 dagteller 2 g: "Kies nu de spuit." []
+     ZIN klok 5.21 spiegel 23.81 dagteller 3 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.5 spiegel 9.57 dagteller 3 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     ZIN klok 9.21 spiegel 11.34 dagteller 4 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN klok 12.7 spiegel 8.87 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 14.99 spiegel 4.72 dagteller 4 g: "Au. De pijn komt terug." [au]
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 0.29 dagteller 1 g: "Spuit voor uur 1"
+     keuze klok 1.5 dagteller 2 g: "Niets voor uur 2"
+     keuze klok 4.4 dagteller 2 g: "Spuit voor uur 5"
+     keuze klok 8.5 dagteller 3 g: "Tablet voor uur 9"
+  einde na 22.5 s: klok 16.00, gegeven slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg, dagteller 4 g, QALY 597, lever "lever tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | 597 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 slik@9 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: []
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A2 (390x844) — één extra zetpil op poortje 7 (laat)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.00 (1 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 1 g, spiegel 9.18, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 1 g, spiegel 4.86, zin "Au. De pijn komt terug."
+  dagteller 1 -> 2 g op klok 5.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: zetpil voor poortje 7 op klok 6.25 (dagteller 2 g)
+  dagteller 2 -> 3 g op klok 7.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING slik voor poortje 9 op klok 8.50, dagteller 3 g, spiegel 11.34, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+  dagteller 3 -> 4 g op klok 9.01 (4 g van max. 4 g; lever-klasse "lever tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.2 spiegel 3.4 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 8.38 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 4.86 dagteller 1 g: "Au. De pijn komt terug." [au]
+     ZIN klok 5.21 spiegel 18.87 dagteller 2 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.5 spiegel 11.34 dagteller 3 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     ZIN klok 9.21 spiegel 13.46 dagteller 4 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN klok 12.7 spiegel 10.04 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 15.46 spiegel 4.72 dagteller 4 g: "Au. De pijn komt terug." [au]
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 1.5 dagteller 1 g: "Niets voor uur 2"
+     keuze klok 4.4 dagteller 1 g: "Spuit voor uur 5"
+     keuze klok 6.29 dagteller 2 g: "Zetpil voor uur 7"
+     keuze klok 8.5 dagteller 3 g: "Tablet voor uur 9"
+  einde na 22.6 s: klok 16.00, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,zetpil,leeg,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg, dagteller 4 g, QALY 587, lever "lever tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | 587 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 slik@9 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: []
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A3 (375x667) — één extra tablet op poortje 11 (laat)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.00 (1 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 1 g, spiegel 9.18, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 1 g, spiegel 4.86, zin "Au. De pijn komt terug."
+  dagteller 1 -> 2 g op klok 5.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING slik voor poortje 9 op klok 8.50, dagteller 2 g, spiegel 7.58, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+  dagteller 2 -> 3 g op klok 9.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: slik voor poortje 11 op klok 10.26 (dagteller 3 g)
+  dagteller 3 -> 4 g op klok 11.01 (4 g van max. 4 g; lever-klasse "lever tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.2 spiegel 3.4 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 8.38 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 4.86 dagteller 1 g: "Au. De pijn komt terug." [au]
+     ZIN klok 5.21 spiegel 18.87 dagteller 2 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.5 spiegel 7.58 dagteller 2 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     ZIN klok 9.21 spiegel 9.7 dagteller 3 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN klok 12.7 spiegel 17.27 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 1.5 dagteller 1 g: "Niets voor uur 2"
+     keuze klok 4.4 dagteller 1 g: "Spuit voor uur 5"
+     keuze klok 8.5 dagteller 2 g: "Tablet voor uur 9"
+     keuze klok 10.29 dagteller 3 g: "Tablet voor uur 11"
+  einde na 22.5 s: klok 16.00, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,slik,leeg,leeg,leeg,leeg,leeg, dagteller 4 g, QALY 620, lever "lever tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | 620 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 slik@9 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: []
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A4 (390x844) — drie extra tabletten op poortje 1, 3 en 4 (meerdere, vroeg)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.03 (1 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: slik voor poortje 1 op klok 0.25 (dagteller 1 g)
+  dagteller 1 -> 2 g op klok 1.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 2 g, spiegel 15.77, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  eigen tik: slik voor poortje 3 op klok 2.27 (dagteller 2 g)
+  dagteller 2 -> 3 g op klok 3.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: slik voor poortje 4 op klok 3.26 (dagteller 3 g)
+  dagteller 3 -> 4 g op klok 4.01 (4 g van max. 4 g; lever-klasse "lever tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.21 spiegel 3.54 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 15.77 dagteller 2 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 17.51 dagteller 2 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.6 spiegel 27.02 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 11.87 spiegel 4.71 dagteller 4 g: "Au. De pijn komt terug." [au]
+     ZIN klok 12.7 spiegel 3.74 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 0.29 dagteller 1 g: "Tablet voor uur 1"
+     keuze klok 1.5 dagteller 2 g: "Niets voor uur 2"
+     keuze klok 2.3 dagteller 2 g: "Tablet voor uur 3"
+     keuze klok 3.3 dagteller 3 g: "Tablet voor uur 4"
+  einde na 21.8 s: klok 16.00, gegeven slik,slik,niets,slik,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg, dagteller 4 g, QALY 429, lever "lever tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | 429 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: []
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A5 (375x667) — tablet op elk niet-gevraagd poortje
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.01 (1 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: slik voor poortje 1 op klok 0.25 (dagteller 1 g)
+  dagteller 1 -> 2 g op klok 1.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 2 g, spiegel 15.77, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  eigen tik: slik voor poortje 3 op klok 2.26 (dagteller 2 g)
+  dagteller 2 -> 3 g op klok 3.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: slik voor poortje 4 op klok 3.26 (dagteller 3 g)
+  dagteller 3 -> 4 g op klok 4.01 (4 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: slik voor poortje 6 op klok 5.25 (dagteller 4 g)
+  dagteller 4 -> 5 g op klok 6.01 (5 g van max. 4 g; lever-klasse "lever vol tel")
+  eigen tik: slik voor poortje 7 op klok 6.41 (dagteller 5 g)
+  dagteller 5 -> 6 g op klok 7.01 (6 g van max. 4 g; lever-klasse "lever vol tel")
+  eigen tik: slik voor poortje 8 op klok 7.25 (dagteller 6 g)
+  dagteller 6 -> 7 g op klok 8.01 (7 g van max. 4 g; lever-klasse "lever vol tel")
+  eigen tik: slik voor poortje 10 op klok 9.26 (dagteller 7 g)
+  dagteller 7 -> 8 g op klok 10.01 (8 g van max. 4 g; lever-klasse "lever vol tel")
+  eigen tik: slik voor poortje 11 op klok 10.39 (dagteller 8 g)
+  dagteller 8 -> 9 g op klok 11.01 (9 g van max. 4 g; lever-klasse "lever vol tel")
+  eigen tik: slik voor poortje 12 op klok 11.26 (dagteller 9 g)
+  dagteller 9 -> 10 g op klok 12.01 (10 g van max. 4 g; lever-klasse "lever vol tel")
+  eigen tik: slik voor poortje 14 op klok 13.26 (dagteller 10 g)
+  dagteller 10 -> 11 g op klok 14.01 (11 g van max. 4 g; lever-klasse "lever vol tel")
+  eigen tik: slik voor poortje 15 op klok 14.41 (dagteller 11 g)
+  dagteller 11 -> 12 g op klok 15.02 (12 g van max. 4 g; lever-klasse "lever vol tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.21 spiegel 3.54 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 15.77 dagteller 2 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 17.51 dagteller 2 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.6 spiegel 27.04 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 6.21 spiegel 25.42 dagteller 5 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     ZIN klok 8.7 spiegel 35.75 dagteller 7 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 10.21 spiegel 31.11 dagteller 8 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     ZIN klok 12.7 spiegel 38.63 dagteller 10 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 14.21 spiegel 33.01 dagteller 11 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 0.29 dagteller 1 g: "Tablet voor uur 1"
+     keuze klok 1.5 dagteller 2 g: "Niets voor uur 2"
+     keuze klok 2.29 dagteller 2 g: "Tablet voor uur 3"
+     keuze klok 3.29 dagteller 3 g: "Tablet voor uur 4"
+     keuze klok 5.27 dagteller 4 g: "Tablet voor uur 6"
+     keuze klok 6.44 dagteller 5 g: "Tablet voor uur 7"
+     keuze klok 7.27 dagteller 6 g: "Tablet voor uur 8"
+     keuze klok 9.27 dagteller 7 g: "Tablet voor uur 10"
+     keuze klok 10.45 dagteller 8 g: "Tablet voor uur 11"
+     keuze klok 11.3 dagteller 9 g: "Tablet voor uur 12"
+     keuze klok 13.27 dagteller 10 g: "Tablet voor uur 14"
+     keuze klok 14.42 dagteller 11 g: "Tablet voor uur 15"
+  einde na 21.8 s: klok 16.00, gegeven slik,slik,niets,slik,slik,leeg,slik,slik,slik,leeg,slik,slik,slik,leeg,slik,slik,leeg, dagteller 12 g, QALY −2.351, lever "lever vol tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | −2.351 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: [{"klok":6.01,"dag":5000,"zin":true},{"klok":7.01,"dag":6000,"zin":false},{"klok":8.01,"dag":7000,"zin":false},{"klok":10.01,"dag":8000,"zin":true},{"klok":11.01,"dag":9000,"zin":false},{"klok":12.01,"dag":10000,"zin":false},{"klok":14.01,"dag":11000,"zin":true},{"klok":15.02,"dag":12000,"zin":false}]
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A6 (390x844) — extra spuit op poortje 4, precies vóór stap 3 (spuit op 5)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.01 (1 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 1 g, spiegel 9.18, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  eigen tik: spuit voor poortje 4 op klok 3.26 (dagteller 1 g)
+  dagteller 1 -> 2 g op klok 4.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 2 g, spiegel 19.07, zin "Kies nu de spuit."
+  dagteller 2 -> 3 g op klok 5.00 (3 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING slik voor poortje 9 op klok 8.50, dagteller 3 g, spiegel 12.14, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+  dagteller 3 -> 4 g op klok 9.01 (4 g van max. 4 g; lever-klasse "lever tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.21 spiegel 3.54 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 8.38 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 19.07 dagteller 2 g: "Kies nu de spuit." []
+     ZIN klok 5.2 spiegel 30.31 dagteller 3 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.5 spiegel 12.14 dagteller 3 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     ZIN klok 9.21 spiegel 13.45 dagteller 4 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN klok 12.7 spiegel 9.66 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 15.31 spiegel 4.71 dagteller 4 g: "Au. De pijn komt terug." [au]
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 1.5 dagteller 1 g: "Niets voor uur 2"
+     keuze klok 3.29 dagteller 1 g: "Spuit voor uur 4"
+     keuze klok 4.4 dagteller 2 g: "Spuit voor uur 5"
+     keuze klok 8.5 dagteller 3 g: "Tablet voor uur 9"
+  einde na 22.5 s: klok 16.00, gegeven slik,leeg,niets,leeg,spuit,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg, dagteller 4 g, QALY 610, lever "lever tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | 610 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 slik@9 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: []
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A7 (375x667) — extra tablet op poortje 8, precies vóór stap 4 (tablet op 9)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.01 (1 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 1 g, spiegel 9.18, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 1 g, spiegel 4.86, zin "Au. De pijn komt terug."
+  dagteller 1 -> 2 g op klok 5.00 (2 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: slik voor poortje 8 op klok 7.25 (dagteller 2 g)
+  dagteller 2 -> 3 g op klok 8.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING slik voor poortje 9 op klok 8.50, dagteller 3 g, spiegel 14.17, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+  dagteller 3 -> 4 g op klok 9.01 (4 g van max. 4 g; lever-klasse "lever tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.21 spiegel 3.54 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 8.38 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 4.86 dagteller 1 g: "Au. De pijn komt terug." [au]
+     ZIN klok 5.2 spiegel 18.92 dagteller 2 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.5 spiegel 14.17 dagteller 3 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     ZIN klok 9.21 spiegel 18.84 dagteller 4 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN klok 12.7 spiegel 12.74 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 1.5 dagteller 1 g: "Niets voor uur 2"
+     keuze klok 4.4 dagteller 1 g: "Spuit voor uur 5"
+     keuze klok 7.28 dagteller 2 g: "Tablet voor uur 8"
+     keuze klok 8.5 dagteller 3 g: "Tablet voor uur 9"
+  einde na 22.6 s: klok 16.00, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,slik,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg, dagteller 4 g, QALY 620, lever "lever tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | 620 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 slik@9 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: []
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A8 (390x844) — extra zetpil op poortje 12, precies vóór stap 5 (zetpil op 13)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.01 (1 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 1 g, spiegel 9.18, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 1 g, spiegel 4.86, zin "Au. De pijn komt terug."
+  dagteller 1 -> 2 g op klok 5.00 (2 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING slik voor poortje 9 op klok 8.50, dagteller 2 g, spiegel 7.58, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+  dagteller 2 -> 3 g op klok 9.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: zetpil voor poortje 12 op klok 11.26 (dagteller 3 g)
+  dagteller 3 -> 4 g op klok 12.01 (4 g van max. 4 g; lever-klasse "lever tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.21 spiegel 3.54 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 8.38 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 4.86 dagteller 1 g: "Au. De pijn komt terug." [au]
+     ZIN klok 5.2 spiegel 18.92 dagteller 2 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.5 spiegel 7.58 dagteller 2 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     ZIN klok 9.21 spiegel 9.7 dagteller 3 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN klok 12.7 spiegel 11.18 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 1.5 dagteller 1 g: "Niets voor uur 2"
+     keuze klok 4.4 dagteller 1 g: "Spuit voor uur 5"
+     keuze klok 8.5 dagteller 2 g: "Tablet voor uur 9"
+     keuze klok 11.29 dagteller 3 g: "Zetpil voor uur 12"
+  einde na 22.5 s: klok 16.00, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,zetpil,leeg,leeg,leeg,leeg, dagteller 4 g, QALY 620, lever "lever tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | 620 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 slik@9 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: []
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A9 (375x667) — aanwijzing gevolgd, daarna zelf spuit op poortje 14 en 15 (speler gaat zelf over 4 g)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.01 (1 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 1 g, spiegel 9.18, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 1 g, spiegel 4.86, zin "Au. De pijn komt terug."
+  dagteller 1 -> 2 g op klok 5.00 (2 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING slik voor poortje 9 op klok 8.50, dagteller 2 g, spiegel 7.58, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+  dagteller 2 -> 3 g op klok 9.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING zetpil voor poortje 13 op klok 12.50, dagteller 3 g, spiegel 8.69, zin "Slikken lukt niet altijd: kies nu een zetpil."
+  dagteller 3 -> 4 g op klok 13.01 (4 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: spuit voor poortje 14 op klok 13.26 (dagteller 4 g)
+  dagteller 4 -> 5 g op klok 14.01 (5 g van max. 4 g; lever-klasse "lever vol tel")
+  eigen tik: spuit voor poortje 15 op klok 14.41 (dagteller 5 g)
+  dagteller 5 -> 6 g op klok 15.01 (6 g van max. 4 g; lever-klasse "lever vol tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.21 spiegel 3.54 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 8.38 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 4.86 dagteller 1 g: "Au. De pijn komt terug." [au]
+     ZIN klok 5.2 spiegel 18.92 dagteller 2 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.5 spiegel 7.58 dagteller 2 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     ZIN klok 9.21 spiegel 9.7 dagteller 3 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN klok 12.5 spiegel 8.69 dagteller 3 g: "Slikken lukt niet altijd: kies nu een zetpil." []
+     ZIN klok 13.21 spiegel 7.51 dagteller 4 g: "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan." []
+     ZIN klok 14.21 spiegel 21.88 dagteller 5 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 1.5 dagteller 1 g: "Niets voor uur 2"
+     keuze klok 4.4 dagteller 1 g: "Spuit voor uur 5"
+     keuze klok 8.5 dagteller 2 g: "Tablet voor uur 9"
+     keuze klok 12.5 dagteller 3 g: "Zetpil voor uur 13"
+     keuze klok 13.3 dagteller 4 g: "Spuit voor uur 14"
+     keuze klok 14.43 dagteller 5 g: "Spuit voor uur 15"
+  einde na 22.9 s: klok 16.00, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,spuit,spuit,leeg, dagteller 6 g, QALY −880, lever "lever vol tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | −880 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 slik@9 zetpil@13 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: [{"klok":14.01,"dag":5000,"zin":true},{"klok":15.01,"dag":6000,"zin":false}]
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A10 (390x844) — extra spuit op poortje 1; stap 5 vervalt; speler geeft op poortje 13 toch zelf een zetpil
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.00 (1 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: spuit voor poortje 1 op klok 0.27 (dagteller 1 g)
+  dagteller 1 -> 2 g op klok 1.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 2 g, spiegel 22.99, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 2 g, spiegel 11.05, zin "Kies nu de spuit."
+  dagteller 2 -> 3 g op klok 5.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING slik voor poortje 9 op klok 8.50, dagteller 3 g, spiegel 9.57, zin "Elke gram telt mee in de dagteller linksboven: kies weer een tablet."
+  dagteller 3 -> 4 g op klok 9.01 (4 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: zetpil voor poortje 13 op klok 12.26 (dagteller 4 g)
+  dagteller 4 -> 5 g op klok 13.01 (5 g van max. 4 g; lever-klasse "lever vol tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.2 spiegel 3.4 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 22.99 dagteller 2 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 19.74 dagteller 2 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 11.05 dagteller 2 g: "Kies nu de spuit." []
+     ZIN klok 5.21 spiegel 23.81 dagteller 3 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.5 spiegel 9.57 dagteller 3 g: "Elke gram telt mee in de dagteller linksboven: kies weer een tablet." []
+     ZIN klok 9.21 spiegel 11.34 dagteller 4 g: "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd." []
+     ZIN klok 12.7 spiegel 8.85 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 13.21 spiegel 8.05 dagteller 5 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 0.28 dagteller 1 g: "Spuit voor uur 1"
+     keuze klok 1.5 dagteller 2 g: "Niets voor uur 2"
+     keuze klok 4.4 dagteller 2 g: "Spuit voor uur 5"
+     keuze klok 8.5 dagteller 3 g: "Tablet voor uur 9"
+     keuze klok 12.3 dagteller 4 g: "Zetpil voor uur 13"
+  einde na 22.5 s: klok 16.00, gegeven slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg, dagteller 5 g, QALY −601, lever "lever vol tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | −601 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 slik@9 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: [{"klok":13.01,"dag":5000,"zin":true}]
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A11 (375x667) — extra tabletten op poortje 3 en 4, vlak vóór stap 3
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.00 (1 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 1 g, spiegel 9.18, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  eigen tik: slik voor poortje 3 op klok 2.26 (dagteller 1 g)
+  dagteller 1 -> 2 g op klok 3.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: slik voor poortje 4 op klok 3.26 (dagteller 2 g)
+  dagteller 2 -> 3 g op klok 4.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 3 g, spiegel 19.79, zin "Kies nu de spuit."
+  dagteller 3 -> 4 g op klok 5.00 (4 g van max. 4 g; lever-klasse "lever tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.2 spiegel 3.33 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 8.38 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 19.79 dagteller 3 g: "Kies nu de spuit." []
+     ZIN klok 5.2 spiegel 36.44 dagteller 4 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.7 spiegel 15.06 dagteller 4 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     ZIN klok 12.89 spiegel 4.73 dagteller 4 g: "Au. De pijn komt terug." [au]
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 1.5 dagteller 1 g: "Niets voor uur 2"
+     keuze klok 2.3 dagteller 1 g: "Tablet voor uur 3"
+     keuze klok 3.3 dagteller 2 g: "Tablet voor uur 4"
+     keuze klok 4.4 dagteller 3 g: "Spuit voor uur 5"
+  einde na 22.1 s: klok 16.00, gegeven slik,leeg,niets,slik,slik,spuit,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg, dagteller 4 g, QALY 490, lever "lever tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | 490 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: []
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+### A12 (390x844) — extra spuit op 6, 7 en 8 (dagteller al 5 g vóór stap 4)
+  MARKERING slik voor poortje 0 op klok -0.80, dagteller 0 g, spiegel 0.00, zin "Opa Jan heeft pijn: kies een tablet voor het eerste poortje."
+  dagteller 0 -> 1 g op klok 0.00 (1 g van max. 4 g; lever-klasse "lever tel")
+  MARKERING niets voor poortje 2 op klok 1.50, dagteller 1 g, spiegel 9.18, zin "De pijn is weg: kies Niets om een poortje over te slaan."
+  MARKERING spuit voor poortje 5 op klok 4.40, dagteller 1 g, spiegel 4.86, zin "Au. De pijn komt terug."
+  dagteller 1 -> 2 g op klok 5.01 (2 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: spuit voor poortje 6 op klok 5.25 (dagteller 2 g)
+  dagteller 2 -> 3 g op klok 6.01 (3 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: spuit voor poortje 7 op klok 6.25 (dagteller 3 g)
+  dagteller 3 -> 4 g op klok 7.01 (4 g van max. 4 g; lever-klasse "lever tel")
+  eigen tik: spuit voor poortje 8 op klok 7.25 (dagteller 4 g)
+  dagteller 4 -> 5 g op klok 8.01 (5 g van max. 4 g; lever-klasse "lever vol tel")
+     ZIN klok -0.8 spiegel 0 dagteller 0 g: "Opa Jan heeft pijn: kies een tablet voor het eerste poortje." []
+     ZIN klok 0.2 spiegel 3.4 dagteller 1 g: "Een pil moet eerst door je maag." []
+     ZIN klok 1.5 spiegel 9.18 dagteller 1 g: "De pijn is weg: kies Niets om een poortje over te slaan." []
+     ZIN klok 2.21 spiegel 8.38 dagteller 1 g: "Je lichaam ruimt het op: elke 2,5 uur is de helft weg." []
+     ZIN klok 4.4 spiegel 4.86 dagteller 1 g: "Au. De pijn komt terug." [au]
+     ZIN klok 5.21 spiegel 18.87 dagteller 2 g: "Een prik werkt meteen, maar zakt net zo hard." []
+     ZIN klok 8.21 spiegel 43.14 dagteller 5 g: "Te veel paracetamol beschadigt de lever." [alarm]
+     ZIN klok 8.7 spiegel 37.66 dagteller 5 g: "De dagteller is vol: opa Jan krijgt vandaag niets meer." []
+     keuze klok -0.8 dagteller 0 g: "Tablet voor uur 0"
+     keuze klok 1.5 dagteller 1 g: "Niets voor uur 2"
+     keuze klok 4.4 dagteller 1 g: "Spuit voor uur 5"
+     keuze klok 5.29 dagteller 2 g: "Spuit voor uur 6"
+     keuze klok 6.29 dagteller 3 g: "Spuit voor uur 7"
+     keuze klok 7.29 dagteller 4 g: "Spuit voor uur 8"
+  einde na 22.2 s: klok 16.00, gegeven slik,leeg,niets,leeg,leeg,spuit,spuit,spuit,spuit,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg, dagteller 5 g, QALY −631, lever "lever vol tel" | eindkaartje: Klaar? | QALY-punten in de oefenronde | −631 | Race! | consolefouten 0 
+  gevraagd (markeringen): slik@0 niets@2 spuit@5 | OVERTREDINGEN (dosis gevraagd boven 4 g): 0 | vastgelopen: nee
+  overschrijdingen door de speler + leverzin erbij: [{"klok":8.01,"dag":5000,"zin":true}]
+  zin past niet bij scherm: geen gevonden (automatische controle)
+
+=== SAMENVATTING ===
+A1 375x667: overtredingen 0, vast nee, overschrijdingen 0 (leverzin bij 0), past-niet 0, gegeven slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg, einddagteller 4 g
+A2 390x844: overtredingen 0, vast nee, overschrijdingen 0 (leverzin bij 0), past-niet 0, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,zetpil,leeg,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg, einddagteller 4 g
+A3 375x667: overtredingen 0, vast nee, overschrijdingen 0 (leverzin bij 0), past-niet 0, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,slik,leeg,leeg,leeg,leeg,leeg, einddagteller 4 g
+A4 390x844: overtredingen 0, vast nee, overschrijdingen 0 (leverzin bij 0), past-niet 0, gegeven slik,slik,niets,slik,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg, einddagteller 4 g
+A5 375x667: overtredingen 0, vast nee, overschrijdingen 8 (leverzin bij 3), past-niet 0, gegeven slik,slik,niets,slik,slik,leeg,slik,slik,slik,leeg,slik,slik,slik,leeg,slik,slik,leeg, einddagteller 12 g
+A6 390x844: overtredingen 0, vast nee, overschrijdingen 0 (leverzin bij 0), past-niet 0, gegeven slik,leeg,niets,leeg,spuit,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg, einddagteller 4 g
+A7 375x667: overtredingen 0, vast nee, overschrijdingen 0 (leverzin bij 0), past-niet 0, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,slik,slik,leeg,leeg,leeg,leeg,leeg,leeg,leeg, einddagteller 4 g
+A8 390x844: overtredingen 0, vast nee, overschrijdingen 0 (leverzin bij 0), past-niet 0, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,zetpil,leeg,leeg,leeg,leeg, einddagteller 4 g
+A9 375x667: overtredingen 0, vast nee, overschrijdingen 2 (leverzin bij 1), past-niet 0, gegeven slik,leeg,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,spuit,spuit,leeg, einddagteller 6 g
+A10 390x844: overtredingen 0, vast nee, overschrijdingen 1 (leverzin bij 1), past-niet 0, gegeven slik,spuit,niets,leeg,leeg,spuit,leeg,leeg,leeg,slik,leeg,leeg,leeg,zetpil,leeg,leeg,leeg, einddagteller 5 g
+A11 375x667: overtredingen 0, vast nee, overschrijdingen 0 (leverzin bij 0), past-niet 0, gegeven slik,leeg,niets,slik,slik,spuit,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg, einddagteller 4 g
+A12 390x844: overtredingen 0, vast nee, overschrijdingen 1 (leverzin bij 1), past-niet 0, gegeven slik,leeg,niets,leeg,leeg,spuit,spuit,spuit,spuit,leeg,leeg,leeg,leeg,leeg,leeg,leeg,leeg, einddagteller 5 g

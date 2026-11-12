@@ -1,0 +1,40 @@
+
+### 375x667 introkaartje race 2: Race 2 · Lithium
+  verhaal: Mevrouw De Vries (70 kg) gebruikt al jaren lithium tegen stemmingsschommelingen. Halverwege heeft ze rugpijn en koopt ze ibuprofen bij de drogist.
+  1. Het groene vlak heeft nu ook een bovenkant: 0,6–1,0 mmol/L.
+  2. Boven 1,5 mmol/L is het giftig.
+  3. De klok telt in dagen: de race duurt 10 dagen.
+  4. Poortjes komen 3× per dag: om 0, 8 en 16 uur.
+  5. Niets heet hier Overslaan.
+  6. Tik twee keer op Tablet voor 2 tabletten op één poortje.
+  7. Er is geen zetpil.
+  8. Er is geen dagteller.
+  lettergrootte regels 15px; scrollHeight 667 / clientHeight 667; onderkant Start-knop 597 van 667; knophoogte 60; paginabreedte 375; qaly-zin: ""
+  race 2 start: knoppen slik:Tablet[-,false,badge=] niets:Overslaan[-,false,badge=] spuit:Spuit[-,false,badge=] | klok "Dag 0· 0 u" | dagteller verborgen true | startspiegel 0.764
+  Tablet: "Tablet voor dag 0" doel 0:slik:open=true zin "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+  Tablet 2e tik: "(leeg)" doel 1:null:open=false zin "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+  Tablet 3e tik: "Tablet voor dag 0 · 8 u" doel 1:slik:open=true zin "(geen)"
+  Overslaan: "(leeg)" doel 2:null:open=true zin "(geen)"
+  Overslaan 2e tik: "Overslaan voor dag 0 · 16 u" doel 2:niets:open=true zin "(geen)"
+  Spuit: "(leeg)" doel 3:null:open=true zin "(geen)"
+  consolefouten 0
+
+### 390x844 introkaartje race 2: Race 2 · Lithium
+  verhaal: Mevrouw De Vries (70 kg) gebruikt al jaren lithium tegen stemmingsschommelingen. Halverwege heeft ze rugpijn en koopt ze ibuprofen bij de drogist.
+  1. Het groene vlak heeft nu ook een bovenkant: 0,6–1,0 mmol/L.
+  2. Boven 1,5 mmol/L is het giftig.
+  3. De klok telt in dagen: de race duurt 10 dagen.
+  4. Poortjes komen 3× per dag: om 0, 8 en 16 uur.
+  5. Niets heet hier Overslaan.
+  6. Tik twee keer op Tablet voor 2 tabletten op één poortje.
+  7. Er is geen zetpil.
+  8. Er is geen dagteller.
+  lettergrootte regels 16.5px; scrollHeight 844 / clientHeight 844; onderkant Start-knop 812 van 844; knophoogte 60; paginabreedte 390; qaly-zin: ""
+  race 2 start: knoppen slik:Tablet[-,false,badge=] niets:Overslaan[-,false,badge=] spuit:Spuit[-,false,badge=] | klok "Dag 0· 0 u" | dagteller verborgen true | startspiegel 0.764
+  Tablet: "Tablet voor dag 0" doel 0:slik:open=true zin "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+  Tablet 2e tik: "2× Tablet voor dag 0" doel 0:slik:open=true zin "Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is."
+  Tablet 3e tik: "Tablet voor dag 0 · 8 u" doel 1:slik:open=true zin "(geen)"
+  Overslaan: "(leeg)" doel 2:null:open=false zin "(geen)"
+  Overslaan 2e tik: "Overslaan voor dag 0 · 16 u" doel 2:niets:open=true zin "(geen)"
+  Spuit: "(leeg)" doel 3:null:open=false zin "Lithium bestaat niet als prik. Slikken of stikken!"
+  consolefouten 0

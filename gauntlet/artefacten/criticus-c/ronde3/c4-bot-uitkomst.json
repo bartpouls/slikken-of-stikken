@@ -1,0 +1,632 @@
+{
+ "375x667": {
+  "tutorialDuur_s": 65.236,
+  "wandklok_start_tot_intro1_s": 65.451,
+  "tikken": [
+   "start",
+   "slik@klok-0.80",
+   "niets@klok1.50",
+   "spuit@klok4.40",
+   "slik@klok8.50",
+   "zetpil@klok12.50",
+   "Race!"
+  ],
+  "gegeven": [
+   "slik",
+   "leeg",
+   "niets",
+   "leeg",
+   "leeg",
+   "spuit",
+   "leeg",
+   "leeg",
+   "leeg",
+   "slik",
+   "leeg",
+   "leeg",
+   "leeg",
+   "zetpil",
+   "leeg",
+   "leeg",
+   "leeg"
+  ],
+  "dagteller": 4000,
+  "score": 620,
+  "finish": "Klaar? | QALY-punten in de oefenronde | 620 | Race!",
+  "intro1": "Race 1 · Paracetamol\n\nOpa Jan (70 kg) heeft net een nieuwe heup. De pijn moet weg, zijn lever moet heel blijven.\n\nHoud de spiegel in het groene vlak, boven de streep.\nKies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.\nMaximaal 4 gram per dag: daarboven raakt de lever beschadigd.\n\nEen QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY's.\n\nStart race",
+  "scroll1": {
+   "sh": 667,
+   "ch": 667,
+   "sw": 375,
+   "cw": 375
+  },
+  "fouten": [],
+  "log": [
+   {
+    "wat": "melding",
+    "tekst": "Opa Jan heeft pijn: kies een tablet voor het eerste poortje.",
+    "klasse": "melding zicht",
+    "klok": -0.8,
+    "C": 0,
+    "dag": 0,
+    "ts": 235
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Tablet voor uur 0",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": -0.8,
+    "C": 0,
+    "dag": 0,
+    "ts": 714
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": -0.32,
+    "C": 0,
+    "dag": 0,
+    "ts": 2514
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 0,
+    "C": 0,
+    "dag": 1000,
+    "ts": 3728
+   },
+   {
+    "wat": "melding",
+    "tekst": "Een pil moet eerst door je maag.",
+    "klasse": "melding zicht",
+    "klok": 0.07,
+    "C": 1.33,
+    "dag": 1000,
+    "ts": 3987
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 1.5,
+    "C": 9.18,
+    "dag": 1000,
+    "ts": 9341
+   },
+   {
+    "wat": "melding",
+    "tekst": "De pijn is weg: kies Niets om een poortje over te slaan.",
+    "klasse": "melding zicht",
+    "klok": 1.5,
+    "C": 9.18,
+    "dag": 1000,
+    "ts": 9602
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Niets voor uur 2",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": 1.5,
+    "C": 9.18,
+    "dag": 1000,
+    "ts": 9764
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": 1.98,
+    "C": 8.71,
+    "dag": 1000,
+    "ts": 11564
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 2,
+    "C": 8.68,
+    "dag": 1000,
+    "ts": 11643
+   },
+   {
+    "wat": "melding",
+    "tekst": "Je lichaam ruimt het op: elke 2,5 uur is de helft weg.",
+    "klasse": "melding zicht",
+    "klok": 2.07,
+    "C": 8.59,
+    "dag": 1000,
+    "ts": 11902
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 4.3,
+    "C": 5,
+    "dag": 1000,
+    "ts": 20279
+   },
+   {
+    "wat": "melding",
+    "tekst": "Au. De pijn komt terug.",
+    "klasse": "melding au zicht",
+    "klok": 4.37,
+    "C": 4.9,
+    "dag": 1000,
+    "ts": 20538
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Spuit voor uur 5",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": 4.4,
+    "C": 4.86,
+    "dag": 1000,
+    "ts": 21061
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": 4.88,
+    "C": 4.27,
+    "dag": 1000,
+    "ts": 22861
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding au",
+    "klok": 5,
+    "C": 20,
+    "dag": 2000,
+    "ts": 23325
+   },
+   {
+    "wat": "melding",
+    "tekst": "Een prik werkt meteen, maar zakt net zo hard.",
+    "klasse": "melding zicht",
+    "klok": 5.07,
+    "C": 19.62,
+    "dag": 2000,
+    "ts": 23584
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 8.5,
+    "C": 7.58,
+    "dag": 2000,
+    "ts": 36440
+   },
+   {
+    "wat": "melding",
+    "tekst": "Elke gram telt mee in de dagteller linksboven: kies weer een tablet.",
+    "klasse": "melding zicht",
+    "klok": 8.5,
+    "C": 7.58,
+    "dag": 2000,
+    "ts": 36700
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Tablet voor uur 9",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": 8.5,
+    "C": 7.58,
+    "dag": 2000,
+    "ts": 36862
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": 8.98,
+    "C": 6.64,
+    "dag": 2000,
+    "ts": 38662
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 9,
+    "C": 6.6,
+    "dag": 3000,
+    "ts": 38741
+   },
+   {
+    "wat": "melding",
+    "tekst": "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.",
+    "klasse": "melding zicht",
+    "klok": 9.07,
+    "C": 7.73,
+    "dag": 3000,
+    "ts": 39001
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 12.5,
+    "C": 8.69,
+    "dag": 3000,
+    "ts": 51874
+   },
+   {
+    "wat": "melding",
+    "tekst": "Slikken lukt niet altijd: kies nu een zetpil.",
+    "klasse": "melding zicht",
+    "klok": 12.5,
+    "C": 8.69,
+    "dag": 3000,
+    "ts": 52133
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Zetpil voor uur 13",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": 12.5,
+    "C": 8.69,
+    "dag": 3000,
+    "ts": 52328
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": 12.98,
+    "C": 7.64,
+    "dag": 3000,
+    "ts": 54128
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 13,
+    "C": 7.6,
+    "dag": 4000,
+    "ts": 54208
+   },
+   {
+    "wat": "melding",
+    "tekst": "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.",
+    "klasse": "melding zicht",
+    "klok": 13.07,
+    "C": 7.57,
+    "dag": 4000,
+    "ts": 54467
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 16,
+    "C": 5.43,
+    "dag": 4000,
+    "ts": 65457
+   }
+  ]
+ },
+ "390x844": {
+  "tutorialDuur_s": 65.37620000000001,
+  "wandklok_start_tot_intro1_s": 65.554,
+  "tikken": [
+   "start",
+   "slik@klok-0.80",
+   "niets@klok1.50",
+   "spuit@klok4.40",
+   "slik@klok8.50",
+   "zetpil@klok12.50",
+   "Race!"
+  ],
+  "gegeven": [
+   "slik",
+   "leeg",
+   "niets",
+   "leeg",
+   "leeg",
+   "spuit",
+   "leeg",
+   "leeg",
+   "leeg",
+   "slik",
+   "leeg",
+   "leeg",
+   "leeg",
+   "zetpil",
+   "leeg",
+   "leeg",
+   "leeg"
+  ],
+  "dagteller": 4000,
+  "score": 620,
+  "finish": "Klaar? | QALY-punten in de oefenronde | 620 | Race!",
+  "intro1": "Race 1 · Paracetamol\n\nOpa Jan (70 kg) heeft net een nieuwe heup. De pijn moet weg, zijn lever moet heel blijven.\n\nHoud de spiegel in het groene vlak, boven de streep.\nKies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.\nMaximaal 4 gram per dag: daarboven raakt de lever beschadigd.\n\nEen QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY's.\n\nStart race",
+  "scroll1": {
+   "sh": 844,
+   "ch": 844,
+   "sw": 390,
+   "cw": 390
+  },
+  "fouten": [],
+  "log": [
+   {
+    "wat": "melding",
+    "tekst": "Opa Jan heeft pijn: kies een tablet voor het eerste poortje.",
+    "klasse": "melding zicht",
+    "klok": -0.8,
+    "C": 0,
+    "dag": 0,
+    "ts": 132
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Tablet voor uur 0",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": -0.8,
+    "C": 0,
+    "dag": 0,
+    "ts": 606
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": -0.32,
+    "C": 0,
+    "dag": 0,
+    "ts": 2407
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 0,
+    "C": 0,
+    "dag": 1000,
+    "ts": 3622
+   },
+   {
+    "wat": "melding",
+    "tekst": "Een pil moet eerst door je maag.",
+    "klasse": "melding zicht",
+    "klok": 0.07,
+    "C": 1.33,
+    "dag": 1000,
+    "ts": 3881
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 1.5,
+    "C": 9.18,
+    "dag": 1000,
+    "ts": 9236
+   },
+   {
+    "wat": "melding",
+    "tekst": "De pijn is weg: kies Niets om een poortje over te slaan.",
+    "klasse": "melding zicht",
+    "klok": 1.5,
+    "C": 9.18,
+    "dag": 1000,
+    "ts": 9496
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Niets voor uur 2",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": 1.5,
+    "C": 9.18,
+    "dag": 1000,
+    "ts": 9690
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": 1.98,
+    "C": 8.71,
+    "dag": 1000,
+    "ts": 11490
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 2,
+    "C": 8.68,
+    "dag": 1000,
+    "ts": 11570
+   },
+   {
+    "wat": "melding",
+    "tekst": "Je lichaam ruimt het op: elke 2,5 uur is de helft weg.",
+    "klasse": "melding zicht",
+    "klok": 2.07,
+    "C": 8.59,
+    "dag": 1000,
+    "ts": 11830
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 4.3,
+    "C": 5,
+    "dag": 1000,
+    "ts": 20203
+   },
+   {
+    "wat": "melding",
+    "tekst": "Au. De pijn komt terug.",
+    "klasse": "melding au zicht",
+    "klok": 4.37,
+    "C": 4.9,
+    "dag": 1000,
+    "ts": 20463
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Spuit voor uur 5",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": 4.4,
+    "C": 4.86,
+    "dag": 1000,
+    "ts": 21059
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": 4.88,
+    "C": 4.27,
+    "dag": 1000,
+    "ts": 22859
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding au",
+    "klok": 5,
+    "C": 20,
+    "dag": 2000,
+    "ts": 23320
+   },
+   {
+    "wat": "melding",
+    "tekst": "Een prik werkt meteen, maar zakt net zo hard.",
+    "klasse": "melding zicht",
+    "klok": 5.07,
+    "C": 19.62,
+    "dag": 2000,
+    "ts": 23579
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 8.5,
+    "C": 7.58,
+    "dag": 2000,
+    "ts": 36434
+   },
+   {
+    "wat": "melding",
+    "tekst": "Elke gram telt mee in de dagteller linksboven: kies weer een tablet.",
+    "klasse": "melding zicht",
+    "klok": 8.5,
+    "C": 7.58,
+    "dag": 2000,
+    "ts": 36695
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Tablet voor uur 9",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": 8.5,
+    "C": 7.58,
+    "dag": 2000,
+    "ts": 36926
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": 8.98,
+    "C": 6.65,
+    "dag": 2000,
+    "ts": 38726
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 9,
+    "C": 6.6,
+    "dag": 3000,
+    "ts": 38802
+   },
+   {
+    "wat": "melding",
+    "tekst": "Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.",
+    "klasse": "melding zicht",
+    "klok": 9.07,
+    "C": 7.73,
+    "dag": 3000,
+    "ts": 39061
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 12.5,
+    "C": 8.69,
+    "dag": 3000,
+    "ts": 51934
+   },
+   {
+    "wat": "melding",
+    "tekst": "Slikken lukt niet altijd: kies nu een zetpil.",
+    "klasse": "melding zicht",
+    "klok": 12.5,
+    "C": 8.69,
+    "dag": 3000,
+    "ts": 52194
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "Zetpil voor uur 13",
+    "klasse": "keuze-info zicht gekozen",
+    "klok": 12.5,
+    "C": 8.69,
+    "dag": 3000,
+    "ts": 52374
+   },
+   {
+    "wat": "keuze-info",
+    "tekst": "",
+    "klasse": "keuze-info gekozen",
+    "klok": 12.98,
+    "C": 7.65,
+    "dag": 3000,
+    "ts": 54174
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 13,
+    "C": 7.6,
+    "dag": 4000,
+    "ts": 54252
+   },
+   {
+    "wat": "melding",
+    "tekst": "Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.",
+    "klasse": "melding zicht",
+    "klok": 13.07,
+    "C": 7.57,
+    "dag": 4000,
+    "ts": 54511
+   },
+   {
+    "wat": "melding",
+    "tekst": "",
+    "klasse": "melding",
+    "klok": 16,
+    "C": 5.43,
+    "dag": 4000,
+    "ts": 65501
+   }
+  ]
+ }
+}
