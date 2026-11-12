@@ -12,9 +12,11 @@
  *   stappen   [{ op, zin, knop, poortje, daarna }]
  *       op       spelklok (uur) waarop de klok stilstaat (−Infinity = meteen bij het begin)
  *       zin      de ene zin die dan in beeld staat
- *       knop     de raceknop die gemarkeerd wordt ('slik' | 'zetpil' | 'spuit' | 'niets'); de klok loopt
- *                weer zodra de speler die knop tikt. De keuze geldt, net als in de race, voor het
- *                eerstvolgende poortje.
+ *       zin 'lekentaal.onder' = de casusbladtekst "Au. De pijn komt terug."; zit de spiegel dan niet onder
+ *                de streep (de speler gaf zelf iets extra), dan staat er zinAnders.
+ *       knop     de raceknop die gemarkeerd wordt ('slik' | 'zetpil' | 'spuit' | 'niets'). De klok wacht
+ *                tot die keuze klaarstaat voor het eerstvolgende poortje. De knoppen zelf werken precies
+ *                als in de race: de speler kan wisselen of zijn keuze wissen; dan wacht de klok opnieuw.
  *       poortje  index van dat poortje (controle: de motor weigert een draaiboek dat niet klopt)
  *       daarna   de ene zin die verschijnt op het moment dat het poortje de keuze uitvoert
  *   klaar     { kop, label, knop }: tekst op het eindkaartje (zelfde kaartje als "Race klaar" na een race)
@@ -40,7 +42,7 @@
         daarna: 'Een pil moet eerst door je maag.' },
       { op: 1.5, zin: 'De pijn is weg: kies Niets om een poortje over te slaan.', knop: 'niets', poortje: 2,
         daarna: 'Je lichaam ruimt het op: elke 2,5 uur is de helft weg.' },
-      { op: 4.4, zin: 'lekentaal.onder', knop: 'spuit', poortje: 5,
+      { op: 4.4, zin: 'lekentaal.onder', zinAnders: 'Kies nu de spuit.', knop: 'spuit', poortje: 5,
         daarna: 'Een prik werkt meteen, maar zakt net zo hard.' },
       { op: 8.5, zin: 'Elke gram telt mee in de dagteller linksboven: kies weer een tablet.', knop: 'slik', poortje: 9,
         daarna: 'Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.' },

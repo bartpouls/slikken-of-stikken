@@ -152,11 +152,11 @@ input { font: inherit; }
 @media (max-height: 700px) {
   .start-figuren .fig { width: 78px; }
   .start-form { margin-top: 20px; gap: 12px; }
-  .intro-fig { height: 92px; margin: 12px 0 10px; }
-  .intro-fig .fig { width: 70px; }
-  .tekst.groot { font-size: 18px; }
-  .intro-regel { margin-top: 12px; font-size: 15.5px; }
-  .intro-regel li { margin-bottom: 6px; }
+  .intro-fig { height: 68px; margin: 8px 0 8px; }
+  .intro-fig .fig { width: 52px; }
+  .tekst.groot { font-size: 17px; line-height: 1.32; }
+  .intro-regel { margin-top: 10px; font-size: 15px; line-height: 1.3; }
+  .intro-regel li { margin-bottom: 4px; }
   .intro-qaly { font-size: 14px; }
   #scherm-intro .knop-paars { margin-top: 14px; }
 }

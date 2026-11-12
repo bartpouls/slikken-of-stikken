@@ -9,7 +9,8 @@
  * EÉN RACE-MOTOR, OOK VOOR DE OEFENRONDE (§6C1): startRace(i, gids). De oefenronde is startRace(0, SoS.tutorial):
  *   hetzelfde scherm (#scherm-race), dezelfde tekencode (teken, tekenPoortjes), dezelfde knoppen, klok,
  *   QALY-stand, dagteller en levermeter. Er bestaat geen tutorialversie van die onderdelen. Het draaiboek
- *   (src/tutorial.js) voegt alleen toe: de klok staat stil tot de speler de gemarkeerde knop tikt (R.gids.bevroren),
+ *   (src/tutorial.js) voegt alleen toe: de klok staat stil tot de gevraagde keuze klaarstaat (R.gids.bevroren;
+ *   de knoppen zelf werken precies als in de race: kiezen, wisselen, wissen, te laat),
  *   één zin in beeld (zelfde .melding als de race, maar hij blijft staan), en de markering van die knop
  *   (class "wijs" + data-wijs="1"). De plotwending (misselijkheid) staat uit; de ronde stopt op gids.eind.
  *
@@ -311,10 +312,13 @@
       // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).
       var uren = M.poortjes(c).filter(function (t) { return t < 24; });
       regels = ['Het groene vlak heeft nu ook een bovenkant: ' + vensterTekst(c, 0) + '.',
+        'Boven ' + getal(c.toxisch, 1) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
+        'De klok telt in dagen: de race duurt ' + Math.round(c.raceDuur / 24) + ' dagen.',
         'Poortjes komen ' + uren.length + '× per dag: om ' + uren.slice(0, -1).join(', ') + ' en ' + uren[uren.length - 1] + ' uur.',
         'Niets heet hier Overslaan.',
         'Tik twee keer op Tablet voor 2 tabletten op één poortje.',
-        'Geen zetpil en geen dagteller; wel een giftige grens: boven ' + getal(c.toxisch, 1) + '\u00a0' + CFG[c.id].eenheid + '.'];
+        'Er is geen zetpil.',
+        'Er is geen dagteller.'];
     }
     var ul = $('intro-regel');
     ul.innerHTML = '';
@@ -371,7 +375,7 @@
     var race = S.maakRace(c, gids ? { blokkades: false } : undefined);
     R = {
       i: i, casus: c, cfg: cfg, race: race,
-      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, i: 0, bevroren: false, t0: performance.now(), duur: null } : null,
+      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, i: 0, bevroren: false, actief: false, wijsVanaf: 0, t0: performance.now(), duur: null } : null,
       stemming: null,
       poorten: M.poortjes(c), g: 0,
       keuze: { route: null, aantal: 0, poging: false },
@@ -482,13 +486,9 @@
     if (!R || R.klaar) return;
     var c = R.casus;
     flits(b, 'tik');
-    // Oefenronde: alleen de gemarkeerde knop doet iets, en alleen terwijl de klok stilstaat.
+    // Oefenronde: de knoppen werken precies als in de race (kiezen, wisselen, wissen, te laat). Alleen de
+    // klok wacht: zie gidsControle.
     var G = R.gids;
-    if (G && !(G.bevroren && G.stappen[G.i].knop === route)) {
-      flits(b, 'schud');
-      keuzeInfo(G.bevroren ? 'Kies nu ' + KEUZENAAM[G.stappen[G.i].knop] + '.' : 'Even kijken wat er gebeurt.', 'laat');
-      return;
-    }
     // Lithium-spuitknop: zichtbaar, doet niets, geen strafpunten.
     if (route === 'spuit' && c.routes.spuit && c.routes.spuit.doetNiets) {
       R.race.geef('spuit');
@@ -510,7 +510,7 @@
     if (R.g >= R.poorten.length) { keuzeInfo('Geen poortjes meer in deze race.'); return; }
     var doelLabel = inZin(tijdLabel(c, R.poorten[R.g], true));
     // Te laat: een tik vlak ná een poortje telt niet stilletjes mee voor het volgende poortje.
-    if (!G && R.laatstePoort && performance.now() - R.laatstePoort.echt < TE_LAAT_MS / SPEED) {
+    if (R.laatstePoort && performance.now() - R.laatstePoort.echt < TE_LAAT_MS / SPEED) {
       flits(b, 'schud');
       speel('overslaan');
       keuzeInfo('Te laat voor ' + inZin(R.laatstePoort.label) + '. Kies opnieuw voor ' + doelLabel + '.', 'laat');
@@ -533,25 +533,36 @@
     speel('tik');
     keuzeInfo(tekst, k.route ? 'gekozen' : 'gewist');
     werkKnoppenBij();
-    if (G) gidsVerder();
+    if (G) gidsControle();
   }
 
   // ---------- gids (oefenronde) ----------
-  // Zet de klok stil op de huidige stap: de zin in beeld en de knop gemarkeerd (class "wijs", data-wijs).
+  // Een stap begint: de zin komt in beeld. Daarna bepaalt gidsControle of de klok moet wachten.
   function gidsStap() {
     var G = R.gids, st = G.stappen[G.i];
-    G.bevroren = true;
-    var zin = st.zin === 'lekentaal.onder' ? R.casus.lekentaal.onder : st.zin;
-    melding(zin, { soort: st.zin === 'lekentaal.onder' ? 'au' : null });
-    var b = R.knoppen[st.knop];
-    if (b) { b.classList.add('wijs'); b.setAttribute('data-wijs', '1'); }
+    G.actief = true;
+    var onder = zoneVan(R.race.sim.C, Math.max(0, R.race.t)) === 'onder';
+    var zin = st.zin;
+    if (zin === 'lekentaal.onder') zin = onder ? R.casus.lekentaal.onder : st.zinAnders; // casusbladtekst als hij klopt
+    melding(zin, { soort: st.zin === 'lekentaal.onder' && onder ? 'au' : null });
+    G.wijsVanaf = performance.now() + MELD_FADE + 40; // de markering komt samen met de zin, niet ervoor
+    gidsControle();
   }
-  // De speler heeft de gemarkeerde knop getikt: markering weg, de klok loopt weer.
-  function gidsVerder() {
+  // De klok staat stil zolang de gevraagde keuze niet klaarstaat voor het poortje van deze stap. Wisselt of
+  // wist de speler zijn keuze (dat kan, net als in de race), dan wacht de klok opnieuw. De gevraagde knop is
+  // gemarkeerd (class "wijs", data-wijs) zolang de klok wacht.
+  function gidsControle() {
     var G = R.gids;
-    G.bevroren = false;
-    G.gevraagd = true; // deze stap is gevraagd; de volgende komt pas na het poortje
-    Object.keys(R.knoppen).forEach(function (r) { R.knoppen[r].classList.remove('wijs'); R.knoppen[r].removeAttribute('data-wijs'); });
+    if (!G) return;
+    var st = G.actief ? G.stappen[G.i] : null;
+    G.bevroren = !!st && !(R.keuze.route === st.knop && R.g === st.poortje);
+    var toon = G.bevroren && performance.now() >= G.wijsVanaf;
+    Object.keys(R.knoppen).forEach(function (r) {
+      var aan = toon && r === st.knop, b = R.knoppen[r];
+      if (aan === b.classList.contains('wijs')) return;
+      b.classList.toggle('wijs', aan);
+      if (aan) b.setAttribute('data-wijs', '1'); else b.removeAttribute('data-wijs');
+    });
   }
 
   // Lithium: tablet tot 2× per poortje (casusblad: "elk poortje dubbel"); paracetamol 1 g per keer.
@@ -1099,10 +1110,11 @@
     if (!(G && G.bevroren)) R.klok += dtEcht * SPEED / R.cfg.secPerUur;
     var c = R.casus, race = R.race, duur = G ? G.eind : c.raceDuur;
     // oefenronde: de klok stopt precies op het moment van de volgende stap
-    if (G && !G.bevroren && !G.gevraagd && G.i < G.stappen.length && R.klok >= G.stappen[G.i].op) {
+    if (G && !G.actief && G.i < G.stappen.length && R.klok >= G.stappen[G.i].op) {
       R.klok = G.stappen[G.i].op;
       gidsStap();
     }
+    if (G) gidsControle();
     if (R.klok > duur) R.klok = duur;
 
     // poortjes die we passeren: precies op de poortjestijd toepassen
@@ -1186,7 +1198,8 @@
     if (G && G.i < G.stappen.length && G.stappen[G.i].poortje === g) {
       melding(G.stappen[G.i].daarna, {});
       G.i++;
-      G.gevraagd = false;
+      G.actief = false;
+      gidsControle();
     }
   }
 
@@ -1365,7 +1378,7 @@
         uitslag: staat.verslagen.map(function (v) { return v ? v.opbouw.totaal : null; }),
         duren: (staat.duren || []).slice(),
         gids: r && r.gids ? { stap: Math.min(r.gids.i + 1, r.gids.stappen.length), bevroren: r.gids.bevroren,
-          wijs: r.gids.bevroren ? r.gids.stappen[r.gids.i].knop : null, zin: $('melding').getAttribute('data-zin') } : null,
+          wijs: r.gids.bevroren && r.gids.i < r.gids.stappen.length ? r.gids.stappen[r.gids.i].knop : null, zin: $('melding').getAttribute('data-zin') } : null,
         tutorialDuur: staat.tutorialDuur || null
       };
       return Object.freeze(snap);
