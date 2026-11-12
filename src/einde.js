@@ -4,7 +4,7 @@
  * INTERFACE (houd deze vast; app.js roept alleen dit aan)
  * ----------------------------------------------------------
  *   SoS.einde.toon(container, data, opnieuw) -> {stop()}
- *     container  <section id="scherm-einde" class="scherm wit">: leeg en zichtbaar. Vul hem zelf.
+ *     container  <section id="scherm-einde" class="scherm">: leeg en zichtbaar. Vul hem zelf.
  *     data = {
  *       naam:    speelnaam (string),
  *       races:   [verslag1, verslag2]  — precies race.verslag() uit src/score.js (zie de API daar:
@@ -20,8 +20,8 @@
  *     stop()     Opruimen als het scherm weggaat.
  *   Eisen (§6B): naam en totaalscore ≥ 32 px; nabespreekvraag "Wat deed je toen je onder de streep zakte?".
  *
- * OPBOUW (één scrollend scherm, wit = Evolution-of-Trust-stijl zoals start en intro; de mini-curves
- * zijn zwarte racepaneeltjes, zodat ze er net zo uitzien als tijdens de race):
+ * OPBOUW (één scrollend scherm in dezelfde stijl als de rest: zwart met sterren, witte tekst, paarse
+ * markering; de mini-curves zien er net zo uit als de spiegel tijdens de race):
  *   1. Eindscherm (boven de vouw): speelnaam (36 px), totaal QALY-punten (72 px), per race een kaart met
  *      de QALY-punten en een tegelrij (één tegel per poortje, kleur = waar de spiegel tot het volgende
  *      poortje het meest zat: in de zone / te laag / te hoog / giftig; uit data.curves), de
@@ -31,7 +31,7 @@
  *      totale dosis, dagteller), de praktijkzin en (lithium) de nabesprekingszin uit het casusblad.
  *   3. "Nog een keer" (data-actie="opnieuw") direct onder de nabespreekvraag; één tik.
  *   Dempknop (van app.js): rechtsboven zoals op de andere schermen, maar hij scrolt mee (nooit over tekst).
- *   Tegels = lijnkleuren van de race op een zwart paneeltje; ibuprofen oranje (zoals in de race);
+ *   Tegels = lijnkleuren van de race; ibuprofen oranje (zoals in de race);
  *   labels "Uur 0" / "Dag 5" zoals in de race; "≠" = neutraal grijs "anders dan schema" (geen oordeel).
  *   Alle getallen komen uit data (verslag/score) of het casusblad; dit bestand rekent niets nieuws uit,
  *   behalve de tegelkleur (welke toestand de meeste meetpunten van de eigen curve had).
@@ -370,9 +370,9 @@
 
   function verslagHtml(i, c, v, curve) {
     var s = '<section class="eind-verslag" data-verslag="' + i + '" id="eind-verslag-' + i + '" aria-labelledby="eind-v-kop-' + i + '">';
+    s += '<p class="markering">Race ' + (i + 1) + ' · verslag</p>';
     s += '<header class="eind-v-kop">' + figuurHtml(c, v, 'eind-v-fig') +
-      '<div><p class="eind-kicker">Race ' + (i + 1) + ' · verslag</p>' +
-      '<h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + ' <span class="eind-v-wie">' + esc(c.patient) + '</span></h2>' +
+      '<div><h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + ' <span class="eind-v-wie">' + esc(c.patient) + '</span></h2>' +
       '<p class="eind-v-score"><b>' + getal(v.opbouw.totaal) + '</b> QALY-punten</p></div></header>';
     var lever = leverOp(c, v), leverOoit = curve && curve.some(function (p) { return lever(p.t); });
     if (curve && curve.length > 1) {
@@ -421,14 +421,14 @@
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
           legendaHtml(cs) +
-          '<div class="eind-vraag"><span class="eind-vraag-kop">Nabespreken</span>' +
+          '<div class="eind-vraag"><span class="markering">Nabespreken</span>' +
             '<p data-eind="vraag">' + VRAAG + '</p></div>' +
-          '<div class="eind-acties"><button type="button" class="knop-wit groot" data-actie="opnieuw">Nog een keer</button></div>' +
+          '<div class="eind-acties"><button type="button" class="knop-paars groot" data-actie="opnieuw">Nog een keer</button></div>' +
           '<p class="eind-scorebord">Laat je naam en totaal op het scorebord zetten.</p>' +
           '<p class="eind-spelpunten">QALY-punten zijn spelpunten, geen echte QALY\'s.</p>' +
         '</div>' +
         verslagen +
-        '<div class="eind-voet"><button type="button" class="knop-wit" data-actie="naar-boven">' +
+        '<div class="eind-voet"><button type="button" class="knop-lijn" data-actie="naar-boven">' +
           '<span aria-hidden="true">↑</span>&nbsp;Terug naar je score</button></div>' +
       '</div>';
 
@@ -451,7 +451,7 @@
         container.scrollTo({ top: doel.offsetTop - 8, behavior: glad ? 'smooth' : 'auto' });
       });
     });
-    // figuurtjes reageren op aanraken (EoT)
+    // figuurtjes reageren op aanraken
     Array.prototype.forEach.call(container.querySelectorAll('.eind-v-fig'), function (f) {
       luister(f, 'pointerdown', function () {
         f.classList.remove('wiebel'); void f.offsetWidth; f.classList.add('wiebel');

@@ -1,4 +1,4 @@
-// Slikken of Stikken — automatische spelers (bots), §6B van docs/bouwopdracht.md.
+// Slikken of Stikken — automatische spelers (bots), §6B en §6C van docs/bouwopdracht.md.
 // Draaien: node tests/bots.mjs            (alles: beide viewports, ±15–20 min)
 //          node tests/bots.mjs --kort     (snelle proef: alleen 375×667, 3 runs, geen run op normale snelheid)
 // Schrijft: gauntlet/artefacten/bots-rapport.md
@@ -146,7 +146,7 @@ async function meetScherm(page) {
       return b.checkVisibility ? b.checkVisibility({ opacityProperty: true, visibilityProperty: true }) : true;
     }).map((b) => {
       const r = b.getBoundingClientRect();
-      const label = b.getAttribute('data-actie') || b.getAttribute('data-tut') || b.id ||
+      const label = b.getAttribute('data-actie') || b.id ||
         (b.className && String(b.className).split(' ')[0]) || b.tagName.toLowerCase();
       const tekst = (b.getAttribute('aria-label') || b.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 24);
       return { label, tekst, w: Math.round(r.width * 10) / 10, h: Math.round(r.height * 10) / 10 };
@@ -155,7 +155,7 @@ async function meetScherm(page) {
     return {
       scherm: actief ? actief.id : null,
       fase: window.SoS && window.SoS.debug ? window.SoS.debug.fase : null,
-      stap: (document.querySelector('.tut-binnen') || { getAttribute: () => null }).getAttribute('data-stap'),
+      stap: window.SoS && window.SoS.debug && window.SoS.debug.gids ? window.SoS.debug.gids.stap : null,
       knoppen,
       scroll: {
         doc: [de.scrollWidth, de.clientWidth],
@@ -217,51 +217,76 @@ async function wachtOp(page, fn, arg, timeout = 30000) {
 // ---------------------------------------------------------------------------------------------
 // Tutorial
 // ---------------------------------------------------------------------------------------------
+// §6C2: plaats, maat, letter en kleur van de vaste onderdelen van het racescherm (voor tutorial vs. race 1).
+async function meetRaceUi(page) {
+  return page.evaluate(() => {
+    const uit = {};
+    const neem = (naam, el, metTekst) => {
+      if (!el) { uit[naam] = null; return; }
+      const r = el.getBoundingClientRect(), cs = getComputedStyle(el);
+      const zichtbaar = r.width > 0 && r.height > 0 && cs.visibility !== 'hidden' && !el.closest('[hidden]');
+      uit[naam] = { x: Math.round(r.x * 2) / 2, y: Math.round(r.y * 2) / 2, w: Math.round(r.width * 2) / 2, h: Math.round(r.height * 2) / 2,
+        font: cs.fontFamily, maat: cs.fontSize, gewicht: cs.fontWeight, achtergrond: cs.backgroundColor, rand: cs.borderTopLeftRadius + ' ' + cs.borderTopWidth,
+        zichtbaar, tekst: metTekst ? (el.textContent || '').replace(/\s+/g, ' ').trim() : undefined,
+        icoon: metTekst && el.querySelector('svg') ? el.querySelector('svg').outerHTML.length : undefined };
+    };
+    const q = (s) => document.querySelector(s);
+    neem('scherm', q('#scherm-race')); neem('kop', q('.race-kop')); neem('klok', q('#klok')); neem('qaly', q('#qaly'));
+    neem('qaly-label', q('.qaly-label'), true); neem('qaly-getal', q('#qaly-getal'));
+    neem('lever', q('#lever')); neem('lever-icoon', q('.lever-icoon')); neem('lever-tekst', q('#lever-tekst')); neem('lever-meter', q('.lever-meter')); neem('lever-max', q('.lever-max'));
+    neem('patient', q('#patient')); neem('patient-kop', q('#patient-kop')); neem('patient-naam', q('#patient-naam'), true);
+    neem('podium', q('#podium')); neem('doek', q('#doek')); neem('knoppen', q('#knoppen')); neem('demp', q('#demp'));
+    [...document.querySelectorAll('#knoppen .actie')].forEach((b) => neem('knop-' + b.getAttribute('data-actie'), b, true));
+    uit.aantalKnoppen = document.querySelectorAll('#knoppen .actie').length;
+    uit.doekPixels = q('#doek').width + '×' + q('#doek').height;
+    return uit;
+  });
+}
+
+// De bot tikt UITSLUITEND op de knop die de uitleg aanwijst ([data-wijs]) en aan het eind op de knop van het
+// eindkaartje. Geen andere tikken, geen kennis van het draaiboek.
 async function speelTutorial(page, run) {
   run.faseNu = 'tutorial';
-  const gezien = new Set();
-  if (run.cfg.tut === 'over') {
-    await wachtOp(page, () => !!document.querySelector('[data-tut="overslaan"]'));
-    run.metingen.push(await meetScherm(page));
-    await tik(page, run, '[data-tut="overslaan"]');
-    await wachtOp(page, () => window.SoS.debug.fase === 'intro1');
-    return;
-  }
-  const einde = Date.now() + (run.cfg.normaal ? 240000 : 90000);
+  const t0 = Date.now();
+  const einde = t0 + (run.cfg.normaal ? 240000 : 90000);
+  let laatsteStap = null;
+  run.tut = { stappen: [], zinnen: [], ui: null, klokStil: [] };
   while (Date.now() < einde) {
     const s = await page.evaluate(() => {
-      const b = document.querySelector('.tut-binnen');
-      const fase = window.SoS.debug.fase;
-      if (!b || fase !== 'tutorial') return { fase };
-      const vol = b.querySelector('.tut-volgende');
-      const verder = b.querySelector('[data-actie="verder"]');
-      const acties = [...b.querySelectorAll('.tut-actie')].filter((x) => !x.disabled).map((x) => x.getAttribute('data-tut'));
-      return {
-        fase, stap: b.getAttribute('data-stap'), tfase: b.getAttribute('data-fase'),
-        volgende: !!(vol && vol.classList.contains('zicht') && !vol.disabled && !vol.hidden),
-        verder: !!verder, acties
-      };
+      const d = window.SoS.debug, w = document.querySelector('#knoppen [data-wijs]');
+      return { fase: d.fase, gids: d.gids, klok: d.klok, wijs: w ? w.getAttribute('data-actie') : null,
+        aantalWijs: document.querySelectorAll('[data-wijs]').length, finish: !document.getElementById('finish').hidden,
+        zin: (document.querySelector('#melding.zicht') || { textContent: '' }).textContent.trim() };
     });
     if (s.fase !== 'tutorial') break;
-    const sleutel = s.stap + (s.volgende ? 'v' : '') + (s.verder ? 'r' : '');
-    if (!gezien.has(sleutel)) { gezien.add(sleutel); run.metingen.push(await meetScherm(page)); }
-    if (s.verder) {
-      await sleep(450); // de knop negeert tikken in de eerste 350 ms (echte tijd)
-      await tik(page, run, '.tut-binnen [data-actie="verder"]');
-      await sleep(150);
-    } else if (s.volgende) {
-      await sleep(250); // overgang van 0,2 s
-      await tik(page, run, '.tut-binnen .tut-volgende');
-      await sleep(150);
-    } else if (s.tfase === 'wacht' && s.acties.length) {
+    if (s.finish) break;
+    if (s.gids && s.gids.bevroren && s.wijs && s.gids.stap !== laatsteStap) {
+      laatsteStap = s.gids.stap;
+      // wacht tot de zin van deze stap is ingefaded (de vorige zin fadet eerst uit)
+      await wachtOp(page, () => { const m = document.querySelector('#melding.zicht'); return !!m && m.getAttribute('data-zin') === window.SoS.debug.gids.zin && getComputedStyle(m).opacity > 0.9; }, undefined, 3000).catch(() => null);
+      const na = await page.evaluate(() => ({ klok: window.SoS.debug.klok, zin: (document.querySelector('#melding.zicht') || { textContent: '' }).textContent.trim() }));
+      run.tut.klokStil.push(na.klok === s.klok); // de klok staat stil zolang de speler niets doet
+      run.metingen.push(await meetScherm(page));
+      if (laatsteStap === 3) run.tut.ui = await meetRaceUi(page);
       if (run.eersteHandeling == null) run.eersteHandeling = run.tikken + 1;
-      await tik(page, run, `.tut-binnen .tut-actie[data-tut="${s.acties[0]}"]`);
-      run.tutActies.push(s.stap + ':' + s.acties[0]);
-      await sleep(100);
+      await tik(page, run, '#knoppen [data-wijs]');
+      run.tutActies.push(s.gids.stap + ':' + s.wijs);
+      run.tut.stappen.push({ stap: s.gids.stap, knop: s.wijs, aantalWijs: s.aantalWijs, zin: na.zin });
     } else {
-      await sleep(60);
+      if (s.zin && run.tut.zinnen[run.tut.zinnen.length - 1] !== s.zin) run.tut.zinnen.push(s.zin);
+      await sleep(40);
     }
   }
+  await wachtOp(page, () => !document.getElementById('finish').hidden, undefined, 60000);
+  run.tut.duurKlok = (Date.now() - t0) / 1000; // tik "Start" → eindkaartje, zoals de bot het meet
+  const d = await debug(page);
+  run.tut.duurSpel = d.tutorialDuur;
+  run.tut.gegeven = d.gegeven.map((x, i) => (x && x !== 'leeg' ? i + ':' + x : null)).filter(Boolean);
+  run.tut.dagteller = d.dagteller;
+  await sleep(250);
+  run.metingen.push(await meetScherm(page));
+  run.tut.eindkaart = await page.evaluate(() => ({ kop: document.getElementById('finish-kop').textContent, knop: document.querySelector('#finish [data-actie="verder"]').textContent }));
+  await tik(page, run, '#finish [data-actie="verder"]');
   await wachtOp(page, () => window.SoS.debug.fase === 'intro1');
 }
 
@@ -426,10 +451,15 @@ async function speelRunBinnen(page, ctx, run, cfg, vp, speed, zetGeladen) {
     await tik(page, run, '[data-veld="naam"]');
     await page.keyboard.type(cfg.naam, { delay: 10 });
   }
-  await tik(page, run, '[data-actie="start"]');
-  run.tikkenNaStart = run.tikken;
-  await wachtOp(page, () => window.SoS.debug.fase === 'tutorial');
-  await speelTutorial(page, run);
+  if (cfg.tut === 'over') {
+    await tik(page, run, '[data-actie="start-over"]'); // "Oefenronde overslaan"
+    run.tikkenNaStart = run.tikken;
+  } else {
+    await tik(page, run, '[data-actie="start"]');
+    run.tikkenNaStart = run.tikken;
+    await wachtOp(page, () => window.SoS.debug.fase === 'tutorial');
+    await speelTutorial(page, run);
+  }
   run.tutorialTikken = run.tikken - run.tikkenNaStart;
 
   for (let nr = 0; nr < 2; nr++) {
@@ -437,11 +467,13 @@ async function speelRunBinnen(page, ctx, run, cfg, vp, speed, zetGeladen) {
     await wachtOp(page, (f) => window.SoS.debug.fase === f, 'intro' + (nr + 1));
     await sleep(150);
     run.metingen.push(await meetScherm(page));
+    if (nr === 1) run.intro2 = await page.evaluate(() => [...document.querySelectorAll('#intro-regel li')].map((li) => li.textContent.trim()));
     await tik(page, run, '[data-actie="start-race"]');
     const tStart = Date.now();
     if (nr === 0) run.tikkenTotRace1 = run.tikken;
     run.faseNu = 'race' + (nr + 1);
     await wachtOp(page, (f) => window.SoS.debug.fase === f, 'race' + (nr + 1));
+    if (nr === 0) { await sleep(120); run.uiRace1 = await meetRaceUi(page); }
     const r = await speelRace(page, run, nr);
     r.duurKlok = (Date.now() - tStart) / 1000; // tik "Start race" → finish-overlay (incl. ±40 ms bot-latentie)
     const dbg = await debug(page);
@@ -551,7 +583,7 @@ const looptijd = (Date.now() - T0_SCRIPT) / 1000;
 const nl = (x, d = 0) => (x == null || !isFinite(x) ? '–' : x.toFixed(d).replace('.', ','));
 const jn = (b) => (b ? '**gehaald**' : '**niet gehaald**');
 const L = [];
-L.push('# Bots-rapport §6B — Slikken of Stikken');
+L.push('# Bots-rapport §6B en §6C — Slikken of Stikken');
 L.push('');
 L.push(`Gegenereerd door \`node tests/bots.mjs\`${KORT ? ' --kort' : ''} op ${new Date().toISOString().replace('T', ' ').slice(0, 19)} UTC. ` +
   `Looptijd: ${nl(looptijd / 60, 1)} min. Playwright ${requireGlobaal('playwright/package.json').version}, Chromium headless (/opt/pw-browsers). index.html: ${(HTML.length / 1024).toFixed(1)} kB, sha256 ${HTML_SHA}… (één keer ingelezen bij de start; alle runs spelen dezelfde build).`);
@@ -561,7 +593,8 @@ L.push('**Opzet.** Het echte `index.html` (lokale http-server op 127.0.0.1) in m
   'knop (vooraf met `elementFromPoint` gecontroleerd). `SoS.debug` wordt alleen gelezen (doelpoortje, open/te laat, gekozen keuze, ' +
   'spiegel, fase). Scores komen van het scherm (finish-overlay en eindscherm); daarna wordt het gespeelde schema uit het rooster ' +
   `op het eindscherm nagerekend met \`SoS.score.scoreSchema\` (src/score.js, identiek aan de inline code). Strategie-runs op \`?speed=${SNEL}\`; ` +
-  'run n01 op normale snelheid (geen parameter). Elke run: start → tutorial (vol of "Overslaan") → race 1 → race 2 → eindscherm. ' +
+  'run n01 op normale snelheid (geen parameter). Elke run: start → oefenronde (vol, of "Oefenronde overslaan" op het startscherm) → race 1 → race 2 → eindscherm. ' +
+  'In de oefenronde tikt de bot uitsluitend op de knop met de markering (data-wijs) en op de knop van het eindkaartje. ' +
   'Een run is geldig als elk poortje precies de keuze van de bot kreeg (debug.gegeven én rooster op het eindscherm); anders opnieuw (max. 3 pogingen).');
 L.push('');
 
@@ -667,7 +700,7 @@ resultaten.forEach((runs, vi) => {
   const eersteZonderNaam = metNaamVol ? metNaamVol.eersteHandeling - 1 : NaN; // zonder de tik op het naamveld
   L.push('### B3 Tikken, raceduur, "Nog een keer"');
   L.push('');
-  L.push('Tikken van openen tot de eerste speelhandeling (eerste tik op een tutorialknop, "Tablet"):');
+  L.push('Tikken van openen tot de eerste speelhandeling (eerste tik op een raceknop in de oefenronde, "Tablet"):');
   L.push(`- met naam typen (tik naamveld + typen + Start + Tablet): ${metNaamVol ? metNaamVol.eersteHandeling : '–'} tikken (run ${metNaamVol ? metNaamVol.cfg.id : '–'}); zonder naam (veld leeg laten): ${eersteZonderNaam} tikken.`);
   L.push('Tikken van openen tot race 1 loopt (tik op "Start race" meegeteld):');
   L.push(`- met "Overslaan", zonder naam typen: ${zonderNaamOver ? zonderNaamOver.tikkenTotRace1 : '–'} tikken (run ${zonderNaamOver ? zonderNaamOver.cfg.id : '–'}: ${zonderNaamOver ? zonderNaamOver.tikLog.slice(0, zonderNaamOver.tikkenTotRace1).join(' → ') : ''})`);
@@ -767,6 +800,53 @@ resultaten.forEach((runs, vi) => {
   }
   L.push('');
 
+  // ---------------- C (samenhang tutorial en race)
+  const volleC = geldig.filter((r) => r.cfg.tut === 'vol' && r.tut);
+  const ref = volleC[0];
+  L.push('### C Samenhang tutorial en race (meetbare delen van §6C)');
+  L.push('');
+  let c2 = false, c3 = false, c4a = false, c4b = null, c5 = false;
+  if (ref) {
+    // C2: vaste onderdelen op dezelfde plek, met dezelfde maat, letter en kleur
+    const a = ref.tut.ui || {}, b = ref.uiRace1 || {};
+    const sleutels = [...new Set([...Object.keys(a), ...Object.keys(b)])];
+    const verschil = [];
+    for (const k of sleutels) {
+      const x = JSON.stringify(a[k]), y = JSON.stringify(b[k]);
+      if (x !== y) verschil.push(`${k}: oefenronde ${x} ≠ race 1 ${y}`);
+    }
+    const toegestaan = verschil.filter((v) => /^knop-spuit: /.test(v) && /"rand"/.test(v)); // markering van de aangewezen knop (rand)
+    const echt = verschil.filter((v) => !toegestaan.includes(v));
+    c2 = echt.length === 0;
+    L.push(`C2 (meting, run ${ref.cfg.id}): plaats, maat, lettertype, lettergrootte, achtergrond, rand, tekst en icoon van ${sleutels.length} onderdelen ` +
+      `(scherm, kop, klok, QALY-stand, dagteller, levermeter, portret, canvas, ${a.aantalKnoppen} knoppen, dempknop) in de oefenronde (stap 3, klok stil) ` +
+      `tegenover race 1 (vlak na de start). Verschillen buiten de markering van de aangewezen knop: ${echt.length}${echt.length ? ' — ' + echt.join(' · ') : ''}. ` +
+      `Toegestaan verschil (rand van de gemarkeerde knop): ${toegestaan.length}. ${jn(c2)}`);
+    L.push(`  Knoppen oefenronde: ${['slik', 'zetpil', 'spuit', 'niets'].map((k) => (a['knop-' + k] || {}).tekst).join(', ')}; race 1: ${['slik', 'zetpil', 'spuit', 'niets'].map((k) => (b['knop-' + k] || {}).tekst).join(', ')}. Dit is een meting van de DOM; kleuren en vormen op het canvas beoordeelt de criticus op de schermafbeeldingen (gauntlet/schermen/).`);
+    // C3: elke knop van race 1 zelf gebruikt via het poortjesmechanisme
+    const knoppenRace = ['slik', 'zetpil', 'spuit', 'niets'];
+    const gebruikt = new Set(ref.tut.stappen.map((x) => x.knop));
+    const toegepast = ref.tut.gegeven.join(' ');
+    c3 = knoppenRace.every((k) => gebruikt.has(k)) && knoppenRace.every((k) => toegepast.includes(':' + k));
+    L.push(`C3 (meting): in de oefenronde getikt (stap:knop) ${ref.tutActies.join(', ')}; door het poortje uitgevoerd (poortje:keuze) ${toegepast}. ` +
+      `Alle vier de knoppen van race 1 (Tablet, Zetpil, Spuit, Niets) getikt én op een poortje uitgevoerd: ${jn(c3)}. Dagteller aan het eind: ${nl((ref.tut.dagteller || 0) / 1000, 0)} g (maximum 4 g).`);
+    // C4: te volgen met alleen de aangewezen knop
+    c4a = volleC.every((r) => r.tut.stappen.length === 5 && r.tut.stappen.every((x) => x.aantalWijs === 1) && r.tut.klokStil.every(Boolean) && r.tut.eindkaart && r.tut.eindkaart.kop === 'Klaar?');
+    L.push(`C4 (meting): ${volleC.length} runs door de hele oefenronde met alleen tikken op de gemarkeerde knop (steeds precies 1 gemarkeerde knop, klok staat stil tot de tik) en de knop "${ref.tut.eindkaart.knop}" op het eindkaartje "${ref.tut.eindkaart.kop}": ${jn(c4a)} (runs ${volleC.map((r) => r.cfg.id).join(', ')}).`);
+    const normC = volleC.find((r) => r.cfg.normaal);
+    if (normC) {
+      c4b = normC.tut.duurKlok <= 120;
+      L.push(`  Duur op normale snelheid (run ${normC.cfg.id}, geen ?speed, bot reageert direct): ${nl(normC.tut.duurKlok, 1)} s van de tik op "Start" tot het eindkaartje (het spel zelf meet ${nl(normC.tut.duurSpel, 1)} s). Hoogstens 120 s: ${jn(c4b)}`);
+    } else L.push('  Duur op normale snelheid: niet gemeten (--kort).');
+    L.push(`  Zinnen in beeld (run ${ref.cfg.id}), bij stilstaande klok: ${ref.tut.stappen.map((x) => '“' + x.zin + '”').join(' · ')}`);
+    L.push(`  Zinnen bij lopende klok: ${ref.tut.zinnen.map((x) => '“' + x + '”').join(' · ')}`);
+    // C5: introkaartje race 2
+    const i2 = ref.intro2 || [];
+    c5 = i2.some((z) => /Overslaan/.test(z)) && i2.some((z) => /2 tabletten/.test(z)) && i2.every((z) => (z.match(/[.!?](\s|$)/g) || []).length === 1);
+    L.push(`C5 (meting): introkaartje race 2 heeft ${i2.length} regels, elk één zin; "Overslaan" en "2 tabletten" staan erop: ${jn(c5)}. Regels: ${i2.map((z) => '“' + z + '”').join(' · ')}`);
+  } else L.push('Geen run met volledige oefenronde.');
+  L.push('');
+
   // ---------------- runs in detail
   L.push('### Runs in detail');
   L.push('');
@@ -781,7 +861,7 @@ resultaten.forEach((runs, vi) => {
   L.push('');
   L.push(`Ongeldige pogingen (opnieuw gespeeld): ${ongeldigePogingen.length ? ongeldigePogingen.join(' · ') : 'geen'}.`);
   L.push('');
-  samenvatting.push({ vp: vp.naam, B1, b1a, b1b, b1c, B2, b2a, b2b, b3duur, b3opn, B4: b4a && b4b && b4c, B5, B6,
+  samenvatting.push({ vp: vp.naam, c2, c3, c4a, c4b, c5, B1, b1a, b1b, b1c, B2, b2a, b2b, b3duur, b3opn, B4: b4a && b4b && b4c, B5, B6,
     echt: sc(echt), hoogste: hoogste.s, pct });
 });
 
@@ -798,6 +878,11 @@ rij('B3 tikken tot spelen', () => 'zie B3 per viewport (getallen)');
 rij('B4 knoppen ≥ 48×48, geen h-scroll, geen netwerk na laden', (s) => gh(s.B4));
 rij('B5 naam en totaal ≥ 32 px', (s) => gh(s.B5));
 rij('B6 0 consolefouten', (s) => gh(s.B6));
+rij('C2 vaste onderdelen gelijk in oefenronde en race 1 (DOM-meting)', (s) => gh(s.c2));
+rij('C3 alle knoppen van race 1 zelf gebruikt via een poortje', (s) => gh(s.c3));
+rij('C4 oefenronde te volgen met alleen de aangewezen knop', (s) => gh(s.c4a));
+rij('C4 oefenronde ≤ 120 s (normale snelheid)', (s) => (s.c4b == null ? 'niet gemeten' : gh(s.c4b)));
+rij('C5 introkaartje race 2: één zin per verschil', (s) => gh(s.c5));
 SV.push('');
 L.splice(kopIdx, 0, ...SV);
 
@@ -805,5 +890,6 @@ mkdirSync(path.dirname(RAPPORT), { recursive: true });
 writeFileSync(RAPPORT, L.join('\n') + '\n');
 console.log('\nRapport: ' + path.relative(ROOT, RAPPORT) + ` (looptijd ${nl(looptijd / 60, 1)} min)`);
 for (const s of samenvatting) {
+  console.log(`${s.vp}: C2 ${gh(s.c2)} · C3 ${gh(s.c3)} · C4 ${gh(s.c4a)} / duur ${s.c4b == null ? '–' : gh(s.c4b)} · C5 ${gh(s.c5)}`);
   console.log(`${s.vp}: B1 ${gh(s.B1)} · B2 ${gh(s.B2)} · B3 duur ${gh(s.b3duur)} / opnieuw ${gh(s.b3opn)} · B4 ${gh(s.B4)} · B5 ${gh(s.B5)} · B6 ${gh(s.B6)}`);
 }

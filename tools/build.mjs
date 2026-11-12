@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const lees = (p) => readFileSync(join(root, p), 'utf8');
 
-const CSS = ['src/style.css', 'src/tutorial.css', 'src/einde.css'];
+const CSS = ['src/style.css', 'src/einde.css'];
 const JS = ['src/model.js', 'src/score.js', 'src/sound.js', 'src/tutorial.js', 'src/einde.js', 'src/app.js'];
 
 // Voorkom dat inhoud de omringende tag afsluit.

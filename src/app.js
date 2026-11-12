@@ -1,21 +1,29 @@
 /*
- * Slikken of Stikken — src/app.js  (schermen, spelverloop, racescherm)
+ * Slikken of Stikken — src/app.js  (schermen, spelverloop, race-motor)
  * Laadt als laatste (na model, score, sound, tutorial, einde). Zet window.SoS.ui en window.SoS.debug.
  *
- * FLOW: start (naam + "Start") → tutorial (SoS.tutorial.start) → intro race 1 → race 1 paracetamol
- *       → intro race 2 → race 2 lithium → einde (SoS.einde.toon). "Nog een keer" start race 1 meteen.
+ * FLOW: start (naam + "Start") → oefenronde → intro race 1 → race 1 paracetamol → intro race 2 → race 2
+ *       lithium → einde (SoS.einde.toon). "Oefenronde overslaan" (startscherm) gaat meteen naar intro race 1.
+ *       "Nog een keer" start race 1 meteen.
  *
- * GEDEELD, VOOR ANDERE BOUWERS (SoS.ui; gebruik binnen je start()/toon(), niet bij het laden):
+ * EÉN RACE-MOTOR, OOK VOOR DE OEFENRONDE (§6C1): startRace(i, gids). De oefenronde is startRace(0, SoS.tutorial):
+ *   hetzelfde scherm (#scherm-race), dezelfde tekencode (teken, tekenPoortjes), dezelfde knoppen, klok,
+ *   QALY-stand, dagteller en levermeter. Er bestaat geen tutorialversie van die onderdelen. Het draaiboek
+ *   (src/tutorial.js) voegt alleen toe: de klok staat stil tot de speler de gemarkeerde knop tikt (R.gids.bevroren),
+ *   één zin in beeld (zelfde .melding als de race, maar hij blijft staan), en de markering van die knop
+ *   (class "wijs" + data-wijs="1"). De plotwending (misselijkheid) staat uit; de ronde stopt op gids.eind.
+ *
+ * GEDEELD, VOOR einde.js (SoS.ui; gebruik binnen toon(), niet bij het laden):
  *   SoS.ui.figuur({wie:'opa'|'vries', stemming:'neutraal'|'blij'|'pijn'|'misselijk', prop:'stok'|'doosje'|null,
- *                 kleur, label}) -> SVG-string in Evolution-of-Trust-stijl: rond wit hoofd, zwarte schetslijn,
- *                 gekleurd hoedje (opa Jan blauwe pet #3d7fe0 met wandelstok, mevrouw De Vries rode hoed
- *                 met rand, knotje en bril). Zet hem in een <div class="fig">; .fig.wiebel laat hem even reageren.
+ *                 kleur, label, kop}) -> SVG-string: plat figuurtje zonder schetslijn (past op zwart met sterren),
+ *                 herkenbaar aan het hoedje (opa Jan blauwe pet + wandelstok, mevrouw De Vries rode hoed met
+ *                 rand, knotje en bril). kop:true = alleen hoofd en hoed. Zet hem in een .fig; .fig.wiebel = reactie.
  *   SoS.ui.icoon(soort)  soort 'tablet'|'slik'|'zetpil'|'spuit'|'niets'|'doosje' -> SVG-string (40×40).
  *   SoS.ui.el(tag, attrs, kinderen) -> element (attrs: class, text, html, data-*, aria-*, on<event>).
  *   SoS.ui.getal(x, decimalen) -> Nederlandse notatie ("1,5"; "1.250").
  *   SoS.ui.speel(naam)  SoS.sound.play zonder risico (namen: zie src/sound.js). SoS.ui.unlock().
- *   SoS.ui.KLEUR {paars, groen, koraal, geel, blauw, rood, roze, inkt, papier}
- *   Stijl: style.css (kleurvariabelen, .scherm.wit/.zwart, .knop-wit, .knop-paars, .fig).
+ *   SoS.ui.KLEUR {paars, groen, koraal, geel, blauw, rood, roze}
+ *   Stijl: style.css (één stijl: zwart met sterren; .kaart, .markering, .tekst, .knop-paars, .knop-lijn, .fig).
  *
  * RACE-INTERACTIE: de tijd loopt van boven naar beneden (pijltje "tijd" in de linkermarge); paarse poortjes
  * schuiven van onder naar de "nu"-lijn. De knoppen onderin kiezen wat er op het EERSTVOLGENDE poortje gebeurt
@@ -26,22 +34,26 @@
  * Te laat: een tik binnen 0,3 s (echte tijd, /speed) ná een poortje telt NIET voor het volgende poortje
  * ("Te laat voor uur 16"); tik opnieuw. SoS.debug.poortje.open = false in dat venster.
  * INDELING CANVAS (geen tekst over tekst): poortlabels staan aan de kant weg van de stip (R.kant, strook
- * R.labelMax breed); waardelabel boven de nu-lijn, "onderweg"-bolletje ernaast of eronder, buiten die strook.
- * Meldingen staan boven in het podium (verleden), één tegelijk; labels onder een melding worden niet getekend.
+ * R.labelMax breed), met een stukje lijn ervoor en erachter; waardelabel boven de nu-lijn, "onderweg"-bolletje
+ * ernaast of eronder, buiten die strook. Meldingen staan boven in het podium (verleden), één tegelijk; labels
+ * onder een melding worden niet getekend.
  * Termen: "het groene vlak" (de zone); de ondergrens ervan heet "de streep" (label bovenaan, intro race 1).
  * Slikken tijdens misselijkheid en de lithium-spuit worden geweigerd met de casusbladtekst (geen effect,
  * geen strafpunten). Leverschade (dagteller > 4 g): lijn en stip rood, QALY-pijl omlaag, levermeter vol.
+ * Het portretje in de racekop (#patient-kop) laat zien hoe het met de patiënt gaat (blij / pijn / misselijk).
  * Terug-knop: eerst een melding; nog een keer terug binnen 3 s verlaat het spel.
  *
  * TESTHAAK (gauntlet/contract.md):
  *   ?speed=N  versnelt de spelklok N× (ook de aanloop van 3 s en de duur van meldingen).
  *   window.SoS.debug (alleen-lezen momentopname, elke keer vers): {fase, casus, t, klok, C, score,
- *     dagteller, poortje:{index, t, keuze, aantal, geblokkeerd}, gegeven:[...], uitslag:[...], naam, speed}
+ *     dagteller, poortje:{index, t, keuze, aantal, geblokkeerd}, gegeven:[...], uitslag:[...], naam, speed,
+ *     gids:{stap, bevroren, wijs, zin} (alleen in de oefenronde), tutorialDuur (s, na afloop)}
  *     fase: 'start'|'tutorial'|'intro1'|'race1'|'intro2'|'race2'|'einde'; t = modeltijd (uur);
  *     klok = spelklok (uur, negatief tijdens de aanloop); score = live QALY-totaal.
- *   Stabiele data-attributen: data-actie="start" (startscherm), "verder" (tutorial-einde en na elke
- *     race), "start-race" (intro-kaartje), "slik" | "zetpil" | "spuit" | "niets" (race; lithium
- *     "Overslaan" = niets), "demp", "opnieuw" (einde). Naamveld: data-veld="naam".
+ *   Stabiele data-attributen: data-actie="start" en "start-over" (startscherm), "verder" (na de oefenronde en
+ *     na elke race), "start-race" (intro-kaartje), "slik" | "zetpil" | "spuit" | "niets" (raceknoppen; lithium
+ *     "Overslaan" = niets), "demp", "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
+ *     uitleg aanwijst heeft data-wijs="1".
  *   Raceknoppen reageren op pointerdown (snel) én click (toetsenbord); één tik telt één keer.
  */
 (function (root) {
@@ -62,8 +74,8 @@
   // ------------------------------------------------------------------------------------------
   // Gedeelde helpers (SoS.ui)
   // ------------------------------------------------------------------------------------------
-  var KLEUR = { paars: '#b07cff', groen: '#3ddc97', koraal: '#ff6f61', geel: '#ffd166', blauw: '#3d7fe0',
-    rood: '#e0405f', roze: '#ff8fb8', inkt: '#1b1b1f', papier: '#fbfaf7' };
+  var KLEUR = { paars: '#b07cff', groen: '#3ddc97', koraal: '#ff6f61', geel: '#ffd166', blauw: '#4f8dff',
+    rood: '#ff4d6d', roze: '#ff8fb8' };
   var FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
   function speel(naam) {
@@ -104,67 +116,64 @@
     return e;
   }
 
+  // Platte figuurtjes voor de zwarte sterrenwereld (geen schetslijnen): herkenbaar aan het gekleurde hoedje.
+  // o.kop = true: alleen hoofd en hoed (klein portret in de racekop).
   function figuur(o) {
     o = o || {};
     var wie = o.wie === 'vries' ? 'vries' : 'opa';
     var st = o.stemming || 'neutraal';
     var hoed = o.kleur || (wie === 'opa' ? KLEUR.blauw : KLEUR.rood);
-    var ink = KLEUR.inkt;
     var prop = o.prop === undefined ? (wie === 'opa' ? 'stok' : null) : o.prop;
     var label = o.label || (wie === 'opa' ? 'Opa Jan' : 'Mevrouw De Vries');
-    var gezicht = st === 'misselijk' ? '#e6f5cf' : '#fff';
-    var L = 'stroke="' + ink + '" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"';
-    var s = '<svg viewBox="0 0 100 132" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + label + '">';
-    // benen + lijfje
-    s += '<path d="M45 104 L42 127 M55 104 L58 127" ' + L + '/>';
-    s += '<path d="M38 108 C38 94 42 84 50 84 C58 84 62 94 62 108 Z" fill="#fff" stroke="' + ink + '" stroke-width="4" stroke-linejoin="round"/>';
-    // armen + attribuut
-    if (prop === 'stok') {
-      s += '<path d="M39 93 L31 101" ' + L + '/>';
-      s += '<path d="M61 93 L70 99" ' + L + '/>';
-      s += '<path d="M73 127 L71 97 C71 90 63 90 63 95" stroke="#7a5230" stroke-width="4" stroke-linecap="round" fill="none"/>';
-    } else if (prop === 'doosje') {
-      s += '<path d="M39 93 L31 101" ' + L + '/>';
-      s += '<path d="M61 93 L69 97" ' + L + '/>';
-      s += '<rect x="67" y="88" width="20" height="14" rx="2" fill="#fff" stroke="' + ink + '" stroke-width="3"/>';
-      s += '<path d="M67 95 H87" stroke="#ff9f43" stroke-width="4"/>';
-    } else {
-      s += '<path d="M39 93 L31 101 M61 93 L69 101" ' + L + '/>';
+    var huid = st === 'misselijk' ? '#cfe3a4' : '#f6d9b4';
+    var lijf = wie === 'opa' ? '#6b7fc4' : '#b06fc9';
+    var d = '#2b2233'; // ogen en mond
+    var A = 'stroke="' + lijf + '" stroke-width="7" stroke-linecap="round" fill="none"';
+    var F = 'stroke="' + d + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"';
+    var s = '<svg viewBox="' + (o.kop ? '16 6 80 82' : '0 0 100 132') + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + label + '">';
+    if (!o.kop) {
+      s += '<path d="M44 104 L42 126 M56 104 L58 126" stroke="' + (wie === 'opa' ? '#4a5a96' : '#8a4fa3') + '" stroke-width="7" stroke-linecap="round" fill="none"/>';
+      if (prop === 'stok') {
+        s += '<path d="M73 127 L71 97 C71 90 63 90 63 95" stroke="#d9a566" stroke-width="4.5" stroke-linecap="round" fill="none"/>';
+        s += '<path d="M39 95 L31 103 M61 95 L70 100" ' + A + '/>';
+      } else if (prop === 'doosje') {
+        s += '<path d="M39 95 L31 103 M61 95 L70 98" ' + A + '/>';
+        s += '<rect x="67" y="88" width="21" height="15" rx="3" fill="#fff"/><path d="M67 95.5 H88" stroke="#ff9f43" stroke-width="5"/>';
+      } else {
+        s += '<path d="M39 95 L31 103 M61 95 L69 103" ' + A + '/>';
+      }
+      s += '<path d="M35 110 C35 93 41 84 50 84 C59 84 65 93 65 110 Z" fill="' + lijf + '"/>';
     }
-    // knotje (achter het hoofd)
-    if (wie === 'vries') s += '<circle cx="73" cy="50" r="8" fill="#d9d3c7" stroke="' + ink + '" stroke-width="3"/>';
-    // hoofd
-    s += '<circle cx="50" cy="58" r="25" fill="' + gezicht + '" stroke="' + ink + '" stroke-width="4"/>';
-    // ogen
+    if (wie === 'vries') s += '<circle cx="74" cy="50" r="9" fill="#e9e4dc"/>';
+    s += '<circle cx="50" cy="58" r="25" fill="' + huid + '"/>';
+    if (st === 'blij') s += '<circle cx="34.5" cy="67" r="4.5" fill="#ff8fb8" opacity=".55"/><circle cx="65.5" cy="67" r="4.5" fill="#ff8fb8" opacity=".55"/>';
     if (st === 'pijn') {
-      s += '<path d="M37 55 l6 3.5 l-6 3.5 M63 55 l-6 3.5 l6 3.5" stroke="' + ink + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
+      s += '<path d="M37 55 l6 3.5 l-6 3.5 M63 55 l-6 3.5 l6 3.5" ' + F + '/>';
     } else if (st === 'misselijk') {
-      s += '<path d="M37 58 q4 -3 8 0 M55 58 q4 -3 8 0" stroke="' + ink + '" stroke-width="3" stroke-linecap="round" fill="none"/>';
+      s += '<path d="M37 58 q4 -3 8 0 M55 58 q4 -3 8 0" ' + F + '/>';
     } else {
-      s += '<circle cx="41" cy="58" r="3.4" fill="' + ink + '"/><circle cx="59" cy="58" r="3.4" fill="' + ink + '"/>';
+      s += '<circle cx="41" cy="58" r="3.4" fill="' + d + '"/><circle cx="59" cy="58" r="3.4" fill="' + d + '"/>';
     }
     if (wie === 'vries') {
-      s += '<circle cx="41" cy="58" r="7.5" fill="none" stroke="' + ink + '" stroke-width="2.2"/>' +
-           '<circle cx="59" cy="58" r="7.5" fill="none" stroke="' + ink + '" stroke-width="2.2"/>' +
-           '<path d="M48.5 58 h3" stroke="' + ink + '" stroke-width="2.2"/>';
+      s += '<circle cx="41" cy="58" r="7.5" fill="none" stroke="' + d + '" stroke-width="2.2"/>' +
+           '<circle cx="59" cy="58" r="7.5" fill="none" stroke="' + d + '" stroke-width="2.2"/>' +
+           '<path d="M48.5 58 h3" stroke="' + d + '" stroke-width="2.2"/>';
     } else {
-      s += '<path d="M42 68.5 q4 -3.5 8 -0.5 q4 -3 8 0.5" stroke="#9b9b9b" stroke-width="3.2" stroke-linecap="round" fill="none"/>';
+      s += '<path d="M41 68.5 q4.5 -4 9 -0.5 q4.5 -3.5 9 0.5" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none"/>';
     }
-    // mond
-    var mond = { blij: 'M43 72 q7 7 14 0', pijn: 'M43 76 q7 -6 14 0', misselijk: 'M41 75 q2.5 -3 5 0 t5 0 t5 0 t5 0', neutraal: 'M45 74 h10' }[st] || 'M45 74 h10';
-    s += '<path d="' + mond + '" stroke="' + ink + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
-    if (st === 'pijn') s += '<path d="M77 40 q5 7 0 10 q-5 -3 0 -10 z" fill="#7cc4ff" stroke="' + ink + '" stroke-width="1.5"/>';
-    if (st === 'misselijk') s += '<path d="M78 70 q3 -4 6 0 M80 78 q3 -4 6 0" stroke="#7bbf3a" stroke-width="2.5" stroke-linecap="round" fill="none"/>';
-    // eigen hoedjes: opa Jan een pet (flat cap) met klep, mevrouw De Vries een hoed met rand en lint
+    var mond = { blij: 'M43 73 q7 7 14 0', pijn: 'M43 77 q7 -6 14 0', misselijk: 'M41 76 q2.5 -3 5 0 t5 0 t5 0 t5 0', neutraal: 'M45 75 h10' }[st] || 'M45 75 h10';
+    s += '<path d="' + mond + '" ' + F + '/>';
+    if (st === 'pijn') s += '<path d="M78 40 q5 7 0 10 q-5 -3 0 -10 z" fill="#7cc4ff"/>';
+    if (st === 'misselijk') s += '<path d="M79 70 q3 -4 6 0 M81 78 q3 -4 6 0" stroke="#a6d96a" stroke-width="2.5" stroke-linecap="round" fill="none"/>';
+    // eigen hoedjes: opa Jan een pet met klep, mevrouw De Vries een hoed met rand en lint
     if (wie === 'opa') {
-      s += '<path d="M25 47 Q23 29 48 27 Q72 26 77 41 L77 45 Q52 39 25 47 Z" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5" stroke-linejoin="round"/>';
-      s += '<path d="M62 43 Q81 38 91 46 Q80 52 63 48 Z" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5" stroke-linejoin="round"/>';
-      s += '<path d="M36 33 Q48 30 62 32" stroke="' + ink + '" stroke-width="2" stroke-linecap="round" fill="none" opacity=".45"/>';
-      s += '<circle cx="49" cy="27.5" r="2.6" fill="' + ink + '"/>';
+      s += '<path d="M25 47 Q23 29 48 27 Q72 26 77 41 L77 45 Q52 39 25 47 Z" fill="' + hoed + '"/>';
+      s += '<path d="M62 43 Q81 38 91 46 Q80 52 63 48 Z" fill="' + hoed + '"/>';
+      s += '<circle cx="49" cy="27.5" r="3" fill="#ffffff" opacity=".85"/>';
     } else {
-      s += '<path d="M35 37 L37.5 15 Q50 10 62.5 15 L65 37 Z" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5" stroke-linejoin="round"/>';
-      s += '<path d="M36.6 29 L63.4 29" stroke="#ffd166" stroke-width="4.5"/>';
-      s += '<ellipse cx="50" cy="37" rx="31" ry="6" fill="' + hoed + '" stroke="' + ink + '" stroke-width="3.5"/>';
+      s += '<path d="M35 37 L37.5 15 Q50 10 62.5 15 L65 37 Z" fill="' + hoed + '"/>';
+      s += '<path d="M36.6 29 L63.4 29" stroke="#ffd166" stroke-width="5"/>';
+      s += '<ellipse cx="50" cy="37" rx="31" ry="6" fill="' + hoed + '"/>';
     }
     s += '</svg>';
     return s;
@@ -224,17 +233,12 @@
     if (staat.moduleStop) { try { staat.moduleStop(); } catch (e) { /* negeer */ } staat.moduleStop = null; }
     var schermen = doc.querySelectorAll('.scherm');
     for (var i = 0; i < schermen.length; i++) schermen[i].classList.toggle('actief', schermen[i].id === 'scherm-' + id);
-    var donker = id === 'race';
-    doc.body.classList.toggle('donker', donker);
-    doc.body.classList.toggle('licht', !donker);
-    var tc = doc.querySelector('meta[name="theme-color"]');
-    if (tc) tc.setAttribute('content', donker ? '#000000' : KLEUR.papier);
     staat.fase = fase || id;
     var s = $('scherm-' + id);
     if (s) s.scrollTop = 0;
   }
 
-  // Figuurtjes reageren op aanraken (EoT-patroon).
+  // Figuurtjes reageren op aanraken.
   function maakFigLevend(div) {
     div.addEventListener('pointerdown', function () {
       unlock();
@@ -257,8 +261,7 @@
     }
     var inp = $('naam');
     try { var oud = root.localStorage.getItem('sos.naam'); if (oud) inp.value = oud; } catch (e) { /* geen opslag */ }
-    $('start-form').addEventListener('submit', function (ev) {
-      ev.preventDefault();
+    function begin(metOefenronde) {
       if (staat.fase !== 'start') return;
       unlock();
       speel('tik');
@@ -268,26 +271,17 @@
       try { root.localStorage.setItem('sos.naam', naam); } catch (e) { /* geen opslag */ }
       inp.blur();
       zetHistorie();
-      toonTutorial();
-    });
+      if (metOefenronde && SoS.tutorial) startRace(0, SoS.tutorial);
+      else toonIntro(0);
+    }
+    $('start-form').addEventListener('submit', function (ev) { ev.preventDefault(); begin(true); });
+    doc.querySelector('[data-actie="start-over"]').addEventListener('click', function () { begin(false); });
   }
 
   // ------------------------------------------------------------------------------------------
-  // 2. Tutorial (module)
+  // 2. Oefenronde (tutorial): geen eigen scherm. startRace(0, SoS.tutorial) start de race-motor van
+  //    race 1 met een draaiboek ernaast (zie "gids" hieronder en src/tutorial.js).
   // ------------------------------------------------------------------------------------------
-  function toonTutorial() {
-    var c = $('scherm-tutorial');
-    c.innerHTML = '';
-    naarScherm('tutorial');
-    if (!SoS.tutorial || typeof SoS.tutorial.start !== 'function') { toonIntro(0); return; }
-    var gedaan = false;
-    var h = SoS.tutorial.start(c, function () {
-      if (gedaan || staat.fase !== 'tutorial') return;
-      gedaan = true;
-      toonIntro(0);
-    }, { naam: staat.naam, speed: SPEED });
-    if (h && typeof h.stop === 'function') staat.moduleStop = h.stop;
-  }
 
   // Venster als tekst, uit de casusdata (M.venster: kan in de tijd verschuiven), bv. "0,6–1,0 mmol/L".
   function vensterTekst(c, t) {
@@ -308,13 +302,20 @@
     maakFigLevend(f);
     fig.appendChild(f);
     $('intro-verhaal').textContent = c.verhaal;
-    var regels = i === 0
-      ? ['De lijn is de spiegel: hoeveel paracetamol er in het bloed zit.',
-         'Houd hem in het groene vlak. De ondergrens daarvan is de streep.',
-         'In de race loopt de tijd van boven naar beneden. Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.']
-      : ['De lijn is de spiegel: hoeveel lithium er in het bloed zit.',
-         'Houd hem in het groene vlak (' + vensterTekst(c, 0) + ').',
-         'Een paars poortje om 0, 8 en 16 uur: kies Tablet (twee keer tikken = 2 tabletten) of Overslaan.'];
+    var regels;
+    if (i === 0) {
+      regels = ['Houd de spiegel in het groene vlak, boven de streep.',
+        'Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.',
+        'Maximaal ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' gram per dag: daarboven raakt de lever beschadigd.'];
+    } else {
+      // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).
+      var uren = M.poortjes(c).filter(function (t) { return t < 24; });
+      regels = ['Het groene vlak heeft nu ook een bovenkant: ' + vensterTekst(c, 0) + '.',
+        'Poortjes komen ' + uren.length + '× per dag: om ' + uren.slice(0, -1).join(', ') + ' en ' + uren[uren.length - 1] + ' uur.',
+        'Niets heet hier Overslaan.',
+        'Tik twee keer op Tablet voor 2 tabletten op één poortje.',
+        'Geen zetpil en geen dagteller; wel een giftige grens: boven ' + getal(c.toxisch, 1) + '\u00a0' + CFG[c.id].eenheid + '.'];
+    }
     var ul = $('intro-regel');
     ul.innerHTML = '';
     regels.forEach(function (r) { ul.appendChild(el('li', { text: r })); });
@@ -361,12 +362,17 @@
     return 'Uur ' + Math.floor(t);
   }
 
-  function startRace(i) {
-    var c = M.casus(RACES[i]);
+  // gids = draaiboek van de oefenronde (SoS.tutorial) of niets. Met gids is dit precies dezelfde race, met
+  // drie verschillen: de klok staat stil tot de speler de gemarkeerde knop tikt, er staat één uitlegzin in
+  // beeld, en de plotwending (misselijkheid) doet niet mee. De ronde stopt op gids.eind en telt niet mee.
+  function startRace(i, gids) {
+    var c = M.casus(gids ? gids.casus : RACES[i]);
     var cfg = CFG[c.id];
-    var race = S.maakRace(c);
+    var race = S.maakRace(c, gids ? { blokkades: false } : undefined);
     R = {
       i: i, casus: c, cfg: cfg, race: race,
+      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, i: 0, bevroren: false, t0: performance.now(), duur: null } : null,
+      stemming: null,
       poorten: M.poortjes(c), g: 0,
       keuze: { route: null, aantal: 0, poging: false },
       gegeven: [],
@@ -392,9 +398,12 @@
       }
     }
     bouwRaceUi();
-    naarScherm('race', 'race' + (i + 1));
+    naarScherm('race', gids ? 'tutorial' : 'race' + (i + 1));
+    werkPatientBij();
     meetDoek();
-    melding('Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is.', { prio: 0, duur: AANLOOP_S + 3 });
+    $('melding').className = 'melding';
+    if (gids) gidsStap(); // stap 1: de klok staat meteen stil
+    else melding('Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is.', { prio: 0, duur: AANLOOP_S + 3 });
     R.rafId = root.requestAnimationFrame(lus);
   }
 
@@ -408,9 +417,12 @@
     var lever = $('lever');
     lever.hidden = !(c.bovengrens && c.bovengrens.type === 'dagteller');
     lever.classList.remove('vol');
-    var pat = $('patient');
-    pat.innerHTML = '';
-    pat.appendChild(el('span', { text: c.patient }));
+    $('finish-kop').textContent = R.gids ? R.gids.klaar.kop : 'Race klaar';
+    $('finish-label').textContent = R.gids ? R.gids.klaar.label : 'QALY-punten';
+    doc.querySelector('#finish [data-actie="verder"]').textContent = R.gids ? R.gids.klaar.knop : 'Verder';
+    var chips = $('patient').querySelectorAll('.chip');
+    for (var ci = 0; ci < chips.length; ci++) chips[ci].remove();
+    $('patient-naam').textContent = c.patient;
     // knoppen
     var nav = $('knoppen');
     nav.innerHTML = '';
@@ -438,7 +450,7 @@
   }
 
   function doelGeblokkeerd() {
-    if (!R || R.g >= R.poorten.length) return null;
+    if (!R || R.gids || R.g >= R.poorten.length) return null;
     return M.geblokkeerd(R.casus, 'slik', R.poorten[R.g]);
   }
 
@@ -470,6 +482,13 @@
     if (!R || R.klaar) return;
     var c = R.casus;
     flits(b, 'tik');
+    // Oefenronde: alleen de gemarkeerde knop doet iets, en alleen terwijl de klok stilstaat.
+    var G = R.gids;
+    if (G && !(G.bevroren && G.stappen[G.i].knop === route)) {
+      flits(b, 'schud');
+      keuzeInfo(G.bevroren ? 'Kies nu ' + KEUZENAAM[G.stappen[G.i].knop] + '.' : 'Even kijken wat er gebeurt.', 'laat');
+      return;
+    }
     // Lithium-spuitknop: zichtbaar, doet niets, geen strafpunten.
     if (route === 'spuit' && c.routes.spuit && c.routes.spuit.doetNiets) {
       R.race.geef('spuit');
@@ -491,7 +510,7 @@
     if (R.g >= R.poorten.length) { keuzeInfo('Geen poortjes meer in deze race.'); return; }
     var doelLabel = inZin(tijdLabel(c, R.poorten[R.g], true));
     // Te laat: een tik vlak ná een poortje telt niet stilletjes mee voor het volgende poortje.
-    if (R.laatstePoort && performance.now() - R.laatstePoort.echt < TE_LAAT_MS / SPEED) {
+    if (!G && R.laatstePoort && performance.now() - R.laatstePoort.echt < TE_LAAT_MS / SPEED) {
       flits(b, 'schud');
       speel('overslaan');
       keuzeInfo('Te laat voor ' + inZin(R.laatstePoort.label) + '. Kies opnieuw voor ' + doelLabel + '.', 'laat');
@@ -514,6 +533,25 @@
     speel('tik');
     keuzeInfo(tekst, k.route ? 'gekozen' : 'gewist');
     werkKnoppenBij();
+    if (G) gidsVerder();
+  }
+
+  // ---------- gids (oefenronde) ----------
+  // Zet de klok stil op de huidige stap: de zin in beeld en de knop gemarkeerd (class "wijs", data-wijs).
+  function gidsStap() {
+    var G = R.gids, st = G.stappen[G.i];
+    G.bevroren = true;
+    var zin = st.zin === 'lekentaal.onder' ? R.casus.lekentaal.onder : st.zin;
+    melding(zin, { soort: st.zin === 'lekentaal.onder' ? 'au' : null });
+    var b = R.knoppen[st.knop];
+    if (b) { b.classList.add('wijs'); b.setAttribute('data-wijs', '1'); }
+  }
+  // De speler heeft de gemarkeerde knop getikt: markering weg, de klok loopt weer.
+  function gidsVerder() {
+    var G = R.gids;
+    G.bevroren = false;
+    G.gevraagd = true; // deze stap is gevraagd; de volgende komt pas na het poortje
+    Object.keys(R.knoppen).forEach(function (r) { R.knoppen[r].classList.remove('wijs'); R.knoppen[r].removeAttribute('data-wijs'); });
   }
 
   // Lithium: tablet tot 2× per poortje (casusblad: "elk poortje dubbel"); paracetamol 1 g per keer.
@@ -542,8 +580,10 @@
     var prio = o.prio || 0;
     if (nu < R.melding.tot && prio < R.melding.prio) return;
     var duur = (o.duur || 2.4) * 1000 / Math.min(SPEED, 4);
-    R.melding = { prio: prio, tot: nu + duur };
+    var blijft = !!R.gids; // oefenronde: de zin blijft staan tot de volgende (altijd precies één zin in beeld)
+    R.melding = { prio: prio, tot: blijft ? 0 : nu + duur };
     var m = $('melding');
+    if (blijft && m.classList.contains('zicht') && m.getAttribute('data-zin') === tekst) return;
     var r = R;
     clearTimeout(meldTimer); clearTimeout(meldWissel);
     function toon() {
@@ -552,15 +592,16 @@
       m.innerHTML = '';
       if (o.fig) m.appendChild(el('div', { class: 'm-fig', html: o.fig }));
       m.appendChild(el('div', { text: tekst }));
+      m.setAttribute('data-zin', tekst);
       void m.offsetWidth;
       var t0 = performance.now();
-      R.meldVlak = { top: m.offsetTop, bottom: m.offsetTop + m.offsetHeight, tot: t0 + duur + MELD_FADE + 60 };
+      R.meldVlak = { top: m.offsetTop, bottom: m.offsetTop + m.offsetHeight, tot: blijft ? Infinity : t0 + duur + MELD_FADE + 60 };
       m.classList.add('zicht');
-      meldTimer = setTimeout(function () { m.classList.remove('zicht'); }, duur);
+      if (!blijft) meldTimer = setTimeout(function () { m.classList.remove('zicht'); }, duur);
     }
     if (m.classList.contains('zicht')) {
       m.classList.remove('zicht');
-      if (R.meldVlak) R.meldVlak.tot = nu + MELD_FADE + 60 + 400;
+      if (R.meldVlak && !blijft) R.meldVlak.tot = nu + MELD_FADE + 60 + 400;
       meldWissel = setTimeout(toon, MELD_FADE);
     } else toon();
   }
@@ -572,11 +613,27 @@
     var kleuren = ['#ff8fb8', '#ffd166', '#7cc4ff', '#b07cff', '#ffffff', '#7ef0c4', '#ffffff'];
     var z = 7;
     function rnd() { z = (z * 16807) % 2147483647; return (z - 1) / 2147483646; } // vaste reeks
-    for (var i = 0; i < 120; i++) {
-      STERREN.push({ x: rnd(), y: rnd(), r: 0.6 + rnd() * 1.5, k: kleuren[Math.floor(rnd() * kleuren.length)],
+    for (var i = 0; i < 170; i++) {
+      STERREN.push({ x: rnd(), y: rnd(), r: 0.7 + rnd() * 1.6, k: kleuren[Math.floor(rnd() * kleuren.length)],
         a: 0.25 + rnd() * 0.6, p: 0.15 + rnd() * 0.5, f: rnd() * 6.28, vierkant: rnd() < 0.18 });
     }
   })();
+
+  // Dezelfde sterren als in de race, als vaste achtergrond voor start, introkaartjes en eindscherm.
+  function zetSterren() {
+    try {
+      var W = 420, H = 900, cv = doc.createElement('canvas');
+      cv.width = W * 2; cv.height = H * 2;
+      var x = cv.getContext('2d');
+      x.scale(2, 2);
+      STERREN.forEach(function (st) {
+        x.globalAlpha = st.a; x.fillStyle = st.k;
+        if (st.vierkant) x.fillRect(st.x * W, st.y * H, st.r * 1.6, st.r * 2.6);
+        else { x.beginPath(); x.arc(st.x * W, st.y * H, st.r, 0, 6.283); x.fill(); }
+      });
+      doc.documentElement.style.setProperty('--sterren', 'url(' + cv.toDataURL('image/png') + ')');
+    } catch (e) { /* zonder sterren is het scherm gewoon zwart */ }
+  }
 
   function meetDoek() {
     doek = $('doek');
@@ -627,7 +684,7 @@
   // heen en weer springen). Die strook (R.strook) is gereserveerd: de stip, het waardelabel en het
   // "onderweg"-bolletje blijven erbuiten. Poortjes vlak bij de nu-lijn (PROX) volgen de kant altijd; verder
   // in het verleden houden ze de kant die ze hadden. Zo ligt er nooit tekst over tekst, ook niet op het poortje.
-  var INSPRING = 8, PROX = 40;
+  var INSPRING = 30, PROX = 40; // inspringen: het paarse label heeft een lijn ervoor en erachter
 
   function poortjeAlpha(yg, h, basis) {
     var a = basis;
@@ -1038,8 +1095,15 @@
     if (R.laatsteTs == null) R.laatsteTs = ts;
     var dtEcht = Math.min(0.25, Math.max(0, (ts - R.laatsteTs) / 1000));
     R.laatsteTs = ts;
-    R.klok += dtEcht * SPEED / R.cfg.secPerUur;
-    var c = R.casus, race = R.race, duur = c.raceDuur;
+    var G = R.gids;
+    if (!(G && G.bevroren)) R.klok += dtEcht * SPEED / R.cfg.secPerUur;
+    var c = R.casus, race = R.race, duur = G ? G.eind : c.raceDuur;
+    // oefenronde: de klok stopt precies op het moment van de volgende stap
+    if (G && !G.bevroren && !G.gevraagd && G.i < G.stappen.length && R.klok >= G.stappen[G.i].op) {
+      R.klok = G.stappen[G.i].op;
+      gidsStap();
+    }
+    if (R.klok > duur) R.klok = duur;
 
     // poortjes die we passeren: precies op de poortjestijd toepassen
     while (R.g < R.poorten.length && R.poorten[R.g] <= R.klok + 1e-9) {
@@ -1053,11 +1117,12 @@
     if (R.klok >= 0) race.naar(Math.min(R.klok, duur));
     neemMonster(false);
     controleerZone();
-    controleerGebeurtenissen();
+    if (!G) controleerGebeurtenissen();
     werkKopBij();
+    werkPatientBij();
     teken(performance.now());
 
-    if (R.klok >= duur && race.klaar) eindeRace();
+    if (R.klok >= duur && (G || race.klaar)) eindeRace();
   }
 
   function neemMonster(forceer) {
@@ -1117,12 +1182,29 @@
     var ki = $('keuze-info'); if (ki) ki.classList.remove('zicht'); // die keuze is nu voorbij
     R.keuze = { route: null, aantal: 0, poging: false };
     werkKnoppenBij();
+    var G = R.gids;
+    if (G && G.i < G.stappen.length && G.stappen[G.i].poortje === g) {
+      melding(G.stappen[G.i].daarna, {});
+      G.i++;
+      G.gevraagd = false;
+    }
+  }
+
+  // Het portretje in de racekop reageert op hoe het met de patiënt gaat.
+  function werkPatientBij() {
+    var c = R.casus, st;
+    var z = R.klok < 0 && c.id === 'lithium' ? 'zone' : zoneVan(R.race.sim.C, Math.max(0, R.race.t));
+    if (c.id === 'lithium') st = (z === 'boven' || R.toxisch) ? 'misselijk' : (z === 'onder' ? 'neutraal' : 'blij');
+    else st = (R.leverOver || (!R.gids && R.klok >= 0 && M.geblokkeerd(c, 'slik', R.klok))) ? 'misselijk' : (z === 'onder' ? 'pijn' : 'blij');
+    if (st === R.stemming) return;
+    R.stemming = st;
+    $('patient-kop').innerHTML = figuur({ wie: c.id === 'lithium' ? 'vries' : 'opa', stemming: st, kop: true });
   }
 
   // Het volgende poortje is nu het doel: misschien is er een plotwending.
   function bijNieuwDoel() {
     var c = R.casus;
-    if (R.g >= R.poorten.length) return;
+    if (R.gids || R.g >= R.poorten.length) return;
     var T = R.poorten[R.g];
     c.gebeurtenissen.forEach(function (g, gi) {
       if (R.onthuld[gi] || g.type !== 'blokkade') return;
@@ -1144,7 +1226,7 @@
         R.onthuld[gi] = true;
         speel('wending');
         melding(g.tekst, { soort: 'wending', prio: 3, duur: 3.6, fig: figuur({ wie: 'vries', prop: 'doosje', stemming: 'neutraal' }) });
-        $('patient').appendChild(el('span', { class: 'chip', html: icoon('doosje').replace('<svg', '<svg width="16" height="16"') + 'ibuprofen' }));
+        $('patient').insertBefore(el('span', { class: 'chip', html: icoon('doosje').replace('<svg', '<svg width="16" height="16"') + 'ibuprofen' }), $('patient').firstChild);
       }
     });
   }
@@ -1192,6 +1274,7 @@
       R.trend = trend;
     }
     if (c.bovengrens && c.bovengrens.type === 'dagteller' && st.dagteller !== R.dagteller) {
+      if (st.dagteller > R.dagteller && R.dagteller >= 0) { var lt = $('lever'); lt.classList.remove('tel'); void lt.offsetWidth; lt.classList.add('tel'); }
       R.dagteller = st.dagteller;
       var max = c.bovengrens.maxPer24u;
       $('lever-tekst').textContent = getalKort(st.dagteller / 1000, 1) + ' g van max. ' + getalKort(max / 1000, 1) + ' g';
@@ -1208,10 +1291,15 @@
     root.cancelAnimationFrame(R.rafId);
     var st = R.race.stand();
     teken(performance.now());
-    staat.verslagen[R.i] = R.race.verslag();
-    staat.curves[R.i] = R.dun.slice();
-    staat.duren = staat.duren || [];
-    staat.duren[R.i] = R.duurEcht;
+    if (R.gids) {
+      R.gids.duur = (performance.now() - R.gids.t0) / 1000;
+      staat.tutorialDuur = R.gids.duur;
+    } else {
+      staat.verslagen[R.i] = R.race.verslag();
+      staat.curves[R.i] = R.dun.slice();
+      staat.duren = staat.duren || [];
+      staat.duren[R.i] = R.duurEcht;
+    }
     speel('klaar');
     $('melding').classList.remove('zicht');
     $('finish-getal').textContent = getal(st.totaal, 0);
@@ -1221,7 +1309,8 @@
   function naRace() {
     if (!R || !R.klaar) return;
     var i = R.i;
-    if (i === 0) toonIntro(1);
+    if (R.gids) toonIntro(0);
+    else if (i === 0) toonIntro(1);
     else toonEinde();
   }
 
@@ -1257,7 +1346,7 @@
   Object.defineProperty(SoS, 'debug', {
     enumerable: true, configurable: false,
     get: function () {
-      var r = R && (staat.fase === 'race1' || staat.fase === 'race2') ? R : null;
+      var r = R && (staat.fase === 'race1' || staat.fase === 'race2' || staat.fase === 'tutorial') ? R : null;
       var snap = {
         fase: staat.fase, naam: staat.naam, speed: SPEED,
         casus: r ? r.casus.id : null,
@@ -1274,7 +1363,10 @@
         } : null,
         gegeven: r ? r.gegeven.map(function (x) { return x ? x.soort + (x.aantal > 1 ? '×' + x.aantal : '') : null; }) : [],
         uitslag: staat.verslagen.map(function (v) { return v ? v.opbouw.totaal : null; }),
-        duren: (staat.duren || []).slice()
+        duren: (staat.duren || []).slice(),
+        gids: r && r.gids ? { stap: Math.min(r.gids.i + 1, r.gids.stappen.length), bevroren: r.gids.bevroren,
+          wijs: r.gids.bevroren ? r.gids.stappen[r.gids.i].knop : null, zin: $('melding').getAttribute('data-zin') } : null,
+        tutorialDuur: staat.tutorialDuur || null
       };
       return Object.freeze(snap);
     }
@@ -1323,7 +1415,7 @@
   });
 
   function init() {
-    doc.body.classList.add('licht');
+    zetSterren();
     initStart();
     initDemp();
     doc.addEventListener('pointerdown', unlock, true);
