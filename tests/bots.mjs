@@ -234,7 +234,7 @@ async function meetRaceUi(page) {
     neem('scherm', q('#scherm-race')); neem('kop', q('.race-kop')); neem('klok', q('#klok')); neem('qaly', q('#qaly'));
     neem('qaly-label', q('.qaly-label'), true); neem('qaly-getal', q('#qaly-getal'));
     neem('lever', q('#lever')); neem('lever-icoon', q('.lever-icoon')); neem('lever-tekst', q('#lever-tekst')); neem('lever-meter', q('.lever-meter')); neem('lever-max', q('.lever-max'));
-    neem('patient', q('#patient')); neem('patient-kop', q('#patient-kop')); neem('patient-naam', q('#patient-naam'), true);
+    neem('delen', q('#delen')); neem('deel-1', q('#deel-1')); neem('deel-2', q('#deel-2')); neem('patient', q('#patient')); neem('patient-kop', q('#patient-kop')); neem('patient-naam', q('#patient-naam'), true);
     neem('podium', q('#podium')); neem('doek', q('#doek')); neem('knoppen', q('#knoppen')); neem('demp', q('#demp'));
     [...document.querySelectorAll('#knoppen .actie')].forEach((b) => neem('knop-' + b.getAttribute('data-actie'), b, true));
     uit.aantalKnoppen = document.querySelectorAll('#knoppen .actie').length;
@@ -267,7 +267,7 @@ async function speelTutorial(page, run) {
       const na = await page.evaluate(() => ({ klok: window.SoS.debug.klok, zin: (document.querySelector('#melding.zicht') || { textContent: '' }).textContent.trim() }));
       run.tut.klokStil.push(na.klok === s.klok); // de klok staat stil zolang de speler niets doet
       run.metingen.push(await meetScherm(page));
-      if (laatsteStap === 3) run.tut.ui = await meetRaceUi(page);
+      if (run.tut.stappen.length === 2) run.tut.ui = await meetRaceUi(page); // derde knopstap (vertelstappen tellen niet mee)
       if (run.eersteHandeling == null) run.eersteHandeling = run.tikken + 1;
       await tik(page, run, '#knoppen [data-wijs]');
       run.tutActies.push(s.gids.stap + ':' + s.wijs);
@@ -819,7 +819,7 @@ resultaten.forEach((runs, vi) => {
     const echt = verschil.filter((v) => !toegestaan.includes(v));
     c2 = echt.length === 0;
     L.push(`C2 (meting, run ${ref.cfg.id}): plaats, maat, lettertype, lettergrootte, achtergrond, rand, tekst en icoon van ${sleutels.length} onderdelen ` +
-      `(scherm, kop, klok, QALY-stand, dagteller, levermeter, portret, canvas, ${a.aantalKnoppen} knoppen, dempknop) in de oefenronde (stap 3, klok stil) ` +
+      `(scherm, kop, klok, QALY-stand, dagteller, levermeter, portret, canvas, ${a.aantalKnoppen} knoppen, dempknop) in de oefenronde (derde knopstap, klok stil) ` +
       `tegenover race 1 (vlak na de start). Verschillen buiten de markering van de aangewezen knop: ${echt.length}${echt.length ? ' — ' + echt.join(' · ') : ''}. ` +
       `Toegestaan verschil (rand van de gemarkeerde knop): ${toegestaan.length}. ${jn(c2)}`);
     L.push(`  Knoppen oefenronde: ${['slik', 'zetpil', 'spuit', 'niets'].map((k) => (a['knop-' + k] || {}).tekst).join(', ')}; race 1: ${['slik', 'zetpil', 'spuit', 'niets'].map((k) => (b['knop-' + k] || {}).tekst).join(', ')}. Dit is een meting van de DOM; kleuren en vormen op het canvas beoordeelt de criticus op de schermafbeeldingen (gauntlet/schermen/).`);
