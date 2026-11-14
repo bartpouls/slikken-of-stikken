@@ -70,10 +70,17 @@ await tik('[data-actie="start"]');
 // ---------- oefenronde: alleen tikken op de knop die de uitleg aanwijst ----------
 await wacht(() => window.SoS.debug.fase === 'tutorial');
 const T0 = Date.now();
-const stappen = await page.evaluate(() => window.SoS.tutorial.stappen.map((s) => ({ op: s.op, knop: s.knop, poortje: s.poortje })));
+const stappen = await page.evaluate(() => window.SoS.tutorial.stappen.map((s) => ({ op: s.op, knop: s.knop, poortje: s.poortje, zin: s.zin, licht: s.licht })));
 const momenten = []; // klok waarop de foto's genomen zijn (voor de vergelijking met race 1)
-let nr = 1;
+let nr = 1, vnr = 0;
 for (const st of stappen) {
+  if (!st.knop) { // vertelstap: de zin staat even in beeld en gaat vanzelf verder
+    vnr++;
+    await wacht((z) => { const m = document.querySelector('#melding.zicht'); return !!m && m.getAttribute('data-zin') === z; }, st.zin);
+    await sleep(900);
+    await foto(`02-oefenronde-verhaal-${vnr}`, `Oefenronde, vertelstap ${vnr} (licht op: ${st.licht})`, 'Oefenronde', `Zin: “${st.zin}” · gaat vanzelf verder, of met een tik op het speelveld.`);
+    continue;
+  }
   await wacht(() => window.SoS.debug.gids && window.SoS.debug.gids.bevroren && !!document.querySelector('#knoppen [data-wijs]'));
   await sleep(700); // de zin is ingefaded
   let d = await dbg();
@@ -105,7 +112,7 @@ await wacht(() => window.SoS.debug.fase === 'race1');
 await sleep(600);
 await foto('04-race1-begin', 'Race 1: begin', 'Race 1', 'Aanloop: het eerste poortje komt eraan.');
 const plan = { 18: 'slik' };
-stappen.forEach((s) => { plan[s.poortje] = s.knop; });
+stappen.forEach((s) => { if (s.knop) plan[s.poortje] = s.knop; });
 let mi = 0, misselijkFoto = false, geweigerd = false, leverFoto = false;
 while (true) {
   const d = await dbg();

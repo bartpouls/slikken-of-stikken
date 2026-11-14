@@ -21,7 +21,7 @@
         <div class="fig" data-fig="vries"></div>
       </div>
       <h1 id="titel" class="titel">Slikken <span>of</span> Stikken</h1>
-      <p class="tekst">Houd de spiegel van een geneesmiddel in het groene vlak.</p>
+      <p class="tekst">Jij bent de dokter: houd de spiegel van een geneesmiddel in het groene vlak.</p>
       <form id="start-form" class="start-form" autocomplete="off" novalidate>
         <label for="naam" class="markering">Jouw speelnaam</label>
         <input id="naam" name="naam" data-veld="naam" type="text" maxlength="16" placeholder="bv. Pilpiraat" enterkeyhint="go" autocapitalize="words" spellcheck="false">
@@ -60,6 +60,10 @@
       </div>
       <div class="patient" id="patient"><span class="fig patient-kop" id="patient-kop" aria-hidden="true"></span><span id="patient-naam"></span></div>
     </div>
+    <div class="delen" id="delen" aria-label="De race heeft twee delen">
+      <div class="deel" id="deel-1"><span class="deel-vul"></span><span class="deel-tekst">Deel 1 · op schema</span></div>
+      <div class="deel" id="deel-2"><span class="deel-vul"></span><span class="deel-tekst" id="deel-2-tekst">Deel 2 · verandering</span></div>
+    </div>
     <div class="podium" id="podium">
       <canvas id="doek" aria-label="Tijdlijn met de spiegel"></canvas>
       <div class="melding" id="melding" role="status" aria-live="polite"></div>
@@ -67,6 +71,7 @@
         <p class="markering finish-kop" id="finish-kop">Race klaar</p>
         <p class="finish-label" id="finish-label">QALY-punten</p>
         <p class="finish-getal" id="finish-getal">0</p>
+        <div class="finish-schema" id="finish-schema"></div>
         <button type="button" class="knop-paars" data-actie="verder">Verder</button>
       </div>
     </div>

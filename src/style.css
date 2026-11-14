@@ -209,11 +209,29 @@ input { font: inherit; }
 }
 @keyframes inploppen { from { transform: scale(.5); opacity: 0; } }
 
+/* deel 1 / deel 2: elke race bestaat uit een gewoon stuk en een stuk waarin iets verandert */
+.delen { flex: none; display: flex; gap: 4px; margin: 0 calc(var(--veilig-rechts) + 16px) 6px calc(var(--veilig-links) + 16px); }
+.deel {
+  position: relative; flex: 1 1 0; height: 20px; overflow: hidden;
+  border-radius: 6px; background: rgba(255, 255, 255, .1); border: 1px solid rgba(255, 255, 255, .22);
+}
+.deel-vul { position: absolute; inset: 0 auto 0 0; width: 0; background: rgba(176, 124, 255, .6); }
+.deel-tekst {
+  position: relative; display: block; text-align: center; line-height: 18px;
+  font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; text-shadow: 0 0 4px #000;
+}
+.delen:not(.in2) #deel-1, .delen.in2 #deel-2 { border-color: rgba(255, 255, 255, .75); }
+.delen.in2 #deel-2 { animation: deelnieuw .9s ease 2; }
+.delen.licht .deel { animation: deelnieuw .9s ease infinite; }
+@keyframes deelnieuw { 50% { box-shadow: 0 0 0 4px rgba(255, 255, 255, .45); border-color: #fff; } }
+.delen { overflow: visible; }
+.patient.licht { border-radius: 999px; animation: deelnieuw .9s ease infinite; padding: 0 8px 0 2px; margin-right: -8px; }
+
 .podium { position: relative; flex: 1 1 auto; min-height: 0; }
 #doek { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
 
 .melding {
-  position: absolute; left: 50%; top: 80px; /* boven in het podium (verleden), los van de nu-lijn en de keuzeregel */
+  position: absolute; left: 50%; top: 92px; /* boven in het podium (verleden), los van de nu-lijn en de keuzeregel */
   width: min(92%, 380px); transform: translate(-50%, -8px);
   text-align: center; font-size: 19px; line-height: 1.35; font-weight: 600;
   color: var(--wit); text-shadow: 0 1px 12px #000, 0 0 3px #000;
@@ -230,19 +248,59 @@ input { font: inherit; }
 .melding.au { color: #ffd2cc; }
 .melding.alarm { color: #ffc2b8; }
 .melding.grap { color: #e5d4ff; }
+/* vertelstap in de oefenronde: een streepje loopt leeg, daarna gaat het vanzelf verder (of tik) */
+.melding.beat::after {
+  content: ""; display: block; height: 3px; width: 64px; margin: 10px auto 0; border-radius: 2px;
+  background: var(--paars); transform-origin: 0 50%;
+}
+.melding.beat.zicht::after { animation: beat var(--beat, 4s) linear forwards; }
+@keyframes beat { to { transform: scaleX(0); } }
 
 .finish {
   position: absolute; inset: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
-  background: rgba(0, 0, 0, .7); padding: 0 28px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: rgba(0, 0, 0, .97); padding: 8px 20px 10px;
   animation: infaden .5s ease;
-  text-align: center;
+  text-align: center; overflow-y: auto;
 }
+.finish::before, .finish::after { content: ""; flex: 1 1 0; } /* midden, maar scrolt netjes als het niet past */
 @keyframes infaden { from { opacity: 0; } }
-.finish-kop { margin: 0 0 14px; max-width: 320px; font-size: 20px; }
+.finish > * { flex: none; }
+.finish-kop { margin: 0 0 6px; max-width: 320px; font-size: 20px; }
 .finish-label { margin: 0; font-size: 15px; color: var(--zacht); }
-.finish .knop-paars { margin-top: 8px; }
-.finish-getal { margin: 0 0 22px; font-size: 64px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+.finish .knop-paars { margin-top: 10px; }
+.finish-getal { margin: 0 0 6px; font-size: 52px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+
+/* het doseerschema op het kaartje na de race: wanneer gaf je wat */
+.finish-schema { width: 100%; max-width: 360px; }
+.finish-schema:empty { display: none; }
+.schema-kop { margin: 4px 0 6px; font-size: 14px; font-weight: 700; color: var(--paars); }
+.schema { list-style: none; margin: 0; padding: 0; display: grid; gap: 3px; }
+.schema-uur { grid-template-columns: repeat(6, 1fr); }
+.schema-dag { grid-auto-flow: column; grid-template-rows: repeat(var(--r, 4), auto); grid-template-columns: 30px; grid-auto-columns: 1fr; }
+.sc {
+  position: relative; min-height: 30px; display: flex; align-items: center; justify-content: center;
+  border-radius: 7px; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .12);
+}
+.sc.gaf { background: rgba(176, 124, 255, .22); border-color: rgba(176, 124, 255, .7); }
+.sc.m { background: rgba(190, 230, 90, .16); }
+.sc.m.gaf { border-color: rgba(200, 235, 120, .8); }
+.sc.ibu { box-shadow: inset 0 -3px 0 #ff9f43; }
+.sc small { position: absolute; left: 4px; top: 1px; font-size: 11px; font-weight: 700; color: var(--zacht); }
+.sc svg { width: 22px; height: 22px; }
+.sc b { font-size: 11px; font-weight: 800; margin-left: -3px; }
+.sc i { width: 9px; height: 2px; border-radius: 1px; background: rgba(255, 255, 255, .45); }
+.schema-uur .sc { padding-left: 12px; }
+.schema-dag .sc { min-height: 26px; }
+.schema-dag .sc svg { width: 19px; height: 19px; }
+.sk { font-size: 11.5px; font-weight: 700; color: var(--zacht); display: flex; align-items: center; justify-content: center; min-height: 16px; }
+.sk.ibu { color: #ff9f43; }
+.schema-tel { margin: 6px 0 0; font-size: 13.5px; color: var(--zacht); }
+.sl { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 4px; vertical-align: -1px; }
+.sl.m { background: rgba(190, 230, 90, .55); }
+.sl.ibu { background: #ff9f43; }
+.sl.x { width: 14px; height: 14px; vertical-align: -3px; margin-right: 2px; }
+.sl.x svg { width: 100%; height: 100%; display: block; }
 
 /* keuze-terugkoppeling boven de knoppen */
 .knoppen-blok { position: relative; flex: none; }
@@ -326,6 +384,7 @@ input { font: inherit; }
 }
 @media (prefers-reduced-motion: reduce) {
   .scherm, .melding, .lever-vul { transition: none; }
+  .delen.in2 #deel-2, .delen.licht .deel, .patient.licht, .melding.beat.zicht::after { animation: none; }
   .fig.wiebel, .actie.schud, .lever.vol .lever-meter, .lever.vol .lever-icoon, .lever.tel .lever-tekst { animation: none; }
   .actie.wijs { animation: none; box-shadow: 0 0 0 4px rgba(255, 255, 255, .5); }
 }

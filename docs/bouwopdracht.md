@@ -2,6 +2,13 @@
 
 **Wat is nieuw in v2:** tutorial en race zijn één geheel (§3 Flow stap 2, §6C), en de beleving heeft één stijl voor alle schermen (§6D). Rekenmodel, casusblad en de drempels in §6A en §6B zijn ongewijzigd.
 
+**Wat is nieuw in v2.1 (op verzoek van Bart):** rekenmodel, casusblad en drempels zijn ongewijzigd. Wel nieuw op het racescherm, en dus ook in de oefenronde (zelfde tekencode):
+- **Verhaal in de oefenronde.** Drie vertelzinnen vooraf (wie je bent: de dokter; wat de spiegelbalk is; wat de grenzen zijn) en één bij deel 2. Ze gaan vanzelf verder (of met een tik op het speelveld) en kosten dus geen extra tik. Dit wijkt af van "de speler doet elke stap zelf" in §3 Flow stap 2.
+- **Spiegelbalk.** De horizontale as bovenaan is een gekleurde balk "spiegel in het bloed" met een wijzer; de banen eronder hebben dezelfde kleuren: te weinig (blauw), het groene vlak, te veel (geel) en giftig (rood). Paracetamol heeft geen bovengrens in mg/L (casusblad): "te veel" loopt daar via de dagteller.
+- **Gevoel bij de spiegel.** Het gezicht van de patiënt staat op de spiegel, met een woord erbij: paracetamol "pijn" / "pijn weg" / "misselijk" / "lever beschadigd"; lithium "kans op terugval" / "stabiel" / "trillen, misselijk" / "giftig: verward" (ontleend aan de lekentaal in het casusblad).
+- **Twee delen.** Elke race toont een balk "Deel 1 · op schema" en "Deel 2 · verandering", en een geblokte strook in de tijdlijn waar deel 2 begint. Wát er verandert blijft een verrassing (§3 Flow stap 2); de oefenronde laat alleen zien dát er iets verandert.
+- **Doseerschema na de race.** Het kaartje "Race klaar" (en "Klaar?" na de oefenronde) toont naast de QALY-punten per poortje wat je gaf.
+
 Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor het rekenmodel: het spel neemt ze letterlijk over. Afwijken mag alleen na akkoord van Bart Pouls (inhoudelijk eigenaar).
 
 ## 1. Doel en doelgroep

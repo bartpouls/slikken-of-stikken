@@ -14,6 +14,17 @@
  *   één zin in beeld (zelfde .melding als de race, maar hij blijft staan), en de markering van die knop
  *   (class "wijs" + data-wijs="1"). De plotwending (misselijkheid) staat uit; de ronde stopt op gids.eind.
  *
+ * WAT JE OP HET RACESCHERM ZIET (v2.1; oefenronde en race, zelfde code):
+ *   - Spiegelbalk boven in het doek: de horizontale as IS de spiegel in het bloed. Gekleurde stukken (te weinig |
+ *     het groene vlak | te veel | giftig), getallen eronder ("streep 5" = de ondergrens), een wijzer op de plek
+ *     van de spiegel. De banen eronder hebben dezelfde kleuren.
+ *   - Het gezicht van de patiënt staat op de spiegel (KOP-afbeeldingen), met een gevoelswoord (R.gevoel).
+ *   - Deel 1 / deel 2 (#delen): R.deel2 = begin van de eerste gebeurtenis (oefenronde: gids.deel2). Geblokte
+ *     strook in de tijdlijn op dat moment; het label van deel 2 wordt pas na de onthulling "misselijk"/"ibuprofen".
+ *   - Vertelstappen in de oefenronde (stap zonder knop): zin in beeld, klok staat even stil, gaat vanzelf verder
+ *     of met een tik op het speelveld (tikPodium); st.licht laat een schermonderdeel oplichten (zetLicht).
+ *   - Kaartje na de race (#finish): QALY-punten + doseerschema per poortje (schemaHtml, uit race.verslag()).
+ *
  * GEDEELD, VOOR einde.js (SoS.ui; gebruik binnen toon(), niet bij het laden):
  *   SoS.ui.figuur({wie:'opa'|'vries', stemming:'neutraal'|'blij'|'pijn'|'misselijk', prop:'stok'|'doosje'|null,
  *                 kleur, label, kop}) -> SVG-string: plat figuurtje zonder schetslijn (past op zwart met sterren),
@@ -223,6 +234,24 @@
     ctx.restore();
   }
 
+  // Portretjes (hoofd + hoed) voor het canvas: het gezicht van de patiënt staat op de spiegel.
+  var KOP = { opa: {}, vries: {} };
+  ['opa', 'vries'].forEach(function (wie) {
+    ['neutraal', 'blij', 'pijn', 'misselijk'].forEach(function (st) {
+      var im = new Image();
+      im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(figuur({ wie: wie, stemming: st, kop: true }).replace('<svg ', '<svg width="160" height="164" '));
+      KOP[wie][st] = im;
+    });
+  });
+  var KOP_S = 0.56; // schaal: hoofd ±14 px straal
+  function tekenKop(ctx, wie, st, x, y) {
+    var im = KOP[wie][st];
+    if (!im || !im.complete || !im.naturalWidth) return false;
+    ctx.drawImage(im, x - 34 * KOP_S, y - 52 * KOP_S, 80 * KOP_S, 82 * KOP_S); // midden van het hoofd op (x, y)
+    return true;
+  }
+  var KOP_R = 18; // ring om het hoofd; labels blijven hierbuiten
+
   // ------------------------------------------------------------------------------------------
   // Staat en schermen
   // ------------------------------------------------------------------------------------------
@@ -305,9 +334,11 @@
     $('intro-verhaal').textContent = c.verhaal;
     var regels;
     if (i === 0) {
-      regels = ['Houd de spiegel in het groene vlak, boven de streep.',
+      regels = ['Jij bent zijn dokter: jij bepaalt wat hij krijgt, en wanneer.',
+        'Houd de spiegel in het groene vlak, boven de streep.',
         'Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.',
-        'Maximaal ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' gram per dag: daarboven raakt de lever beschadigd.'];
+        'Maximaal ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' gram per dag: daarboven raakt de lever beschadigd.',
+        'De race heeft twee delen: halverwege verandert er iets, pas dan je plan aan.'];
     } else {
       // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).
       var uren = M.poortjes(c).filter(function (t) { return t < 24; });
@@ -375,8 +406,11 @@
     var race = S.maakRace(c, gids ? { blokkades: false } : undefined);
     R = {
       i: i, casus: c, cfg: cfg, race: race,
-      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, vol: gids.vol, i: 0, bevroren: false, actief: false, wijsVanaf: 0, t0: performance.now(), duur: null } : null,
-      stemming: null,
+      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, vol: gids.vol, i: 0, bevroren: false, actief: false, wijsVanaf: 0, beatTot: 0, t0: performance.now(), duur: null } : null,
+      stemming: null, gevoel: '', licht: null,
+      // elke race heeft twee delen: een gewoon stuk, en dan verandert er iets (eerste gebeurtenis uit de casusdata)
+      deel2: gids ? gids.deel2 : c.gebeurtenissen.reduce(function (m, g) { return Math.min(m, g.type === 'blokkade' ? g.van : g.t); }, Infinity),
+      deelStand: '',
       poorten: M.poortjes(c), g: 0,
       keuze: { route: null, aantal: 0, poging: false },
       gegeven: [],
@@ -414,6 +448,10 @@
   function bouwRaceUi() {
     var c = R.casus;
     $('finish').hidden = true;
+    $('finish-schema').innerHTML = '';
+    $('deel-2-tekst').textContent = 'Deel 2 · verandering';
+    $('delen').className = 'delen';
+    zetLicht(null);
     $('klok').innerHTML = klokHtml(c, 0);
     $('qaly-getal').textContent = '0';
     $('qaly').className = 'qaly';
@@ -549,6 +587,16 @@
       return;
     }
     G.actief = true;
+    if (!st.knop) { // vertelstap: de klok staat even stil, daarna gaat het vanzelf verder
+      var duur = (1.3 + 0.045 * st.zin.length) * 1000 / Math.min(SPEED, 4);
+      G.beatVan = performance.now() + MELD_FADE;
+      G.beatTot = G.beatVan + duur;
+      G.bevroren = true;
+      zetLicht(st.licht);
+      melding(st.zin, { soort: 'beat', beat: duur });
+      return;
+    }
+    zetLicht(null);
     var onder = zoneVan(R.race.sim.C, Math.max(0, R.race.t)) === 'onder';
     var zin = st.zin;
     if (zin === 'lekentaal.onder') zin = onder ? R.casus.lekentaal.onder : st.zinAnders; // casusbladtekst als hij klopt
@@ -563,6 +611,13 @@
     var G = R.gids;
     if (!G) return;
     var st = G.actief ? G.stappen[G.i] : null;
+    if (st && !st.knop) { // vertelstap
+      if (performance.now() < G.beatTot) { G.bevroren = true; return; }
+      G.i++; G.actief = false; G.bevroren = false;
+      zetLicht(null);
+      if (G.i < G.stappen.length && R.klok >= G.stappen[G.i].op) gidsStap();
+      return;
+    }
     G.bevroren = !!st && !(R.keuze.route === st.knop && R.g === st.poortje);
     var toon = G.bevroren && performance.now() >= G.wijsVanaf;
     Object.keys(R.knoppen).forEach(function (r) {
@@ -571,6 +626,21 @@
       b.classList.toggle('wijs', aan);
       if (aan) b.setAttribute('data-wijs', '1'); else b.removeAttribute('data-wijs');
     });
+  }
+
+  // Het schermonderdeel dat bij een vertelstap oplicht (in de DOM via een klasse, op het canvas via R.licht).
+  function zetLicht(wat) {
+    if (R) R.licht = wat || null;
+    $('patient').classList.toggle('licht', wat === 'patient');
+    $('delen').classList.toggle('licht', wat === 'delen');
+  }
+  // Een tik op het speelveld slaat de wachttijd van een vertelstap over.
+  function tikPodium() {
+    var G = R && R.gids;
+    if (!G || !G.actief || G.stappen[G.i].knop || R.klaar) return;
+    if (performance.now() < G.beatVan + 500) return;
+    G.beatTot = 0;
+    speel('tik');
   }
 
   // Lithium: tablet tot 2× per poortje (casusblad: "elk poortje dubbel"); paracetamol 1 g per keer.
@@ -608,6 +678,7 @@
     function toon() {
       if (R !== r || R.klaar) return;
       m.className = 'melding' + (o.soort ? ' ' + o.soort : '') + (o.fig ? ' met-fig' : '');
+      if (o.beat) m.style.setProperty('--beat', Math.round(o.beat) + 'ms');
       m.innerHTML = '';
       if (o.fig) m.appendChild(el('div', { class: 'm-fig', html: o.fig }));
       m.appendChild(el('div', { text: tekst }));
@@ -667,7 +738,7 @@
       var gat = Math.max(84, Math.min(130, D.h * 0.22));
       R.pxPerUur = gat / R.casus.poortjes.interval;
       R.yNu = Math.round(D.h * 0.52);
-      R.links = 18; R.rechts = 18;
+      R.links = 26; R.rechts = 26; // ruimte voor het gezicht aan de rand
       // breedste poortlabel (+ icoontje, lithium ook "2×"): zo breed is de gereserveerde labelstrook
       ctx.font = '700 15px ' + FONT;
       var mx = 0;
@@ -698,7 +769,7 @@
   }
 
   // Bovenrand (as-labels) en onderrand (knoppen): hier worden poortjes en spiegel weggevaagd.
-  var BOVENRAND = 58;
+  var BOVENRAND = 72;
   // Poortlabels staan aan de kant WEG van de stip (R.kant: 'links' | 'rechts', met speling zodat ze niet
   // heen en weer springen). Die strook (R.strook) is gereserveerd: de stip, het waardelabel en het
   // "onderweg"-bolletje blijven erbuiten. Poortjes vlak bij de nu-lijn (PROX) volgen de kant altijd; verder
@@ -825,30 +896,38 @@
       links.push([xVan(v.laag), yy]);
       rechts.push([v.hoog === Infinity ? Rr : xVan(v.hoog), yy]);
     }
-    ctx.fillStyle = 'rgba(61,220,151,0.10)';
-    ctx.beginPath();
-    links.forEach(function (p, j) { if (j) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
-    for (var j2 = rechts.length - 1; j2 >= 0; j2--) ctx.lineTo(rechts[j2][0], rechts[j2][1]);
-    ctx.closePath(); ctx.fill();
-    // de streep (ondergrens) helder
-    ctx.strokeStyle = 'rgba(61,220,151,0.75)'; ctx.lineWidth = 2;
-    ctx.beginPath();
-    links.forEach(function (p, j) { if (j) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
-    ctx.stroke();
-    if (rechts[0][0] < Rr) {
-      ctx.strokeStyle = 'rgba(61,220,151,0.35)'; ctx.lineWidth = 1.5;
-      ctx.beginPath();
-      rechts.forEach(function (p, j) { if (j) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
-      ctx.stroke();
+    // De banen: links van de streep "te weinig" (blauw), het groene vlak, daarboven "te veel" (geel) en
+    // giftig (rood). Zelfde kleuren als de lijn en de spiegelbalk bovenaan. Bij een vertelstap lichten ze op.
+    var puls = R.licht === 'banen' ? 0.5 + 0.5 * Math.sin(nu / 240) : 0;
+    var pad = function (pts, omgekeerd) {
+      if (omgekeerd) for (var a = pts.length - 1; a >= 0; a--) ctx.lineTo(pts[a][0], pts[a][1]);
+      else pts.forEach(function (p, j) { if (j) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]); });
+    };
+    ctx.fillStyle = 'rgba(124,196,255,' + (0.075 + 0.13 * puls) + ')';
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    links.forEach(function (p) { ctx.lineTo(p[0], p[1]); });
+    ctx.lineTo(0, h); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = 'rgba(61,220,151,' + (0.13 + 0.13 * puls) + ')';
+    ctx.beginPath(); pad(links); pad(rechts, true); ctx.closePath(); ctx.fill();
+    var heeftHoog = rechts[0][0] < Rr - 0.5;
+    if (heeftHoog) {
+      var xt0 = c.toxisch != null ? xVan(c.toxisch) : w;
+      ctx.fillStyle = 'rgba(255,225,77,0.07)';
+      ctx.beginPath(); pad(rechts); ctx.lineTo(xt0, h); ctx.lineTo(xt0, 0); ctx.closePath(); ctx.fill();
+    }
+    // de grenzen: de streep (ondergrens) en, als die er is, de bovenkant van het groene vlak
+    ctx.strokeStyle = 'rgba(86,235,170,0.95)'; ctx.lineWidth = 2.5 + 1.5 * puls;
+    ctx.beginPath(); pad(links); ctx.stroke();
+    if (heeftHoog) {
+      ctx.strokeStyle = 'rgba(255,225,77,0.8)'; ctx.lineWidth = 2;
+      ctx.beginPath(); pad(rechts); ctx.stroke();
     }
     if (c.toxisch != null) {
       var xt = xVan(c.toxisch);
-      ctx.fillStyle = 'rgba(255,80,80,0.09)';
-      ctx.fillRect(xt, 0, Rr - xt, h);
-      ctx.strokeStyle = 'rgba(255,90,90,0.55)'; ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 5]);
+      ctx.fillStyle = 'rgba(255,80,80,0.12)';
+      ctx.fillRect(xt, 0, w - xt, h);
+      ctx.strokeStyle = 'rgba(255,90,90,0.85)'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(xt, 0); ctx.lineTo(xt, h); ctx.stroke();
-      ctx.setLineDash([]);
     }
 
     // stip, kant van de poortlabels en de vrije strook
@@ -897,6 +976,15 @@
         gebeurtenisLabel('ibuprofen', Math.max(yk + 18, BOVENRAND + 4), true);
       }
     });
+
+    // waar deel 2 begint: een geblokte strook dwars over de baan (zoals een sectorgrens op een circuit)
+    var yS = yVan(R.deel2);
+    if (yS > BOVENRAND - 10 && yS < h + 10) {
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      for (var bx = 0, bi = 0; bx < w; bx += 6, bi++) ctx.fillRect(bx, yS + (bi % 2 ? 0 : -6), 6, 6);
+      var geenOnthuld = !Object.keys(R.onthuld).length;
+      if (geenOnthuld) { ctx.fillStyle = '#ffffff'; gebeurtenisLabel('deel 2', yS + 18, false); }
+    }
 
     // paarse poortjes, stap 1: alleen de lijnen (onder de spiegel)
     tekenPoortjes(nu, 1);
@@ -953,12 +1041,25 @@
     // indeling rond de stip: waardelabel boven de nu-lijn, naar buiten (weg van de poortlabels);
     // past dat niet, dan naar binnen. Het "onderweg"-bolletje aan de andere kant, of voorbij het label.
     var waarde = c.id === 'lithium' ? getal(C, 2) + ' mmol/L' : getal(C, 1) + ' mg/L';
+    var gevoel = R.klok >= 0 || c.id === 'lithium' ? R.gevoel : (R.gevoel || '');
+    ctx.font = '800 13.5px ' + FONT;
+    var wg = ctx.measureText(gevoel).width;
     ctx.font = '600 12.5px ' + FONT;
     var wv = ctx.measureText(waarde).width;
     var o = R.kant === 'links' ? 1 : -1;
-    var va = o > 0 ? xD + 10 : xD - 10 - wv;
-    if (!past(va, va + wv) || !vrij(va, va + wv)) va = o > 0 ? xD - 10 - wv : xD + 10;
+    var va = o > 0 ? xD + KOP_R + 6 : xD - KOP_R - 6 - wv;
+    if (!past(va, va + wv) || !vrij(va, va + wv)) va = o > 0 ? xD - KOP_R - 6 - wv : xD + KOP_R + 6;
     var vb = va + wv, vKant = va > xD ? 1 : -1;
+    // het gevoelswoord: naast het gezicht (boven het getal) als dat past; anders boven het gezicht, in de
+    // vrije ruimte naast de strook met poortlabels
+    var ga = vKant > 0 ? va : vb - wg, gNaast = past(ga, ga + wg) && vrij(ga, ga + wg), gy = yN - 5;
+    if (gNaast) { va = Math.min(va, ga); vb = Math.max(vb, ga + wg); }
+    else {
+      var lo = R.kant === 'links' ? zB + 6 : 3, hi = R.kant === 'links' ? w - 3 : zA - 6;
+      ga = Math.max(lo, Math.min(hi - wg, xD - wg / 2));
+      gy = yN - KOP_R - 20;
+    }
+    var wa = vKant > 0 ? va : vb - wv; // begin van het getal (aan de kant van het gezicht)
 
     // opnamedepot ("onderweg"): vertraging van slikken/zetpil zichtbaar
     var ref = c.routes.slik.dosis * c.routes.slik.F;
@@ -968,8 +1069,8 @@
       var rB = 5 + 13 * Math.sqrt(Math.min(1.6, dep));
       var hw = Math.max(rB, 29); // halve breedte, met het woord "onderweg" eronder
       // naast de stip (aan de kant zonder waardelabel, of voorbij het label); past dat niet: onder de stip
-      var kand = [xD - vKant * (rB + 26), xD + vKant * Math.max(rB + 26, (vKant > 0 ? vb - xD : xD - va) + 6 + hw)];
-      var xB = R.kant === 'links' ? Math.max(xD, zB + 8 + hw) : Math.min(xD, zA - 8 - hw), yB = yN + rB + 14;
+      var kand = [xD - vKant * (rB + KOP_R + 16), xD + vKant * Math.max(rB + KOP_R + 16, (vKant > 0 ? vb - xD : xD - va) + 6 + hw)];
+      var xB = R.kant === 'links' ? Math.max(xD, zB + 8 + hw) : Math.min(xD, zA - 8 - hw), yB = yN + rB + KOP_R + 8;
       for (var q = 0; q < kand.length; q++) {
         if (kand[q] - hw >= L && kand[q] + hw <= w - 4 && vrij(kand[q] - hw, kand[q] + hw)) { xB = kand[q]; yB = yN; break; }
       }
@@ -1023,29 +1124,47 @@
       return dt < 1;
     });
 
-    // de stip (nu)
+    // de spiegel van nu: het gezicht van de patiënt, met een ring in de kleur van de toestand. Zo zie je in
+    // één blik waar de spiegel staat en hoe de patiënt zich daarbij voelt.
     var kl = lijnKleur(C, tm, R.leverOver);
-    var gr = ctx.createRadialGradient(xD, yN, 0, xD, yN, 20);
+    // stippellijn van het gezicht naar de spiegelbalk bovenaan: de plek links-rechts IS de spiegel
+    ctx.save();
+    ctx.strokeStyle = kl; ctx.globalAlpha = R.licht === 'meter' ? 0.9 : 0.4; ctx.lineWidth = 1.5; ctx.setLineDash([2, 5]);
+    ctx.beginPath(); ctx.moveTo(xD, BOVENRAND - 6); ctx.lineTo(xD, yN - KOP_R - 14); ctx.stroke();
+    ctx.restore();
+    var gr = ctx.createRadialGradient(xD, yN, KOP_R - 4, xD, yN, KOP_R + 16);
     gr.addColorStop(0, kl); gr.addColorStop(1, 'rgba(0,0,0,0)');
-    ctx.globalAlpha = 0.55; ctx.fillStyle = gr;
-    ctx.beginPath(); ctx.arc(xD, yN, 20, 0, 6.283); ctx.fill();
+    ctx.globalAlpha = 0.5; ctx.fillStyle = gr;
+    ctx.beginPath(); ctx.arc(xD, yN, KOP_R + 16, 0, 6.283); ctx.fill();
     ctx.globalAlpha = 1;
-    ctx.fillStyle = kl; ctx.beginPath(); ctx.arc(xD, yN, 6.5, 0, 6.283); ctx.fill();
-    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(xD, yN, KOP_R, 0, 6.283); ctx.fill();
+    ctx.strokeStyle = kl; ctx.lineWidth = 3; ctx.stroke();
+    if (!tekenKop(ctx, c.id === 'lithium' ? 'vries' : 'opa', R.stemming || 'neutraal', xD, yN + 2)) {
+      ctx.fillStyle = kl; ctx.beginPath(); ctx.arc(xD, yN, 6.5, 0, 6.283); ctx.fill();
+    }
+    if (R.licht === 'meter' || R.licht === 'patient') { // vertelstap: het gezicht licht op
+      var pr = 0.5 + 0.5 * Math.sin(nu / 240);
+      ctx.strokeStyle = 'rgba(255,255,255,' + (0.9 - 0.6 * pr) + ')'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.arc(xD, yN, KOP_R + 5 + 9 * pr, 0, 6.283); ctx.stroke();
+    }
     if (C > R.cfg.Cmax) { // buiten beeld: pijltje
       ctx.fillStyle = kl;
-      ctx.beginPath(); ctx.moveTo(xD + 9, yN - 6); ctx.lineTo(xD + 16, yN); ctx.lineTo(xD + 9, yN + 6); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(xD + KOP_R + 4, yN - 6); ctx.lineTo(xD + KOP_R + 11, yN); ctx.lineTo(xD + KOP_R + 4, yN + 6); ctx.fill();
     }
-    // waarde bij de stip (boven de nu-lijn)
-    ctx.font = '600 12.5px ' + FONT; ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
-    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    // bij het gezicht: hoe de patiënt zich voelt (kleur van de toestand) en daaronder de spiegel in getallen
+    ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
     ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
-    ctx.strokeText(waarde, va, yN - 8);
-    ctx.fillText(waarde, va, yN - 8);
+    ctx.font = '800 13.5px ' + FONT; ctx.fillStyle = kl;
+    ctx.strokeText(gevoel, ga, gy);
+    ctx.fillText(gevoel, ga, gy);
+    ctx.font = '600 12.5px ' + FONT; ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.textBaseline = 'top';
+    ctx.strokeText(waarde, wa, yN + 3);
+    ctx.fillText(waarde, wa, yN + 3);
 
     // rand boven: as-labels; rand onder: vervagen naar de knoppen
     var gb = ctx.createLinearGradient(0, 0, 0, BOVENRAND);
-    gb.addColorStop(0, 'rgba(0,0,0,1)'); gb.addColorStop(0.7, 'rgba(0,0,0,0.85)'); gb.addColorStop(1, 'rgba(0,0,0,0)');
+    gb.addColorStop(0, 'rgba(0,0,0,1)'); gb.addColorStop(0.86, 'rgba(0,0,0,0.9)'); gb.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = gb; ctx.fillRect(0, 0, w, BOVENRAND);
     var go = ctx.createLinearGradient(0, h - 50, 0, h);
     go.addColorStop(0, 'rgba(0,0,0,0)'); go.addColorStop(1, 'rgba(0,0,0,1)');
@@ -1055,40 +1174,63 @@
     function halo(tekst, x, y) {
       ctx.strokeStyle = '#000'; ctx.lineWidth = 5; ctx.strokeText(tekst, x, y); ctx.fillText(tekst, x, y);
     }
-    // as-labels: venstergrenzen uit M.venster(casus, t) (schuiven mee), giftig uit casus.toxisch, hulplijnen;
-    // de eenheid staat bij beide casussen rechts, bij het hoogste getal.
+    // DE SPIEGELBALK: de horizontale as bovenaan is de spiegel in het bloed. Een gekleurde balk met dezelfde
+    // stukken als de banen eronder (te weinig | het groene vlak | te veel | giftig) en een wijzer die met het
+    // gezicht meeschuift. Grenzen uit M.venster(casus, t) (schuiven mee) en casus.toxisch.
     var v0 = M.venster(c, tm);
     var zl = xVan(v0.laag), zr = v0.hoog === Infinity ? Rr : xVan(v0.hoog);
     var dec = c.id === 'lithium' ? 1 : 0;
     var fmt = function (x) { return x === 0 || x === R.cfg.Cmax ? getalKort(x, 1) : getal(x, x % 1 && !dec ? 1 : dec); };
+    var stukken = [{ a: L, b: zl, k: LIJNKLEUR.onder, label: 'te weinig' },
+      { a: zl, b: zr, k: LIJNKLEUR.zone, label: c.id === 'lithium' ? R.cfg.zoneLabel[0] : c.zone.label }];
+    if (v0.hoog !== Infinity) stukken.push({ a: zr, b: c.toxisch != null ? xVan(c.toxisch) : Rr, k: LIJNKLEUR.boven, label: 'te veel' });
+    if (c.toxisch != null) stukken.push({ a: xVan(c.toxisch), b: Rr, k: LIJNKLEUR.tox, label: R.cfg.toxLabel });
+    var mp = R.licht === 'meter' ? 0.5 + 0.5 * Math.sin(nu / 240) : 0;
+    ctx.font = '800 10.5px ' + FONT; ctx.textBaseline = 'top';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.textAlign = 'left';
+    halo('SPIEGEL IN HET BLOED', L, 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.72)'; ctx.textAlign = 'right';
+    halo(R.cfg.eenheid, Rr, 2);
+    var by = 17, bh = 9;
+    stukken.forEach(function (sk, si) {
+      ctx.fillStyle = sk.k; ctx.globalAlpha = 0.85;
+      ctx.fillRect(sk.a + (si ? 1.5 : 0), by, sk.b - sk.a - (si ? 1.5 : 0), bh);
+    });
+    ctx.globalAlpha = 1;
+    if (mp) { ctx.strokeStyle = 'rgba(255,255,255,' + (0.9 - 0.5 * mp) + ')'; ctx.lineWidth = 2; ctx.strokeRect(L - 5 - 3 * mp, by - 5 - 3 * mp, Rr - L + 10 + 6 * mp, bh + 10 + 6 * mp); }
+    // de wijzer: zelfde plek links-rechts als het gezicht
+    var xw = Math.max(L, Math.min(Rr, xD));
+    ctx.fillStyle = '#000'; ctx.fillRect(xw - 4, by - 4, 8, bh + 8);
+    ctx.fillStyle = '#fff'; ctx.fillRect(xw - 2, by - 4, 4, bh + 8);
+    // getallen onder de balk; bij de ondergrens staat het woord "streep" (zo heet die grens in het spel)
     var vast = [{ C: v0.laag, streep: true }];
     if (v0.hoog !== Infinity) vast.push({ C: v0.hoog });
     var ticks = vast.slice();
     [0].concat(R.cfg.as, c.toxisch != null ? [c.toxisch] : []).forEach(function (x) {
       if (vast.every(function (tk) { return Math.abs(xVan(tk.C) - xVan(x)) > 26; })) ticks.push({ C: x });
     });
-    if (vast.every(function (tk) { return xVan(tk.C) < Rr - 70; })) ticks.push({ C: R.cfg.Cmax, rechts: true });
+    if (vast.every(function (tk) { return xVan(tk.C) < Rr - 40; })) ticks.push({ C: R.cfg.Cmax, rechts: true });
     ctx.font = '600 12px ' + FONT; ctx.textBaseline = 'top';
     ticks.forEach(function (tk) {
-      var xt = xVan(tk.C);
+      var xt = xVan(tk.C), tekst = fmt(tk.C);
       ctx.fillStyle = tk.streep ? 'rgba(126,240,196,1)' : 'rgba(255,255,255,0.72)';
-      ctx.textAlign = tk.C === 0 ? 'left' : (tk.rechts ? 'right' : 'center');
-      halo(fmt(tk.C) + (tk.rechts ? ' ' + R.cfg.eenheid : ''), tk.C === 0 ? xt - 2 : xt, 6);
+      if (tk.streep) {
+        ctx.textAlign = 'right';
+        halo('streep ' + tekst, xt + ctx.measureText(tekst).width / 2, 31);
+      } else {
+        ctx.textAlign = tk.C === 0 ? 'left' : (tk.rechts ? 'right' : 'center');
+        halo(tekst, tk.C === 0 ? xt - 2 : xt, 31);
+      }
     });
-    // "de streep" = de ondergrens van het groene vlak (zie intro race 1)
-    ctx.fillStyle = 'rgba(126,240,196,1)'; ctx.textAlign = 'right';
-    halo('streep →', zl - 4, 23);
-    ctx.textAlign = 'center';
-    ctx.font = '700 11.5px ' + FONT;
-    var zx = (zl + zr) / 2 + (v0.hoog === Infinity ? 12 : 0);
-    R.cfg.zoneLabel.forEach(function (regel, i) { halo(regel, zx, 23 + i * 14); });
-    if (R.cfg.toxLabel) {
-      ctx.fillStyle = 'rgba(255,135,125,1)';
-      halo(R.cfg.toxLabel, (xVan(c.toxisch) + Rr) / 2, 23);
-    }
+    // wat elk stuk betekent
+    ctx.font = '800 11.5px ' + FONT; ctx.textAlign = 'center';
+    stukken.forEach(function (sk) {
+      ctx.fillStyle = sk.k;
+      halo(sk.label, (sk.a + sk.b) / 2, 47);
+    });
 
     // tijd loopt naar beneden: klein pijltje in de linkermarge, onder de nu-lijn
-    var ty = yN + 22;
+    var ty = yN + 44;
     ctx.save();
     ctx.globalAlpha = 0.8;
     ctx.strokeStyle = '#000'; ctx.lineWidth = 4;
@@ -1119,7 +1261,7 @@
     var c = R.casus, race = R.race, duur = G ? G.eind : c.raceDuur;
     // oefenronde: de klok stopt precies op het moment van de volgende stap
     if (G && !G.actief && G.i < G.stappen.length && R.klok >= G.stappen[G.i].op) {
-      R.klok = G.stappen[G.i].op;
+      if (isFinite(G.stappen[G.i].op)) R.klok = G.stappen[G.i].op;
       gidsStap();
     }
     if (G) gidsControle();
@@ -1217,6 +1359,11 @@
     var z = R.klok < 0 && c.id === 'lithium' ? 'zone' : zoneVan(R.race.sim.C, Math.max(0, R.race.t));
     if (c.id === 'lithium') st = (z === 'boven' || R.toxisch) ? 'misselijk' : (z === 'onder' ? 'neutraal' : 'blij');
     else st = (R.leverOver || (!R.gids && R.klok >= 0 && M.geblokkeerd(c, 'slik', R.klok))) ? 'misselijk' : (z === 'onder' ? 'pijn' : 'blij');
+    // In één of twee woorden hoe de patiënt zich nu voelt, bij deze spiegel (woorden uit het casusblad).
+    var gv;
+    if (c.id === 'lithium') gv = R.toxisch ? 'giftig: verward' : (z === 'boven' ? 'trillen, misselijk' : (z === 'onder' ? 'kans op terugval' : 'stabiel'));
+    else gv = R.leverOver ? 'lever beschadigd' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
+    R.gevoel = gv;
     if (st === R.stemming) return;
     R.stemming = st;
     $('patient-kop').innerHTML = figuur({ wie: c.id === 'lithium' ? 'vries' : 'opa', stemming: st, kop: true });
@@ -1231,6 +1378,7 @@
       if (R.onthuld[gi] || g.type !== 'blokkade') return;
       if (T >= g.van - 1e-9 && T < g.tot - 1e-9) {
         R.onthuld[gi] = true;
+        $('deel-2-tekst').textContent = 'Deel 2 · misselijk';
         speel('wending');
         melding(g.tekst, { soort: 'wending', prio: 3, duur: 3.4, fig: figuur({ wie: 'opa', stemming: 'misselijk' }) });
         if (R.knoppen.slik) flits(R.knoppen.slik, 'schud');
@@ -1245,6 +1393,7 @@
       if (R.onthuld[gi] || g.type !== 'klaring') return;
       if (R.klok >= g.t - 1e-9) {
         R.onthuld[gi] = true;
+        $('deel-2-tekst').textContent = 'Deel 2 · ibuprofen';
         speel('wending');
         melding(g.tekst, { soort: 'wending', prio: 3, duur: 3.6, fig: figuur({ wie: 'vries', prop: 'doosje', stemming: 'neutraal' }) });
         $('patient').insertBefore(el('span', { class: 'chip', html: icoon('doosje').replace('<svg', '<svg width="16" height="16"') + 'ibuprofen' }), $('patient').firstChild);
@@ -1279,6 +1428,16 @@
     var c = R.casus;
     var k = klokHtml(c, R.klok);
     if (k !== R.tekstKlok) { $('klok').innerHTML = k; R.tekstKlok = k; }
+    // deel 1 / deel 2: waar ben je in de race
+    var eind = R.gids ? R.gids.eind : c.raceDuur, kk = Math.max(0, R.klok);
+    var f1 = Math.round(100 * Math.min(1, kk / R.deel2)), f2 = Math.round(100 * Math.max(0, Math.min(1, (kk - R.deel2) / (eind - R.deel2))));
+    var ds = f1 + '|' + f2;
+    if (ds !== R.deelStand) {
+      R.deelStand = ds;
+      $('deel-1').firstChild.style.width = f1 + '%';
+      $('deel-2').firstChild.style.width = f2 + '%';
+      $('delen').classList.toggle('in2', kk >= R.deel2 - 1e-9);
+    }
     var st = R.race.stand();
     var sc = getal(st.totaal, 0);
     if (sc !== R.tekstScore) { $('qaly-getal').textContent = sc; R.tekstScore = sc; }
@@ -1324,7 +1483,46 @@
     speel('klaar');
     $('melding').classList.remove('zicht');
     $('finish-getal').textContent = getal(st.totaal, 0);
+    $('finish-schema').innerHTML = schemaHtml();
+    zetLicht(null);
     $('finish').hidden = false;
+    $('finish').scrollTop = 0;
+  }
+
+  // Het doseerschema op het kaartje na de race: wanneer gaf je wat (uit hetzelfde verslag als het eindscherm).
+  function schemaHtml() {
+    var c = R.casus, v = R.race.verslag(), eind = R.gids ? R.gids.eind : c.raceDuur;
+    var rijen = v.tijdlijn.filter(function (r) { return r.t < eind - 1e-9; });
+    var klaring = null;
+    if (!R.gids) c.gebeurtenissen.forEach(function (g) { if (g.type === 'klaring') klaring = g; });
+    function cel(r, metUur) {
+      var j = r.jij, inh;
+      if (j.soorten.length) {
+        inh = j.soorten.map(function (so) { return icoon(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : ''); }).join('');
+      } else inh = j.soort === 'geblokkeerd' ? icoon('kruis') : '<i></i>';
+      var kl = 'sc' + (j.soorten.length ? ' gaf' : '') +
+        (!R.gids && M.geblokkeerd(c, 'slik', r.t) ? ' m' : '') + (klaring && r.t >= klaring.t - 1e-9 ? ' ibu' : '');
+      return '<li class="' + kl + '" aria-label="' + r.tijdTekst + ': ' + j.tekst + '">' + (metUur ? '<small>' + r.t + '</small>' : '') + inh + '</li>';
+    }
+    var s = '<p class="schema-kop">Jouw doseerschema: wanneer gaf je wat</p>';
+    if (c.id === 'lithium') {
+      var perDag = Math.round(24 / c.poortjes.interval), dagen = Math.ceil(rijen.length / perDag);
+      s += '<ul class="schema schema-dag" style="--r:' + (perDag + 1) + '"><li class="sk">dag</li>';
+      for (var u = 0; u < perDag; u++) s += '<li class="sk">' + rijen[u].t + ' u</li>';
+      for (var d = 0; d < dagen; d++) {
+        s += '<li class="sk' + (klaring && d * 24 >= klaring.t - 1e-9 ? ' ibu' : '') + '">' + d + '</li>';
+        for (var q = 0; q < perDag; q++) s += cel(rijen[d * perDag + q], false);
+      }
+      s += '</ul>';
+    } else {
+      s += '<ul class="schema schema-uur">' + rijen.map(function (r) { return cel(r, true); }).join('') + '</ul>';
+    }
+    var leg = [];
+    if (!R.gids && c.gebeurtenissen.some(function (g) { return g.type === 'blokkade'; })) leg.push('<span class="sl m"></span>misselijk');
+    if (klaring) leg.push('<span class="sl ibu"></span>ibuprofen');
+    if (rijen.some(function (r) { return !r.jij.soorten.length && r.jij.soort === 'geblokkeerd'; })) leg.push('<span class="sl x">' + icoon('kruis') + '</span>slikken lukte niet');
+    s += '<p class="schema-tel">' + v.telling.toedienmomenten + ' keer iets gegeven · samen ' + v.telling.totaleDosis.tekst + (leg.length ? ' · ' + leg.join(' · ') : '') + '</p>';
+    return s;
   }
 
   function naRace() {
@@ -1451,6 +1649,7 @@
       speel('tik');
       naRace();
     });
+    $('podium').addEventListener('pointerdown', tikPodium);
     root.addEventListener('resize', function () { if (R && !R.klaar) meetDoek(); else if (R) { meetDoek(); teken(performance.now()); } });
     naarScherm('start');
   }
