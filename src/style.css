@@ -139,6 +139,11 @@ input { font: inherit; }
 #naam::placeholder { color: rgba(255, 255, 255, .55); }
 #naam:focus { border-color: var(--paars); box-shadow: 0 0 0 4px rgba(176, 124, 255, .25); }
 .start-form .knop-stil { margin-top: -6px; }
+/* Verder waar je was (na herladen of "Naar het begin"): alleen zichtbaar als er een afgeronde race bewaard is. */
+.start-verder { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 6px; }
+.start-verder[hidden] { display: none; }
+.start-verder .knop-lijn.groot { width: 100%; max-width: 320px; min-height: 56px; font-size: 20px; }
+.start-verder .kleintje { margin: 0; }
 .kleintje { margin: 14px 0 0; font-size: 13px; color: var(--zacht); }
 
 /* ---------- intro-kaartje ---------- */

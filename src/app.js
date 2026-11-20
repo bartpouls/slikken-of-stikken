@@ -277,6 +277,48 @@
     if (mk) mk.hidden = staat.fase === 'start';
     var s = $('scherm-' + id);
     if (s) s.scrollTop = 0;
+    if (id === 'start') werkVerderBij();
+  }
+
+  // ------------------------------------------------------------------------------------------
+  // Voortgang bewaren. Herlaadt de telefoon de pagina (iPhone doet dat soms na een ander app), dan zijn de
+  // afgeronde races niet weg: na elke race gaan naam, verslagen en curves naar localStorage (alleen op deze
+  // telefoon, 12 uur geldig). Het startscherm biedt dan "Verder als …". Een race die halverwege onderbroken
+  // werd, telt niet mee (zelfde regel als het menu) en begint opnieuw bij zijn introkaartje.
+  // ------------------------------------------------------------------------------------------
+  var VOORTGANG = 'sos.voortgang', VOORTGANG_GELDIG = 12 * 3600 * 1000;
+  function heeftRace(v) { return !!(v && v.opbouw && isFinite(v.opbouw.totaal)); }
+  function bewaarVoortgang() {
+    try {
+      if (!staat.verslagen.some(heeftRace)) { root.localStorage.removeItem(VOORTGANG); return; }
+      root.localStorage.setItem(VOORTGANG, JSON.stringify({ v: 1, op: Date.now(), naam: staat.naam,
+        verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] }));
+    } catch (e) { /* geen opslag of vol: het spel werkt gewoon door */ }
+  }
+  function leesVoortgang() {
+    try {
+      var x = JSON.parse(root.localStorage.getItem(VOORTGANG) || 'null');
+      if (!x || x.v !== 1 || !Array.isArray(x.verslagen) || !Array.isArray(x.curves)) return null;
+      if (!(Date.now() - x.op < VOORTGANG_GELDIG) || !x.verslagen.some(heeftRace)) return null;
+      return x;
+    } catch (e) { return null; }
+  }
+  function wisVoortgang() { try { root.localStorage.removeItem(VOORTGANG); } catch (e) { /* geen opslag */ } }
+  // Welke voortgang biedt het startscherm aan: die van dit spel (na "Naar het begin"), anders de bewaarde.
+  function voortgangVoorStart() {
+    if (staat.verslagen.some(heeftRace)) return { naam: staat.naam, verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] };
+    return leesVoortgang();
+  }
+  function werkVerderBij() {
+    var blok = $('start-verder');
+    if (!blok) return;
+    var x = voortgangVoorStart();
+    blok.hidden = !x;
+    if (!x) return;
+    $('start-verder-knop').textContent = 'Verder als ' + x.naam;
+    var stand = [];
+    x.verslagen.forEach(function (v, i) { if (heeftRace(v)) stand.push(raceNaam(i) + ': ' + getal(v.opbouw.totaal, 0)); });
+    $('start-verder-stand').textContent = stand.join(' · ') + ' QALY-punten';
   }
 
   // Figuurtjes reageren op aanraken.
@@ -306,6 +348,9 @@
       if (staat.fase !== 'start') return;
       unlock();
       speel('tik');
+      // Start = een nieuw spel: de stand van een vorige speler (of vorige keer) telt niet mee.
+      staat.verslagen = []; staat.curves = []; staat.duren = [];
+      wisVoortgang();
       var naam = (inp.value || '').replace(/\s+/g, ' ').trim().slice(0, 16);
       if (!naam) naam = 'Speler ' + (10 + Math.floor(Math.random() * 90));
       staat.naam = naam;
@@ -317,6 +362,23 @@
     }
     $('start-form').addEventListener('submit', function (ev) { ev.preventDefault(); begin(true); });
     doc.querySelector('[data-actie="start-over"]').addEventListener('click', function () { begin(false); });
+    $('start-verder-knop').addEventListener('click', function () {
+      if (staat.fase !== 'start') return;
+      var x = voortgangVoorStart();
+      if (!x) { werkVerderBij(); return; }
+      unlock();
+      speel('tik');
+      staat.naam = x.naam;
+      staat.verslagen = x.verslagen.slice(); staat.curves = x.curves.slice(); staat.duren = (x.duren || []).slice();
+      inp.value = x.naam;
+      zetHistorie();
+      // eerste race die nog niet gespeeld is; zijn race 1 en 2 klaar, dan het eindverslag
+      var v = staat.verslagen;
+      if (!heeftRace(v[0])) toonIntro(0);
+      else if (!heeftRace(v[1])) toonIntro(1);
+      else toonEinde();
+    });
+    werkVerderBij();
   }
 
   // ------------------------------------------------------------------------------------------
@@ -1610,6 +1672,7 @@
       staat.curves[R.i] = R.dun.slice();
       staat.duren = staat.duren || [];
       staat.duren[R.i] = R.duurEcht;
+      bewaarVoortgang();
     }
     speel('klaar');
     $('melding').classList.remove('zicht');
@@ -1769,6 +1832,7 @@
   function opnieuw() {
     if (staat.fase !== 'einde') return;
     staat.verslagen = []; staat.curves = []; staat.duren = [];
+    wisVoortgang();
     startRace(0);
   }
 

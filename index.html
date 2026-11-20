@@ -150,6 +150,11 @@ input { font: inherit; }
 #naam::placeholder { color: rgba(255, 255, 255, .55); }
 #naam:focus { border-color: var(--paars); box-shadow: 0 0 0 4px rgba(176, 124, 255, .25); }
 .start-form .knop-stil { margin-top: -6px; }
+/* Verder waar je was (na herladen of "Naar het begin"): alleen zichtbaar als er een afgeronde race bewaard is. */
+.start-verder { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 6px; }
+.start-verder[hidden] { display: none; }
+.start-verder .knop-lijn.groot { width: 100%; max-width: 320px; min-height: 56px; font-size: 20px; }
+.start-verder .kleintje { margin: 0; }
 .kleintje { margin: 14px 0 0; font-size: 13px; color: var(--zacht); }
 
 /* ---------- intro-kaartje ---------- */
@@ -740,6 +745,10 @@ input { font: inherit; }
       <h1 id="titel" class="titel">Slikken <span>of</span> Stikken</h1>
       <p class="tekst">Jij regelt de medicijnen: houd de spiegel van een geneesmiddel binnen het therapeutisch venster.</p>
       <form id="start-form" class="start-form" autocomplete="off" novalidate>
+        <div id="start-verder" class="start-verder" hidden>
+          <button type="button" class="knop-lijn groot" data-actie="verder-spel" id="start-verder-knop">Verder</button>
+          <p class="kleintje" id="start-verder-stand"></p>
+        </div>
         <label for="naam" class="markering">Jouw speelnaam</label>
         <input id="naam" name="naam" data-veld="naam" type="text" maxlength="16" placeholder="bv. Pilpiraat" enterkeyhint="go" autocapitalize="words" spellcheck="false">
         <button type="submit" class="knop-paars groot" data-actie="start">Start</button>
@@ -3331,6 +3340,48 @@ input { font: inherit; }
     if (mk) mk.hidden = staat.fase === 'start';
     var s = $('scherm-' + id);
     if (s) s.scrollTop = 0;
+    if (id === 'start') werkVerderBij();
+  }
+
+  // ------------------------------------------------------------------------------------------
+  // Voortgang bewaren. Herlaadt de telefoon de pagina (iPhone doet dat soms na een ander app), dan zijn de
+  // afgeronde races niet weg: na elke race gaan naam, verslagen en curves naar localStorage (alleen op deze
+  // telefoon, 12 uur geldig). Het startscherm biedt dan "Verder als …". Een race die halverwege onderbroken
+  // werd, telt niet mee (zelfde regel als het menu) en begint opnieuw bij zijn introkaartje.
+  // ------------------------------------------------------------------------------------------
+  var VOORTGANG = 'sos.voortgang', VOORTGANG_GELDIG = 12 * 3600 * 1000;
+  function heeftRace(v) { return !!(v && v.opbouw && isFinite(v.opbouw.totaal)); }
+  function bewaarVoortgang() {
+    try {
+      if (!staat.verslagen.some(heeftRace)) { root.localStorage.removeItem(VOORTGANG); return; }
+      root.localStorage.setItem(VOORTGANG, JSON.stringify({ v: 1, op: Date.now(), naam: staat.naam,
+        verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] }));
+    } catch (e) { /* geen opslag of vol: het spel werkt gewoon door */ }
+  }
+  function leesVoortgang() {
+    try {
+      var x = JSON.parse(root.localStorage.getItem(VOORTGANG) || 'null');
+      if (!x || x.v !== 1 || !Array.isArray(x.verslagen) || !Array.isArray(x.curves)) return null;
+      if (!(Date.now() - x.op < VOORTGANG_GELDIG) || !x.verslagen.some(heeftRace)) return null;
+      return x;
+    } catch (e) { return null; }
+  }
+  function wisVoortgang() { try { root.localStorage.removeItem(VOORTGANG); } catch (e) { /* geen opslag */ } }
+  // Welke voortgang biedt het startscherm aan: die van dit spel (na "Naar het begin"), anders de bewaarde.
+  function voortgangVoorStart() {
+    if (staat.verslagen.some(heeftRace)) return { naam: staat.naam, verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] };
+    return leesVoortgang();
+  }
+  function werkVerderBij() {
+    var blok = $('start-verder');
+    if (!blok) return;
+    var x = voortgangVoorStart();
+    blok.hidden = !x;
+    if (!x) return;
+    $('start-verder-knop').textContent = 'Verder als ' + x.naam;
+    var stand = [];
+    x.verslagen.forEach(function (v, i) { if (heeftRace(v)) stand.push(raceNaam(i) + ': ' + getal(v.opbouw.totaal, 0)); });
+    $('start-verder-stand').textContent = stand.join(' · ') + ' QALY-punten';
   }
 
   // Figuurtjes reageren op aanraken.
@@ -3360,6 +3411,9 @@ input { font: inherit; }
       if (staat.fase !== 'start') return;
       unlock();
       speel('tik');
+      // Start = een nieuw spel: de stand van een vorige speler (of vorige keer) telt niet mee.
+      staat.verslagen = []; staat.curves = []; staat.duren = [];
+      wisVoortgang();
       var naam = (inp.value || '').replace(/\s+/g, ' ').trim().slice(0, 16);
       if (!naam) naam = 'Speler ' + (10 + Math.floor(Math.random() * 90));
       staat.naam = naam;
@@ -3371,6 +3425,23 @@ input { font: inherit; }
     }
     $('start-form').addEventListener('submit', function (ev) { ev.preventDefault(); begin(true); });
     doc.querySelector('[data-actie="start-over"]').addEventListener('click', function () { begin(false); });
+    $('start-verder-knop').addEventListener('click', function () {
+      if (staat.fase !== 'start') return;
+      var x = voortgangVoorStart();
+      if (!x) { werkVerderBij(); return; }
+      unlock();
+      speel('tik');
+      staat.naam = x.naam;
+      staat.verslagen = x.verslagen.slice(); staat.curves = x.curves.slice(); staat.duren = (x.duren || []).slice();
+      inp.value = x.naam;
+      zetHistorie();
+      // eerste race die nog niet gespeeld is; zijn race 1 en 2 klaar, dan het eindverslag
+      var v = staat.verslagen;
+      if (!heeftRace(v[0])) toonIntro(0);
+      else if (!heeftRace(v[1])) toonIntro(1);
+      else toonEinde();
+    });
+    werkVerderBij();
   }
 
   // ------------------------------------------------------------------------------------------
@@ -4664,6 +4735,7 @@ input { font: inherit; }
       staat.curves[R.i] = R.dun.slice();
       staat.duren = staat.duren || [];
       staat.duren[R.i] = R.duurEcht;
+      bewaarVoortgang();
     }
     speel('klaar');
     $('melding').classList.remove('zicht');
@@ -4823,6 +4895,7 @@ input { font: inherit; }
   function opnieuw() {
     if (staat.fase !== 'einde') return;
     staat.verslagen = []; staat.curves = []; staat.duren = [];
+    wisVoortgang();
     startRace(0);
   }
 
