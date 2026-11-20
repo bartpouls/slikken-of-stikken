@@ -138,20 +138,20 @@
   // o.kop = true: alleen hoofd en hoed (klein portret in de racekop).
   function figuur(o) {
     o = o || {};
-    var bakker = o.wie === 'bakker'; // meneer Bakker: zelfde vorm als opa Jan, groene pet, geen stok, geen snor
+    var idrissi = o.wie === 'idrissi'; // meneer El Idrissi: zelfde vorm als opa Jan, groene pet, donkerder huid, kort zwart haar, geen stok
     var wie = o.wie === 'vries' ? 'vries' : 'opa';
     var st = o.stemming || 'neutraal';
-    var hoed = o.kleur || (bakker ? KLEUR.groen : (wie === 'opa' ? KLEUR.blauw : KLEUR.rood));
-    var prop = o.prop === undefined ? (wie === 'opa' && !bakker ? 'stok' : null) : o.prop;
-    var label = o.label || (bakker ? 'Meneer Bakker' : (wie === 'opa' ? 'Opa Jan' : 'Mevrouw De Vries'));
-    var huid = st === 'misselijk' ? '#cfe3a4' : '#f6d9b4';
-    var lijf = bakker ? '#3f9b7a' : (wie === 'opa' ? '#6b7fc4' : '#b06fc9');
+    var hoed = o.kleur || (idrissi ? KLEUR.groen : (wie === 'opa' ? KLEUR.blauw : KLEUR.rood));
+    var prop = o.prop === undefined ? (wie === 'opa' && !idrissi ? 'stok' : null) : o.prop;
+    var label = o.label || (idrissi ? 'Meneer El Idrissi' : (wie === 'opa' ? 'Opa Jan' : 'Mevrouw De Vries'));
+    var huid = idrissi ? (st === 'misselijk' ? '#93a160' : '#a8714a') : (st === 'misselijk' ? '#cfe3a4' : '#f6d9b4');
+    var lijf = idrissi ? '#3f9b7a' : (wie === 'opa' ? '#6b7fc4' : '#b06fc9');
     var d = '#2b2233'; // ogen en mond
     var A = 'stroke="' + lijf + '" stroke-width="7" stroke-linecap="round" fill="none"';
     var F = 'stroke="' + d + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"';
     var s = '<svg viewBox="' + (o.kop ? '16 6 80 82' : '0 0 100 132') + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + label + '">';
     if (!o.kop) {
-      s += '<path d="M44 104 L42 126 M56 104 L58 126" stroke="' + (wie === 'opa' ? '#4a5a96' : '#8a4fa3') + '" stroke-width="7" stroke-linecap="round" fill="none"/>';
+      s += '<path d="M44 104 L42 126 M56 104 L58 126" stroke="' + (idrissi ? '#2f5f8f' : (wie === 'opa' ? '#4a5a96' : '#8a4fa3')) + '" stroke-width="7" stroke-linecap="round" fill="none"/>';
       if (prop === 'stok') {
         s += '<path d="M73 127 L71 97 C71 90 63 90 63 95" stroke="#d9a566" stroke-width="4.5" stroke-linecap="round" fill="none"/>';
         s += '<path d="M39 95 L31 103 M61 95 L70 100" ' + A + '/>';
@@ -165,6 +165,8 @@
     }
     if (wie === 'vries') s += '<circle cx="74" cy="50" r="9" fill="#e9e4dc"/>';
     s += '<circle cx="50" cy="58" r="25" fill="' + huid + '"/>';
+    if (idrissi) s += '<path d="M26.5 52 Q26 44 30 40 L33 50 Z M73.5 52 Q74 44 70 40 L67 50 Z" fill="#1f1a1d"/>' + // kort zwart haar langs de pet
+      '<path d="M37 51.5 q4 -2.5 8 0 M55 51.5 q4 -2.5 8 0" stroke="#1f1a1d" stroke-width="2.6" stroke-linecap="round" fill="none"/>'; // wenkbrauwen
     if (st === 'blij') s += '<circle cx="34.5" cy="67" r="4.5" fill="#ff8fb8" opacity=".55"/><circle cx="65.5" cy="67" r="4.5" fill="#ff8fb8" opacity=".55"/>';
     if (st === 'pijn') {
       s += '<path d="M37 55 l6 3.5 l-6 3.5 M63 55 l-6 3.5 l6 3.5" ' + F + '/>';
@@ -177,7 +179,7 @@
       s += '<circle cx="41" cy="58" r="7.5" fill="none" stroke="' + d + '" stroke-width="2.2"/>' +
            '<circle cx="59" cy="58" r="7.5" fill="none" stroke="' + d + '" stroke-width="2.2"/>' +
            '<path d="M48.5 58 h3" stroke="' + d + '" stroke-width="2.2"/>';
-    } else if (!bakker) {
+    } else if (!idrissi) {
       s += '<path d="M41 68.5 q4.5 -4 9 -0.5 q4.5 -3.5 9 0.5" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none"/>';
     }
     var mond = { blij: 'M43 73 q7 7 14 0', pijn: 'M43 77 q7 -6 14 0', misselijk: 'M41 76 q2.5 -3 5 0 t5 0 t5 0 t5 0', neutraal: 'M45 75 h10' }[st] || 'M45 75 h10';
@@ -242,8 +244,8 @@
   }
 
   // Portretjes (hoofd + hoed) voor het canvas: het gezicht van de patiënt staat op de spiegel.
-  var KOP = { opa: {}, vries: {}, bakker: {} };
-  ['opa', 'vries', 'bakker'].forEach(function (wie) {
+  var KOP = { opa: {}, vries: {}, idrissi: {} };
+  ['opa', 'vries', 'idrissi'].forEach(function (wie) {
     ['neutraal', 'blij', 'pijn', 'misselijk'].forEach(function (st) {
       var im = new Image();
       im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(figuur({ wie: wie, stemming: st, kop: true }).replace('<svg ', '<svg width="160" height="164" '));
@@ -332,7 +334,7 @@
   // 3. Intro-kaartje per race
   // ------------------------------------------------------------------------------------------
   var RACES = ['paracetamol', 'lithium', 'carbamazepine']; // race 3 = bonusrace (alleen via menu / eindscherm)
-  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'bakker' };
+  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'idrissi' };
   function wieVan(c) { return WIE[c.id] || 'opa'; }
   function perDagCasus(c) { return c.raceDuur > 48; } // klok in dagen
   function raceNaam(i) { return i === 2 ? 'Bonusrace' : 'Race ' + (i + 1); }
@@ -360,7 +362,7 @@
     } else if (i === 2) {
       regels = ['Bonusrace: telt niet mee in je totaal. De getallen zijn nog een concept.',
         'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + ' in de eerste dagen, ' + vensterTekst(c, 1e6) + ' als hij gewend is. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
-        'Meneer Bakker begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
+        'Meneer El Idrissi begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
         'De race duurt ' + Math.round(c.raceDuur / 24) + ' dagen, met 2 poortjes per dag: om 0 en 12 uur.',
         'Kies per poortje 200, 400 of 800 mg, of Overslaan.'];
     } else {

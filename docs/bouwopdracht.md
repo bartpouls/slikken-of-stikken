@@ -135,7 +135,7 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 
 Bonusrace, alleen via het menu en via de knop "Bonusrace" op het eindscherm. Telt niet mee in het totaal. Bart akkoord op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend venster, dosisknoppen 200/400/800 mg). De getallen zijn nagezocht via zoekresultaten; de Nederlandse bronnen (TDM-monografie, CBG-SmPC, UMC Utrecht) zijn vanuit de bouwomgeving niet zelf geopend.
 
-**Verhaal:** Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.
+**Verhaal:** Meneer El Idrissi (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.
 
 | Veld | Waarde | Status / bron |
 |---|---|---|

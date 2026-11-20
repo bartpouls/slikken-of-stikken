@@ -235,9 +235,9 @@
     id: 'carbamazepine',
     concept: true,
     naam: 'Carbamazepine',
-    patient: 'Meneer Bakker',
+    patient: 'Meneer El Idrissi',
     gewichtKg: 70,
-    verhaal: 'Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.',
+    verhaal: 'Meneer El Idrissi (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.',
     eenheid: { dosis: 'mg', concentratie: 'mg/L', tijd: 'uur' },
     dosis: { mg: 200, stof: 'carbamazepine', tekst: 'eenheid 200 mg; knoppen 200, 400 of 800 mg per poortje' },
     VdPerKg: 1.2,
@@ -249,7 +249,7 @@
       slik: { dosis: 200, F: 0.8, ka: 0.4, tekst: '200 mg per eenheid, F = 0,8, ka = 0,4 /u (piek ±8 u na inname)' }
     },
     zone: { laag: 4, hoog: 12, tekst: '4–12 mg/L' },
-    // Meeschuivend venster: in de eerste 6 dagen is meneer Bakker nog niet gewend aan de bijwerkingen (duizelig,
+    // Meeschuivend venster: in de eerste 6 dagen is meneer El Idrissi nog niet gewend aan de bijwerkingen (duizelig,
     // slaperig, wankel): bovenkant 8 mg/L. Daarna 12 mg/L. Spelkeuze voor "start laag, verhoog langzaam".
     venster: [{ vanaf: 0, laag: 4, hoog: 8 }, { vanaf: 144, laag: 4, hoog: 12 }],
     toxisch: 20,
@@ -266,7 +266,7 @@
     gebeurtenissen: [
       { type: 'klaring', t: 168, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
         tijdTekst: 'Dag 7 (t = 168 u)',
-        tekst: 'De lever van meneer Bakker went aan carbamazepine: hij gaat het sneller afbreken.',
+        tekst: 'De lever van meneer El Idrissi went aan carbamazepine: hij gaat het sneller afbreken.',
         gevolg: 'Klaring × 1,3 (autoinductie, stap 1 van 3).' },
       { type: 'klaring', t: 336, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
         tijdTekst: 'Dag 14 (t = 336 u)',

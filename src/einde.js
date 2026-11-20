@@ -51,7 +51,7 @@
   var IBU = '#ff9f43'; // ibuprofen: oranje, zoals in de race (paars is voor de poortjes)
   var LIJN = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', giftig: '#ff4d5e' }; // = LIJNKLEUR in de race
 
-  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'bakker' };
+  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'idrissi' };
   function perDagCasus(c) { return c.raceDuur > 48; }
   function dec(c) { return c.id === 'lithium' ? 1 : 0; } // getallen van de grenzen
   function esc(s) {
@@ -347,7 +347,7 @@
     var tijden = perDag.map(function (e) { return e.t; });
     var lek;
     if (c.id === 'carbamazepine') {
-      lek = '2× per dag 200 mg (start laag: meneer Bakker moet wennen aan de bijwerkingen); na 2 weken, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling, maximaal 1.200 mg per dag.';
+      lek = '2× per dag 200 mg (start laag: meneer El Idrissi moet wennen aan de bijwerkingen); na 2 weken, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling, maximaal 1.200 mg per dag.';
     } else if (c.id === 'lithium') {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
     } else {

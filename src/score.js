@@ -561,12 +561,12 @@
     var dubbelVroeg = eersteWeek.filter(function (r) { return tabl(r) >= 2; }).length;
     var gemLaat = laatsteDagen.reduce(function (s, r) { return s + tabl(r); }, 0) / Math.max(1, laatsteDagen.length);
     if (!doses.length) return { regel: 'niets',
-      zin: 'Meneer Bakker kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
+      zin: 'Meneer El Idrissi kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
     if (teller.uren.toxisch > 0) return { regel: 'giftig',
       zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus hoge doses stapelen zich op. ' +
         'In het echt is de maximale dosis 1.200 mg per dag.' };
     if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
-      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer Bakker werd duizelig: hij was nog niet ' +
+      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer El Idrissi werd duizelig: hij was nog niet ' +
         'gewend aan het middel. Start laag en verhoog langzaam.' };
     if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
       zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +

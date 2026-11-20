@@ -135,8 +135,8 @@ input { font: inherit; }
 @keyframes wiebel { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-6deg) translateY(-4px); } 60% { transform: rotate(5deg); } }
 
 /* ---------- start ---------- */
-.start-figuren { display: flex; gap: 26px; align-items: flex-end; justify-content: center; margin-bottom: 10px; }
-.start-figuren .fig { width: 96px; }
+.start-figuren { display: flex; gap: 18px; align-items: flex-end; justify-content: center; margin-bottom: 10px; }
+.start-figuren .fig { width: 88px; }
 .titel { margin: 6px 0 10px; font-size: clamp(36px, 11.5vw, 48px); line-height: 1.02; font-weight: 800; letter-spacing: -.01em; }
 .titel span { font-weight: 500; font-size: .6em; color: var(--paars); }
 .start-form { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 14px; margin-top: 30px; }
@@ -168,7 +168,7 @@ input { font: inherit; }
   .tl-rij.gaf { height: 17px; }
   .finish-getal { font-size: 44px; margin-bottom: 2px; }
   .finish-kop { margin-bottom: 2px; }
-  .start-figuren .fig { width: 78px; }
+  .start-figuren .fig { width: 72px; }
   .start-form { margin-top: 20px; gap: 12px; }
   .intro-fig { height: 68px; margin: 8px 0 8px; }
   .intro-fig .fig { width: 52px; }
@@ -735,6 +735,7 @@ input { font: inherit; }
       <div class="start-figuren" aria-hidden="true">
         <div class="fig" data-fig="opa"></div>
         <div class="fig" data-fig="vries"></div>
+        <div class="fig" data-fig="idrissi"></div>
       </div>
       <h1 id="titel" class="titel">Slikken <span>of</span> Stikken</h1>
       <p class="tekst">Jij regelt de medicijnen: houd de spiegel van een geneesmiddel binnen het therapeutisch venster.</p>
@@ -1057,9 +1058,9 @@ input { font: inherit; }
     id: 'carbamazepine',
     concept: true,
     naam: 'Carbamazepine',
-    patient: 'Meneer Bakker',
+    patient: 'Meneer El Idrissi',
     gewichtKg: 70,
-    verhaal: 'Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.',
+    verhaal: 'Meneer El Idrissi (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.',
     eenheid: { dosis: 'mg', concentratie: 'mg/L', tijd: 'uur' },
     dosis: { mg: 200, stof: 'carbamazepine', tekst: 'eenheid 200 mg; knoppen 200, 400 of 800 mg per poortje' },
     VdPerKg: 1.2,
@@ -1071,7 +1072,7 @@ input { font: inherit; }
       slik: { dosis: 200, F: 0.8, ka: 0.4, tekst: '200 mg per eenheid, F = 0,8, ka = 0,4 /u (piek ±8 u na inname)' }
     },
     zone: { laag: 4, hoog: 12, tekst: '4–12 mg/L' },
-    // Meeschuivend venster: in de eerste 6 dagen is meneer Bakker nog niet gewend aan de bijwerkingen (duizelig,
+    // Meeschuivend venster: in de eerste 6 dagen is meneer El Idrissi nog niet gewend aan de bijwerkingen (duizelig,
     // slaperig, wankel): bovenkant 8 mg/L. Daarna 12 mg/L. Spelkeuze voor "start laag, verhoog langzaam".
     venster: [{ vanaf: 0, laag: 4, hoog: 8 }, { vanaf: 144, laag: 4, hoog: 12 }],
     toxisch: 20,
@@ -1088,7 +1089,7 @@ input { font: inherit; }
     gebeurtenissen: [
       { type: 'klaring', t: 168, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
         tijdTekst: 'Dag 7 (t = 168 u)',
-        tekst: 'De lever van meneer Bakker went aan carbamazepine: hij gaat het sneller afbreken.',
+        tekst: 'De lever van meneer El Idrissi went aan carbamazepine: hij gaat het sneller afbreken.',
         gevolg: 'Klaring × 1,3 (autoinductie, stap 1 van 3).' },
       { type: 'klaring', t: 336, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
         tijdTekst: 'Dag 14 (t = 336 u)',
@@ -1940,12 +1941,12 @@ input { font: inherit; }
     var dubbelVroeg = eersteWeek.filter(function (r) { return tabl(r) >= 2; }).length;
     var gemLaat = laatsteDagen.reduce(function (s, r) { return s + tabl(r); }, 0) / Math.max(1, laatsteDagen.length);
     if (!doses.length) return { regel: 'niets',
-      zin: 'Meneer Bakker kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
+      zin: 'Meneer El Idrissi kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
     if (teller.uren.toxisch > 0) return { regel: 'giftig',
       zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus hoge doses stapelen zich op. ' +
         'In het echt is de maximale dosis 1.200 mg per dag.' };
     if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
-      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer Bakker werd duizelig: hij was nog niet ' +
+      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer El Idrissi werd duizelig: hij was nog niet ' +
         'gewend aan het middel. Start laag en verhoog langzaam.' };
     if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
       zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +
@@ -2565,7 +2566,7 @@ input { font: inherit; }
   var IBU = '#ff9f43'; // ibuprofen: oranje, zoals in de race (paars is voor de poortjes)
   var LIJN = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', giftig: '#ff4d5e' }; // = LIJNKLEUR in de race
 
-  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'bakker' };
+  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'idrissi' };
   function perDagCasus(c) { return c.raceDuur > 48; }
   function dec(c) { return c.id === 'lithium' ? 1 : 0; } // getallen van de grenzen
   function esc(s) {
@@ -2861,7 +2862,7 @@ input { font: inherit; }
     var tijden = perDag.map(function (e) { return e.t; });
     var lek;
     if (c.id === 'carbamazepine') {
-      lek = '2× per dag 200 mg (start laag: meneer Bakker moet wennen aan de bijwerkingen); na 2 weken, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling, maximaal 1.200 mg per dag.';
+      lek = '2× per dag 200 mg (start laag: meneer El Idrissi moet wennen aan de bijwerkingen); na 2 weken, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling, maximaal 1.200 mg per dag.';
     } else if (c.id === 'lithium') {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
     } else {
@@ -3191,20 +3192,20 @@ input { font: inherit; }
   // o.kop = true: alleen hoofd en hoed (klein portret in de racekop).
   function figuur(o) {
     o = o || {};
-    var bakker = o.wie === 'bakker'; // meneer Bakker: zelfde vorm als opa Jan, groene pet, geen stok, geen snor
+    var idrissi = o.wie === 'idrissi'; // meneer El Idrissi: zelfde vorm als opa Jan, groene pet, donkerder huid, kort zwart haar, geen stok
     var wie = o.wie === 'vries' ? 'vries' : 'opa';
     var st = o.stemming || 'neutraal';
-    var hoed = o.kleur || (bakker ? KLEUR.groen : (wie === 'opa' ? KLEUR.blauw : KLEUR.rood));
-    var prop = o.prop === undefined ? (wie === 'opa' && !bakker ? 'stok' : null) : o.prop;
-    var label = o.label || (bakker ? 'Meneer Bakker' : (wie === 'opa' ? 'Opa Jan' : 'Mevrouw De Vries'));
-    var huid = st === 'misselijk' ? '#cfe3a4' : '#f6d9b4';
-    var lijf = bakker ? '#3f9b7a' : (wie === 'opa' ? '#6b7fc4' : '#b06fc9');
+    var hoed = o.kleur || (idrissi ? KLEUR.groen : (wie === 'opa' ? KLEUR.blauw : KLEUR.rood));
+    var prop = o.prop === undefined ? (wie === 'opa' && !idrissi ? 'stok' : null) : o.prop;
+    var label = o.label || (idrissi ? 'Meneer El Idrissi' : (wie === 'opa' ? 'Opa Jan' : 'Mevrouw De Vries'));
+    var huid = idrissi ? (st === 'misselijk' ? '#93a160' : '#a8714a') : (st === 'misselijk' ? '#cfe3a4' : '#f6d9b4');
+    var lijf = idrissi ? '#3f9b7a' : (wie === 'opa' ? '#6b7fc4' : '#b06fc9');
     var d = '#2b2233'; // ogen en mond
     var A = 'stroke="' + lijf + '" stroke-width="7" stroke-linecap="round" fill="none"';
     var F = 'stroke="' + d + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"';
     var s = '<svg viewBox="' + (o.kop ? '16 6 80 82' : '0 0 100 132') + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + label + '">';
     if (!o.kop) {
-      s += '<path d="M44 104 L42 126 M56 104 L58 126" stroke="' + (wie === 'opa' ? '#4a5a96' : '#8a4fa3') + '" stroke-width="7" stroke-linecap="round" fill="none"/>';
+      s += '<path d="M44 104 L42 126 M56 104 L58 126" stroke="' + (idrissi ? '#2f5f8f' : (wie === 'opa' ? '#4a5a96' : '#8a4fa3')) + '" stroke-width="7" stroke-linecap="round" fill="none"/>';
       if (prop === 'stok') {
         s += '<path d="M73 127 L71 97 C71 90 63 90 63 95" stroke="#d9a566" stroke-width="4.5" stroke-linecap="round" fill="none"/>';
         s += '<path d="M39 95 L31 103 M61 95 L70 100" ' + A + '/>';
@@ -3218,6 +3219,8 @@ input { font: inherit; }
     }
     if (wie === 'vries') s += '<circle cx="74" cy="50" r="9" fill="#e9e4dc"/>';
     s += '<circle cx="50" cy="58" r="25" fill="' + huid + '"/>';
+    if (idrissi) s += '<path d="M26.5 52 Q26 44 30 40 L33 50 Z M73.5 52 Q74 44 70 40 L67 50 Z" fill="#1f1a1d"/>' + // kort zwart haar langs de pet
+      '<path d="M37 51.5 q4 -2.5 8 0 M55 51.5 q4 -2.5 8 0" stroke="#1f1a1d" stroke-width="2.6" stroke-linecap="round" fill="none"/>'; // wenkbrauwen
     if (st === 'blij') s += '<circle cx="34.5" cy="67" r="4.5" fill="#ff8fb8" opacity=".55"/><circle cx="65.5" cy="67" r="4.5" fill="#ff8fb8" opacity=".55"/>';
     if (st === 'pijn') {
       s += '<path d="M37 55 l6 3.5 l-6 3.5 M63 55 l-6 3.5 l6 3.5" ' + F + '/>';
@@ -3230,7 +3233,7 @@ input { font: inherit; }
       s += '<circle cx="41" cy="58" r="7.5" fill="none" stroke="' + d + '" stroke-width="2.2"/>' +
            '<circle cx="59" cy="58" r="7.5" fill="none" stroke="' + d + '" stroke-width="2.2"/>' +
            '<path d="M48.5 58 h3" stroke="' + d + '" stroke-width="2.2"/>';
-    } else if (!bakker) {
+    } else if (!idrissi) {
       s += '<path d="M41 68.5 q4.5 -4 9 -0.5 q4.5 -3.5 9 0.5" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none"/>';
     }
     var mond = { blij: 'M43 73 q7 7 14 0', pijn: 'M43 77 q7 -6 14 0', misselijk: 'M41 76 q2.5 -3 5 0 t5 0 t5 0 t5 0', neutraal: 'M45 75 h10' }[st] || 'M45 75 h10';
@@ -3295,8 +3298,8 @@ input { font: inherit; }
   }
 
   // Portretjes (hoofd + hoed) voor het canvas: het gezicht van de patiënt staat op de spiegel.
-  var KOP = { opa: {}, vries: {}, bakker: {} };
-  ['opa', 'vries', 'bakker'].forEach(function (wie) {
+  var KOP = { opa: {}, vries: {}, idrissi: {} };
+  ['opa', 'vries', 'idrissi'].forEach(function (wie) {
     ['neutraal', 'blij', 'pijn', 'misselijk'].forEach(function (st) {
       var im = new Image();
       im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(figuur({ wie: wie, stemming: st, kop: true }).replace('<svg ', '<svg width="160" height="164" '));
@@ -3385,7 +3388,7 @@ input { font: inherit; }
   // 3. Intro-kaartje per race
   // ------------------------------------------------------------------------------------------
   var RACES = ['paracetamol', 'lithium', 'carbamazepine']; // race 3 = bonusrace (alleen via menu / eindscherm)
-  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'bakker' };
+  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'idrissi' };
   function wieVan(c) { return WIE[c.id] || 'opa'; }
   function perDagCasus(c) { return c.raceDuur > 48; } // klok in dagen
   function raceNaam(i) { return i === 2 ? 'Bonusrace' : 'Race ' + (i + 1); }
@@ -3413,7 +3416,7 @@ input { font: inherit; }
     } else if (i === 2) {
       regels = ['Bonusrace: telt niet mee in je totaal. De getallen zijn nog een concept.',
         'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + ' in de eerste dagen, ' + vensterTekst(c, 1e6) + ' als hij gewend is. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
-        'Meneer Bakker begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
+        'Meneer El Idrissi begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
         'De race duurt ' + Math.round(c.raceDuur / 24) + ' dagen, met 2 poortjes per dag: om 0 en 12 uur.',
         'Kies per poortje 200, 400 of 800 mg, of Overslaan.'];
     } else {
