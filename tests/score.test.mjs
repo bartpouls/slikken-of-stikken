@@ -543,6 +543,26 @@ kop('Eindverslag en praktijkzinnen');
 }
 
 // ---------------------------------------------------------------------------------------------
+kop('Geen keuze (v2.2): poortje voorbij zonder keuze kost punten; live = batch; per dag');
+{
+  const G = S.PUNTEN.GEEN_KEUZE;
+  const sch = [{ t: 0, route: 'slik' }, { t: 6, route: 'slik' }, { t: 12, route: 'spuit' }, { t: 18, route: 'slik' }];
+  const zonder = S.scoreSchema(P, sch), met = S.scoreSchema(P, sch, { geenKeuze: [3, 4, 5] });
+  check(met.stand.regels.keuze === -3 * G && met.stand.totaal === zonder.stand.totaal - 3 * G, 'drie poortjes zonder keuze: −3 × ' + G);
+  check(met.verslag.tijdlijn[3].jij.soort === 'geenKeuze' && met.verslag.tijdlijn[3].jij.tekst === 'geen keuze' && met.verslag.telling.geenKeuze === 3, 'tijdlijn en telling tonen "geen keuze"');
+  check(met.verslag.opbouw.regels.some((r) => r.id === 'keuze' && r.label === 'geen keuze' && r.punten === -3 * G), 'opbouwregel "geen keuze"');
+  const race = S.maakRace(P);
+  sch.forEach((d) => race.geef(d.route, { t: d.t }));
+  [3, 4, 5].forEach((i) => { race.naar(M.poortjes(P)[i]); race.geenKeuze(i); });
+  race.geenKeuze(3); // dubbel melden telt niet dubbel
+  race.naar(24);
+  check(race.stand().totaal === met.stand.totaal, 'live = batch met geen keuze (' + race.stand().totaal + ' / ' + met.stand.totaal + ')');
+  check(zonder.verslag.telling.perDag.tekst === '4 g per dag' && /max\. 1 g per keer, 4 g per dag/.test(zonder.verslag.telling.perDag.grens), 'paracetamol per dag: ' + JSON.stringify(zonder.verslag.telling.perDag));
+  const lAlles = S.scoreSchema(L, M.poortjes(L).map((t) => ({ t, route: 'slik' })));
+  check(lAlles.verslag.telling.perDag.gemiddeld === 3 && lAlles.verslag.telling.perDag.dagen.length === 10 && /1\.200 mg/.test(lAlles.verslag.telling.perDag.tekst), 'lithium per dag: ' + lAlles.verslag.telling.perDag.tekst);
+}
+
+// ---------------------------------------------------------------------------------------------
 kop('Browser-lading (<script>)');
 {
   const ctx = { window: {} };

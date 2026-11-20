@@ -18,18 +18,20 @@
  *     opnieuw()  Roep aan bij "Nog een keer" (één tik; knop data-actie="opnieuw"). app.js start dan
  *                meteen race 1 opnieuw, met dezelfde naam (tutorial en intro worden overgeslagen).
  *     stop()     Opruimen als het scherm weggaat.
- *   Eisen (§6B): naam en totaalscore ≥ 32 px; nabespreekvraag "Wat deed je toen je onder de streep zakte?".
+ *   Eisen (§6B): naam en totaalscore ≥ 32 px. (De nabespreekvraag is vervallen op verzoek van Bart: de docent
+ *   reflecteert straks met de groep vanuit de eindverslagen.)
  *
  * OPBOUW (één scrollend scherm in dezelfde stijl als de rest: zwart met sterren, witte tekst, paarse
  * markering; de mini-curves zien er net zo uit als de spiegel tijdens de race):
  *   1. Eindscherm (boven de vouw): speelnaam (36 px), totaal QALY-punten (72 px), per race een kaart met
  *      de QALY-punten en een tegelrij (één tegel per poortje, kleur = waar de spiegel tot het volgende
  *      poortje het meest zat: in de zone / te laag / te hoog / giftig; uit data.curves), de
- *      nabespreekvraag, een regel over het scorebord, "spelpunten, geen echte QALY's".
+ *      een regel over het scorebord, "spelpunten, geen echte QALY's".
  *   2. Toedienverslag per race (data-verslag="0|1"): mini-curve, QALY-opbouw in vier regels + totaal,
- *      rooster met je toedieningen per poortje naast het echte schema, telling (toedienmomenten,
- *      totale dosis, dagteller), de praktijkzin en (lithium) de nabesprekingszin uit het casusblad.
- *   3. "Nog een keer" (data-actie="opnieuw") direct onder de nabespreekvraag; één tik.
+ *      rooster met je toedieningen per poortje naast het echte schema (van boven naar beneden, zoals de tijd in
+ *      de race), telling (toedienmomenten, gemiddeld per dag naast de grens), de praktijkzin en (lithium) de
+ *      nabesprekingszin uit het casusblad.
+ *   3. "Nog een keer" (data-actie="opnieuw") direct onder de racekaarten; één tik.
  *   Dempknop (van app.js): rechtsboven zoals op de andere schermen, maar hij scrolt mee (nooit over tekst).
  *   Tegels = lijnkleuren van de race; ibuprofen oranje (zoals in de race);
  *   labels "Uur 0" / "Dag 5" zoals in de race; "≠" = neutraal grijs "anders dan schema" (geen oordeel).
@@ -44,9 +46,8 @@
   if (!root) return;
   var SoS = root.SoS = root.SoS || {};
 
-  var VRAAG = 'Wat deed je toen je onder de streep zakte?';
   var TOESTAND_LABEL = { zone: 'in de zone', onder: 'te laag', boven: 'te hoog', giftig: 'giftig' };
-  var SOORT_LABEL = { tablet: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', overgeslagen: 'overgeslagen', geblokkeerd: 'geblokkeerd' }; // knopnamen uit de race
+  var SOORT_LABEL = { tablet: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', overgeslagen: 'Overslaan', geblokkeerd: 'geblokkeerd', geenKeuze: 'geen keuze' }; // knopnamen uit de race
   var IBU = '#ff9f43'; // ibuprofen: oranje, zoals in de race (paars is voor de poortjes)
   var LIJN = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', giftig: '#ff4d5e' }; // = LIJNKLEUR in de race
 
@@ -267,7 +268,8 @@
         return '<span class="eind-cel-ic">' + ic(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : '') + '</span>';
       }).join('');
     }
-    if (j.soort === 'geblokkeerd') return '<span class="eind-cel-ic">' + ic('kruis') + '</span>';
+    if (j.soort === 'geblokkeerd' || j.soort === 'geenKeuze') return '<span class="eind-cel-ic">' + ic('kruis') + '</span>' +
+      (j.soort === 'geenKeuze' ? '<span class="eind-cel-txt">geen keuze</span>' : '');
     return '<span class="eind-cel-leeg" aria-hidden="true">–</span>';
   }
 
@@ -288,7 +290,7 @@
         ' data-anders="' + (anders ? 1 : 0) + '"' +
         ' data-poortje="' + r.index + '" data-soort="' + j.soort + '" data-tekst="' + esc(j.tekst) + '"' +
         ' aria-label="' + esc(label) + '">' +
-        (metTijd ? '<span class="eind-cel-uur" aria-hidden="true">' + r.t + '</span>' : '') +
+        (metTijd ? '<span class="eind-cel-uur" aria-hidden="true">uur ' + r.t + '</span>' : '') +
         celInhoud(r) +
         (echt ? '<span class="eind-cel-echt" aria-hidden="true">' + esc(r.echt) + '</span>' : '') +
         (anders ? '<span class="eind-cel-anders" aria-hidden="true">≠</span>' : '') + '</li>';
@@ -310,22 +312,23 @@
       }
       s += '</div>';
     } else {
-      // rijen van 6 uur: het echte schema (om de 6 uur) valt steeds in de eerste kolom
-      var stap = c.echtSchema.schema.length > 1 ? Math.round((c.echtSchema.schema[1].t - c.echtSchema.schema[0].t) / c.poortjes.interval) : 6;
-      s += '<ul class="eind-rooster eind-rooster-uur" style="--k:' + stap + '">' + rijen.map(function (r) { return cel(r, true); }).join('') + '</ul>';
+      // één dag, van boven naar beneden: elk uur een rij, zoals de tijd in de race
+      s += '<ul class="eind-rooster eind-rooster-uur">' + rijen.map(function (r) { return cel(r, true); }).join('') + '</ul>';
     }
     // legenda: alleen wat voorkomt (+ altijd overgeslagen), en het echte schema
     var komtVoor = {};
     rijen.forEach(function (r) {
       r.jij.soorten.forEach(function (so) { komtVoor[so.soort] = true; });
       if (r.jij.soort === 'geblokkeerd') komtVoor.geblokkeerd = true;
+      if (r.jij.soort === 'geenKeuze') komtVoor.geenKeuze = true;
     });
     var ic = SoS.ui.icoon;
     var leg = ['tablet', 'zetpil', 'spuit'].filter(function (k) { return komtVoor[k]; }).map(function (k) {
       return '<li><span class="eind-leg-ic">' + ic(k) + '</span>' + SOORT_LABEL[k] + '</li>';
     });
     if (komtVoor.geblokkeerd) leg.push('<li><span class="eind-leg-ic">' + ic('kruis') + '</span>geblokkeerd (wilde slikken, maar misselijk)</li>');
-    leg.push('<li><span class="eind-leg-ic eind-leg-leeg">–</span>overgeslagen</li>');
+    if (komtVoor.geenKeuze) leg.push('<li><span class="eind-leg-ic">' + ic('kruis') + '</span>geen keuze (kost punten)</li>');
+    leg.push('<li><span class="eind-leg-ic eind-leg-leeg">–</span>Overslaan</li>');
     leg.push('<li><span class="eind-leg-echt">' + esc(rijen.filter(function (r) { return r.echt; })[0].echt) + '</span>echt schema</li>');
     if (rijen.some(function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return r.echt ? n !== 1 : n > 0; })) {
       leg.push('<li><span class="eind-leg-anders">≠</span>anders dan schema</li>');
@@ -355,15 +358,20 @@
       'Dat is: ' + esc(lek) + '</p>';
   }
 
+  // Telling: hoe vaak gaf je iets, en wat kreeg de patiënt gemiddeld per dag naast de grens (paracetamol: max. 1 g
+  // per keer en 4 g per dag; lithium: het schema per dag en het venster). Een totaal "x mg in y dagen" zegt
+  // spelers weinig; per dag kun je naast de grens leggen.
   function tellingHtml(v) {
-    var t = v.telling, s = '<div class="eind-telling">';
+    var t = v.telling, pd = t.perDag, s = '<div class="eind-telling">';
     s += '<div data-tel="momenten"><span>Toedien&shy;momenten</span><b>' + getal(t.toedienmomenten) + '</b>' +
-      '<small>echt schema: ' + getal(v.echtSchema.aantal) + '</small></div>';
-    s += '<div data-tel="dosis"><span>Totale dosis</span><b>' + esc(t.totaleDosis.tekst) + '</b></div>';
-    if (t.dagteller) {
-      s += '<div data-tel="dagteller" class="' + (t.dagteller.over ? 'over' : '') + '"><span>Dagteller</span>' +
+      '<small>echt schema: ' + getal(v.echtSchema.aantal) + (t.geenKeuze ? ' · ' + t.geenKeuze + '× geen keuze' : '') + '</small></div>';
+    if (t.dagteller) { // paracetamol: de race is één dag, dus per dag = de dagteller
+      s += '<div data-tel="dagteller" class="' + (t.dagteller.over ? 'over' : '') + '"><span>Per dag</span>' +
         '<b>' + getal(t.dagteller.hoogste, t.dagteller.hoogste % 1 ? 1 : 0) + ' g</b>' +
-        '<small>max. ' + getal(t.dagteller.max) + ' g per 24 uur' + (t.dagteller.over ? '. Lever beschadigd.' : '') + '</small></div>';
+        '<small>' + esc(pd.grens) + (t.dagteller.over ? '. Lever beschadigd.' : '') + '</small></div>';
+    } else if (pd) {
+      s += '<div data-tel="perdag"><span>Gemiddeld per dag</span><b>' + getal(pd.gemiddeld, pd.gemiddeld % 1 ? 1 : 0) + '</b>' +
+        '<small>tabletten (' + esc(pd.tekst.replace(/^.*\(|\)$/g, '')) + '); ' + esc(pd.grens) + '</small></div>';
     }
     return s + '</div>';
   }
@@ -421,8 +429,6 @@
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
           legendaHtml(cs) +
-          '<div class="eind-vraag"><span class="markering">Nabespreken</span>' +
-            '<p data-eind="vraag">' + VRAAG + '</p></div>' +
           '<div class="eind-acties"><button type="button" class="knop-paars groot" data-actie="opnieuw">Nog een keer</button></div>' +
           '<p class="eind-scorebord">Laat je naam en totaal op het scorebord zetten.</p>' +
           '<p class="eind-spelpunten">QALY-punten zijn spelpunten, geen echte QALY\'s.</p>' +
@@ -473,6 +479,12 @@
       dempTerug = { ouder: demp.parentNode, na: demp.nextSibling };
       container.appendChild(demp);
     }
+    // idem de menuknop (linksboven)
+    var menuK = root.document.getElementById('menu-knop'), menuTerug = null;
+    if (menuK && menuK.parentNode) {
+      menuTerug = { ouder: menuK.parentNode, na: menuK.nextSibling };
+      container.appendChild(menuK);
+    }
 
     // Speelnaam: 1–2 regels, alleen breken op spaties; zo nodig kleiner, maar nooit onder 32 px.
     var naamEl = container.querySelector('[data-eind="naam"]');
@@ -501,6 +513,11 @@
           try { dempTerug.ouder.insertBefore(demp, dempTerug.na && dempTerug.na.parentNode === dempTerug.ouder ? dempTerug.na : null); }
           catch (e) { /* negeer */ }
           dempTerug = null;
+        }
+        if (menuTerug && menuK) {
+          try { menuTerug.ouder.insertBefore(menuK, menuTerug.na && menuTerug.na.parentNode === menuTerug.ouder ? menuTerug.na : null); }
+          catch (e) { /* negeer */ }
+          menuTerug = null;
         }
       }
     };

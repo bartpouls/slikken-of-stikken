@@ -9,12 +9,25 @@
 - **Twee delen.** Elke race toont een balk "Deel 1 · op schema" en "Deel 2 · verandering", en een geblokte strook in de tijdlijn waar deel 2 begint. Wát er verandert blijft een verrassing (§3 Flow stap 2); de oefenronde laat alleen zien dát er iets verandert.
 - **Doseerschema na de race.** Het kaartje "Race klaar" (en "Klaar?" na de oefenronde) toont naast de QALY-punten per poortje wat je gaf.
 
+**Wat is nieuw in v2.2 (feedback Bart, november 2026):** rekenmodel en getallen in het casusblad zijn ongewijzigd.
+- **Doelgroep:** het spel is een eerste kennismaking met voorschrijven, ook voor farmaciestudenten. De speler is niet "de dokter" maar "jij regelt de medicijnen".
+- **Geen keuze kost punten.** Overslaan is ook een keuze (knop "Overslaan" in beide races; in race 1 heette die "Niets"). Gaat een poortje voorbij zonder dat de speler iets koos, dan kost dat 20 QALY-punten (vijfde regel in de QALY-opbouw: *geen keuze*). Boven de knoppen staat steeds wat er klaarstaat voor het volgende poortje, met een balk die volloopt tot het poortje; nog niets gekozen en het poortje is dichtbij: rood "Kies nu". Een geweigerde tablet tijdens de misselijkheid telt als keuze.
+- **Plotwending: de klok stopt** tot de speler op "Verder" tikt (of op het speelveld). Zo mist niemand de verandering.
+- **Tijdstrook links.** De horizontale balk "deel 1 / deel 2" is een verticale strook links in het speelveld geworden, met de klok erboven: de tijd loopt overal van boven naar beneden.
+- **Bovenbalk** met race, middel en patiënt ("Race 1 · Paracetamol · Opa Jan"), links de menuknop, rechts de dempknop.
+- **Hoofdmenu (kleine versie):** menuknop linksboven op elk scherm behalve start: verder spelen, oefenronde, race 1, race 2, eindverslag, naar het begin. Tijdens een race staat de klok stil zolang het menu open is; een race die je via het menu verlaat, telt niet mee.
+- **Oefenronde:** elk schermonderdeel krijgt een uitlegzin (bovenbalk, spiegel als concentratie-tijdcurve die een kwartslag draait, spiegelbalk, banen, klok en tijdstrook, QALY-punten, poortjes en knoppen, dagteller, deel 2). De oefenronde vraagt drie doses (tablet, spuit, zetpil) in plaats van vier, zodat de zetpil ook aan bod komt als de speler zelf één dosis extra gaf. Tussen de stappen kiest de speler zelf.
+- **Therapeutisch venster als algemene regel** (Bart akkoord): "Blijf binnen het therapeutisch venster". Paracetamol: boven de streep, 1 g per keer en hooguit 4 g per dag; geen bovengrens in mg/L. Lithium: 0,6–1,0 mmol/L.
+- **Doseerschema na de race** van boven naar beneden: paracetamol één dag in uren, lithium één rij per dag. Daaronder gemiddeld per dag naast de grens (paracetamol: max. 1 g per keer, 4 g per dag; lithium: het schema per dag en het venster). Het eindverslag toont hetzelfde.
+- **Lithium sneller:** race 2 duurt ±70 seconden (was ±90).
+- **Nabespreekvraag vervallen:** de docent reflecteert straks met de groep vanuit de eindverslagen.
+
 Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor het rekenmodel: het spel neemt ze letterlijk over. Afwijken mag alleen na akkoord van Bart Pouls (inhoudelijk eigenaar).
 
 ## 1. Doel en doelgroep
 
 - **Wat:** een farmacokinetiek-race op de eigen telefoon. Je houdt de spiegel van een geneesmiddel in de goede zone door op het juiste moment te slikken (of een zetpil te geven, of te spuiten).
-- **Voor wie:** ouders en eerstejaars geneeskunde, zonder farmacologiekennis.
+- **Voor wie:** ouders en eerstejaars geneeskunde en farmacie, zonder farmacologiekennis. Het spel is een eerste kennismaking met voorschrijven.
 - **Waar:** ouderdag geneeskunde, blok van 12,5 minuten: ±2 min uitleg, tutorial, race 1, race 2, ±3 min nabespreking.
 - **Prestatieprobleem (wat doen spelers straks anders):** ze snappen dat (1) een pil tijd nodig heeft voordat hij werkt, (2) het lichaam een middel in een vast tempo opruimt (halfwaardetijd), (3) meer niet beter is, en (4) een ander middel de spiegel ongemerkt kan opdrijven.
 
@@ -23,7 +36,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 **Wel:**
 - Eén HTML-pagina, mobiel eerst (staand), werkt zonder installatie, account of server, en zonder internet na het laden. Geen externe bestanden of CDN's.
 - Speelnaam invoeren → tutorial → race 1 → race 2 → eindscherm.
-- Eindscherm: speelnaam, QALY-punten race 1, race 2 en totaal, en per race een kort eindverslag (zie §3). Plus één nabespreekvraag: "Wat deed je toen je onder de streep zakte?"
+- Eindscherm: speelnaam, QALY-punten race 1, race 2 en totaal, en per race een kort eindverslag (zie §3). (De nabespreekvraag is vervallen in v2.2.)
 - Een losse scorebordpagina voor de beamer: Bart of een student typt naam en totaal in, lijst sorteert zichzelf (alleen lokaal in die browser opgeslagen).
 - Geluid (korte blips à la Flappy Bird, zelf gesynthetiseerd, geen gekopieerde geluidsbestanden) met een dempknop.
 - Nederlands.
@@ -32,15 +45,15 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 
 ## 3. Spelmechaniek
 
-- **Poortjes in plaats van vrij tikken.** De tijdas schuift voorbij; op vaste doseermomenten (poortjes) kiest de speler wat er gebeurt. Niets kiezen = overslaan. Zo is het doseerschema dat het eindscherm toont altijd een realistisch schema op vaste tijden.
+- **Poortjes in plaats van vrij tikken.** De tijdas schuift voorbij; op vaste doseermomenten (poortjes) kiest de speler wat er gebeurt. Overslaan is ook een keuze; geen keuze kost punten (v2.2). Zo is het doseerschema dat het eindscherm toont altijd een realistisch schema op vaste tijden.
 - **Tijdas geschaald op de halfwaardetijd.** Elke race beslaat ±10 halfwaardetijden in ±90 seconden (60–120 s toegestaan). Daardoor voelt elke casus even snel, terwijl de klok laat zien dat het om uren (paracetamol) of dagen (lithium) gaat. Dat verschil is zelf een leerpunt.
 - **Directe feedback.** Elke keuze geeft binnen 100 ms beweging en geluid. Het verschil tussen slikken (vertraagd, lager) en spuiten (direct, hoog) moet je zien.
 - **Eerlijke race.** Iedereen speelt dezelfde casus, met de gebeurtenissen op hetzelfde moment. Toeval (zetpil) komt uit een vaste reeks die voor iedereen gelijk is.
 - **Score in QALY-punten.** Uitleg in het spel in één zin: *"Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer."* Het zijn spelpunten, geen echte QALY's; zeg dat ook zo. De bouwer ontwerpt de formule, maar die moet de botrangorde in §6B halen. Tijd in de zone levert punten op, tijd erbuiten kost punten, en hoe verder buiten de zone hoe meer (kwadratisch). Paracetamol: boven 4 g per 24 uur raakt de lever beschadigd (zware straf of einde race). Tijdens de race is de QALY-stand live zichtbaar.
 - **Eindverslag per race** (toedienverslag, één scherm):
-  - QALY-opbouw in vier regels: *in de zone* (+), *te laag* (−), *te hoog* (−), *lever / giftig* (−), en het totaal.
+  - QALY-opbouw in vijf regels: *in de zone* (+), *te laag* (−), *te hoog* (−), *lever / giftig* (−), *geen keuze* (−, v2.2), en het totaal.
   - Tijdlijn van jouw toedieningen (welk poortje, tablet / zetpil / spuit / overgeslagen) naast het echte schema uit het casusblad.
-  - Telling: aantal toedienmomenten, totale dosis en, bij paracetamol, de dagteller tegen het maximum van 4 g.
+  - Telling: aantal toedienmomenten en gemiddeld per dag naast de grens (paracetamol: max. 1 g per keer, 4 g per dag; lithium: schema en venster).
   - Eén zin die je keuzes koppelt aan de praktijk. Paracetamol bijvoorbeeld: *"Tijdens de misselijkheid koos jij de zetpil. Die werkte maar half: daar kun je niet op rekenen."* Lithium: *"Jij liet na de ibuprofen 30% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten."* Het spel mag nooit suggereren dat zelf pillen overslaan een goed idee is.
 
 ### Flow

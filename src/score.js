@@ -104,7 +104,8 @@
 })(this, function (haalModel) {
   'use strict';
 
-  var PUNTEN = Object.freeze({ ZONE: 1000, LAAG: 1000, HOOG: 1000, GIFTIG: 2000, LEVER_SCHADE: 1000, LEVER_PER_GRAM: 250, DT: 0.005 });
+  var PUNTEN = Object.freeze({ ZONE: 1000, LAAG: 1000, HOOG: 1000, GIFTIG: 2000, LEVER_SCHADE: 1000, LEVER_PER_GRAM: 250,
+    GEEN_KEUZE: 20, DT: 0.005 });
 
   var UITLEG = 'Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt ' +
     'zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY\'s.';
@@ -113,7 +114,8 @@
     { id: 'zone', label: 'in de zone' },
     { id: 'laag', label: 'te laag' },
     { id: 'hoog', label: 'te hoog' },
-    { id: 'giftig', label: 'lever / giftig' }
+    { id: 'giftig', label: 'lever / giftig' },
+    { id: 'keuze', label: 'geen keuze' }
   ]);
 
   var M = null;
@@ -140,7 +142,8 @@
     c = mdl().casus(c);
     var tK = eersteKlaring(c);
     var tl = {
-      som: { zone: 0, laag: 0, hoog: 0, giftig: 0 },
+      som: { zone: 0, laag: 0, hoog: 0, giftig: 0, keuze: 0 },
+      geenKeuze: [],                    // poortje-indexen die voorbijgingen zonder keuze (−GEEN_KEUZE elk)
       uren: { zone: 0, onder: 0, boven: 0, toxisch: 0 },
       onderTijdensBlokkade: 0,          // uren onder de zone terwijl slikken geblokkeerd is
       voor: { zone: 0, onder: 0, boven: 0 }, // uren vóór de klaringsgebeurtenis (lithium: ibuprofen)
@@ -175,10 +178,17 @@
       tl.som.giftig += straf;
       return straf;
     };
+    // Een poortje ging voorbij zonder dat de speler iets koos (ook geen Overslaan): vaste straf.
+    tl.geenKeuzeOp = function (index) {
+      if (tl.geenKeuze.indexOf(index) >= 0) return 0;
+      tl.geenKeuze.push(index);
+      tl.som.keuze -= PUNTEN.GEEN_KEUZE;
+      return -PUNTEN.GEEN_KEUZE;
+    };
     tl.stand = function () {
       var rg = {}, tot = 0;
       REGELS.forEach(function (r) { rg[r.id] = Math.round(tl.som[r.id]) + 0; tot += rg[r.id]; });
-      return { totaal: tot, regels: rg, exact: { zone: tl.som.zone, laag: tl.som.laag, hoog: tl.som.hoog, giftig: tl.som.giftig } };
+      return { totaal: tot, regels: rg, exact: { zone: tl.som.zone, laag: tl.som.laag, hoog: tl.som.hoog, giftig: tl.som.giftig, keuze: tl.som.keuze } };
     };
     return tl;
   }
@@ -224,6 +234,8 @@
       res.leverSchade = !!res.leverSchade;
       return res;
     };
+    // Poortje voorbij zonder keuze (de UI roept dit aan op het poortje). Geeft de straf (≤ 0) terug.
+    race.geenKeuze = function (index) { return teller.geenKeuzeOp(index); };
     race.stand = function () {
       var s = teller.stand();
       s.dagteller = sim.dagteller();
@@ -247,6 +259,7 @@
     var teller = maakTeller(c);
     for (var i = 0; i < uit.t.length - 1; i++) teller.meet(uit.C[i], uit.t[i], dt);
     uit.log.forEach(function (l) { teller.dosis(uit.log, l); });
+    (opties.geenKeuze || []).forEach(function (i) { teller.geenKeuzeOp(i); });
     return { stand: teller.stand(), verslag: verslag(c, uit.log, teller), model: uit };
   }
 
@@ -306,16 +319,36 @@
     c = mdl().casus(c);
     var stand = teller.stand();
     var rijen = tijdlijn(c, log);
+    (teller.geenKeuze || []).forEach(function (i) {
+      var j = rijen[i] && rijen[i].jij;
+      if (j && !j.soorten.length && !j.geblokkeerd) { j.soort = 'geenKeuze'; j.tekst = 'geen keuze'; }
+      if (j) j.geenKeuze = true;
+    });
     var ok = log.filter(function (l) { return l.ok; });
     var momenten = rijen.filter(function (r) { return r.jij.toedieningen.length > 0; }).length;
     var tabletten = 0, nominaal = 0;
     ok.forEach(function (l) { tabletten += l.aantal; nominaal += l.dosis; });
-    var telling = { toedienmomenten: momenten };
+    var telling = { toedienmomenten: momenten, geenKeuze: (teller.geenKeuze || []).length };
     if (c.id === 'lithium') {
       var mg = tabletten * c.dosis.mg;
       telling.totaleDosis = { waarde: mg, eenheid: 'mg', tekst: getal(mg) + ' mg' };
     } else {
       telling.totaleDosis = { waarde: nominaal / 1000, eenheid: 'g', tekst: getal(nominaal / 1000) + ' g' };
+    }
+    // Per dag (dag 0 = uur 0–24): wat kreeg de patiënt gemiddeld per dag, naast de grens of het schema.
+    var dagen = Math.max(1, Math.round(c.raceDuur / 24)), perDag = [];
+    for (var dg = 0; dg < dagen; dg++) perDag.push(0);
+    ok.forEach(function (l) { var d = Math.min(dagen - 1, Math.floor(l.t / 24 + 1e-9)); perDag[d] += c.id === 'lithium' ? l.aantal : l.dosis / 1000; });
+    var gem = perDag.reduce(function (a, b) { return a + b; }, 0) / dagen;
+    if (c.id === 'lithium') {
+      var schemaPerDag = c.echtSchema.schema.filter(function (e) { return e.t < 24; }).length;
+      telling.perDag = { dagen: perDag, gemiddeld: gem, eenheid: 'tabletten',
+        tekst: getal(Math.round(gem * 10) / 10) + ' tabletten per dag (' + getal(Math.round(gem * c.dosis.mg)) + ' mg)',
+        grens: 'schema: ' + schemaPerDag + ' × ' + getal(c.dosis.mg) + ' mg per dag; venster ' + c.zone.tekst };
+    } else {
+      telling.perDag = { dagen: perDag, gemiddeld: gem, eenheid: 'g',
+        tekst: getal(Math.round(gem * 10) / 10) + ' g per dag',
+        grens: 'max. ' + getal(c.routes.slik.dosis / 1000) + ' g per keer, ' + getal(c.bovengrens.maxPer24u / 1000) + ' g per dag' };
     }
     var bg = c.bovengrens;
     if (bg && bg.type === 'dagteller') {
