@@ -230,8 +230,7 @@ input { font: inherit; }
 @keyframes inploppen { from { transform: scale(.5); opacity: 0; } }
 
 /* de tijdstrook links in het speelveld: de tijd loopt naar beneden, net als de poortjes. Twee delen
-   (deel 1 · op schema | deel 2 · verandering), even lang (zelfde strook in oefenronde en race); de vulling loopt
-   per deel mee met de klok. */
+   (deel 1 · op schema | deel 2 · verandering), naar verhouding van hun duur; de vulling loopt per deel mee. */
 .tijdstrook {
   position: absolute; left: calc(var(--veilig-links) + 6px); top: 4px; bottom: 30px; width: 22px; z-index: 1;
   display: flex; flex-direction: column; gap: 4px;
@@ -311,7 +310,7 @@ input { font: inherit; }
 .finish > * { flex: none; }
 .finish-kop { margin: 0 0 6px; max-width: 320px; font-size: 20px; }
 .finish-label { margin: 0; font-size: 15px; color: var(--zacht); }
-.finish .knop-paars { margin-top: 10px; }
+.finish .knop-paars { margin-top: 10px; position: sticky; bottom: 0; z-index: 1; } /* blijft in beeld bij een lang schema */
 .finish-getal { margin: 0 0 6px; font-size: 52px; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
 
 /* het doseerschema op het kaartje na de race: van boven naar beneden, zoals de tijd in de race */
@@ -336,6 +335,10 @@ input { font: inherit; }
 .tl-dag .sk.dag { text-align: left; }
 .tl-dag .sk.ibu { color: #ff9f43; }
 .tl-dag .sk.som { text-align: right; color: #fff; }
+.tl-dag.veel { gap: 2px 3px; }
+.tl-dag.veel .sc { min-height: 15px; border-radius: 4px; }
+.tl-dag.veel .sc svg { width: 13px; height: 13px; }
+.tl-dag.veel .sk { font-size: 10.5px; }
 .sc {
   position: relative; min-height: 24px; display: flex; align-items: center; justify-content: center;
   border-radius: 7px; background: rgba(255, 255, 255, .07); border: 1px solid rgba(255, 255, 255, .12);

@@ -274,8 +274,10 @@
     return s.join(',');
   }
 
-  function echtDosisTekst(c) {
-    return c.id === 'lithium' ? getal(c.dosis.mg) + ' mg' : getal(c.routes.slik.dosis / 1000) + ' g';
+  // Dosis van het echte schema op één poortje, als tekst (aantal tabletten: carbamazepine wordt opgehoogd).
+  function echtDosisTekst(c, aantal) {
+    aantal = aantal || 1;
+    return c.dosis && c.dosis.mg ? getal(c.dosis.mg * aantal) + ' mg' : getal(aantal * c.routes.slik.dosis / 1000) + ' g';
   }
 
   var SOORT_MV = { tablet: 'tabletten', zetpil: 'zetpillen', spuit: 'spuiten' };
@@ -283,13 +285,13 @@
   function tijdlijn(c, log) {
     var Mo = mdl();
     var tijden = Mo.poortjes(c);
-    var echt = {}, et = echtDosisTekst(c);
-    c.echtSchema.schema.forEach(function (e) { echt[Mo.poortjeIndex(c, e.t)] = et; });
+    var echt = {}, echtN = {};
+    c.echtSchema.schema.forEach(function (e) { var i = Mo.poortjeIndex(c, e.t); echt[i] = echtDosisTekst(c, e.aantal); echtN[i] = e.aantal || 1; });
     var rijen = tijden.map(function (t, i) {
       return { index: i, t: t, tijdTekst: 'uur ' + t,
         jij: { soort: 'overgeslagen', aantal: 0, soorten: [], tekst: 'overgeslagen', toedieningen: [],
           geblokkeerd: false, geenPrik: false },
-        echt: echt[i] || null };
+        echt: echt[i] || null, echtAantal: echtN[i] || 0 };
     });
     log.forEach(function (l) {
       var j = rijen[Mo.poortjeIndex(c, l.t)].jij;
@@ -329,7 +331,7 @@
     var tabletten = 0, nominaal = 0;
     ok.forEach(function (l) { tabletten += l.aantal; nominaal += l.dosis; });
     var telling = { toedienmomenten: momenten, geenKeuze: (teller.geenKeuze || []).length };
-    if (c.id === 'lithium') {
+    if (c.dosis && c.dosis.mg) {
       var mg = tabletten * c.dosis.mg;
       telling.totaleDosis = { waarde: mg, eenheid: 'mg', tekst: getal(mg) + ' mg' };
     } else {
@@ -338,13 +340,19 @@
     // Per dag (dag 0 = uur 0–24): wat kreeg de patiënt gemiddeld per dag, naast de grens of het schema.
     var dagen = Math.max(1, Math.round(c.raceDuur / 24)), perDag = [];
     for (var dg = 0; dg < dagen; dg++) perDag.push(0);
-    ok.forEach(function (l) { var d = Math.min(dagen - 1, Math.floor(l.t / 24 + 1e-9)); perDag[d] += c.id === 'lithium' ? l.aantal : l.dosis / 1000; });
+    var tabl = c.dosis && c.dosis.mg;
+    ok.forEach(function (l) { var d = Math.min(dagen - 1, Math.floor(l.t / 24 + 1e-9)); perDag[d] += tabl ? l.aantal : l.dosis / 1000; });
     var gem = perDag.reduce(function (a, b) { return a + b; }, 0) / dagen;
-    if (c.id === 'lithium') {
-      var schemaPerDag = c.echtSchema.schema.filter(function (e) { return e.t < 24; }).length;
+    if (tabl) {
+      var dag0 = c.echtSchema.schema.filter(function (e) { return e.t < 24; });
+      var laatste = c.echtSchema.schema.filter(function (e) { return e.t >= c.raceDuur - 24; });
+      var mgDag = function (rij) { var m = 0; rij.forEach(function (e) { m += (e.aantal || 1) * c.dosis.mg; }); return m; };
+      var schemaTekst = mgDag(dag0) === mgDag(laatste)
+        ? dag0.length + ' × ' + getal(c.dosis.mg * (dag0[0].aantal || 1)) + ' mg per dag'
+        : getal(mgDag(dag0)) + ' mg per dag, later ' + getal(mgDag(laatste)) + ' mg per dag';
       telling.perDag = { dagen: perDag, gemiddeld: gem, eenheid: 'tabletten',
         tekst: getal(Math.round(gem * 10) / 10) + ' tabletten per dag (' + getal(Math.round(gem * c.dosis.mg)) + ' mg)',
-        grens: 'schema: ' + schemaPerDag + ' × ' + getal(c.dosis.mg) + ' mg per dag; venster ' + c.zone.tekst };
+        grens: 'schema: ' + schemaTekst + '; venster ' + c.zone.tekst };
     } else {
       telling.perDag = { dagen: perDag, gemiddeld: gem, eenheid: 'g',
         tekst: getal(Math.round(gem * 10) / 10) + ' g per dag',
@@ -455,6 +463,8 @@
           'Een vast schema op vaste tijden houdt de pijn weg en de lever heel.' };
     }
 
+    if (c.id === 'carbamazepine') return praktijkCarbamazepine(c, rijen, teller, doses);
+
     // lithium
     var tK = eersteKlaring(c), naDuur = T - tK;
     var isNa = function (r) { return r.t >= tK - 1e-9; };
@@ -539,6 +549,32 @@
           'minder op. In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.' };
     }
     return { regel: 'nabespreking', zin: c.nabespreking }; // vangnet
+  }
+
+  // Carbamazepine (bonusrace, concept): opbouwen, en na de gewenning van de lever ophogen.
+  function praktijkCarbamazepine(c, rijen, teller, doses) {
+    var T = c.raceDuur, tK = eersteKlaring(c);
+    var tabl = function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return n; };
+    var eersteWeek = rijen.filter(function (r) { return r.t < tK; });
+    var laatsteDagen = rijen.filter(function (r) { return r.t >= T - 120; });
+    var dubbelVroeg = eersteWeek.filter(function (r) { return tabl(r) >= 2; }).length;
+    var gemLaat = laatsteDagen.reduce(function (s, r) { return s + tabl(r); }, 0) / Math.max(1, laatsteDagen.length);
+    if (!doses.length) return { regel: 'niets',
+      zin: 'Meneer Bakker kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
+    if (teller.uren.toxisch > 0) return { regel: 'giftig',
+      zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus te veel tegelijk stapelt zich op.' };
+    if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
+      zin: 'Jij gaf in de eerste dagen al dubbele doses en de spiegel kwam boven de 12: duizelig en dubbelzien. ' +
+        'Het middel heeft dagen nodig om op te bouwen: start laag en verhoog langzaam.' };
+    if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
+      zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +
+        'In het echt verhoogt de arts dan de dosis, op geleide van een spiegelbepaling.' };
+    if (teller.uren.boven > 0) return { regel: 'boven',
+      zin: 'De spiegel kwam ' + pct(teller.uren.boven / T) + ' van de tijd boven de 12: duizelig en dubbelzien. ' +
+        'Verhoog in kleine stappen en wacht een paar dagen op het effect.' };
+    return { regel: 'goed',
+      zin: 'Jij hoogde de dosis op toen de lever het middel sneller ging afbreken. ' +
+        'Zo doet de arts het ook: start laag, verhoog langzaam, en laat de spiegel prikken.' };
   }
 
   return {

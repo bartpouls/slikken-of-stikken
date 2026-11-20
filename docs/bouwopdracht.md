@@ -21,6 +21,9 @@
 - **Doseerschema na de race** van boven naar beneden: paracetamol één dag in uren, lithium één rij per dag. Daaronder gemiddeld per dag naast de grens (paracetamol: max. 1 g per keer, 4 g per dag; lithium: het schema per dag en het venster). Het eindverslag toont hetzelfde.
 - **Lithium sneller:** race 2 duurt ±70 seconden (was ±90).
 - **Nabespreekvraag vervallen:** de docent reflecteert straks met de groep vanuit de eindverslagen.
+- **Tijdstrook naar verhouding:** deel 1 en deel 2 zijn even lang als hun duur. De vergelijking oefenronde–race (§6C2) laat de lengte van die stukken buiten beschouwing.
+- **Eindverslag:** de curve staat daar bewust horizontaal, "zoals in een boek", met die uitleg erbij (de race was dezelfde curve, een kwartslag gedraaid).
+- **Bonusrace carbamazepine (concept):** via het menu en het eindscherm, telt niet mee in het totaal. Zie "Concept casus 3" onder het casusblad.
 
 Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor het rekenmodel: het spel neemt ze letterlijk over. Afwijken mag alleen na akkoord van Bart Pouls (inhoudelijk eigenaar).
 
@@ -127,6 +130,39 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 | Onder de zone, in lekentaal | "Kans op terugval: somber of juist ontremd." | |
 | Boven de zone, in lekentaal | "Trillen, misselijk, diarree. Nog hoger: verward, nieren in gevaar." | |
 | Nabespreking | "In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken." | |
+
+### Concept casus 3 — Carbamazepine (bonusrace) · WACHT OP AKKOORD BART
+
+Bonusrace, alleen via het menu en via de knop "Bonusrace" op het eindscherm. Telt niet mee in het totaal. Alle getallen hieronder komen uit het geheugen van Claude (niet nagezocht) en zijn nog geen casusblad: ze gaan pas in het casusblad na akkoord van Bart Pouls.
+
+**Verhaal:** Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. Na een paar dagen went zijn lever aan het middel.
+
+| Veld | Waarde | Status |
+|---|---|---|
+| Dosis | 200 mg per tablet; 1 of 2 tabletten per poortje | spelkeuze |
+| Vd | 1,0 L/kg → 70 L | geheugen (range ±0,8–1,4 L/kg) |
+| T½ | 36 uur bij de start; na de gewenning ±15 uur | geheugen (eenmalig ±25–65 u; na autoinductie ±12–17 u) |
+| F, ka | F = 0,8; ka = 0,4 /u (piek ±8 u na inname) | geheugen (tmax ±4–8 u) / aanname |
+| Zone | 4–12 mg/L | geheugen |
+| Boven de zone, in lekentaal | "Duizelig, dubbelzien, wankel lopen." | geheugen |
+| Toxisch | > 20 mg/L | geheugen, spelkeuze |
+| Onder de zone, in lekentaal | "Kans op een epileptische aanval." | |
+| Poortjes | 2× per dag, om 0 en 12 uur (42 poortjes) | spelkeuze |
+| Start | spiegel 0: hij begint vandaag (opbouw naar steady state duurt dagen) | |
+| Racelengte | 21 dagen patiënttijd, ±90 s | spelkeuze |
+| Gebeurtenis | Autoinductie in twee stappen: dag 5 klaring × 1,4; dag 10 nog eens × 1,7 (samen × 2,4) | vereenvoudiging: in het echt geleidelijk over ±2–4 weken |
+| Echt schema | 200 mg 2dd; vanaf dag 11 400 mg 2dd (op geleide van de spiegel) | spelkeuze, vereenvoudigde titratie |
+
+Doorgerekend met het model uit §4 (score met de formule van het spel):
+
+| Strategie | In zone | Piek (mg/L) | QALY |
+|---|---|---|---|
+| Echt schema (200 mg 2dd, vanaf dag 11 400 mg 2dd) | 95% | 9,2 | 942 |
+| Nooit ophogen (200 mg 2dd) | 81% (laatste dagen 3,5–4,6) | 9,2 | 805 |
+| Meteen 400 mg 2dd | 57% (41% boven 12) | 18,4 | 530 |
+| Niets | 0% | 0 | −1000 |
+
+Bekende beperking: een eerste dosis van 400 mg ("oplaaddosis") scoort in het spel iets hoger (974), terwijl je carbamazepine in het echt juist laag start om bijwerkingen te voorkomen. Die bijwerkingen bij de start zitten niet in het model.
 
 ### Verwachte uitkomsten (referentie voor de criticus)
 

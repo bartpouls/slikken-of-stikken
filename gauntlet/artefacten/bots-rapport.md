@@ -1,6 +1,6 @@
 # Bots-rapport §6B en §6C — Slikken of Stikken
 
-Gegenereerd door `node tests/bots.mjs` op 2026-11-20 09:30:22 UTC. Looptijd: 14,9 min. Playwright 1.63.0, Chromium headless (/opt/pw-browsers). index.html: 245.9 kB, sha256 e705284abf7f… (één keer ingelezen bij de start; alle runs spelen dezelfde build).
+Gegenereerd door `node tests/bots.mjs` op 2026-11-20 11:04:27 UTC. Looptijd: 14,9 min. Playwright 1.63.0, Chromium headless (/opt/pw-browsers). index.html: 255.1 kB, sha256 745ea636dc94… (één keer ingelezen bij de start; alle runs spelen dezelfde build).
 
 **Opzet.** Het echte `index.html` (lokale http-server op 127.0.0.1) in mobiele emulatie (isMobile, hasTouch, Pixel-5-UA): 375×667 @2x en 390×844 @3x. De bots handelen alleen via `page.touchscreen.tap` op het midden van een zichtbare knop (vooraf met `elementFromPoint` gecontroleerd). `SoS.debug` wordt alleen gelezen (doelpoortje, open/te laat, gekozen keuze, spiegel, fase). Scores komen van het scherm (finish-overlay en eindscherm); daarna wordt het gespeelde schema uit het rooster op het eindscherm nagerekend met `SoS.score.scoreSchema` (src/score.js, identiek aan de inline code). Strategie-runs op `?speed=4`; run n01 op normale snelheid (geen parameter). Elke run: start → oefenronde (vol, of "Oefenronde overslaan" op het startscherm) → race 1 → race 2 → eindscherm. In de oefenronde tikt de bot uitsluitend op de knop met de markering (data-wijs) en op de knop van het eindkaartje. Een run is geldig als elk poortje precies de keuze van de bot kreeg (debug.gegeven én rooster op het eindscherm); anders opnieuw (max. 3 pogingen).
 
@@ -87,16 +87,16 @@ Raceduur op normale snelheid (run n01, geen ?speed): race 1 94,1 s, race 2 74,1 
   Scores op normale snelheid: race 1 768, race 2 1000 (zelfde strategie op 4× in r01: 768, 1000).
 "Nog een keer": 1 tik → fase race1, scherm scherm-race, klok loopt (-0,80 → -0,40 u), naam "Pilpiraat Zestig" (was "Pilpiraat Zestig"): **gehaald**
 Tikken waarbij de knop > 0,6 s nog bedekt was (bv. tijdens een schermovergang van 0,35 s; de bot wacht dan tot de knop bovenop ligt): geen.
-Knoppen die eerst in beeld gescrold moesten worden voor een tik: r05 finish1 #finish [data-actie="verder"]; r06 finish1 #finish [data-actie="verder"]. Tikken die (volgens elementFromPoint) niet op de bedoelde knop zouden landen: geen.
+Knoppen die eerst in beeld gescrold moesten worden voor een tik: geen. Tikken die (volgens elementFromPoint) niet op de bedoelde knop zouden landen: geen.
 - Samengevat (≤ 3 tikken van openen tot spelen): eerste speelhandeling 2 (zonder naam) / 3 (met naam); race 1 loopt na 2 (Overslaan, zonder naam) / 3 (Overslaan, met naam). Gehaald volgens de lezing "eerste speelhandeling ≤ 3": **gehaald**; race 1 loopt binnen 3 tikken (zonder naam, met Overslaan): **gehaald**.
 - **B3 375×667: raceduur gehaald; "Nog een keer" gehaald; tikken: zie hierboven.**
 
 ### B4 Knoppen, scrollen, netwerk
 
-- 174 schermmetingen (1071 knopmetingen) op: einde, intro1, intro2, race1, race2, start, tutorial stap 11, tutorial stap 14, tutorial stap 8, tutorial stap 9.
+- 174 schermmetingen (1091 knopmetingen) op: einde, intro1, intro2, race1, race2, start, tutorial stap 11, tutorial stap 14, tutorial stap 8, tutorial stap 9.
 - Kleinste zichtbare knop: start-over "Oefenronde overslaan" 203.3×48 px (min. breedte 48 px, min. hoogte 48 px). Knoppen < 48×48: geen: **gehaald**
 - Horizontaal scrollen (scrollWidth > clientWidth op document, body of actief scherm): 0 van 174 metingen; grootste scrollWidth 375 px bij clientWidth 375 px: **gehaald**
-- Netwerkverzoeken (11 runs, elk een verse pagina): vóór/tijdens het laden 11 in totaal (http://127.0.0.1:40507/index.html); ná het laden 0: **gehaald**
+- Netwerkverzoeken (11 runs, elk een verse pagina): vóór/tijdens het laden 11 in totaal (http://127.0.0.1:36139/index.html); ná het laden 0: **gehaald**
 - **B4 375×667: gehaald**
 
 ### B5 Eindscherm
@@ -121,9 +121,9 @@ C2 (meting, run r01): plaats, maat, lettertype, lettergrootte, achtergrond, rand
   Knoppen oefenronde: Tablet, Zetpil, Spuit, Overslaan; race 1: Tablet, Zetpil, Spuit, Overslaan. Dit is een meting van de DOM; kleuren en vormen op het canvas beoordeelt de criticus op de schermafbeeldingen (gauntlet/schermen/).
 C3 (meting): in de oefenronde getikt (stap:knop) 8:slik, 9:niets, 11:spuit, 14:zetpil; door het poortje uitgevoerd (poortje:keuze) 0:slik 1:niets 2:geen 3:geen 4:geen 5:spuit 6:geen 7:geen 8:geen 9:geen 10:geen 11:geen 12:geen 13:zetpil 14:geen 15:geen. Alle vier de knoppen van race 1 (Tablet, Zetpil, Spuit, Niets) getikt én op een poortje uitgevoerd: **gehaald**. Dagteller aan het eind: 3 g (maximum 4 g).
 C4 (meting): 6 runs door de hele oefenronde met alleen tikken op de gemarkeerde knop (steeds precies 1 gemarkeerde knop, klok staat stil tot de tik) en de knop "Race!" op het eindkaartje "Klaar?": **gehaald** (runs r01, r03, r05, r07, r09, n01).
-  Duur op normale snelheid (run n01, geen ?speed, bot reageert direct): 115,8 s van de tik op "Start" tot het eindkaartje (het spel zelf meet 115,7 s). Hoogstens 120 s: **gehaald**
+  Duur op normale snelheid (run n01, geen ?speed, bot reageert direct): 115,8 s van de tik op "Start" tot het eindkaartje (het spel zelf meet 115,8 s). Hoogstens 120 s: **gehaald**
   Zinnen in beeld (run r01), bij stilstaande klok: “Opa Jan heeft pijn: kies een tablet voor het eerste poortje.” · “Bij elk poortje kies je iets: Overslaan is ook een keuze, geen keuze kost punten.” · “Au. De pijn komt terug.” · “Hier lukt slikken even niet: kies nu een zetpil.”
-  Zinnen bij lopende klok: “Jij regelt de medicijnen van opa Jan: wat hij krijgt, en wanneer.” · “tijdspiegelDit is een concentratie-tijdcurve, een kwartslag gedraaid: de tijd loopt naar beneden.” · “Zijn gezicht staat op de spiegel: zoveel paracetamol zit er in zijn bloed.” · “Links van de streep heeft hij pijn, in het groene vlak niet: blijf binnen dat venster.” · “Linksboven loopt de klok; de strook eronder laat zien hoe ver je in de race bent.” · “Een QALY is een jaar in goede gezondheid; hier zijn het spelpunten: in het groene vlak erbij, erbuiten eraf.” · “De paarse lijnen zijn poortjes: kies vóór elk poortje een knop, op het poortje gebeurt het.” · “Opa Jan heeft pijn: kies een tablet voor het eerste poortje.” · “Een pil moet eerst door je maag.” · “Bij elk poortje kies je iets: Overslaan is ook een keuze, geen keuze kost punten.” · “Kies nu zelf bij elk poortje, tot de volgende uitleg.” · “De curve zakt: je lichaam ruimt het op, elke 2,5 uur is de helft weg.” · “Au. De pijn komt terug.” · “Een prik werkt meteen, maar zakt net zo hard.” · “De dagteller telt elke gram: 1 g per keer, en boven 4 g per dag raakt de lever beschadigd.” · “Au. De pijn komt terug.” · “Deel 2: in elke race verandert halverwege iets, en dan moet je plan mee.” · “Hier lukt slikken even niet: kies nu een zetpil.” · “Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.”
+  Zinnen bij lopende klok: “Jij regelt de medicijnen van opa Jan: wat hij krijgt, en wanneer.” · “tijdspiegelDit is een concentratie-tijdcurve, een kwartslag gedraaid: de tijd loopt naar beneden.” · “Zijn gezicht staat op de spiegel: zoveel paracetamol zit er in zijn bloed.” · “Links van de streep heeft hij pijn, in het groene vlak niet: blijf binnen dat venster.” · “Linksboven loopt de klok; de strook eronder laat zien hoe ver je in de race bent.” · “Een QALY is een jaar in goede gezondheid; hier zijn het spelpunten: in het groene vlak erbij, erbuiten eraf.” · “De paarse lijnen zijn poortjes: kies vóór elk poortje een knop, op het poortje gebeurt het.” · “Opa Jan heeft pijn: kies een tablet voor het eerste poortje.” · “Bij elk poortje kies je iets: Overslaan is ook een keuze, geen keuze kost punten.” · “Kies nu zelf bij elk poortje, tot de volgende uitleg.” · “De curve zakt: je lichaam ruimt het op, elke 2,5 uur is de helft weg.” · “Au. De pijn komt terug.” · “Een prik werkt meteen, maar zakt net zo hard.” · “De dagteller telt elke gram: 1 g per keer, en boven 4 g per dag raakt de lever beschadigd.” · “Au. De pijn komt terug.” · “Deel 2: in elke race verandert halverwege iets, en dan moet je plan mee.” · “Hier lukt slikken even niet: kies nu een zetpil.” · “Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.”
 C5 (meting): introkaartje race 2 heeft 6 regels, elk één zin; "2 tabletten" staat erop: **gehaald**. Regels: “Blijf binnen het therapeutisch venster: het groene vlak heeft nu ook een bovenkant, 0,6–1,0 mmol/L.” · “Boven 1,5 mmol/L is het giftig.” · “De klok telt in dagen: de race duurt 10 dagen.” · “Poortjes komen 3× per dag: om 0, 8 en 16 uur.” · “Tik twee keer op Tablet voor 2 tabletten op één poortje.” · “Er is geen zetpil en geen dagteller.”
 
 ### Runs in detail
@@ -207,7 +207,7 @@ Tikken van openen tot race 1 loopt (tik op "Start race" meegeteld):
 - tutorialhandelingen (stap:knop) in run r01: 8:slik, 9:niets, 11:spuit, 14:zetpil
 Raceduur op normale snelheid (run n01, geen ?speed): race 1 94,1 s, race 2 74,1 s (klok van de bot: tik "Start race" → finish-overlay; spel zelf meet 93,9 s en 73,9 s, incl. 3 s aanloop). 60–120 s: **gehaald**
   Scores op normale snelheid: race 1 768, race 2 1000 (zelfde strategie op 4× in r01: 768, 1000).
-"Nog een keer": 1 tik → fase race1, scherm scherm-race, klok loopt (-0,80 → -0,39 u), naam "Pilpiraat Zestig" (was "Pilpiraat Zestig"): **gehaald**
+"Nog een keer": 1 tik → fase race1, scherm scherm-race, klok loopt (-0,80 → -0,40 u), naam "Pilpiraat Zestig" (was "Pilpiraat Zestig"): **gehaald**
 Tikken waarbij de knop > 0,6 s nog bedekt was (bv. tijdens een schermovergang van 0,35 s; de bot wacht dan tot de knop bovenop ligt): geen.
 Knoppen die eerst in beeld gescrold moesten worden voor een tik: geen. Tikken die (volgens elementFromPoint) niet op de bedoelde knop zouden landen: geen.
 - Samengevat (≤ 3 tikken van openen tot spelen): eerste speelhandeling 2 (zonder naam) / 3 (met naam); race 1 loopt na 2 (Overslaan, zonder naam) / 3 (Overslaan, met naam). Gehaald volgens de lezing "eerste speelhandeling ≤ 3": **gehaald**; race 1 loopt binnen 3 tikken (zonder naam, met Overslaan): **gehaald**.
@@ -215,10 +215,10 @@ Knoppen die eerst in beeld gescrold moesten worden voor een tik: geen. Tikken di
 
 ### B4 Knoppen, scrollen, netwerk
 
-- 174 schermmetingen (1075 knopmetingen) op: einde, intro1, intro2, race1, race2, start, tutorial stap 11, tutorial stap 14, tutorial stap 8, tutorial stap 9.
-- Kleinste zichtbare knop: demp "Geluid uit" 48×48 px (min. breedte 48 px, min. hoogte 48 px). Knoppen < 48×48: geen: **gehaald**
+- 174 schermmetingen (1093 knopmetingen) op: einde, intro1, intro2, race1, race2, start, tutorial stap 11, tutorial stap 14, tutorial stap 8, tutorial stap 9.
+- Kleinste zichtbare knop: start-over "Oefenronde overslaan" 203.3×48 px (min. breedte 48 px, min. hoogte 48 px). Knoppen < 48×48: geen: **gehaald**
 - Horizontaal scrollen (scrollWidth > clientWidth op document, body of actief scherm): 0 van 174 metingen; grootste scrollWidth 390 px bij clientWidth 390 px: **gehaald**
-- Netwerkverzoeken (11 runs, elk een verse pagina): vóór/tijdens het laden 11 in totaal (http://127.0.0.1:40507/index.html); ná het laden 0: **gehaald**
+- Netwerkverzoeken (11 runs, elk een verse pagina): vóór/tijdens het laden 11 in totaal (http://127.0.0.1:36139/index.html); ná het laden 0: **gehaald**
 - **B4 390×844: gehaald**
 
 ### B5 Eindscherm

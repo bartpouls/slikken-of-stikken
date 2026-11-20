@@ -51,6 +51,9 @@
   var IBU = '#ff9f43'; // ibuprofen: oranje, zoals in de race (paars is voor de poortjes)
   var LIJN = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', giftig: '#ff4d5e' }; // = LIJNKLEUR in de race
 
+  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'bakker' };
+  function perDagCasus(c) { return c.raceDuur > 48; }
+  function dec(c) { return c.id === 'lithium' ? 1 : 0; } // getallen van de grenzen
   function esc(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -107,8 +110,7 @@
   }
   function figuurHtml(c, v, klasse) {
     return '<div class="fig ' + (klasse || '') + '" aria-hidden="true">' +
-      SoS.ui.figuur({ wie: c.id === 'lithium' ? 'vries' : 'opa', stemming: stemming(c, v),
-        prop: c.id === 'lithium' ? null : 'stok' }) + '</div>';
+      SoS.ui.figuur({ wie: WIE[c.id] || 'opa', stemming: stemming(c, v) }) + '</div>';
   }
 
   // ------------------------------------------------------------------------------------------
@@ -119,7 +121,7 @@
     c.gebeurtenissen.forEach(function (x) { if (x.type === type) g = x; });
     return g;
   }
-  function tijdLabel(c, t) { return c.id === 'lithium' ? 'Dag ' + getal(t / 24) : 'Uur ' + t; } // als label, zoals in de race
+  function tijdLabel(c, t) { return perDagCasus(c) ? 'Dag ' + getal(t / 24) : 'Uur ' + t; } // als label, zoals in de race
 
   function kaartHtml(i, c, v, curve) {
     var staten = curve && curve.length ? tegelStaten(c, curve) : null;
@@ -129,7 +131,8 @@
     if (staten) {
       tijden.forEach(function (t, k) { if (lever(t)) staten[k] = 'giftig'; });
       // twee rijen: paracetamol uur 0–11 | 12–23; lithium dag 0–4 | dag 5–9 (vanaf de ibuprofen)
-      var helft = Math.ceil(staten.length / 2);
+      var perDagN = perDagCasus(c) ? Math.round(24 / c.poortjes.interval) : 1; // rijen beginnen op een hele dag
+      var helft = Math.ceil(staten.length / 2 / perDagN) * perDagN;
       var rij = function (van, tot) {
         var s = '<span class="eind-tegelrij"><span class="eind-rijlabel">' + tijdLabel(c, tijden[van]) + '</span>' +
           '<span class="eind-tegelvak" style="--n:' + (tot - van) + '">';
@@ -146,7 +149,7 @@
     }
     return '<button type="button" class="eind-kaart" data-actie="naar-verslag" data-race="' + i + '">' +
       '<span class="eind-kaart-kop">' + figuurHtml(c, v, 'eind-kaart-fig') +
-        '<span class="eind-kaart-titel"><small>Race ' + (i + 1) + '</small>' + esc(c.naam) + '</span>' +
+        '<span class="eind-kaart-titel"><small>' + (i === 2 ? 'Bonusrace · telt niet mee' : 'Race ' + (i + 1)) + '</small>' + esc(c.naam) + '</span>' +
         '<span class="eind-kaart-rechts"><span class="eind-kaart-score" data-eind="race-' + i + '">' + getal(v.opbouw.totaal) + '</span>' +
         '<span class="eind-kaart-meer">verslag <span aria-hidden="true">↓</span></span></span>' +
       '</span>' + tegels +
@@ -160,13 +163,13 @@
       if (c.venster.some(function (v) { return v.hoog !== Infinity; })) heeft.boven = true;
       if (c.toxisch != null || (c.bovengrens && c.bovengrens.type === 'dagteller')) heeft.giftig = true;
       if (gebeurtenis(c, 'blokkade')) blok = true;
-      if (gebeurtenis(c, 'klaring')) ibu = true;
+      if (gebeurtenis(c, 'klaring')) ibu = ibu ? ibu + ' / ' + (gebeurtenis(c, 'klaring').label || 'ibuprofen') : (gebeurtenis(c, 'klaring').label || 'ibuprofen');
     });
     var li = ['zone', 'onder', 'boven', 'giftig'].filter(function (s) { return heeft[s]; }).map(function (s) {
       return '<li><span class="eind-tegel t-' + s + '"></span>' + (s === 'giftig' ? 'lever / giftig' : TOESTAND_LABEL[s]) + '</li>';
     });
     if (blok) li.push('<li><span class="eind-leg-m"></span>misselijk</li>');
-    if (ibu) li.push('<li><span class="eind-leg-ibu"></span>ibuprofen</li>');
+    if (ibu) li.push('<li><span class="eind-leg-ibu"></span>' + ibu + '</li>');
     return '<ul class="eind-legenda" aria-label="Uitleg van de tegels">' + li.join('') + '</ul>';
   }
 
@@ -178,7 +181,7 @@
     var W = 340, H = 132, L = 8, R = 30, T = 18, B = 22, pw = W - L - R, ph = H - T - B;
     var maxC = 0;
     curve.forEach(function (p) { if (p.C > maxC) maxC = p.C; });
-    var vast = c.id === 'lithium' ? 2 : 20;
+    var vast = c.id === 'lithium' ? 2 : (c.id === 'carbamazepine' ? 24 : 20);
     var ymax = Math.max(vast, maxC * 1.08);
     var x = function (t) { return L + pw * t / c.raceDuur; };
     var y = function (C) { return T + ph * (1 - Math.min(C, ymax) / ymax); };
@@ -195,7 +198,7 @@
       } else if (g.type === 'klaring') {
         s += '<line x1="' + f(x(g.t)) + '" y1="' + T + '" x2="' + f(x(g.t)) + '" y2="' + (T + ph) +
           '" stroke="' + IBU + '" stroke-width="2"/>';
-        s += '<text x="' + f(x(g.t) + 4) + '" y="' + (T - 5) + '" class="eind-svg-ibu">ibuprofen</text>';
+        if (g === gebeurtenis(c, 'klaring') || !g.label) s += '<text x="' + f(x(g.t) + 4) + '" y="' + (T - 5) + '" class="eind-svg-ibu">' + esc(g.label || 'ibuprofen') + '</text>';
       }
     });
     // het groene vlak: uit M.venster(casus, t), dus het schuift mee als het venster in de tijd verschuift
@@ -228,8 +231,8 @@
       s += '<path d="' + pd.d + '" fill="none" stroke="' + LIJN[pd.st] + '" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>';
     });
     // labels: drempels (casusblad) en tijdas
-    var labels = c.id === 'lithium'
-      ? [[v0.laag, getal(v0.laag, 1), 5], [v0.hoog, getal(v0.hoog, 1), -1], [c.toxisch, getal(c.toxisch, 1), 4]]
+    var labels = c.toxisch != null
+      ? [[v0.laag, getal(v0.laag, dec(c)), 5], [v0.hoog, getal(v0.hoog, dec(c)), -1], [c.toxisch, getal(c.toxisch, dec(c)), 4]]
       : [[v0.laag, getal(v0.laag), 4]];
     var gezet = [];
     labels.forEach(function (lb) {
@@ -240,7 +243,7 @@
       s += '<text x="' + (W - 3) + '" y="' + f(y(lb[0]) + lb[2]) + '" text-anchor="end" class="eind-svg-label' +
         (lb[0] === c.toxisch ? ' tox' : '') + '">' + esc(lb[1]) + '</text>';
     });
-    var asTekst = c.id === 'lithium'
+    var asTekst = perDagCasus(c)
       ? [[0, 'Dag 0'], [c.raceDuur / 2, 'Dag ' + c.raceDuur / 48], [c.raceDuur, 'Dag ' + c.raceDuur / 24]]
       : [[0, 'Uur 0'], [c.raceDuur / 2, 'Uur ' + c.raceDuur / 2], [c.raceDuur, 'Uur ' + c.raceDuur]];
     asTekst.forEach(function (a, k) {
@@ -283,7 +286,7 @@
       var j = r.jij, misselijk = blok && r.t >= blok.van - 1e-9 && r.t < blok.tot - 1e-9;
       var echt = !!r.echt, n = 0;
       j.toedieningen.forEach(function (d) { n += d.aantal; });
-      var anders = echt ? n !== 1 : n > 0; // afwijking van het echte schema (aantal doses op dit poortje)
+      var anders = n !== (r.echtAantal || 0); // afwijking van het echte schema (aantal doses op dit poortje)
       var label = r.tijdTekst + ': ' + j.tekst + (r.echt ? '; echt schema ' + r.echt : '; echt schema niets') +
         (anders ? '; anders dan schema' : '');
       return '<li class="eind-cel' + (echt ? ' echt' : '') + (misselijk ? ' misselijk' : '') + (anders ? ' anders' : '') + ' s-' + j.soort + '"' +
@@ -296,7 +299,7 @@
         (anders ? '<span class="eind-cel-anders" aria-hidden="true">≠</span>' : '') + '</li>';
     };
     var s = '';
-    if (c.id === 'lithium') {
+    if (perDagCasus(c)) {
       // rijen = dagen, kolommen = de poortjes van die dag
       var perDag = Math.round(24 / c.poortjes.interval), dagen = Math.ceil(rijen.length / perDag);
       var kop = rijen.slice(0, perDag).map(function (r) { return '<span>' + r.t + ' u</span>'; }).join('');
@@ -305,7 +308,7 @@
       for (var d = 0; d < dagen; d++) {
         var r0 = rijen[d * perDag];
         if (klaring && Math.abs(r0.t - klaring.t) < 1e-9) {
-          s += '<div class="eind-markering"><span>Dag ' + (klaring.t / 24) + ': ibuprofen</span></div>';
+          s += '<div class="eind-markering"><span>Dag ' + (klaring.t / 24) + ': ' + esc(klaring.label || 'ibuprofen') + '</span></div>';
         }
         s += '<div class="eind-dagrij"><span class="eind-dag">Dag ' + d + '</span><ul>' +
           rijen.slice(d * perDag, (d + 1) * perDag).map(function (r) { return cel(r, false); }).join('') + '</ul></div>';
@@ -330,7 +333,7 @@
     if (komtVoor.geenKeuze) leg.push('<li><span class="eind-leg-ic">' + ic('kruis') + '</span>geen keuze (kost punten)</li>');
     leg.push('<li><span class="eind-leg-ic eind-leg-leeg">–</span>Overslaan</li>');
     leg.push('<li><span class="eind-leg-echt">' + esc(rijen.filter(function (r) { return r.echt; })[0].echt) + '</span>echt schema</li>');
-    if (rijen.some(function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return r.echt ? n !== 1 : n > 0; })) {
+    if (rijen.some(function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return n !== (r.echtAantal || 0); })) {
       leg.push('<li><span class="eind-leg-anders">≠</span>anders dan schema</li>');
     }
     if (blok) leg.push('<li><span class="eind-leg-misselijk"></span>misselijk (' + esc(blok.tijdTekst.toLowerCase()) + ')</li>');
@@ -342,7 +345,9 @@
     var dosis = (v.tijdlijn.filter(function (r) { return r.echt; })[0] || {}).echt || '';
     var tijden = perDag.map(function (e) { return e.t; });
     var lek;
-    if (c.id === 'lithium') {
+    if (c.id === 'carbamazepine') {
+      lek = '2× per dag 200 mg; na ±10 dagen, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling.';
+    } else if (c.id === 'lithium') {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
     } else {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur).';
@@ -378,14 +383,14 @@
 
   function verslagHtml(i, c, v, curve) {
     var s = '<section class="eind-verslag" data-verslag="' + i + '" id="eind-verslag-' + i + '" aria-labelledby="eind-v-kop-' + i + '">';
-    s += '<p class="markering">Race ' + (i + 1) + ' · verslag</p>';
+    s += '<p class="markering">' + (i === 2 ? 'Bonusrace' : 'Race ' + (i + 1)) + ' · verslag</p>';
     s += '<header class="eind-v-kop">' + figuurHtml(c, v, 'eind-v-fig') +
       '<div><h2 id="eind-v-kop-' + i + '">' + esc(c.naam) + ' <span class="eind-v-wie">' + esc(c.patient) + '</span></h2>' +
       '<p class="eind-v-score"><b>' + getal(v.opbouw.totaal) + '</b> QALY-punten</p></div></header>';
     var lever = leverOp(c, v), leverOoit = curve && curve.some(function (p) { return lever(p.t); });
     if (curve && curve.length > 1) {
       s += '<figure class="eind-curve">' + curveSvg(c, curve, lever) +
-        '<figcaption>Jouw spiegel. Het groene vlak: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + '); de onderkant is de streep.' +
+        '<figcaption>Jouw spiegel als concentratie-tijdcurve, zoals in een boek: de tijd loopt hier naar rechts. In de race was het dezelfde curve, een kwartslag gedraaid. Het groene vlak: in de zone (' + esc(c.zone.tekst.split(' = ')[0]) + '); de onderkant is de streep.' +
         (c.toxisch != null ? ' Rode stippellijn: giftig (' + esc(c.toxischTekst || getal(c.toxisch, 1)) + ').' : '') +
         (leverOoit ? ' Rode lijn: meer dan ' + getal(c.bovengrens.maxPer24u / 1000) + ' g in 24 uur. ' + esc(c.lekentaal.boven) : '') +
         '</figcaption></figure>';
@@ -429,7 +434,8 @@
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
           legendaHtml(cs) +
-          '<div class="eind-acties"><button type="button" class="knop-paars groot" data-actie="opnieuw">Nog een keer</button></div>' +
+          '<div class="eind-acties"><button type="button" class="knop-paars groot" data-actie="opnieuw">Nog een keer</button>' +
+            (data.bonus && !races[2] ? '<button type="button" class="knop-lijn groot" data-actie="bonus">Bonusrace: carbamazepine</button>' : '') + '</div>' +
           '<p class="eind-scorebord">Laat je naam en totaal op het scorebord zetten.</p>' +
           '<p class="eind-spelpunten">QALY-punten zijn spelpunten, geen echte QALY\'s.</p>' +
         '</div>' +
@@ -448,6 +454,8 @@
       ui.speel('tik');
       opnieuw();
     });
+    var bonusK = container.querySelector('[data-actie="bonus"]');
+    if (bonusK) luister(bonusK, 'click', function () { if (bezig) return; bezig = true; ui.speel('tik'); data.bonus(); });
     Array.prototype.forEach.call(container.querySelectorAll('[data-actie="naar-verslag"]'), function (k) {
       luister(k, 'click', function () {
         var doel = container.querySelector('[data-verslag="' + k.getAttribute('data-race') + '"]');

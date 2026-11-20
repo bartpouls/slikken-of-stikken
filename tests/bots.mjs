@@ -819,8 +819,11 @@ resultaten.forEach((runs, vi) => {
     const a = ref.tut.ui || {}, b = ref.uiRace1 || {};
     const sleutels = [...new Set([...Object.keys(a), ...Object.keys(b)])];
     const verschil = [];
+    // v2.2 (keuze Bart/Claude): de stukken van de tijdstrook zijn naar verhouding van de duur van deel 1 en deel 2.
+    // Die lengte verschilt per ronde (oefenronde 15 u, race 24 u); plaats, breedte, letter en kleur moeten gelijk zijn.
+    const zonderHoogte = (o, k) => (o && /^deel-[12]$/.test(k) ? { ...o, y: undefined, h: undefined } : o);
     for (const k of sleutels) {
-      const x = JSON.stringify(a[k]), y = JSON.stringify(b[k]);
+      const x = JSON.stringify(zonderHoogte(a[k], k)), y = JSON.stringify(zonderHoogte(b[k], k));
       if (x !== y) verschil.push(`${k}: oefenronde ${x} ≠ race 1 ${y}`);
     }
     const toegestaan = verschil.filter((v) => /^knop-spuit: /.test(v) && /"rand"/.test(v)); // markering van de aangewezen knop (rand)
