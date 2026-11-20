@@ -19,8 +19,12 @@
  *     het groene vlak | te veel | giftig), getallen eronder ("streep 5" = de ondergrens), een wijzer op de plek
  *     van de spiegel. De banen eronder hebben dezelfde kleuren.
  *   - Het gezicht van de patiënt staat op de spiegel (KOP-afbeeldingen), met een gevoelswoord (R.gevoel).
- *   - Deel 1 / deel 2 (#delen): R.deel2 = begin van de eerste gebeurtenis (oefenronde: gids.deel2). Geblokte
- *     strook in de tijdlijn op dat moment; het label van deel 2 wordt pas na de onthulling "misselijk"/"ibuprofen".
+ *   - Bovenbalk (#patient): portretje, "Race 1 · Paracetamol" en de patiënt; menuknop linksboven, demp rechtsboven.
+ *   - Tijdstrook (#tijdstrook) links in het speelveld, onder de klok: deel 1 / deel 2 van boven naar beneden, lengte
+ *     naar verhouding van hun duur, vulling per deel loopt met de klok mee. R.deel2 = begin van de eerste gebeurtenis (oefenronde:
+ *     gids.deel2). Geblokte strook in de tijdlijn op dat moment; het label van deel 2 wordt pas na de onthulling
+ *     "misselijk"/"ibuprofen". Plotwending: de klok staat stil tot de speler op Verder tikt (R.wacht).
+ *   - Regel boven de knoppen (#poort-status): wat staat klaar voor het volgende poortje + balk tot het poortje.
  *   - Vertelstappen in de oefenronde (stap zonder knop): zin in beeld, klok staat even stil, gaat vanzelf verder
  *     of met een tik op het speelveld (tikPodium); st.licht laat een schermonderdeel oplichten (zetLicht).
  *   - Kaartje na de race (#finish): QALY-punten + doseerschema per poortje (schemaHtml, uit race.verslag()).
@@ -40,7 +44,8 @@
  * RACE-INTERACTIE: de tijd loopt van boven naar beneden (pijltje "tijd" in de linkermarge); paarse poortjes
  * schuiven van onder naar de "nu"-lijn. De knoppen onderin kiezen wat er op het EERSTVOLGENDE poortje gebeurt
  * (stand "gekozen", icoontje op het poortje, regel "Tablet voor uur 18" boven de knoppen); op het poortje wordt
- * de keuze toegepast (race.naar(poortjetijd), dan race.geef) en gewist. Niets gekozen = overslaan.
+ * de keuze toegepast (race.naar(poortjetijd), dan race.geef) en gewist. Overslaan is ook een keuze; een poortje
+ * zonder keuze kost punten (race.geenKeuze, S.PUNTEN.GEEN_KEUZE). Een geweigerde tablet telt als keuze.
  * Paracetamol: 1 toediening (1 g) per poortje; dezelfde knop nog eens = keuze weg.
  * Lithium: tablet tot 2× per poortje ("2× Tablet voor ..."), derde tik = keuze weg.
  * Te laat: een tik binnen 0,3 s (echte tijd, /speed) ná een poortje telt NIET voor het volgende poortje
@@ -59,12 +64,13 @@
  *   ?speed=N  versnelt de spelklok N× (ook de aanloop van 3 s en de duur van meldingen).
  *   window.SoS.debug (alleen-lezen momentopname, elke keer vers): {fase, casus, t, klok, C, score,
  *     dagteller, poortje:{index, t, keuze, aantal, geblokkeerd}, gegeven:[...], uitslag:[...], naam, speed,
- *     gids:{stap, bevroren, wijs, zin} (alleen in de oefenronde), tutorialDuur (s, na afloop)}
+ *     gids:{stap, bevroren, wijs, zin} (alleen in de oefenronde), tutorialDuur (s, na afloop),
+ *     wacht (plotwending wacht op "Verder", data-actie="wending-verder"), menu (hoofdmenu open)}
  *     fase: 'start'|'tutorial'|'intro1'|'race1'|'intro2'|'race2'|'einde'; t = modeltijd (uur);
  *     klok = spelklok (uur, negatief tijdens de aanloop); score = live QALY-totaal.
  *   Stabiele data-attributen: data-actie="start" en "start-over" (startscherm), "verder" (na de oefenronde en
  *     na elke race), "start-race" (intro-kaartje), "slik" | "zetpil" | "spuit" | "niets" (raceknoppen; lithium
- *     "Overslaan" = niets), "demp", "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
+ *     "Overslaan" = niets), "demp", "menu" (+ data-menu="verder|oefenronde|race-1|race-2|einde|begin"), "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
  *     uitleg aanwijst heeft data-wijs="1".
  *   Raceknoppen reageren op pointerdown (snel) én click (toetsenbord); één tik telt één keer.
  */
@@ -132,19 +138,20 @@
   // o.kop = true: alleen hoofd en hoed (klein portret in de racekop).
   function figuur(o) {
     o = o || {};
+    var idrissi = o.wie === 'idrissi'; // meneer El Idrissi: zelfde vorm als opa Jan, groene pet, donkerder huid, kort zwart haar, geen stok
     var wie = o.wie === 'vries' ? 'vries' : 'opa';
     var st = o.stemming || 'neutraal';
-    var hoed = o.kleur || (wie === 'opa' ? KLEUR.blauw : KLEUR.rood);
-    var prop = o.prop === undefined ? (wie === 'opa' ? 'stok' : null) : o.prop;
-    var label = o.label || (wie === 'opa' ? 'Opa Jan' : 'Mevrouw De Vries');
-    var huid = st === 'misselijk' ? '#cfe3a4' : '#f6d9b4';
-    var lijf = wie === 'opa' ? '#6b7fc4' : '#b06fc9';
+    var hoed = o.kleur || (idrissi ? KLEUR.groen : (wie === 'opa' ? KLEUR.blauw : KLEUR.rood));
+    var prop = o.prop === undefined ? (wie === 'opa' && !idrissi ? 'stok' : null) : o.prop;
+    var label = o.label || (idrissi ? 'Meneer El Idrissi' : (wie === 'opa' ? 'Opa Jan' : 'Mevrouw De Vries'));
+    var huid = idrissi ? (st === 'misselijk' ? '#93a160' : '#a8714a') : (st === 'misselijk' ? '#cfe3a4' : '#f6d9b4');
+    var lijf = idrissi ? '#3f9b7a' : (wie === 'opa' ? '#6b7fc4' : '#b06fc9');
     var d = '#2b2233'; // ogen en mond
     var A = 'stroke="' + lijf + '" stroke-width="7" stroke-linecap="round" fill="none"';
     var F = 'stroke="' + d + '" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"';
     var s = '<svg viewBox="' + (o.kop ? '16 6 80 82' : '0 0 100 132') + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' + label + '">';
     if (!o.kop) {
-      s += '<path d="M44 104 L42 126 M56 104 L58 126" stroke="' + (wie === 'opa' ? '#4a5a96' : '#8a4fa3') + '" stroke-width="7" stroke-linecap="round" fill="none"/>';
+      s += '<path d="M44 104 L42 126 M56 104 L58 126" stroke="' + (idrissi ? '#2f5f8f' : (wie === 'opa' ? '#4a5a96' : '#8a4fa3')) + '" stroke-width="7" stroke-linecap="round" fill="none"/>';
       if (prop === 'stok') {
         s += '<path d="M73 127 L71 97 C71 90 63 90 63 95" stroke="#d9a566" stroke-width="4.5" stroke-linecap="round" fill="none"/>';
         s += '<path d="M39 95 L31 103 M61 95 L70 100" ' + A + '/>';
@@ -158,6 +165,8 @@
     }
     if (wie === 'vries') s += '<circle cx="74" cy="50" r="9" fill="#e9e4dc"/>';
     s += '<circle cx="50" cy="58" r="25" fill="' + huid + '"/>';
+    if (idrissi) s += '<path d="M26.5 52 Q26 44 30 40 L33 50 Z M73.5 52 Q74 44 70 40 L67 50 Z" fill="#1f1a1d"/>' + // kort zwart haar langs de pet
+      '<path d="M37 51.5 q4 -2.5 8 0 M55 51.5 q4 -2.5 8 0" stroke="#1f1a1d" stroke-width="2.6" stroke-linecap="round" fill="none"/>'; // wenkbrauwen
     if (st === 'blij') s += '<circle cx="34.5" cy="67" r="4.5" fill="#ff8fb8" opacity=".55"/><circle cx="65.5" cy="67" r="4.5" fill="#ff8fb8" opacity=".55"/>';
     if (st === 'pijn') {
       s += '<path d="M37 55 l6 3.5 l-6 3.5 M63 55 l-6 3.5 l6 3.5" ' + F + '/>';
@@ -170,7 +179,7 @@
       s += '<circle cx="41" cy="58" r="7.5" fill="none" stroke="' + d + '" stroke-width="2.2"/>' +
            '<circle cx="59" cy="58" r="7.5" fill="none" stroke="' + d + '" stroke-width="2.2"/>' +
            '<path d="M48.5 58 h3" stroke="' + d + '" stroke-width="2.2"/>';
-    } else {
+    } else if (!idrissi) {
       s += '<path d="M41 68.5 q4.5 -4 9 -0.5 q4.5 -3.5 9 0.5" stroke="#ffffff" stroke-width="4" stroke-linecap="round" fill="none"/>';
     }
     var mond = { blij: 'M43 73 q7 7 14 0', pijn: 'M43 77 q7 -6 14 0', misselijk: 'M41 76 q2.5 -3 5 0 t5 0 t5 0 t5 0', neutraal: 'M45 75 h10' }[st] || 'M45 75 h10';
@@ -235,8 +244,8 @@
   }
 
   // Portretjes (hoofd + hoed) voor het canvas: het gezicht van de patiënt staat op de spiegel.
-  var KOP = { opa: {}, vries: {} };
-  ['opa', 'vries'].forEach(function (wie) {
+  var KOP = { opa: {}, vries: {}, idrissi: {} };
+  ['opa', 'vries', 'idrissi'].forEach(function (wie) {
     ['neutraal', 'blij', 'pijn', 'misselijk'].forEach(function (st) {
       var im = new Image();
       im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(figuur({ wie: wie, stemming: st, kop: true }).replace('<svg ', '<svg width="160" height="164" '));
@@ -264,6 +273,8 @@
     var schermen = doc.querySelectorAll('.scherm');
     for (var i = 0; i < schermen.length; i++) schermen[i].classList.toggle('actief', schermen[i].id === 'scherm-' + id);
     staat.fase = fase || id;
+    var mk = $('menu-knop');
+    if (mk) mk.hidden = staat.fase === 'start';
     var s = $('scherm-' + id);
     if (s) s.scrollTop = 0;
   }
@@ -315,41 +326,54 @@
 
   // Venster als tekst, uit de casusdata (M.venster: kan in de tijd verschuiven), bv. "0,6–1,0 mmol/L".
   function vensterTekst(c, t) {
-    var v = M.venster(c, t), e = '\u00a0' + CFG[c.id].eenheid, dec = c.id === 'lithium' ? 1 : 0;
+    var v = M.venster(c, t), e = '\u00a0' + CFG[c.id].eenheid, dec = CFG[c.id].dec;
     return v.hoog === Infinity ? '≥\u00a0' + getal(v.laag, dec) + e : getal(v.laag, dec) + '–' + getal(v.hoog, dec) + e;
   }
 
   // ------------------------------------------------------------------------------------------
   // 3. Intro-kaartje per race
   // ------------------------------------------------------------------------------------------
-  var RACES = ['paracetamol', 'lithium'];
+  var RACES = ['paracetamol', 'lithium', 'carbamazepine']; // race 3 = bonusrace (alleen via menu / eindscherm)
+  var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'idrissi' };
+  function wieVan(c) { return WIE[c.id] || 'opa'; }
+  function perDagCasus(c) { return c.raceDuur > 48; } // klok in dagen
+  function raceNaam(i) { return i === 2 ? 'Bonusrace' : 'Race ' + (i + 1); }
+  // Hoe de patiënt zich voelt bij deze spiegel (lekentaal uit het casusblad) en welk gezicht erbij hoort.
+  var GEVOEL = {
+    lithium: { onder: ['kans op terugval', 'neutraal'], zone: ['stabiel', 'blij'], boven: ['trillen, misselijk', 'misselijk'], tox: ['giftig: verward', 'misselijk'] },
+    carbamazepine: { onder: ['kans op aanval', 'neutraal'], zone: ['geen aanvallen', 'blij'], boven: ['duizelig, dubbelzien', 'misselijk'], tox: ['giftig: suf, wankel', 'misselijk'] }
+  };
   function toonIntro(i) {
     var c = M.casus(RACES[i]);
-    $('intro-kop').textContent = 'Race ' + (i + 1) + ' · ' + c.naam;
+    $('intro-kop').textContent = raceNaam(i) + ' · ' + c.naam;
     var fig = $('intro-fig');
     fig.innerHTML = '';
-    var f = el('div', { class: 'fig', html: figuur({ wie: i === 0 ? 'opa' : 'vries', stemming: i === 0 ? 'pijn' : 'neutraal' }) });
+    var f = el('div', { class: 'fig', html: figuur({ wie: wieVan(c), stemming: i === 0 ? 'pijn' : 'neutraal' }) });
     maakFigLevend(f);
     fig.appendChild(f);
     $('intro-verhaal').textContent = c.verhaal;
     var regels;
     if (i === 0) {
-      regels = ['Jij bent zijn dokter: jij bepaalt wat hij krijgt, en wanneer.',
-        'Houd de spiegel in het groene vlak, boven de streep.',
-        'Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Niets.',
-        'Maximaal ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' gram per dag: daarboven raakt de lever beschadigd.',
+      regels = ['Jij regelt de medicijnen van opa Jan: wat hij krijgt, en wanneer.',
+        'Blijf binnen het therapeutisch venster: boven de streep, met ' + getalKort(c.routes.slik.dosis / 1000, 1) +
+          ' g per keer en hooguit ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' g per dag. Boven ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' g per dag raakt de lever beschadigd.',
+        'Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Overslaan. Geen keuze kost punten.',
         'De race heeft twee delen: halverwege verandert er iets, pas dan je plan aan.'];
+    } else if (i === 2) {
+      regels = ['Bonusrace: telt niet mee in je totaal. De getallen zijn nog een concept.',
+        'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + ' in de eerste dagen, ' + vensterTekst(c, 1e6) + ' als hij gewend is. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
+        'Meneer El Idrissi begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
+        'De race duurt ' + Math.round(c.raceDuur / 24) + ' dagen, met 2 poortjes per dag: om 0 en 12 uur.',
+        'Kies per poortje 200, 400 of 800 mg, of Overslaan.'];
     } else {
       // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).
       var uren = M.poortjes(c).filter(function (t) { return t < 24; });
-      regels = ['Het groene vlak heeft nu ook een bovenkant: ' + vensterTekst(c, 0) + '.',
+      regels = ['Blijf binnen het therapeutisch venster: het groene vlak heeft nu ook een bovenkant, ' + vensterTekst(c, 0) + '.',
         'Boven ' + getal(c.toxisch, 1) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
         'De klok telt in dagen: de race duurt ' + Math.round(c.raceDuur / 24) + ' dagen.',
         'Poortjes komen ' + uren.length + '× per dag: om ' + uren.slice(0, -1).join(', ') + ' en ' + uren[uren.length - 1] + ' uur.',
-        'Niets heet hier Overslaan.',
         'Tik twee keer op Tablet voor 2 tabletten op één poortje.',
-        'Er is geen zetpil.',
-        'Er is geen dagteller.'];
+        'Er is geen zetpil en geen dagteller.'];
     }
     var ul = $('intro-regel');
     ul.innerHTML = '';
@@ -369,17 +393,23 @@
       zoneLabel: null, toxLabel: null
     },
     lithium: {
-      secPerUur: 90 / 240, Cmax: 2, monster: 0.1, dun: 1,
+      secPerUur: 70 / 240, Cmax: 2, monster: 0.1, dun: 1, dec: 1, decWaarde: 2,
       as: [], eenheid: 'mmol/L', // + casus.toxisch; de venstergrenzen komen uit M.venster(casus, t)
+      zoneLabel: ['in de zone'], toxLabel: 'giftig'
+    },
+    carbamazepine: {
+      secPerUur: 110 / 672, Cmax: 24, monster: 0.2, dun: 1, dec: 0, decWaarde: 1,
+      as: [], eenheid: 'mg/L',
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     }
   };
+  CFG.paracetamol.dec = 0; CFG.paracetamol.decWaarde = 1;
   // Zonelabel letterlijk uit het casusblad: "pijnstilling (vereenvoudigd)" -> twee regels.
   CFG.paracetamol.zoneLabel = (function (l) { var i = l.indexOf(' ('); return i > 0 ? [l.slice(0, i), l.slice(i + 1)] : [l]; })(M.casus('paracetamol').zone.label);
   var AANLOOP_S = 3; // seconden echte tijd vóór t = 0 (bij speed 1)
 
   function tijdLabel(c, t, metUur) {
-    if (c.id === 'lithium') {
+    if (perDagCasus(c)) {
       var d = Math.floor(t / 24 + 1e-9), h = Math.round(t - d * 24);
       if (h === 24) { d++; h = 0; }
       return h === 0 ? 'Dag ' + d : 'Dag ' + d + (metUur ? ' · ' + h + ' u' : '');
@@ -390,7 +420,7 @@
   function inZin(label) { return label.charAt(0).toLowerCase() + label.slice(1); }
   function klokHtml(c, t) {
     t = Math.max(0, t);
-    if (c.id === 'lithium') {
+    if (perDagCasus(c)) {
       var d = Math.floor(t / 24), h = Math.floor(t - d * 24);
       return 'Dag ' + d + '<small>· ' + h + ' u</small>';
     }
@@ -419,6 +449,7 @@
       voorgeschiedenis: [],
       toestand: null, toxisch: false,
       onthuld: {}, effecten: [], ibuprofen: false, leverOver: false, laatstePoort: null, kiesT0: 0,
+      wacht: false, wachtVanaf: 0, psStand: '',
       laatsteTs: null, klaar: false, rafId: 0,
       startEcht: performance.now(), duurEcht: null,
       tekstKlok: '', tekstScore: '', trend: '', dagteller: -1,
@@ -441,7 +472,7 @@
     meetDoek();
     $('melding').className = 'melding';
     if (gids) gidsStap(); // stap 1: de klok staat meteen stil
-    else melding('Tik een knop vóór het paarse poortje: wat je kiest, gebeurt als het poortje bij ‘nu’ is.', { prio: 0, duur: AANLOOP_S + 3 });
+    else melding('Kies vóór elk paars poortje een knop: op het poortje gebeurt het. Geen keuze kost punten.', { prio: 0, duur: AANLOOP_S + 3 });
     R.rafId = root.requestAnimationFrame(lus);
   }
 
@@ -450,7 +481,13 @@
     $('finish').hidden = true;
     $('finish-schema').innerHTML = '';
     $('deel-2-tekst').textContent = 'Deel 2 · verandering';
-    $('delen').className = 'delen';
+    $('deel-2-tekst').removeAttribute('data-vol');
+    $('tijdstrook').className = 'tijdstrook';
+    // deel 1 en deel 2 naar verhouding van hun duur: de strook is een tijdsaanduiding
+    $('deel-1').style.flexGrow = R.deel2;
+    $('deel-2').style.flexGrow = (R.gids ? R.gids.eind : c.raceDuur) - R.deel2;
+    $('race-titel').textContent = (R.gids ? 'Oefenronde' : (R.i === 2 ? 'Bonus' : raceNaam(R.i))) + ' · ' + c.naam;
+    $('poort-status').className = 'poort-status';
     zetLicht(null);
     $('klok').innerHTML = klokHtml(c, 0);
     $('qaly-getal').textContent = '0';
@@ -462,17 +499,19 @@
     $('finish-kop').textContent = R.gids ? R.gids.klaar.kop : 'Race klaar';
     $('finish-label').textContent = R.gids ? R.gids.klaar.label : 'QALY-punten';
     doc.querySelector('#finish [data-actie="verder"]').textContent = R.gids ? R.gids.klaar.knop : 'Verder';
-    var chips = $('patient').querySelectorAll('.chip');
-    for (var ci = 0; ci < chips.length; ci++) chips[ci].remove();
+    $('chips').innerHTML = '';
     $('patient-naam').textContent = c.patient;
     // knoppen
     var nav = $('knoppen');
     nav.innerHTML = '';
     var lijst = c.id === 'lithium'
       ? [['slik', 'Tablet', 'tablet'], ['niets', 'Overslaan', 'niets'], ['spuit', 'Spuit', 'spuit']]
-      : [['slik', 'Tablet', 'tablet'], ['zetpil', 'Zetpil', 'zetpil'], ['spuit', 'Spuit', 'spuit'], ['niets', 'Niets', 'niets']];
+      : (c.poortjes.dosisKnoppen ? c.poortjes.dosisKnoppen.map(function (n) { return ['d' + n, mgTekst(c, n), 'tablet', 'slik', n]; }).concat([['niets', 'Overslaan', 'niets']])
+        : [['slik', 'Tablet', 'tablet'], ['zetpil', 'Zetpil', 'zetpil'], ['spuit', 'Spuit', 'spuit'], ['niets', 'Overslaan', 'niets']]);
     R.knoppen = {};
+    R.knopInfo = {};
     lijst.forEach(function (d) {
+      R.knopInfo[d[0]] = { route: d[3] || d[0], vast: d[4] || 0 };
       var b = el('button', { type: 'button', class: 'actie', 'data-actie': d[0], 'aria-pressed': 'false', 'aria-label': d[1] });
       b.innerHTML = icoon(d[2]) + '<span>' + d[1] + '</span>';
       var viaPointer = 0;
@@ -500,11 +539,11 @@
     if (!R) return;
     var blok = doelGeblokkeerd();
     Object.keys(R.knoppen).forEach(function (r) {
-      var b = R.knoppen[r];
-      var gek = R.keuze.route === r;
+      var b = R.knoppen[r], info = R.knopInfo[r];
+      var gek = R.keuze.route === info.route && (!info.vast || R.keuze.aantal === info.vast);
       b.classList.toggle('gekozen', gek);
       b.setAttribute('aria-pressed', gek ? 'true' : 'false');
-      b.setAttribute('data-badge', gek ? (R.keuze.aantal > 1 ? R.keuze.aantal + '×' : '✓') : '');
+      b.setAttribute('data-badge', gek ? (R.keuze.aantal > 1 && !info.vast ? R.keuze.aantal + '×' : '✓') : '');
       if (r === 'slik') {
         b.classList.toggle('geblokkeerd', !!blok);
         b.querySelector('span').textContent = blok ? 'Misselijk' : 'Tablet';
@@ -519,10 +558,11 @@
     setTimeout(function () { b.classList.remove(klasse); }, 380);
   }
 
-  function tikActie(route, b) {
+  function tikActie(actie, b) {
     unlock();
     if (!R || R.klaar) return;
     var c = R.casus;
+    var info = R.knopInfo[actie] || { route: actie, vast: 0 }, route = info.route;
     flits(b, 'tik');
     // Oefenronde: de knoppen werken precies als in de race (kiezen, wisselen, wissen, te laat). Alleen de
     // klok wacht: zie gidsControle.
@@ -557,15 +597,18 @@
     var k = R.keuze;
     var max = maxAantal(route);
     var tekst;
-    if (k.route === route && k.aantal < max) {
+    if (info.vast) { // dosisknop (carbamazepine): één tik = die dosis; nog eens = keuze weg
+      if (k.route === route && k.aantal === info.vast) { k.route = null; k.aantal = 0; tekst = 'Keuze gewist voor ' + doelLabel + ': kies opnieuw, geen keuze kost punten.'; }
+      else { k.route = route; k.aantal = info.vast; tekst = mgTekst(c, info.vast) + ' voor ' + doelLabel; }
+    } else if (k.route === route && k.aantal < max) {
       k.aantal++;
       tekst = k.aantal + '× Tablet voor ' + doelLabel;
     } else if (k.route === route) {
       k.route = null; k.aantal = 0;
-      tekst = 'Keuze gewist voor ' + doelLabel + ': niets kiezen is overslaan.';
+      tekst = 'Keuze gewist voor ' + doelLabel + ': kies opnieuw, geen keuze kost punten.';
     } else {
       k.route = route; k.aantal = 1;
-      tekst = KEUZENAAM[c.id === 'lithium' && route === 'niets' ? 'overslaan' : route] + ' voor ' + doelLabel;
+      tekst = KEUZENAAM[route] + ' voor ' + doelLabel;
     }
     R.kiesT0 = performance.now();
     speel('tik');
@@ -588,12 +631,12 @@
     }
     G.actief = true;
     if (!st.knop) { // vertelstap: de klok staat even stil, daarna gaat het vanzelf verder
-      var duur = (1.3 + 0.045 * st.zin.length) * 1000 / Math.min(SPEED, 4);
+      var duur = (1.3 + 0.045 * st.zin.length + (st.fig ? 2 : 0)) * 1000 / Math.min(SPEED, 4);
       G.beatVan = performance.now() + MELD_FADE;
       G.beatTot = G.beatVan + duur;
       G.bevroren = true;
       zetLicht(st.licht);
-      melding(st.zin, { soort: 'beat', beat: duur });
+      melding(st.zin, { soort: 'beat', beat: duur, fig: st.fig === 'draai' ? draaiSvg() : null, figGroot: st.fig === 'draai' });
       return;
     }
     zetLicht(null);
@@ -629,13 +672,18 @@
   }
 
   // Het schermonderdeel dat bij een vertelstap oplicht (in de DOM via een klasse, op het canvas via R.licht).
+  // wat: 'patient' (bovenbalk) | 'meter' (spiegelbalk + gezicht, canvas) | 'banen' (canvas) | 'klok' (klok +
+  // tijdstrook) | 'delen' (tijdstrook) | 'qaly' | 'lever' | 'knoppen' (knoppen + het volgende poortje op het canvas)
+  var LICHT_DOM = { patient: ['patient'], klok: ['klok', 'tijdstrook'], delen: ['tijdstrook'], qaly: ['qaly'], lever: ['lever'], knoppen: ['knoppen'] };
   function zetLicht(wat) {
     if (R) R.licht = wat || null;
-    $('patient').classList.toggle('licht', wat === 'patient');
-    $('delen').classList.toggle('licht', wat === 'delen');
+    ['patient', 'klok', 'tijdstrook', 'qaly', 'lever', 'knoppen'].forEach(function (id) {
+      $(id).classList.toggle('licht', !!(wat && LICHT_DOM[wat] && LICHT_DOM[wat].indexOf(id) >= 0));
+    });
   }
   // Een tik op het speelveld slaat de wachttijd van een vertelstap over.
   function tikPodium() {
+    if (R && R.wacht) { wachtVerder(); return; }
     var G = R && R.gids;
     if (!G || !G.actief || G.stappen[G.i].knop || R.klaar) return;
     if (performance.now() < G.beatVan + 500) return;
@@ -644,8 +692,10 @@
   }
 
   // Lithium: tablet tot 2× per poortje (casusblad: "elk poortje dubbel"); paracetamol 1 g per keer.
-  function maxAantal(route) { return route === 'slik' && R.casus.id === 'lithium' ? 2 : 1; }
-  var KEUZENAAM = { slik: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', niets: 'Niets', overslaan: 'Overslaan' };
+  function mgTekst(c, n) { return getal(n * c.dosis.mg, 0) + ' mg'; }
+  function keuzeNaam(c, k) { return c.poortjes.dosisKnoppen && k.route === 'slik' ? mgTekst(c, k.aantal) : (k.aantal > 1 ? k.aantal + '× ' : '') + KEUZENAAM[k.route]; }
+  function maxAantal(route) { return route === 'slik' && R.casus.id !== 'paracetamol' ? (R.casus.poortjes.maxTabletten || 2) : 1; }
+  var KEUZENAAM = { slik: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', niets: 'Overslaan' };
   var TE_LAAT_MS = 300; // echte tijd bij speed 1 (gedeeld door ?speed=N)
 
   var infoTimer = 0;
@@ -667,9 +717,11 @@
     if (!R) return;
     var nu = performance.now();
     var prio = o.prio || 0;
+    if (R.wacht && !o.wacht) return; // een plotwending staat in beeld en wacht op een tik
     if (nu < R.melding.tot && prio < R.melding.prio) return;
     var duur = (o.duur || 2.4) * 1000 / Math.min(SPEED, 4);
-    var blijft = !!R.gids; // oefenronde: de zin blijft staan tot de volgende (altijd precies één zin in beeld)
+    // oefenronde: de zin blijft staan tot de volgende (altijd precies één zin in beeld); plotwending: tot de tik
+    var blijft = !!R.gids || !!o.wacht;
     R.melding = { prio: prio, tot: blijft ? 0 : nu + duur };
     var m = $('melding');
     if (blijft && m.classList.contains('zicht') && m.getAttribute('data-zin') === tekst) return;
@@ -677,11 +729,16 @@
     clearTimeout(meldTimer); clearTimeout(meldWissel);
     function toon() {
       if (R !== r || R.klaar) return;
-      m.className = 'melding' + (o.soort ? ' ' + o.soort : '') + (o.fig ? ' met-fig' : '');
+      m.className = 'melding' + (o.soort ? ' ' + o.soort : '') + (o.fig ? ' met-fig' : '') + (o.wacht ? ' wacht' : '');
       if (o.beat) m.style.setProperty('--beat', Math.round(o.beat) + 'ms');
       m.innerHTML = '';
-      if (o.fig) m.appendChild(el('div', { class: 'm-fig', html: o.fig }));
+      if (o.fig) m.appendChild(el('div', { class: 'm-fig' + (o.figGroot ? ' groot kw-fig' : ''), html: o.fig }));
       m.appendChild(el('div', { text: tekst }));
+      if (o.wacht) {
+        m.appendChild(el('button', { type: 'button', class: 'knop-paars m-verder', 'data-actie': 'wending-verder', text: 'Verder',
+          onclick: function (ev) { ev.stopPropagation(); wachtVerder(); } }));
+        m.appendChild(el('div', { class: 'm-tik', text: 'De klok staat stil tot je verder tikt.' }));
+      }
       m.setAttribute('data-zin', tekst);
       void m.offsetWidth;
       var t0 = performance.now();
@@ -738,13 +795,26 @@
       var gat = Math.max(84, Math.min(130, D.h * 0.22));
       R.pxPerUur = gat / R.casus.poortjes.interval;
       R.yNu = Math.round(D.h * 0.52);
-      R.links = 26; R.rechts = 26; // ruimte voor het gezicht aan de rand
+      R.links = 40; R.rechts = 24; // links: de tijdstrook; rechts: ruimte voor het gezicht aan de rand
       // breedste poortlabel (+ icoontje, lithium ook "2×"): zo breed is de gereserveerde labelstrook
       ctx.font = '700 15px ' + FONT;
       var mx = 0;
       R.poorten.forEach(function (T) { mx = Math.max(mx, ctx.measureText(tijdLabel(R.casus, T, true)).width); });
-      R.labelMax = mx + 34 + (R.casus.id === 'lithium' ? 18 : 0);
+      R.labelMax = mx + 34 + (R.casus.poortjes.dosisKnoppen ? 28 : (R.casus.id !== 'paracetamol' ? 18 : 0));
+      pasStrookTekst();
     }
+  }
+
+  // De labels in de tijdstrook: past "Deel 2 · misselijk" niet in een kort deel, dan alleen "Deel 2".
+  function pasStrookTekst() {
+    ['deel-1', 'deel-2'].forEach(function (id) {
+      var t = $(id).querySelector('.ts-tekst');
+      var vol = t.getAttribute('data-vol') || t.textContent;
+      t.setAttribute('data-vol', vol);
+      t.textContent = vol;
+      var rg = doc.createRange(); rg.selectNodeContents(t);
+      if (rg.getBoundingClientRect().height > $(id).clientHeight - 6) t.textContent = vol.split(' · ')[0];
+    });
   }
 
   function xVan(C) {
@@ -815,10 +885,10 @@
       else if (doel && R.keuze.poging) icoonSoort = 'kruis';
       else if (verleden && R.gegeven[g]) {
         var gg = R.gegeven[g];
-        icoonSoort = gg.soort === 'slik' ? 'tablet' : (gg.soort === 'geblokkeerd' ? 'kruis' : (gg.soort === 'leeg' ? null : gg.soort));
+        icoonSoort = gg.soort === 'slik' ? 'tablet' : (gg.soort === 'geblokkeerd' || gg.soort === 'geen' ? 'kruis' : (gg.soort === 'leeg' ? null : gg.soort));
         aantal = gg.aantal || 1;
       }
-      var extra = icoonSoort ? 34 + (aantal > 1 ? 18 : 0) : 0;
+      var extra = icoonSoort ? 34 + (c.poortjes.dosisKnoppen && icoonSoort === 'tablet' ? 28 : (aantal > 1 ? 18 : 0)) : 0;
       var wb = tw + extra;
       var xs = zijde === 'links' ? L + INSPRING : Rr - INSPRING - wb; // begin van label (+ icoon)
       var l1 = xs - 8, r1 = xs + wb + 8;
@@ -830,6 +900,8 @@
         ctx.globalAlpha = a;
         ctx.strokeStyle = doel ? '#d9c2ff' : (verleden ? KLEUR.paars : '#c9a4ff');
         ctx.lineWidth = doel ? 2.5 : (verleden ? 1 : 1.25);
+        if (doel && R.licht === 'knoppen') { ctx.lineWidth = 3 + 3 * (0.5 + 0.5 * Math.sin(nu / 240)); ctx.strokeStyle = '#ffffff'; }
+        if (verleden && R.gegeven[g] && R.gegeven[g].soort === 'geen') { ctx.strokeStyle = KLEUR.koraal; ctx.globalAlpha = Math.min(1, a * 1.6); }
         ctx.beginPath();
         if (l1 > L - 6) { ctx.moveTo(L - 6, yg); ctx.lineTo(l1, yg); }
         ctx.moveTo(r1, yg); ctx.lineTo(Rr + 6, yg); ctx.stroke();
@@ -857,11 +929,13 @@
           ctx.beginPath(); ctx.arc(ix, yg, 15, 0, 6.283); ctx.fill();
           ctx.globalAlpha = a;
           tekenIcoon(ctx, icoonSoort, ix, yg, 26 * pop, verleden ? 0.55 : 1);
-          if (aantal > 1) {
+          var dk = c.poortjes.dosisKnoppen && icoonSoort === 'tablet';
+          if (aantal > 1 || dk) {
+            var at = dk ? getal(aantal * c.dosis.mg, 0) : aantal + '×';
             ctx.font = '800 13px ' + FONT;
-            ctx.strokeText(aantal + '×', ix + 17, yg + 1);
+            ctx.strokeText(at, ix + 17, yg + 1);
             ctx.fillStyle = '#fff';
-            ctx.fillText(aantal + '×', ix + 17, yg + 1);
+            ctx.fillText(at, ix + 17, yg + 1);
             ctx.font = '700 15px ' + FONT;
           }
         }
@@ -973,7 +1047,7 @@
           ctx.beginPath(); ctx.moveTo(0, yk); ctx.lineTo(w, yk); ctx.stroke();
         }
         ctx.fillStyle = '#ff9f43';
-        gebeurtenisLabel('ibuprofen', Math.max(yk + 18, BOVENRAND + 4), true);
+        gebeurtenisLabel(g.label || 'ibuprofen', Math.max(yk + 18, BOVENRAND + 4), g.icoon !== null);
       }
     });
 
@@ -1040,8 +1114,8 @@
 
     // indeling rond de stip: waardelabel boven de nu-lijn, naar buiten (weg van de poortlabels);
     // past dat niet, dan naar binnen. Het "onderweg"-bolletje aan de andere kant, of voorbij het label.
-    var waarde = c.id === 'lithium' ? getal(C, 2) + ' mmol/L' : getal(C, 1) + ' mg/L';
-    var gevoel = R.klok >= 0 || c.id === 'lithium' ? R.gevoel : (R.gevoel || '');
+    var waarde = getal(C, R.cfg.decWaarde) + ' ' + R.cfg.eenheid;
+    var gevoel = R.gevoel || '';
     ctx.font = '800 13.5px ' + FONT;
     var wg = ctx.measureText(gevoel).width;
     ctx.font = '600 12.5px ' + FONT;
@@ -1139,7 +1213,7 @@
     ctx.globalAlpha = 1;
     ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(xD, yN, KOP_R, 0, 6.283); ctx.fill();
     ctx.strokeStyle = kl; ctx.lineWidth = 3; ctx.stroke();
-    if (!tekenKop(ctx, c.id === 'lithium' ? 'vries' : 'opa', R.stemming || 'neutraal', xD, yN + 2)) {
+    if (!tekenKop(ctx, wieVan(c), R.stemming || 'neutraal', xD, yN + 2)) {
       ctx.fillStyle = kl; ctx.beginPath(); ctx.arc(xD, yN, 6.5, 0, 6.283); ctx.fill();
     }
     if (R.licht === 'meter' || R.licht === 'patient') { // vertelstap: het gezicht licht op
@@ -1179,10 +1253,10 @@
     // gezicht meeschuift. Grenzen uit M.venster(casus, t) (schuiven mee) en casus.toxisch.
     var v0 = M.venster(c, tm);
     var zl = xVan(v0.laag), zr = v0.hoog === Infinity ? Rr : xVan(v0.hoog);
-    var dec = c.id === 'lithium' ? 1 : 0;
+    var dec = R.cfg.dec;
     var fmt = function (x) { return x === 0 || x === R.cfg.Cmax ? getalKort(x, 1) : getal(x, x % 1 && !dec ? 1 : dec); };
     var stukken = [{ a: L, b: zl, k: LIJNKLEUR.onder, label: 'te weinig' },
-      { a: zl, b: zr, k: LIJNKLEUR.zone, label: c.id === 'lithium' ? R.cfg.zoneLabel[0] : c.zone.label }];
+      { a: zl, b: zr, k: LIJNKLEUR.zone, label: c.zone.label || R.cfg.zoneLabel[0] }];
     if (v0.hoog !== Infinity) stukken.push({ a: zr, b: c.toxisch != null ? xVan(c.toxisch) : Rr, k: LIJNKLEUR.boven, label: 'te veel' });
     if (c.toxisch != null) stukken.push({ a: xVan(c.toxisch), b: Rr, k: LIJNKLEUR.tox, label: R.cfg.toxLabel });
     var mp = R.licht === 'meter' ? 0.5 + 0.5 * Math.sin(nu / 240) : 0;
@@ -1224,40 +1298,31 @@
     });
     // wat elk stuk betekent
     ctx.font = '800 11.5px ' + FONT; ctx.textAlign = 'center';
+    // labels mogen niet over elkaar: past het niet, dan een kort woord; past dat ook niet, dan geen label
+    var KORT = { 'te weinig': 'laag', 'in de zone': 'zone', 'te veel': 'hoog' }, rechtsVorig = -Infinity;
     stukken.forEach(function (sk) {
+      var m = (sk.a + sk.b) / 2, lb = sk.label;
+      var past = function (t) { var bw = ctx.measureText(t).width; return m - bw / 2 >= rechtsVorig + 6 && bw <= sk.b - sk.a + 10; };
+      if (!past(lb)) lb = KORT[lb] || lb;
+      if (!past(lb)) return;
       ctx.fillStyle = sk.k;
-      halo(sk.label, (sk.a + sk.b) / 2, 47);
+      halo(lb, m, 47);
+      rechtsVorig = m + ctx.measureText(lb).width / 2;
     });
 
-    // tijd loopt naar beneden: klein pijltje in de linkermarge, onder de nu-lijn
-    var ty = yN + 44;
-    ctx.save();
-    ctx.globalAlpha = 0.8;
-    ctx.strokeStyle = '#000'; ctx.lineWidth = 4;
-    ctx.fillStyle = '#d0d0d8';
-    ctx.translate(10, ty); ctx.rotate(Math.PI / 2);
-    ctx.font = '600 11px ' + FONT; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.strokeText('tijd', 0, 0); ctx.fillText('tijd', 0, 0);
-    var tl = ctx.measureText('tijd').width;
-    ctx.restore();
-    ctx.save();
-    ctx.globalAlpha = 0.8;
-    ctx.strokeStyle = '#d0d0d8'; ctx.lineWidth = 1.5; ctx.lineCap = 'round';
-    var ya = ty + tl + 4;
-    ctx.beginPath(); ctx.moveTo(10, ya); ctx.lineTo(10, ya + 16); ctx.moveTo(6, ya + 11); ctx.lineTo(10, ya + 16); ctx.lineTo(14, ya + 11); ctx.stroke();
-    ctx.restore();
+    // (de tijd loopt naar beneden: dat laat de tijdstrook links in het speelveld zien, met de klok erboven)
   }
 
   // ---------- spelklok ----------
   function lus(ts) {
     if (!R || R.klaar) return;
     R.rafId = root.requestAnimationFrame(lus);
-    if (doc.hidden) { R.laatsteTs = null; return; }
+    if (doc.hidden || staat.pauze) { R.laatsteTs = null; return; }
     if (R.laatsteTs == null) R.laatsteTs = ts;
     var dtEcht = Math.min(0.25, Math.max(0, (ts - R.laatsteTs) / 1000));
     R.laatsteTs = ts;
     var G = R.gids;
-    if (!(G && G.bevroren)) R.klok += dtEcht * SPEED / R.cfg.secPerUur;
+    if (!(G && G.bevroren) && !R.wacht) R.klok += dtEcht * SPEED / R.cfg.secPerUur;
     var c = R.casus, race = R.race, duur = G ? G.eind : c.raceDuur;
     // oefenronde: de klok stopt precies op het moment van de volgende stap
     if (G && !G.actief && G.i < G.stappen.length && R.klok >= G.stappen[G.i].op) {
@@ -1337,7 +1402,14 @@
       uit.soort = 'niets';
       speel('overslaan');
     } else if (!k.poging) {
-      speel('poort');
+      // geen keuze gemaakt (ook geen Overslaan): dat kost punten. Overslaan is ook een keuze.
+      var straf = race.geenKeuze(g);
+      uit.soort = 'geen';
+      speel('bonk');
+      var qs = $('qaly-straf');
+      qs.textContent = getal(straf, 0) + ' geen keuze';
+      qs.classList.remove('zicht'); void qs.offsetWidth; qs.classList.add('zicht');
+      R.psFlits = { tot: performance.now() + 1300 / Math.min(SPEED, 4), tekst: 'Geen keuze voor ' + inZin(tijdLabel(c, T, true)) + ': ' + getal(straf, 0) + ' punten' };
     }
     R.gegeven[g] = uit;
     R.laatstePoort = { echt: performance.now(), label: tijdLabel(c, T, true), index: g };
@@ -1356,17 +1428,18 @@
   // Het portretje in de racekop reageert op hoe het met de patiënt gaat.
   function werkPatientBij() {
     var c = R.casus, st;
-    var z = R.klok < 0 && c.id === 'lithium' ? 'zone' : zoneVan(R.race.sim.C, Math.max(0, R.race.t));
-    if (c.id === 'lithium') st = (z === 'boven' || R.toxisch) ? 'misselijk' : (z === 'onder' ? 'neutraal' : 'blij');
-    else st = (R.leverOver || (!R.gids && R.klok >= 0 && M.geblokkeerd(c, 'slik', R.klok))) ? 'misselijk' : (z === 'onder' ? 'pijn' : 'blij');
+    var z = R.klok < 0 && c.start && c.start.type === 'steadyState' ? 'zone' : zoneVan(R.race.sim.C, Math.max(0, R.race.t));
     // In één of twee woorden hoe de patiënt zich nu voelt, bij deze spiegel (woorden uit het casusblad).
-    var gv;
-    if (c.id === 'lithium') gv = R.toxisch ? 'giftig: verward' : (z === 'boven' ? 'trillen, misselijk' : (z === 'onder' ? 'kans op terugval' : 'stabiel'));
-    else gv = R.leverOver ? 'lever beschadigd' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
+    var gv, gw = GEVOEL[c.id];
+    if (gw) { var rij = R.toxisch ? gw.tox : gw[z]; gv = rij[0]; st = rij[1]; }
+    else {
+      st = (R.leverOver || (!R.gids && R.klok >= 0 && M.geblokkeerd(c, 'slik', R.klok))) ? 'misselijk' : (z === 'onder' ? 'pijn' : 'blij');
+      gv = R.leverOver ? 'lever beschadigd' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
+    }
     R.gevoel = gv;
     if (st === R.stemming) return;
     R.stemming = st;
-    $('patient-kop').innerHTML = figuur({ wie: c.id === 'lithium' ? 'vries' : 'opa', stemming: st, kop: true });
+    $('patient-kop').innerHTML = figuur({ wie: wieVan(c), stemming: st, kop: true });
   }
 
   // Het volgende poortje is nu het doel: misschien is er een plotwending.
@@ -1378,9 +1451,9 @@
       if (R.onthuld[gi] || g.type !== 'blokkade') return;
       if (T >= g.van - 1e-9 && T < g.tot - 1e-9) {
         R.onthuld[gi] = true;
-        $('deel-2-tekst').textContent = 'Deel 2 · misselijk';
+        $('deel-2-tekst').removeAttribute('data-vol'); $('deel-2-tekst').textContent = 'Deel 2 · misselijk'; pasStrookTekst();
         speel('wending');
-        melding(g.tekst, { soort: 'wending', prio: 3, duur: 3.4, fig: figuur({ wie: 'opa', stemming: 'misselijk' }) });
+        startWacht(g.tekst + ' Slikken lukt nu niet: kies een zetpil, de spuit of Overslaan.', figuur({ wie: 'opa', stemming: 'misselijk' }));
         if (R.knoppen.slik) flits(R.knoppen.slik, 'schud');
       }
     });
@@ -1393,12 +1466,47 @@
       if (R.onthuld[gi] || g.type !== 'klaring') return;
       if (R.klok >= g.t - 1e-9) {
         R.onthuld[gi] = true;
-        $('deel-2-tekst').textContent = 'Deel 2 · ibuprofen';
+        var lbl = g.label || 'ibuprofen', metDoosje = g.icoon !== null;
+        $('deel-2-tekst').removeAttribute('data-vol'); $('deel-2-tekst').textContent = 'Deel 2 · ' + lbl; pasStrookTekst();
         speel('wending');
-        melding(g.tekst, { soort: 'wending', prio: 3, duur: 3.6, fig: figuur({ wie: 'vries', prop: 'doosje', stemming: 'neutraal' }) });
-        $('patient').insertBefore(el('span', { class: 'chip', html: icoon('doosje').replace('<svg', '<svg width="16" height="16"') + 'ibuprofen' }), $('patient').firstChild);
+        startWacht(g.tekst, figuur({ wie: wieVan(c), prop: metDoosje ? 'doosje' : undefined, stemming: 'neutraal' }));
+        if (!$('chips').children.length) $('chips').appendChild(el('span', { class: 'chip', html: (metDoosje ? icoon('doosje').replace('<svg', '<svg width="16" height="16"') : '') + lbl }));
       }
     });
+  }
+
+  // Plotwending: de klok staat stil tot de speler verder tikt (knop "Verder" of tik op het speelveld). Zo mist
+  // niemand de verandering, ook niet wie even wegkeek.
+  function startWacht(tekst, fig) {
+    R.wacht = false; // eerst de melding zelf mogen tonen
+    melding(tekst, { soort: 'wending', prio: 3, fig: fig, wacht: true });
+    R.wacht = true;
+    R.wachtVanaf = performance.now();
+    $('tijdstrook').classList.add('in2');
+  }
+  function wachtVerder() {
+    if (!R || !R.wacht) return;
+    if (performance.now() - R.wachtVanaf < 700 / Math.min(SPEED, 4)) return; // niet per ongeluk wegtikken
+    R.wacht = false;
+    speel('tik');
+    var m = $('melding');
+    m.classList.remove('zicht');
+    R.melding = { prio: -1, tot: 0 };
+    if (R.meldVlak) R.meldVlak.tot = performance.now() + MELD_FADE + 60;
+  }
+
+  // Een concentratie-tijdcurve zoals in een boek (tijd naar rechts, spiegel omhoog) die een kwartslag draait:
+  // dan loopt de tijd naar beneden en de spiegel naar rechts, zoals op het racescherm.
+  function draaiSvg() {
+    return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Concentratie-tijdcurve die een kwartslag draait">' +
+      '<g class="kw-draai">' +
+      '<path d="M18 82 H90 M18 82 V12" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+      '<path d="M86 78 L91 82 L86 86 M14 16 L18 11 L22 16" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<rect x="18" y="40" width="72" height="42" fill="rgba(61,220,151,0.18)"/>' +
+      '<path d="M18 82 C26 30 34 24 42 32 C54 46 66 60 90 70" stroke="#7ef0c4" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+      '<text class="kw-lbl" x="88" y="96" text-anchor="end" font-size="11" font-weight="700" fill="#d0d0d8">tijd</text>' +
+      '<text class="kw-lbl" x="4" y="10" font-size="11" font-weight="700" fill="#d0d0d8">spiegel</text>' +
+      '</g></svg>';
   }
 
   function controleerZone() {
@@ -1434,10 +1542,11 @@
     var ds = f1 + '|' + f2;
     if (ds !== R.deelStand) {
       R.deelStand = ds;
-      $('deel-1').firstChild.style.width = f1 + '%';
-      $('deel-2').firstChild.style.width = f2 + '%';
-      $('delen').classList.toggle('in2', kk >= R.deel2 - 1e-9);
+      $('deel-1').firstChild.style.height = f1 + '%';
+      $('deel-2').firstChild.style.height = f2 + '%';
+      $('tijdstrook').classList.toggle('in2', kk >= R.deel2 - 1e-9);
     }
+    werkPoortStatusBij();
     var st = R.race.stand();
     var sc = getal(st.totaal, 0);
     if (sc !== R.tekstScore) { $('qaly-getal').textContent = sc; R.tekstScore = sc; }
@@ -1465,6 +1574,28 @@
     }
   }
 
+  // De regel boven de knoppen: wat staat er klaar voor het volgende poortje, en een balk die volloopt tot het
+  // poortje er is. Nog niets gekozen en het poortje is dichtbij: rood ("Kies nu").
+  function werkPoortStatusBij() {
+    var c = R.casus, ps = $('poort-status'), tekst, klasse = 'poort-status', vul = 0, nu = performance.now();
+    if (R.psFlits && nu < R.psFlits.tot) { tekst = R.psFlits.tekst; klasse += ' dringend'; vul = 100; }
+    else if (R.g >= R.poorten.length) tekst = 'Geen poortjes meer in deze race.';
+    else {
+      var T = R.poorten[R.g], vorig = R.g > 0 ? R.poorten[R.g - 1] : Math.min(0, R.klok) - c.poortjes.interval;
+      if (R.g === 0) vorig = -AANLOOP_S / R.cfg.secPerUur;
+      vul = Math.round(100 * Math.max(0, Math.min(1, (R.klok - vorig) / (T - vorig))));
+      var lbl = inZin(tijdLabel(c, T, true)), k = R.keuze;
+      if (k.route) tekst = icoon(k.route === 'slik' ? 'tablet' : k.route) + keuzeNaam(c, k) + ' staat klaar voor ' + lbl;
+      else {
+        tekst = (vul >= 60 ? 'Kies nu voor ' : 'Volgend poortje: ') + lbl + (vul >= 60 ? '!' : '');
+        klasse += vul >= 60 ? ' dringend' : ' leeg';
+      }
+    }
+    var stand = klasse + '|' + tekst;
+    if (stand !== R.psStand) { R.psStand = stand; ps.className = klasse; $('ps-tekst').innerHTML = tekst; }
+    $('ps-vul').style.width = vul + '%';
+  }
+
   function eindeRace() {
     R.klaar = true;
     R.duurEcht = (performance.now() - R.startEcht) / 1000;
@@ -1489,39 +1620,69 @@
     $('finish').scrollTop = 0;
   }
 
-  // Het doseerschema op het kaartje na de race: wanneer gaf je wat (uit hetzelfde verslag als het eindscherm).
+  // Het doseerschema op het kaartje na de race: wanneer gaf je wat. Van boven naar beneden, zoals de tijd in de
+  // race: paracetamol één dag in uren, lithium één rij per dag met de poortjes van die dag. Daaronder: gemiddeld
+  // per dag naast de grens (uit hetzelfde verslag als het eindscherm).
   function schemaHtml() {
     var c = R.casus, v = R.race.verslag(), eind = R.gids ? R.gids.eind : c.raceDuur;
     var rijen = v.tijdlijn.filter(function (r) { return r.t < eind - 1e-9; });
     var klaring = null;
-    if (!R.gids) c.gebeurtenissen.forEach(function (g) { if (g.type === 'klaring') klaring = g; });
-    function cel(r, metUur) {
-      var j = r.jij, inh;
-      if (j.soorten.length) {
-        inh = j.soorten.map(function (so) { return icoon(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : ''); }).join('');
-      } else inh = j.soort === 'geblokkeerd' ? icoon('kruis') : '<i></i>';
-      var kl = 'sc' + (j.soorten.length ? ' gaf' : '') +
-        (!R.gids && M.geblokkeerd(c, 'slik', r.t) ? ' m' : '') + (klaring && r.t >= klaring.t - 1e-9 ? ' ibu' : '');
-      return '<li class="' + kl + '" aria-label="' + r.tijdTekst + ': ' + j.tekst + '">' + (metUur ? '<small>' + r.t + '</small>' : '') + inh + '</li>';
+    if (!R.gids) c.gebeurtenissen.forEach(function (g) { if (g.type === 'klaring' && !klaring) klaring = g; }); // de eerste
+    function inhoud(j, kort) {
+      if (j.soorten.length) return j.soorten.map(function (so) {
+        if (c.poortjes.dosisKnoppen) return '<b class="mg">' + getal(so.aantal * c.dosis.mg, 0) + '</b>';
+        return icoon(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : '') + (kort ? '' : ' ' + (KEUZENAAM[so.soort === 'tablet' ? 'slik' : so.soort] || so.soort));
+      }).join(' ');
+      if (j.soort === 'geblokkeerd') return icoon('kruis') + (kort ? '' : ' slikken lukte niet');
+      if (j.geenKeuze) return icoon('kruis') + (kort ? '' : ' geen keuze');
+      return kort ? '<i></i>' : '';
     }
     var s = '<p class="schema-kop">Jouw doseerschema: wanneer gaf je wat</p>';
-    if (c.id === 'lithium') {
+    if (perDagCasus(c)) {
       var perDag = Math.round(24 / c.poortjes.interval), dagen = Math.ceil(rijen.length / perDag);
-      s += '<ul class="schema schema-dag" style="--r:' + (perDag + 1) + '"><li class="sk">dag</li>';
-      for (var u = 0; u < perDag; u++) s += '<li class="sk">' + rijen[u].t + ' u</li>';
+      s += '<div class="schema tl-dag' + (dagen > 12 ? ' veel' : '') + '" style="--k:' + perDag + '"><span class="sk dag"></span>';
+      for (var u = 0; u < perDag; u++) s += '<span class="sk">' + rijen[u].t + ' u</span>';
+      s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? 'mg/dag' : 'per dag') + '</span>';
       for (var d = 0; d < dagen; d++) {
-        s += '<li class="sk' + (klaring && d * 24 >= klaring.t - 1e-9 ? ' ibu' : '') + '">' + d + '</li>';
-        for (var q = 0; q < perDag; q++) s += cel(rijen[d * perDag + q], false);
+        var ibu = klaring && d * 24 >= klaring.t - 1e-9;
+        s += '<span class="sk dag' + (ibu ? ' ibu' : '') + '">Dag ' + d + '</span>';
+        var som = 0;
+        for (var q = 0; q < perDag; q++) {
+          var r = rijen[d * perDag + q], j = r.jij;
+          j.toedieningen.forEach(function (x) { som += x.aantal; });
+          s += '<span class="sc' + (j.soorten.length ? ' gaf' : '') + (j.geenKeuze && !j.soorten.length ? ' geen' : '') + (ibu ? ' ibu' : '') +
+            '" aria-label="Dag ' + d + ', ' + r.t % 24 + ' uur: ' + j.tekst + '">' + inhoud(j, true) + '</span>';
+        }
+        s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? getal(som * c.dosis.mg, 0) : som + '×') + '</span>';
       }
-      s += '</ul>';
+      s += '</div>';
     } else {
-      s += '<ul class="schema schema-uur">' + rijen.map(function (r) { return cel(r, true); }).join('') + '</ul>';
+      var blok = null;
+      if (!R.gids) c.gebeurtenissen.forEach(function (g) { if (g.type === 'blokkade') blok = g; });
+      s += '<ul class="schema tl-uur">' + rijen.map(function (r) {
+        var j = r.jij, m = blok && r.t >= blok.van - 1e-9 && r.t < blok.tot - 1e-9;
+        var gaf = j.soorten.length || j.soort === 'geblokkeerd' || j.geenKeuze;
+        return '<li class="tl-rij' + (gaf ? ' gaf' : '') + (j.geenKeuze && !j.soorten.length ? ' geen' : '') + (m ? ' m' : '') +
+          '" aria-label="Uur ' + r.t + ': ' + j.tekst + '"><span class="tl-t">' + (gaf || r.t % 3 === 0 ? 'uur ' + r.t : '') +
+          '</span><span class="tl-as"></span><span class="tl-ic">' + inhoud(j, false) + '</span></li>';
+      }).join('') + '</ul>';
     }
     var leg = [];
     if (!R.gids && c.gebeurtenissen.some(function (g) { return g.type === 'blokkade'; })) leg.push('<span class="sl m"></span>misselijk');
-    if (klaring) leg.push('<span class="sl ibu"></span>ibuprofen');
-    if (rijen.some(function (r) { return !r.jij.soorten.length && r.jij.soort === 'geblokkeerd'; })) leg.push('<span class="sl x">' + icoon('kruis') + '</span>slikken lukte niet');
-    s += '<p class="schema-tel">' + v.telling.toedienmomenten + ' keer iets gegeven · samen ' + v.telling.totaleDosis.tekst + (leg.length ? ' · ' + leg.join(' · ') : '') + '</p>';
+    if (klaring) leg.push('<span class="sl ibu"></span>' + (klaring.label || 'ibuprofen'));
+    var t = v.telling, pd = t.perDag, regels = [];
+    if (R.gids) { // oefenronde: 16 uur, dus geen "per dag"
+      regels.push('<b>' + t.toedienmomenten + ' keer iets gegeven</b>, samen ' + t.totaleDosis.tekst + ' (' + pd.grens + ')');
+    } else if (perDagCasus(c)) {
+      regels.push('Gemiddeld <b>' + pd.tekst + '</b>');
+      regels.push(pd.grens.charAt(0).toUpperCase() + pd.grens.slice(1));
+    } else {
+      var over = t.dagteller && t.dagteller.over;
+      regels.push('<b' + (over ? ' class="over"' : '') + '>' + pd.tekst + '</b> · ' + pd.grens + (over ? ': <span class="over">lever beschadigd</span>' : ''));
+    }
+    if (t.geenKeuze) regels.push('<span class="over">' + t.geenKeuze + '× geen keuze gemaakt</span>');
+    if (leg.length) regels.push(leg.join(' · '));
+    s += '<p class="schema-tel">' + regels.join('<br>') + '</p>';
     return s;
   }
 
@@ -1530,7 +1691,7 @@
     var i = R.i;
     if (R.gids) toonIntro(0);
     else if (i === 0) toonIntro(1);
-    else toonEinde();
+    else toonEinde(); // na race 2 én na de bonusrace
   }
 
   // ------------------------------------------------------------------------------------------
@@ -1540,17 +1701,69 @@
     var c = $('scherm-einde');
     c.innerHTML = '';
     naarScherm('einde');
-    var races = staat.verslagen.slice(0, 2);
+    var races = staat.verslagen.slice(0, 3);
     var data = {
       naam: staat.naam,
       races: races,
-      totaal: races.reduce(function (s, v) { return s + (v ? v.opbouw.totaal : 0); }, 0),
-      curves: staat.curves.slice(0, 2),
-      casussen: RACES.map(function (id) { return M.casus(id); })
+      // totaal = race 1 + race 2 (de bonusrace telt niet mee: zelfde lat voor iedereen op het scorebord)
+      totaal: races.slice(0, 2).reduce(function (s, v) { return s + (v ? v.opbouw.totaal : 0); }, 0),
+      curves: staat.curves.slice(0, 3),
+      casussen: RACES.map(function (id) { return M.casus(id); }),
+      bonus: function () { toonIntro(2); }
     };
     if (!SoS.einde || typeof SoS.einde.toon !== 'function') return;
     var h = SoS.einde.toon(c, data, opnieuw);
     if (h && typeof h.stop === 'function') staat.moduleStop = h.stop;
+  }
+
+  // ------------------------------------------------------------------------------------------
+  // Hoofdmenu (knop linksboven op elk scherm behalve start): rondgaan in het spel. Tijdens een race staat de
+  // klok stil zolang het menu open is. Een race die je via het menu verlaat, telt niet mee.
+  // ------------------------------------------------------------------------------------------
+  function stopRace() {
+    if (!R) return;
+    if (!R.klaar) { R.klaar = true; root.cancelAnimationFrame(R.rafId); }
+    $('melding').classList.remove('zicht');
+    $('finish').hidden = true;
+  }
+  var menuSinds = 0;
+  function openMenu() {
+    unlock();
+    speel('tik');
+    if (!$('menu').hidden) return;
+    staat.pauze = true;
+    menuSinds = performance.now();
+    var lijst = $('menu-lijst');
+    lijst.innerHTML = '';
+    var bezig = R && !R.klaar && /^(race|tutorial)/.test(staat.fase);
+    function knop(tekst, actie, fn, hoofd, huidig) {
+      lijst.appendChild(el('button', { type: 'button', class: hoofd ? 'knop-paars' : 'knop-lijn', 'data-menu': actie,
+        'aria-current': huidig ? 'true' : null, text: tekst, onclick: function () { sluitMenu(); fn(); } }));
+    }
+    knop(bezig ? 'Verder spelen' : 'Terug', 'verder', function () {}, true);
+    knop('Oefenronde', 'oefenronde', function () { stopRace(); startRace(0, SoS.tutorial); }, false, staat.fase === 'tutorial');
+    RACES.forEach(function (id, i) {
+      knop(raceNaam(i) + ' · ' + M.casus(id).naam, 'race-' + (i + 1), function () { stopRace(); toonIntro(i); },
+        false, staat.fase === 'race' + (i + 1) || staat.fase === 'intro' + (i + 1));
+    });
+    if (staat.verslagen.some(Boolean)) knop('Eindverslag', 'einde', function () { stopRace(); toonEinde(); }, false, staat.fase === 'einde');
+    knop('Naar het begin', 'begin', function () { stopRace(); naarScherm('start'); });
+    if (bezig) lijst.appendChild(el('small', { text: 'De klok staat stil. Kies je iets anders, dan telt deze race niet mee.' }));
+    $('menu').hidden = false;
+    var eerste = lijst.querySelector('button');
+    if (eerste) eerste.focus({ preventScroll: true });
+  }
+  function sluitMenu() {
+    if ($('menu').hidden) return;
+    $('menu').hidden = true;
+    staat.pauze = false;
+    var weg = performance.now() - menuSinds;
+    if (R && !R.klaar) {
+      R.laatsteTs = null;
+      if (R.gids) { R.gids.beatVan += weg; R.gids.beatTot += weg; R.gids.wijsVanaf += weg; } // vertelstap loopt verder waar hij was
+      if (R.psFlits) R.psFlits.tot += weg;
+    }
+    $('menu-knop').focus({ preventScroll: true });
   }
 
   function opnieuw() {
@@ -1565,7 +1778,7 @@
   Object.defineProperty(SoS, 'debug', {
     enumerable: true, configurable: false,
     get: function () {
-      var r = R && (staat.fase === 'race1' || staat.fase === 'race2' || staat.fase === 'tutorial') ? R : null;
+      var r = R && (/^race[123]$/.test(staat.fase) || staat.fase === 'tutorial') ? R : null;
       var snap = {
         fase: staat.fase, naam: staat.naam, speed: SPEED,
         casus: r ? r.casus.id : null,
@@ -1585,7 +1798,9 @@
         duren: (staat.duren || []).slice(),
         gids: r && r.gids ? { stap: Math.min(r.gids.i + 1, r.gids.stappen.length), bevroren: r.gids.bevroren,
           wijs: r.gids.bevroren && r.gids.i < r.gids.stappen.length ? r.gids.stappen[r.gids.i].knop : null, zin: $('melding').getAttribute('data-zin') } : null,
-        tutorialDuur: staat.tutorialDuur || null
+        tutorialDuur: staat.tutorialDuur || null,
+        wacht: r ? !!r.wacht : false,
+        menu: !$('menu').hidden
       };
       return Object.freeze(snap);
     }
@@ -1640,7 +1855,7 @@
     doc.addEventListener('pointerdown', unlock, true);
     doc.querySelector('[data-actie="start-race"]').addEventListener('click', function () {
       unlock();
-      if (staat.fase !== 'intro1' && staat.fase !== 'intro2') return;
+      if (!/^intro[123]$/.test(staat.fase)) return;
       speel('tik');
       startRace(staat.introIndex);
     });
@@ -1650,6 +1865,8 @@
       naRace();
     });
     $('podium').addEventListener('pointerdown', tikPodium);
+    $('menu-knop').addEventListener('click', openMenu);
+    doc.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') sluitMenu(); });
     root.addEventListener('resize', function () { if (R && !R.klaar) meetDoek(); else if (R) { meetDoek(); teken(performance.now()); } });
     naarScherm('start');
   }

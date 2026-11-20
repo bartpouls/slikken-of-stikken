@@ -59,7 +59,9 @@ const BASIS = `http://127.0.0.1:${server.address().port}/index.html`;
 // Strategieën
 // ---------------------------------------------------------------------------------------------
 const K_PARA = Math.LN2 / 2.5; // T½ 2,5 uur (staat in de tutorial: "elke 2,5 uur is de helft weg")
-const vast = (kaart) => (g) => kaart[g] || null; // kaart: {index: {route, aantal}}
+const vast = (kaart) => (g) => kaart[g] || null; // kaart: {index: {route, aantal}}; geen plan = "Overslaan" tikken
+// Sinds v2.2 kost een poortje zonder keuze punten ("Overslaan is ook een keuze"). Elke bot tikt daarom Overslaan
+// op poortjes waar hij niets wil geven, behalve de bot "niets (geen enkele tik)" (geenTik).
 const tab = { route: 'slik', aantal: 1 }, zet = { route: 'zetpil', aantal: 1 }, spu = { route: 'spuit', aantal: 1 };
 const niets = { route: 'niets', aantal: 1 }, dubbel = { route: 'slik', aantal: 2 };
 
@@ -68,7 +70,7 @@ const PARA = {
   spuit: { naam: 'spuit-variant (12 u spuit)', plan: vast({ 0: tab, 6: tab, 12: spu, 18: tab }) },
   zetpil: { naam: 'zetpil-variant (12 u zetpil)', plan: vast({ 0: tab, 6: tab, 12: zet, 18: tab }) },
   gemist: { naam: 'gemiste dosis (niets op 12 u)', plan: vast({ 0: tab, 6: tab, 18: tab }) },
-  niets: { naam: 'niets (geen enkele tik)', plan: () => null },
+  niets: { naam: 'niets (geen enkele tik: elk poortje "geen keuze")', plan: () => null, geenTik: true },
   elkuur: { naam: 'elk uur slikken (waar het kan)', plan: (g) => (g >= 10 && g < 16 ? null : tab) },
   slimA: { naam: 'slim A: spuit 0, tablet 5, spuit 11, zetpil 16', plan: vast({ 0: spu, 5: tab, 11: spu, 16: zet }) },
   slimB: { naam: 'slim B: tablet 0, tablet 5, zetpil 10, zetpil 16', plan: vast({ 0: tab, 5: tab, 10: zet, 16: zet }) },
@@ -234,7 +236,7 @@ async function meetRaceUi(page) {
     neem('scherm', q('#scherm-race')); neem('kop', q('.race-kop')); neem('klok', q('#klok')); neem('qaly', q('#qaly'));
     neem('qaly-label', q('.qaly-label'), true); neem('qaly-getal', q('#qaly-getal'));
     neem('lever', q('#lever')); neem('lever-icoon', q('.lever-icoon')); neem('lever-tekst', q('#lever-tekst')); neem('lever-meter', q('.lever-meter')); neem('lever-max', q('.lever-max'));
-    neem('delen', q('#delen')); neem('deel-1', q('#deel-1')); neem('deel-2', q('#deel-2')); neem('patient', q('#patient')); neem('patient-kop', q('#patient-kop')); neem('patient-naam', q('#patient-naam'), true);
+    neem('tijdstrook', q('#tijdstrook')); neem('deel-1', q('#deel-1')); neem('deel-2', q('#deel-2')); neem('patient', q('#patient')); neem('patient-kop', q('#patient-kop')); neem('patient-naam', q('#patient-naam'), true);
     neem('podium', q('#podium')); neem('doek', q('#doek')); neem('knoppen', q('#knoppen')); neem('demp', q('#demp'));
     [...document.querySelectorAll('#knoppen .actie')].forEach((b) => neem('knop-' + b.getAttribute('data-actie'), b, true));
     uit.aantalKnoppen = document.querySelectorAll('#knoppen .actie').length;
@@ -304,7 +306,7 @@ async function speelRace(page, run, nr) {
   const besluit = {};
   const hist = []; // gegeven toedieningen (poortje-index) voor de greedy-bot
   const uit = { casus, strategie: strat.naam, maxC: 0, leverZichtbaar: null, tikkenRace: 0, metingen: 0 };
-  const secPerUur = casus === 'paracetamol' ? 90 / 24 : 90 / 240;
+  const secPerUur = casus === 'paracetamol' ? 90 / 24 : 70 / 240;
   const limiet = Date.now() + ((24 * (casus === 'paracetamol' ? 1 : 10)) * secPerUur / speed + 3 / speed + 40) * 1000;
   const tikkenVoor = run.tikken;
   let gemeten = new Set();
@@ -315,6 +317,12 @@ async function speelRace(page, run, nr) {
     if (!d || d.fase !== 'race' + (nr + 1)) { await sleep(20); continue; }
     if (d.C > uit.maxC) uit.maxC = d.C;
     if (d.klaar) break;
+    if (d.wacht) { // plotwending: de klok staat stil tot de speler op Verder tikt
+      await sleep(Math.max(200, 800 / speed));
+      await tik(page, run, '[data-actie="wending-verder"]');
+      uit.wendingen = (uit.wendingen || 0) + 1;
+      continue;
+    }
     // leverschade zichtbaar op het scherm (levermeter "vol")
     if (casus === 'paracetamol' && d.dagteller > 4000 && uit.leverZichtbaar == null) {
       uit.leverZichtbaar = await page.evaluate(() => {
@@ -329,14 +337,14 @@ async function speelRace(page, run, nr) {
         // net een poortje gepasseerd: bijhouden wat er gegeven is (greedy) en af en toe het scherm meten
         laatsteG = g;
         hist.length = 0;
-        d.gegeven.forEach((x, i) => { if (x && x !== 'leeg' && x !== 'niets' && x !== 'geblokkeerd') hist.push(i); });
+        d.gegeven.forEach((x, i) => { if (x && x !== 'leeg' && x !== 'niets' && x !== 'geblokkeerd' && x !== 'geen') hist.push(i); });
         const meetMoment = casus === 'paracetamol' ? [1, 11, 20] : [2, 16, 27];
         if (meetMoment.includes(g) && !gemeten.has(g)) { gemeten.add(g); run.metingen.push(await meetScherm(page)); uit.metingen++; }
       }
       if (!(g in besluit)) {
         if (strat.besluit) {
-          if (d.klok >= p.t - strat.vooruit) besluit[g] = strat.besluit(g, d, hist);
-        } else besluit[g] = strat.plan(g);
+          if (d.klok >= p.t - strat.vooruit) besluit[g] = strat.besluit(g, d, hist) || (strat.geenTik ? null : niets);
+        } else besluit[g] = strat.plan(g) || (strat.geenTik ? null : niets);
       }
       const wil = besluit[g];
       if (wil && p.open && d.klok < p.t - marge) {
@@ -362,7 +370,7 @@ async function speelRace(page, run, nr) {
   uit.verwacht = [];
   for (let g = 0; g < n; g++) {
     const w = besluit[g];
-    uit.verwacht.push(!w ? 'leeg' : (w.route + (w.aantal > 1 ? '×' + w.aantal : '')));
+    uit.verwacht.push(!w ? 'geen' : (w.route + (w.aantal > 1 ? '×' + w.aantal : '')));
   }
   uit.besluit = besluit;
   uit.afwijkingen = [];
@@ -396,7 +404,7 @@ async function leesEinde(page) {
       regels: [regels(0), regels(1)],
       dagteller: dag ? { over: dag.classList.contains('over'), tekst: [...dag.children].map((c) => c.textContent.trim()).join(' ').replace(/\s+/g, ' ') } : null,
       praktijk: [...document.querySelectorAll('[data-zin="praktijk"]')].map((e) => e.textContent.trim()),
-      vraag: (q('[data-eind="vraag"]') || {}).textContent || null
+      vraag: (q('[data-eind="vraag"]') || {}).textContent || null // vervallen in v2.2 (verwacht: null)
     };
   });
 }
@@ -413,7 +421,7 @@ function schemaVanRooster(rooster, casus) {
   }
   return sch;
 }
-const roosterVerwacht = (v) => (v === 'leeg' || v === 'niets' ? 'overgeslagen' : v.startsWith('slik') ? 'tablet' : v);
+const roosterVerwacht = (v) => (v === 'niets' ? 'overgeslagen' : v === 'geen' ? 'geenKeuze' : v.startsWith('slik') ? 'tablet' : v);
 
 // ---------------------------------------------------------------------------------------------
 // Eén run
@@ -498,7 +506,7 @@ async function speelRunBinnen(page, ctx, run, cfg, vp, speed, zetGeladen) {
   run.races.forEach((r, i) => {
     r.scherm = getalVanScherm(i === 0 ? run.einde.race0 : run.einde.race1);
     r.schema = schemaVanRooster(run.einde.rooster[i], casussen[i]);
-    const ss = S.scoreSchema(casussen[i], r.schema);
+    const ss = S.scoreSchema(casussen[i], r.schema, { geenKeuze: run.einde.rooster[i].filter((c) => c.soort === 'geenKeuze').map((c) => c.index) });
     r.scoreSchema = ss.stand.totaal;
     r.uren = ss.verslag.uren;
     r.lever = ss.verslag.lever || null;
@@ -811,8 +819,11 @@ resultaten.forEach((runs, vi) => {
     const a = ref.tut.ui || {}, b = ref.uiRace1 || {};
     const sleutels = [...new Set([...Object.keys(a), ...Object.keys(b)])];
     const verschil = [];
+    // v2.2 (keuze Bart/Claude): de stukken van de tijdstrook zijn naar verhouding van de duur van deel 1 en deel 2.
+    // Die lengte verschilt per ronde (oefenronde 15 u, race 24 u); plaats, breedte, letter en kleur moeten gelijk zijn.
+    const zonderHoogte = (o, k) => (o && /^deel-[12]$/.test(k) ? { ...o, y: undefined, h: undefined } : o);
     for (const k of sleutels) {
-      const x = JSON.stringify(a[k]), y = JSON.stringify(b[k]);
+      const x = JSON.stringify(zonderHoogte(a[k], k)), y = JSON.stringify(zonderHoogte(b[k], k));
       if (x !== y) verschil.push(`${k}: oefenronde ${x} ≠ race 1 ${y}`);
     }
     const toegestaan = verschil.filter((v) => /^knop-spuit: /.test(v) && /"rand"/.test(v)); // markering van de aangewezen knop (rand)
@@ -831,7 +842,8 @@ resultaten.forEach((runs, vi) => {
     L.push(`C3 (meting): in de oefenronde getikt (stap:knop) ${ref.tutActies.join(', ')}; door het poortje uitgevoerd (poortje:keuze) ${toegepast}. ` +
       `Alle vier de knoppen van race 1 (Tablet, Zetpil, Spuit, Niets) getikt én op een poortje uitgevoerd: ${jn(c3)}. Dagteller aan het eind: ${nl((ref.tut.dagteller || 0) / 1000, 0)} g (maximum 4 g).`);
     // C4: te volgen met alleen de aangewezen knop
-    c4a = volleC.every((r) => r.tut.stappen.length === 5 && r.tut.stappen.every((x) => x.aantalWijs === 1) && r.tut.klokStil.every(Boolean) && r.tut.eindkaart && r.tut.eindkaart.kop === 'Klaar?');
+    // v2.2: vier knopstappen (tablet, Overslaan, spuit, zetpil); de rest zijn vertelstappen
+    c4a = volleC.every((r) => r.tut.stappen.length === 4 && r.tut.stappen.every((x) => x.aantalWijs === 1) && r.tut.klokStil.every(Boolean) && r.tut.eindkaart && r.tut.eindkaart.kop === 'Klaar?');
     L.push(`C4 (meting): ${volleC.length} runs door de hele oefenronde met alleen tikken op de gemarkeerde knop (steeds precies 1 gemarkeerde knop, klok staat stil tot de tik) en de knop "${ref.tut.eindkaart.knop}" op het eindkaartje "${ref.tut.eindkaart.kop}": ${jn(c4a)} (runs ${volleC.map((r) => r.cfg.id).join(', ')}).`);
     const normC = volleC.find((r) => r.cfg.normaal);
     if (normC) {
@@ -842,8 +854,9 @@ resultaten.forEach((runs, vi) => {
     L.push(`  Zinnen bij lopende klok: ${ref.tut.zinnen.map((x) => '“' + x + '”').join(' · ')}`);
     // C5: introkaartje race 2
     const i2 = ref.intro2 || [];
-    c5 = i2.some((z) => /Overslaan/.test(z)) && i2.some((z) => /2 tabletten/.test(z)) && i2.every((z) => (z.match(/[.!?](\s|$)/g) || []).length === 1);
-    L.push(`C5 (meting): introkaartje race 2 heeft ${i2.length} regels, elk één zin; "Overslaan" en "2 tabletten" staan erop: ${jn(c5)}. Regels: ${i2.map((z) => '“' + z + '”').join(' · ')}`);
+    // v2.2: "Overslaan" heet in beide races zo, dus geen verschil meer; "2 tabletten" wel
+    c5 = i2.some((z) => /2 tabletten/.test(z)) && i2.every((z) => (z.match(/[.!?](\s|$)/g) || []).length === 1);
+    L.push(`C5 (meting): introkaartje race 2 heeft ${i2.length} regels, elk één zin; "2 tabletten" staat erop: ${jn(c5)}. Regels: ${i2.map((z) => '“' + z + '”').join(' · ')}`);
   } else L.push('Geen run met volledige oefenronde.');
   L.push('');
 

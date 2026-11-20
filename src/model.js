@@ -6,6 +6,7 @@
  * PUBLIEKE API (voor UI- en scorebouwers)
  * ---------------------------------------
  * M.CASUSSEN.paracetamol / M.CASUSSEN.lithium   Casusdata, letterlijk uit het casusblad (zie onder).
+ * M.CASUSSEN.carbamazepine          Bonusrace, CONCEPT (concept: true): getallen uit geheugen, wacht op akkoord.
  * M.casus(id)                       -> casusobject (id 'paracetamol' | 'lithium', of een object zelf).
  * M.venster(casus, t)               -> {laag, hoog}: therapeutisch venster op tijdstip t (uur).
  *                                      Komt uit casus.venster (reeks [{vanaf, laag, hoog}], stapsgewijs);
@@ -227,7 +228,67 @@
     nabespreking: 'In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.'
   };
 
-  var CASUSSEN = { paracetamol: paracetamol, lithium: lithium };
+  // Casus 3 — Carbamazepine (bonusrace). CONCEPT: getallen uit bronnen en spelkeuzes (zie docs/bouwopdracht.md,
+  // "Concept casus 3"); Bart akkoord op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend
+  // venster). Nog niet in het casusblad.
+  var carbamazepine = {
+    id: 'carbamazepine',
+    concept: true,
+    naam: 'Carbamazepine',
+    patient: 'Meneer El Idrissi',
+    gewichtKg: 70,
+    verhaal: 'Meneer El Idrissi (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.',
+    eenheid: { dosis: 'mg', concentratie: 'mg/L', tijd: 'uur' },
+    dosis: { mg: 200, stof: 'carbamazepine', tekst: 'eenheid 200 mg; knoppen 200, 400 of 800 mg per poortje' },
+    VdPerKg: 1.2,
+    Vd: 84,
+    VdTekst: '1,2 L/kg → 84 L',
+    Thalf: 36,
+    ThalfTekst: '36 uur bij de start; na 3 weken gewenning ±16 uur',
+    routes: {
+      slik: { dosis: 200, F: 0.8, ka: 0.4, tekst: '200 mg per eenheid, F = 0,8, ka = 0,4 /u (piek ±8 u na inname)' }
+    },
+    zone: { laag: 4, hoog: 12, tekst: '4–12 mg/L' },
+    // Meeschuivend venster: in de eerste 6 dagen is meneer El Idrissi nog niet gewend aan de bijwerkingen (duizelig,
+    // slaperig, wankel): bovenkant 8 mg/L. Daarna 12 mg/L. Spelkeuze voor "start laag, verhoog langzaam".
+    venster: [{ vanaf: 0, laag: 4, hoog: 8 }, { vanaf: 144, laag: 4, hoog: 12 }],
+    toxisch: 20,
+    toxischTekst: '> 20 mg/L',
+    bovengrens: { type: 'concentratie', waarde: 20, tekst: '> 20 mg/L' },
+    poortjes: {
+      interval: 12, tijden: reeks(0, 12, 56), aantal: 56, keuzes: ['200 mg', '400 mg', '800 mg', 'overslaan'],
+      dosisKnoppen: [1, 2, 4], // in eenheden van 200 mg
+      tekst: '2× per dag, om 0 en 12 uur (56 poortjes); 200, 400 of 800 mg, of overslaan'
+    },
+    start: null, // begint vandaag: de spiegel moet nog opbouwen
+    raceDuur: 672,
+    raceDuurTekst: '28 dagen patiënttijd',
+    gebeurtenissen: [
+      { type: 'klaring', t: 168, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 7 (t = 168 u)',
+        tekst: 'De lever van meneer El Idrissi went aan carbamazepine: hij gaat het sneller afbreken.',
+        gevolg: 'Klaring × 1,3 (autoinductie, stap 1 van 3).' },
+      { type: 'klaring', t: 336, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 14 (t = 336 u)',
+        tekst: 'Zijn lever breekt carbamazepine nóg sneller af.',
+        gevolg: 'Klaring × 1,3 (stap 2 van 3).' },
+      { type: 'klaring', t: 504, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 21 (t = 504 u)',
+        tekst: 'De gewenning van de lever is nu compleet.',
+        gevolg: 'Klaring × 1,3 (stap 3 van 3; samen × 2,2: T½ 36 → ±16 uur).' }
+    ],
+    echtSchema: {
+      tekst: '200 mg 2dd; na 2 weken 400 mg 2dd op geleide van de spiegel',
+      schema: reeks(0, 12, 56).map(function (t) { return { t: t, route: 'slik', aantal: t >= 336 ? 2 : 1 }; })
+    },
+    lekentaal: {
+      onder: 'Kans op een epileptische aanval.',
+      boven: 'Duizelig, dubbelzien, wankel lopen.'
+    },
+    nabespreking: 'In het echt: start laag, verhoog langzaam, en laat na een paar weken de spiegel prikken: de lever gaat carbamazepine zelf sneller afbreken.'
+  };
+
+  var CASUSSEN = { paracetamol: paracetamol, lithium: lithium, carbamazepine: carbamazepine };
 
   function casus(c) {
     if (c && typeof c === 'object') return c;

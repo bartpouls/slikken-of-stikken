@@ -79,11 +79,8 @@
 .eind-leg-m { width: 18px; height: 6px; border-radius: 2px; background: #c8eb78; }
 .eind-leg-ibu { width: 5px; height: 18px; border-radius: 2px; background: #ff9f43; }
 
-.eind-vraag {
-  width: 100%; margin: 22px 0 0;
-}
-.eind-vraag p { margin: 10px 0 0; font-size: 22px; font-weight: 800; line-height: 1.25; }
-.eind-acties { width: 100%; display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.eind-acties { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-top: 14px; }
+.eind-acties .knop-lijn.groot { width: 100%; min-height: 52px; font-size: 18px; }
 .eind-acties .knop-paars.groot { flex: 1 1 auto; max-width: none; }
 /* dempknop van app.js: dezelfde plek als op de andere schermen (rechtsboven), maar hij scrolt mee */
 #scherm-einde > .demp { position: absolute; top: calc(var(--veilig-boven) + 6px); right: calc(var(--veilig-rechts) + 6px); }
@@ -132,7 +129,13 @@
 
 /* rooster per poortje */
 .eind-rooster { list-style: none; margin: 0; padding: 0; }
-.eind-rooster-uur { display: grid; grid-template-columns: repeat(var(--k, 6), 1fr); gap: 5px; }
+.eind-rooster-uur { display: grid; grid-template-columns: 1fr; gap: 3px; }
+.eind-rooster-uur .eind-cel { min-height: 30px; padding: 3px 34px 3px 70px; justify-content: flex-start; gap: 8px; }
+.eind-rooster-uur .eind-cel-uur { top: 50%; transform: translateY(-50%); left: 12px; font-size: 13px; }
+.eind-rooster-uur .eind-cel-echt { top: 50%; transform: translateY(-50%); right: 30px; font-size: 12px; }
+.eind-rooster-uur .eind-cel-anders { bottom: auto; top: 50%; transform: translateY(-50%); right: 10px; }
+.eind-rooster-uur .eind-cel-ic svg { width: 24px; height: 24px; }
+.eind-cel-txt { font-size: 13px; font-weight: 700; color: #ff9d92; margin-left: 4px; }
 .eind-cel {
   position: relative; min-height: 52px; padding: 14px 2px 4px;
   display: flex; align-items: center; justify-content: center; gap: 0;
@@ -179,7 +182,7 @@
 .eind-leg-misselijk { width: 18px; height: 18px; border-radius: 5px; background: rgba(190, 230, 90, .16); border: 1.5px solid var(--lijn); }
 
 .eind-telling { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 18px; }
-.eind-telling > [data-tel="dagteller"] { grid-column: 1 / -1; }
+
 .eind-telling > div {
   display: flex; flex-direction: column; gap: 2px; padding: 10px 10px 9px;
   background: var(--vlak); border: 1.5px solid var(--lijn); border-radius: 14px;
@@ -221,6 +224,6 @@
   .eind-tegels { margin-top: 7px; gap: 3px; }
   .eind-tegel { height: 17px; }
   .eind-legenda { margin-top: 8px; }
-  .eind-vraag { margin-top: 14px; }
-  .eind-vraag p { font-size: 21px; }
 }
+
+.eind-cel-txt.mg { color: var(--wit); margin: 0; font-size: 13px; }

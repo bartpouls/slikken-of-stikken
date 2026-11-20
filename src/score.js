@@ -104,7 +104,8 @@
 })(this, function (haalModel) {
   'use strict';
 
-  var PUNTEN = Object.freeze({ ZONE: 1000, LAAG: 1000, HOOG: 1000, GIFTIG: 2000, LEVER_SCHADE: 1000, LEVER_PER_GRAM: 250, DT: 0.005 });
+  var PUNTEN = Object.freeze({ ZONE: 1000, LAAG: 1000, HOOG: 1000, GIFTIG: 2000, LEVER_SCHADE: 1000, LEVER_PER_GRAM: 250,
+    GEEN_KEUZE: 20, DT: 0.005 });
 
   var UITLEG = 'Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt ' +
     'zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY\'s.';
@@ -113,7 +114,8 @@
     { id: 'zone', label: 'in de zone' },
     { id: 'laag', label: 'te laag' },
     { id: 'hoog', label: 'te hoog' },
-    { id: 'giftig', label: 'lever / giftig' }
+    { id: 'giftig', label: 'lever / giftig' },
+    { id: 'keuze', label: 'geen keuze' }
   ]);
 
   var M = null;
@@ -140,7 +142,8 @@
     c = mdl().casus(c);
     var tK = eersteKlaring(c);
     var tl = {
-      som: { zone: 0, laag: 0, hoog: 0, giftig: 0 },
+      som: { zone: 0, laag: 0, hoog: 0, giftig: 0, keuze: 0 },
+      geenKeuze: [],                    // poortje-indexen die voorbijgingen zonder keuze (−GEEN_KEUZE elk)
       uren: { zone: 0, onder: 0, boven: 0, toxisch: 0 },
       onderTijdensBlokkade: 0,          // uren onder de zone terwijl slikken geblokkeerd is
       voor: { zone: 0, onder: 0, boven: 0 }, // uren vóór de klaringsgebeurtenis (lithium: ibuprofen)
@@ -175,10 +178,17 @@
       tl.som.giftig += straf;
       return straf;
     };
+    // Een poortje ging voorbij zonder dat de speler iets koos (ook geen Overslaan): vaste straf.
+    tl.geenKeuzeOp = function (index) {
+      if (tl.geenKeuze.indexOf(index) >= 0) return 0;
+      tl.geenKeuze.push(index);
+      tl.som.keuze -= PUNTEN.GEEN_KEUZE;
+      return -PUNTEN.GEEN_KEUZE;
+    };
     tl.stand = function () {
       var rg = {}, tot = 0;
       REGELS.forEach(function (r) { rg[r.id] = Math.round(tl.som[r.id]) + 0; tot += rg[r.id]; });
-      return { totaal: tot, regels: rg, exact: { zone: tl.som.zone, laag: tl.som.laag, hoog: tl.som.hoog, giftig: tl.som.giftig } };
+      return { totaal: tot, regels: rg, exact: { zone: tl.som.zone, laag: tl.som.laag, hoog: tl.som.hoog, giftig: tl.som.giftig, keuze: tl.som.keuze } };
     };
     return tl;
   }
@@ -224,6 +234,8 @@
       res.leverSchade = !!res.leverSchade;
       return res;
     };
+    // Poortje voorbij zonder keuze (de UI roept dit aan op het poortje). Geeft de straf (≤ 0) terug.
+    race.geenKeuze = function (index) { return teller.geenKeuzeOp(index); };
     race.stand = function () {
       var s = teller.stand();
       s.dagteller = sim.dagteller();
@@ -247,6 +259,7 @@
     var teller = maakTeller(c);
     for (var i = 0; i < uit.t.length - 1; i++) teller.meet(uit.C[i], uit.t[i], dt);
     uit.log.forEach(function (l) { teller.dosis(uit.log, l); });
+    (opties.geenKeuze || []).forEach(function (i) { teller.geenKeuzeOp(i); });
     return { stand: teller.stand(), verslag: verslag(c, uit.log, teller), model: uit };
   }
 
@@ -261,8 +274,10 @@
     return s.join(',');
   }
 
-  function echtDosisTekst(c) {
-    return c.id === 'lithium' ? getal(c.dosis.mg) + ' mg' : getal(c.routes.slik.dosis / 1000) + ' g';
+  // Dosis van het echte schema op één poortje, als tekst (aantal tabletten: carbamazepine wordt opgehoogd).
+  function echtDosisTekst(c, aantal) {
+    aantal = aantal || 1;
+    return c.dosis && c.dosis.mg ? getal(c.dosis.mg * aantal) + ' mg' : getal(aantal * c.routes.slik.dosis / 1000) + ' g';
   }
 
   var SOORT_MV = { tablet: 'tabletten', zetpil: 'zetpillen', spuit: 'spuiten' };
@@ -270,13 +285,13 @@
   function tijdlijn(c, log) {
     var Mo = mdl();
     var tijden = Mo.poortjes(c);
-    var echt = {}, et = echtDosisTekst(c);
-    c.echtSchema.schema.forEach(function (e) { echt[Mo.poortjeIndex(c, e.t)] = et; });
+    var echt = {}, echtN = {};
+    c.echtSchema.schema.forEach(function (e) { var i = Mo.poortjeIndex(c, e.t); echt[i] = echtDosisTekst(c, e.aantal); echtN[i] = e.aantal || 1; });
     var rijen = tijden.map(function (t, i) {
       return { index: i, t: t, tijdTekst: 'uur ' + t,
         jij: { soort: 'overgeslagen', aantal: 0, soorten: [], tekst: 'overgeslagen', toedieningen: [],
           geblokkeerd: false, geenPrik: false },
-        echt: echt[i] || null };
+        echt: echt[i] || null, echtAantal: echtN[i] || 0 };
     });
     log.forEach(function (l) {
       var j = rijen[Mo.poortjeIndex(c, l.t)].jij;
@@ -295,6 +310,7 @@
         j.soort = j.soorten[0].soort;
         j.aantal = j.soorten[0].aantal;
         j.tekst = j.soorten.map(function (so) {
+          if (c.poortjes.dosisKnoppen) return getal(so.aantal * c.dosis.mg) + ' mg'; // carbamazepine: dosis in mg
           return so.aantal > 1 ? so.aantal + ' ' + SOORT_MV[so.soort] : so.soort;
         }).join(' + ');
       } else if (j.geblokkeerd) { j.soort = 'geblokkeerd'; j.tekst = 'geblokkeerd'; }
@@ -306,16 +322,42 @@
     c = mdl().casus(c);
     var stand = teller.stand();
     var rijen = tijdlijn(c, log);
+    (teller.geenKeuze || []).forEach(function (i) {
+      var j = rijen[i] && rijen[i].jij;
+      if (j && !j.soorten.length && !j.geblokkeerd) { j.soort = 'geenKeuze'; j.tekst = 'geen keuze'; }
+      if (j) j.geenKeuze = true;
+    });
     var ok = log.filter(function (l) { return l.ok; });
     var momenten = rijen.filter(function (r) { return r.jij.toedieningen.length > 0; }).length;
     var tabletten = 0, nominaal = 0;
     ok.forEach(function (l) { tabletten += l.aantal; nominaal += l.dosis; });
-    var telling = { toedienmomenten: momenten };
-    if (c.id === 'lithium') {
+    var telling = { toedienmomenten: momenten, geenKeuze: (teller.geenKeuze || []).length };
+    if (c.dosis && c.dosis.mg) {
       var mg = tabletten * c.dosis.mg;
       telling.totaleDosis = { waarde: mg, eenheid: 'mg', tekst: getal(mg) + ' mg' };
     } else {
       telling.totaleDosis = { waarde: nominaal / 1000, eenheid: 'g', tekst: getal(nominaal / 1000) + ' g' };
+    }
+    // Per dag (dag 0 = uur 0–24): wat kreeg de patiënt gemiddeld per dag, naast de grens of het schema.
+    var dagen = Math.max(1, Math.round(c.raceDuur / 24)), perDag = [];
+    for (var dg = 0; dg < dagen; dg++) perDag.push(0);
+    var tabl = c.dosis && c.dosis.mg;
+    ok.forEach(function (l) { var d = Math.min(dagen - 1, Math.floor(l.t / 24 + 1e-9)); perDag[d] += tabl ? l.aantal : l.dosis / 1000; });
+    var gem = perDag.reduce(function (a, b) { return a + b; }, 0) / dagen;
+    if (tabl) {
+      var dag0 = c.echtSchema.schema.filter(function (e) { return e.t < 24; });
+      var laatste = c.echtSchema.schema.filter(function (e) { return e.t >= c.raceDuur - 24; });
+      var mgDag = function (rij) { var m = 0; rij.forEach(function (e) { m += (e.aantal || 1) * c.dosis.mg; }); return m; };
+      var schemaTekst = mgDag(dag0) === mgDag(laatste)
+        ? dag0.length + ' × ' + getal(c.dosis.mg * (dag0[0].aantal || 1)) + ' mg per dag'
+        : getal(mgDag(dag0)) + ' mg per dag, later ' + getal(mgDag(laatste)) + ' mg per dag';
+      telling.perDag = { dagen: perDag, gemiddeld: gem, eenheid: 'tabletten',
+        tekst: getal(Math.round(gem * 10) / 10) + ' tabletten per dag (' + getal(Math.round(gem * c.dosis.mg)) + ' mg)',
+        grens: 'schema: ' + schemaTekst + '; venster ' + c.zone.tekst };
+    } else {
+      telling.perDag = { dagen: perDag, gemiddeld: gem, eenheid: 'g',
+        tekst: getal(Math.round(gem * 10) / 10) + ' g per dag',
+        grens: 'max. ' + getal(c.routes.slik.dosis / 1000) + ' g per keer, ' + getal(c.bovengrens.maxPer24u / 1000) + ' g per dag' };
     }
     var bg = c.bovengrens;
     if (bg && bg.type === 'dagteller') {
@@ -422,6 +464,8 @@
           'Een vast schema op vaste tijden houdt de pijn weg en de lever heel.' };
     }
 
+    if (c.id === 'carbamazepine') return praktijkCarbamazepine(c, rijen, teller, doses);
+
     // lithium
     var tK = eersteKlaring(c), naDuur = T - tK;
     var isNa = function (r) { return r.t >= tK - 1e-9; };
@@ -506,6 +550,33 @@
           'minder op. In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.' };
     }
     return { regel: 'nabespreking', zin: c.nabespreking }; // vangnet
+  }
+
+  // Carbamazepine (bonusrace, concept): opbouwen, en na de gewenning van de lever ophogen.
+  function praktijkCarbamazepine(c, rijen, teller, doses) {
+    var T = c.raceDuur, tK = eersteKlaring(c);
+    var tabl = function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return n; };
+    var eersteWeek = rijen.filter(function (r) { return r.t < tK; });
+    var laatsteDagen = rijen.filter(function (r) { return r.t >= T - 120; });
+    var dubbelVroeg = eersteWeek.filter(function (r) { return tabl(r) >= 2; }).length;
+    var gemLaat = laatsteDagen.reduce(function (s, r) { return s + tabl(r); }, 0) / Math.max(1, laatsteDagen.length);
+    if (!doses.length) return { regel: 'niets',
+      zin: 'Meneer El Idrissi kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
+    if (teller.uren.toxisch > 0) return { regel: 'giftig',
+      zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus hoge doses stapelen zich op. ' +
+        'In het echt is de maximale dosis 1.200 mg per dag.' };
+    if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
+      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer El Idrissi werd duizelig: hij was nog niet ' +
+        'gewend aan het middel. Start laag en verhoog langzaam.' };
+    if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
+      zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +
+        'In het echt verhoogt de arts dan de dosis, op geleide van een spiegelbepaling.' };
+    if (teller.uren.boven / T > 0.02) return { regel: 'boven',
+      zin: 'De spiegel kwam ' + pct(teller.uren.boven / T) + ' van de tijd boven de 12: duizelig en dubbelzien. ' +
+        'Verhoog in kleine stappen en wacht een paar dagen op het effect.' };
+    return { regel: 'goed',
+      zin: 'Jij startte laag en hoogde de dosis op toen de lever het middel sneller ging afbreken. ' +
+        'Zo doet de arts het ook: start laag, verhoog langzaam, en laat de spiegel prikken.' };
   }
 
   return {

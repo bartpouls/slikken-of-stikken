@@ -114,6 +114,7 @@ await foto('04-race1-begin', 'Race 1: begin', 'Race 1', 'Aanloop: het eerste poo
 const plan = { 18: 'slik' };
 stappen.forEach((s) => { if (s.knop) plan[s.poortje] = s.knop; });
 let mi = 0, misselijkFoto = false, geweigerd = false, leverFoto = false;
+const gedaan1 = {};
 while (true) {
   const d = await dbg();
   if (d.fase !== 'race1' || d.klaar) break;
@@ -129,10 +130,17 @@ while (true) {
     }
     continue;
   }
-  if (!misselijkFoto && d.klok >= 9.35) {
-    misselijkFoto = true;
-    await foto('06-race1-misselijk', 'Race 1: plotwending (misselijk)', 'Race 1', 'Opa is misselijk na de narcose: slikken is geblokkeerd.');
+  if (d.wacht) { // plotwending: de klok staat stil tot de speler op Verder tikt
+    if (!misselijkFoto) {
+      misselijkFoto = true;
+      await sleep(600);
+      await foto('06-race1-misselijk', 'Race 1: plotwending (misselijk), klok staat stil', 'Race 1', 'Opa is misselijk na de narcose: slikken is geblokkeerd. De klok wacht op een tik.');
+    }
+    await sleep(400);
+    await tik('[data-actie="wending-verder"]');
+    continue;
   }
+  if (d.klok >= 3.2 && d.klok < 3.6 && !gedaan1.geen) { gedaan1.geen = true; await sleep(250); await foto('05b-race1-geen-keuze', 'Race 1: poortje voorbij zonder keuze', 'Race 1', 'Geen keuze gemaakt op uur 3: −20 punten.'); }
   if (!geweigerd && d.klok >= 10.3 && d.klok < 10.6) {
     geweigerd = true;
     await tik('#knoppen [data-actie="slik"]');
@@ -147,6 +155,8 @@ while (true) {
   const p = d.poortje;
   if (p && plan[p.index] && p.index >= 14 && p.open && !p.keuze && d.klok > p.t - 0.6 && d.klok < p.t - 0.15) {
     await tik(`#knoppen [data-actie="${plan[p.index]}"]`);
+  } else if (p && !plan[p.index] && p.index !== 3 && p.open && !p.keuze && !p.poging && d.klok > p.t - 0.6 && d.klok < p.t - 0.15) {
+    await tik('#knoppen [data-actie="niets"]'); // Overslaan is ook een keuze (uur 3 bewust zonder keuze: foto)
   }
   await sleep(30);
 }
@@ -186,10 +196,23 @@ while (true) {
     await sleep(500);
     await foto('12-race2-spuit', 'Race 2: plotwending (de spuitknop)', 'Race 2', 'Lithium bestaat niet als prik.');
   }
-  if (!gedaan.ibu && d.klok >= 121.5) {
-    gedaan.ibu = true;
-    await sleep(250);
-    await foto('13-race2-ibuprofen', 'Race 2: plotwending (ibuprofen)', 'Race 2');
+  if (d.wacht) {
+    if (!gedaan.ibu) {
+      gedaan.ibu = true;
+      await sleep(600);
+      await foto('13-race2-ibuprofen', 'Race 2: plotwending (ibuprofen), klok staat stil', 'Race 2');
+    }
+    await sleep(300);
+    await tik('[data-actie="wending-verder"]');
+    continue;
+  }
+  if (!gedaan.menu && d.klok >= 30) {
+    gedaan.menu = true;
+    await tik('[data-actie="menu"]');
+    await sleep(500);
+    await foto('12b-menu', 'Hoofdmenu tijdens race 2 (klok staat stil)', 'Menu');
+    await tik('[data-menu="verder"]');
+    await sleep(200);
   }
   await sleep(30);
 }

@@ -11,10 +11,12 @@
  *   eind      spelklok (uur) waarop de oefenronde stopt en "Klaar?" verschijnt
  *   deel2     spelklok (uur) waarop in de oefenronde "deel 2" begint (in een race: de eerste gebeurtenis
  *             uit de casusdata). Elke race bestaat uit twee delen: een gewoon stuk, en dan verandert er iets.
- *   stappen   [{ op, zin, knop, poortje, daarna }]  of een vertelstap  { op, zin, licht }
+ *   stappen   [{ op, zin, knop, poortje, daarna }]  of een vertelstap  { op, zin, licht, fig }
  *       vertelstap (zonder knop): de klok staat even stil, de zin staat in beeld en gaat vanzelf verder
  *                (of meteen, met een tik op het speelveld). licht = het schermonderdeel dat oplicht:
- *                'patient' | 'meter' (spiegelbalk bovenaan + gezicht) | 'banen' | 'delen' (deel 1 / deel 2).
+ *                'patient' (bovenbalk) | 'meter' (spiegelbalk bovenaan + gezicht) | 'banen' | 'klok' (klok + tijdstrook)
+ *                | 'delen' (tijdstrook: deel 1 / deel 2) | 'qaly' | 'lever' (dagteller) | 'knoppen' (+ volgend poortje).
+ *                fig 'draai' = een concentratie-tijdcurve die een kwartslag draait (zo staat hij op het scherm).
  *       op       spelklok (uur) waarop de klok stilstaat (−Infinity = meteen bij het begin)
  *       zin      de ene zin die dan in beeld staat
  *       zin 'lekentaal.onder' = de casusbladtekst "Au. De pijn komt terug."; zit de spiegel dan niet onder
@@ -31,8 +33,10 @@
  * De plotwendingen (misselijkheid, ibuprofen, geweigerde lithiumprik) zitten er bewust niet in: de
  * motor zet de blokkade van casus 1 in de oefenronde uit.
  *
- * Doses in de oefenronde: tablet (uur 0), spuit (uur 5), tablet (uur 9), zetpil (uur 13) = 4 × 1 g,
- * dus precies het dagmaximum uit het casusblad en nooit erboven. De zetpil op poortje 13 is
+ * Doses in de oefenronde: tablet (uur 0), spuit (uur 5), zetpil (uur 13) = 3 × 1 g. Zo blijft er 1 g ruimte
+ * onder het dagmaximum: geeft de speler op een vrij poortje zelf één dosis extra, dan komt de zetpil toch aan bod.
+ * Tussen de stappen kiest de speler zelf (de klok loopt door; geen keuze kost punten, net als in de race:
+ * dat staat uitgelegd op poortje 1, vóór het eerste vrije poortje). De zetpil op poortje 13 is
  * M.zetpil(13) uit de vaste reeks (F 0,35; ka 0,3 /u): een zwakke, zodat "nauwelijks" te zien is.
  * Zinnen bij "daarna" zijn de zinnen uit §3 Flow stap 2 van de bouwopdracht; "Au. De pijn komt terug."
  * komt uit het casusblad (de motor leest hem uit de casusdata).
@@ -43,20 +47,24 @@
   var SoS = root.SoS = root.SoS || {};
   SoS.tutorial = {
     casus: 'paracetamol',
-    eind: 16,
+    eind: 15,
     deel2: 12,
     stappen: [
-      { op: -Infinity, zin: 'Jij bent de dokter van opa Jan: jij bepaalt wat hij krijgt, en wanneer.', licht: 'patient' },
+      { op: -Infinity, zin: 'Jij regelt de medicijnen van opa Jan: wat hij krijgt, en wanneer.', licht: 'patient' },
+      { op: -Infinity, zin: 'Dit is een concentratie-tijdcurve, een kwartslag gedraaid: de tijd loopt naar beneden.', fig: 'draai' },
       { op: -Infinity, zin: 'Zijn gezicht staat op de spiegel: zoveel paracetamol zit er in zijn bloed.', licht: 'meter' },
-      { op: -Infinity, zin: 'Links van de streep is het te weinig en heeft hij pijn, in het groene vlak niet.', licht: 'banen' },
+      { op: -Infinity, zin: 'Links van de streep heeft hij pijn, in het groene vlak niet: blijf binnen dat venster.', licht: 'banen' },
+      { op: -Infinity, zin: 'Linksboven loopt de klok; de strook eronder laat zien hoe ver je in de race bent.', licht: 'klok' },
+      { op: -Infinity, zin: 'Een QALY is een jaar in goede gezondheid; hier zijn het spelpunten: in het groene vlak erbij, erbuiten eraf.', licht: 'qaly' },
+      { op: -Infinity, zin: 'De paarse lijnen zijn poortjes: kies vóór elk poortje een knop, op het poortje gebeurt het.', licht: 'knoppen' },
       { op: -Infinity, zin: 'Opa Jan heeft pijn: kies een tablet voor het eerste poortje.', knop: 'slik', poortje: 0,
         daarna: 'Een pil moet eerst door je maag.' },
-      { op: 1.5, zin: 'De pijn is weg: kies Niets om een poortje over te slaan.', knop: 'niets', poortje: 2,
-        daarna: 'Je lichaam ruimt het op: elke 2,5 uur is de helft weg.' },
+      { op: 0.3, zin: 'Bij elk poortje kies je iets: Overslaan is ook een keuze, geen keuze kost punten.', knop: 'niets', poortje: 1,
+        daarna: 'Kies nu zelf bij elk poortje, tot de volgende uitleg.' },
+      { op: 2.6, zin: 'De curve zakt: je lichaam ruimt het op, elke 2,5 uur is de helft weg.' },
       { op: 4.4, zin: 'lekentaal.onder', zinAnders: 'Kies nu de spuit.', knop: 'spuit', poortje: 5,
         daarna: 'Een prik werkt meteen, maar zakt net zo hard.' },
-      { op: 8.5, zin: 'Te veel kan ook, dus de dagteller linksboven telt elke gram: kies weer een tablet.', knop: 'slik', poortje: 9,
-        daarna: 'Meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.' },
+      { op: 8.5, zin: 'De dagteller telt elke gram: 1 g per keer, en boven 4 g per dag raakt de lever beschadigd.', licht: 'lever' },
       { op: 12, zin: 'Deel 2: in elke race verandert halverwege iets, en dan moet je plan mee.', licht: 'delen' },
       { op: 12.5, zin: 'Hier lukt slikken even niet: kies nu een zetpil.', knop: 'zetpil', poortje: 13,
         daarna: 'Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.' }

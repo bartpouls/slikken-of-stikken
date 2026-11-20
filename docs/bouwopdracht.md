@@ -9,12 +9,28 @@
 - **Twee delen.** Elke race toont een balk "Deel 1 · op schema" en "Deel 2 · verandering", en een geblokte strook in de tijdlijn waar deel 2 begint. Wát er verandert blijft een verrassing (§3 Flow stap 2); de oefenronde laat alleen zien dát er iets verandert.
 - **Doseerschema na de race.** Het kaartje "Race klaar" (en "Klaar?" na de oefenronde) toont naast de QALY-punten per poortje wat je gaf.
 
+**Wat is nieuw in v2.2 (feedback Bart, november 2026):** rekenmodel en getallen in het casusblad zijn ongewijzigd.
+- **Doelgroep:** het spel is een eerste kennismaking met voorschrijven, ook voor farmaciestudenten. De speler is niet "de dokter" maar "jij regelt de medicijnen".
+- **Geen keuze kost punten.** Overslaan is ook een keuze (knop "Overslaan" in beide races; in race 1 heette die "Niets"). Gaat een poortje voorbij zonder dat de speler iets koos, dan kost dat 20 QALY-punten (vijfde regel in de QALY-opbouw: *geen keuze*). Boven de knoppen staat steeds wat er klaarstaat voor het volgende poortje, met een balk die volloopt tot het poortje; nog niets gekozen en het poortje is dichtbij: rood "Kies nu". Een geweigerde tablet tijdens de misselijkheid telt als keuze.
+- **Plotwending: de klok stopt** tot de speler op "Verder" tikt (of op het speelveld). Zo mist niemand de verandering.
+- **Tijdstrook links.** De horizontale balk "deel 1 / deel 2" is een verticale strook links in het speelveld geworden, met de klok erboven: de tijd loopt overal van boven naar beneden.
+- **Bovenbalk** met race, middel en patiënt ("Race 1 · Paracetamol · Opa Jan"), links de menuknop, rechts de dempknop.
+- **Hoofdmenu (kleine versie):** menuknop linksboven op elk scherm behalve start: verder spelen, oefenronde, race 1, race 2, eindverslag, naar het begin. Tijdens een race staat de klok stil zolang het menu open is; een race die je via het menu verlaat, telt niet mee.
+- **Oefenronde:** elk schermonderdeel krijgt een uitlegzin (bovenbalk, spiegel als concentratie-tijdcurve die een kwartslag draait, spiegelbalk, banen, klok en tijdstrook, QALY-punten, poortjes en knoppen, dagteller, deel 2). De oefenronde vraagt drie doses (tablet, spuit, zetpil) in plaats van vier, zodat de zetpil ook aan bod komt als de speler zelf één dosis extra gaf. Tussen de stappen kiest de speler zelf.
+- **Therapeutisch venster als algemene regel** (Bart akkoord): "Blijf binnen het therapeutisch venster". Paracetamol: boven de streep, 1 g per keer en hooguit 4 g per dag; geen bovengrens in mg/L. Lithium: 0,6–1,0 mmol/L.
+- **Doseerschema na de race** van boven naar beneden: paracetamol één dag in uren, lithium één rij per dag. Daaronder gemiddeld per dag naast de grens (paracetamol: max. 1 g per keer, 4 g per dag; lithium: het schema per dag en het venster). Het eindverslag toont hetzelfde.
+- **Lithium sneller:** race 2 duurt ±70 seconden (was ±90).
+- **Nabespreekvraag vervallen:** de docent reflecteert straks met de groep vanuit de eindverslagen.
+- **Tijdstrook naar verhouding:** deel 1 en deel 2 zijn even lang als hun duur. De vergelijking oefenronde–race (§6C2) laat de lengte van die stukken buiten beschouwing.
+- **Eindverslag:** de curve staat daar bewust horizontaal, "zoals in een boek", met die uitleg erbij (de race was dezelfde curve, een kwartslag gedraaid).
+- **Bonusrace carbamazepine (concept):** via het menu en het eindscherm, telt niet mee in het totaal. Zie "Concept casus 3" onder het casusblad.
+
 Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor het rekenmodel: het spel neemt ze letterlijk over. Afwijken mag alleen na akkoord van Bart Pouls (inhoudelijk eigenaar).
 
 ## 1. Doel en doelgroep
 
 - **Wat:** een farmacokinetiek-race op de eigen telefoon. Je houdt de spiegel van een geneesmiddel in de goede zone door op het juiste moment te slikken (of een zetpil te geven, of te spuiten).
-- **Voor wie:** ouders en eerstejaars geneeskunde, zonder farmacologiekennis.
+- **Voor wie:** ouders en eerstejaars geneeskunde en farmacie, zonder farmacologiekennis. Het spel is een eerste kennismaking met voorschrijven.
 - **Waar:** ouderdag geneeskunde, blok van 12,5 minuten: ±2 min uitleg, tutorial, race 1, race 2, ±3 min nabespreking.
 - **Prestatieprobleem (wat doen spelers straks anders):** ze snappen dat (1) een pil tijd nodig heeft voordat hij werkt, (2) het lichaam een middel in een vast tempo opruimt (halfwaardetijd), (3) meer niet beter is, en (4) een ander middel de spiegel ongemerkt kan opdrijven.
 
@@ -23,7 +39,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 **Wel:**
 - Eén HTML-pagina, mobiel eerst (staand), werkt zonder installatie, account of server, en zonder internet na het laden. Geen externe bestanden of CDN's.
 - Speelnaam invoeren → tutorial → race 1 → race 2 → eindscherm.
-- Eindscherm: speelnaam, QALY-punten race 1, race 2 en totaal, en per race een kort eindverslag (zie §3). Plus één nabespreekvraag: "Wat deed je toen je onder de streep zakte?"
+- Eindscherm: speelnaam, QALY-punten race 1, race 2 en totaal, en per race een kort eindverslag (zie §3). (De nabespreekvraag is vervallen in v2.2.)
 - Een losse scorebordpagina voor de beamer: Bart of een student typt naam en totaal in, lijst sorteert zichzelf (alleen lokaal in die browser opgeslagen).
 - Geluid (korte blips à la Flappy Bird, zelf gesynthetiseerd, geen gekopieerde geluidsbestanden) met een dempknop.
 - Nederlands.
@@ -32,15 +48,15 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 
 ## 3. Spelmechaniek
 
-- **Poortjes in plaats van vrij tikken.** De tijdas schuift voorbij; op vaste doseermomenten (poortjes) kiest de speler wat er gebeurt. Niets kiezen = overslaan. Zo is het doseerschema dat het eindscherm toont altijd een realistisch schema op vaste tijden.
+- **Poortjes in plaats van vrij tikken.** De tijdas schuift voorbij; op vaste doseermomenten (poortjes) kiest de speler wat er gebeurt. Overslaan is ook een keuze; geen keuze kost punten (v2.2). Zo is het doseerschema dat het eindscherm toont altijd een realistisch schema op vaste tijden.
 - **Tijdas geschaald op de halfwaardetijd.** Elke race beslaat ±10 halfwaardetijden in ±90 seconden (60–120 s toegestaan). Daardoor voelt elke casus even snel, terwijl de klok laat zien dat het om uren (paracetamol) of dagen (lithium) gaat. Dat verschil is zelf een leerpunt.
 - **Directe feedback.** Elke keuze geeft binnen 100 ms beweging en geluid. Het verschil tussen slikken (vertraagd, lager) en spuiten (direct, hoog) moet je zien.
 - **Eerlijke race.** Iedereen speelt dezelfde casus, met de gebeurtenissen op hetzelfde moment. Toeval (zetpil) komt uit een vaste reeks die voor iedereen gelijk is.
 - **Score in QALY-punten.** Uitleg in het spel in één zin: *"Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer."* Het zijn spelpunten, geen echte QALY's; zeg dat ook zo. De bouwer ontwerpt de formule, maar die moet de botrangorde in §6B halen. Tijd in de zone levert punten op, tijd erbuiten kost punten, en hoe verder buiten de zone hoe meer (kwadratisch). Paracetamol: boven 4 g per 24 uur raakt de lever beschadigd (zware straf of einde race). Tijdens de race is de QALY-stand live zichtbaar.
 - **Eindverslag per race** (toedienverslag, één scherm):
-  - QALY-opbouw in vier regels: *in de zone* (+), *te laag* (−), *te hoog* (−), *lever / giftig* (−), en het totaal.
+  - QALY-opbouw in vijf regels: *in de zone* (+), *te laag* (−), *te hoog* (−), *lever / giftig* (−), *geen keuze* (−, v2.2), en het totaal.
   - Tijdlijn van jouw toedieningen (welk poortje, tablet / zetpil / spuit / overgeslagen) naast het echte schema uit het casusblad.
-  - Telling: aantal toedienmomenten, totale dosis en, bij paracetamol, de dagteller tegen het maximum van 4 g.
+  - Telling: aantal toedienmomenten en gemiddeld per dag naast de grens (paracetamol: max. 1 g per keer, 4 g per dag; lithium: schema en venster).
   - Eén zin die je keuzes koppelt aan de praktijk. Paracetamol bijvoorbeeld: *"Tijdens de misselijkheid koos jij de zetpil. Die werkte maar half: daar kun je niet op rekenen."* Lithium: *"Jij liet na de ibuprofen 30% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten."* Het spel mag nooit suggereren dat zelf pillen overslaan een goed idee is.
 
 ### Flow
@@ -114,6 +130,43 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 | Onder de zone, in lekentaal | "Kans op terugval: somber of juist ontremd." | |
 | Boven de zone, in lekentaal | "Trillen, misselijk, diarree. Nog hoger: verward, nieren in gevaar." | |
 | Nabespreking | "In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken." | |
+
+### Concept casus 3 — Carbamazepine (bonusrace) · CONCEPT
+
+Bonusrace, alleen via het menu en via de knop "Bonusrace" op het eindscherm. Telt niet mee in het totaal. Bart akkoord op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend venster, dosisknoppen 200/400/800 mg). De getallen zijn nagezocht via zoekresultaten; de Nederlandse bronnen (TDM-monografie, CBG-SmPC, UMC Utrecht) zijn vanuit de bouwomgeving niet zelf geopend.
+
+**Verhaal:** Meneer El Idrissi (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.
+
+| Veld | Waarde | Status / bron |
+|---|---|---|
+| Knoppen | 200 mg, 400 mg, 800 mg of Overslaan, per poortje | spelkeuze (Bart); 800 mg per keer 2× per dag = 1.600 mg/dag, boven het maximum van 1.200 mg/dag [SmPC] |
+| Vd | 1,2 L/kg → 84 L | 0,8–1,9 L/kg; bij onderhoud 1,24 L/kg [review, ScienceDirect] |
+| T½ | 36 uur bij de start; na 3 weken ±16 uur | eenmalig ±36 u [SmPC NL], 25–65 u; chronisch 12–17 u [FDA-label], 16–24 u [SmPC NL], 12–24 u [UMC Utrecht] |
+| F, ka | F = 0,8; ka = 0,4 /u (piek ±8 u na inname) | F 75–85% [review]; tmax 4–8 u; ka is een aanname |
+| Venster | 4–12 mg/L; in de eerste 6 dagen bovenkant 8 mg/L | 4–12 mg/L [UMC Utrecht, TDM]. Het lagere plafond is een spelkeuze voor "start laag": tolerantie voor de bijwerkingen in de hersenen ontstaat in de eerste weken [ILAE 2015; SCHN] |
+| Boven de zone, in lekentaal | "Duizelig, dubbelzien, wankel lopen." | ataxie en nystagmus vanaf ±10–15 mg/L [StatPearls; RCH] |
+| Toxisch | > 20 mg/L | 15–25 agressie, hallucinaties; 20–40 coma [StatPearls; RCH]: "ernstig" |
+| Onder de zone, in lekentaal | "Kans op een epileptische aanval." | |
+| Poortjes | 2× per dag, om 0 en 12 uur (56 poortjes) | spelkeuze |
+| Start | spiegel 0: hij begint vandaag | steady state na 1–2 weken [TDM] |
+| Racelengte | 28 dagen patiënttijd, ±110 s | spelkeuze |
+| Gebeurtenis | Autoinductie in drie stappen: dag 7, 14 en 21 klaring × 1,3 (samen × 2,2) | autoinductie compleet na 3–5 weken [FDA-label] |
+| Echt schema | 200 mg 2dd; vanaf dag 14 400 mg 2dd | start 200–400 mg/dag, langzaam ophogen naar 800–1.200 mg/dag [SmPC NL]; 100–200 mg/dag in wekelijkse stappen [ILAE] |
+
+Doorgerekend met het model uit §4 en de score van het spel (ook in tests/score.test.mjs):
+
+| Strategie | QALY |
+|---|---|
+| Echt schema | 943 |
+| Oplaaddosis 800 mg, dan het echte schema | 931 |
+| Nooit ophogen (200 mg 2dd) | 798 |
+| Meteen 400 mg 2dd | 434 |
+| Niets | −1000 |
+| 800 mg per keer | −2729 |
+
+Bronnen casus 3: [UMC Utrecht bepalingenwijzer](https://www.umcutrecht.nl/bepalingenwijzer/carbamazepine) · [TDM-monografie (RUG)](https://fse.studenttheses.ub.rug.nl/22682/1/Carbamazepine%20TDM%20monografie%20versie%20repository.pdf) · [SmPC carbamazepine (CBG)](https://www.geneesmiddeleninformatiebank.nl/smpc/h03899_smpc.pdf) · [FDA-label (DailyMed)](https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=62d38b93-7dd0-48e7-bd59-a434d52520f6&type=display) · [Review farmacokinetiek](https://www.researchgate.net/publication/255988032_A_quick_review_of_carbamazepine_pharmacokinetics_in_epilepsy_from_1953_to_2012) · [StatPearls](https://www.statpearls.com/point-of-care/30317) · [RCH](https://www.rch.org.au/clinicalguide/guideline_index/carbamazepine_poisoning) · [ILAE 2015](https://icnapedia.org/elibrary/ilae2015/files/basic-html/page278.html) · [SCHN](https://www.schn.health.nsw.gov.au/epilepsy-clinician-handbook/medications/carbamazepine)
+
+Plank (idee Bart): in deel 2 ook de behandelopties laten veranderen (andere knoppen na de wending), voor latere casussen.
 
 ### Verwachte uitkomsten (referentie voor de criticus)
 

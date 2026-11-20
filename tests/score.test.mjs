@@ -543,6 +543,43 @@ kop('Eindverslag en praktijkzinnen');
 }
 
 // ---------------------------------------------------------------------------------------------
+kop('Geen keuze (v2.2): poortje voorbij zonder keuze kost punten; live = batch; per dag');
+{
+  const G = S.PUNTEN.GEEN_KEUZE;
+  const sch = [{ t: 0, route: 'slik' }, { t: 6, route: 'slik' }, { t: 12, route: 'spuit' }, { t: 18, route: 'slik' }];
+  const zonder = S.scoreSchema(P, sch), met = S.scoreSchema(P, sch, { geenKeuze: [3, 4, 5] });
+  check(met.stand.regels.keuze === -3 * G && met.stand.totaal === zonder.stand.totaal - 3 * G, 'drie poortjes zonder keuze: −3 × ' + G);
+  check(met.verslag.tijdlijn[3].jij.soort === 'geenKeuze' && met.verslag.tijdlijn[3].jij.tekst === 'geen keuze' && met.verslag.telling.geenKeuze === 3, 'tijdlijn en telling tonen "geen keuze"');
+  check(met.verslag.opbouw.regels.some((r) => r.id === 'keuze' && r.label === 'geen keuze' && r.punten === -3 * G), 'opbouwregel "geen keuze"');
+  const race = S.maakRace(P);
+  sch.forEach((d) => race.geef(d.route, { t: d.t }));
+  [3, 4, 5].forEach((i) => { race.naar(M.poortjes(P)[i]); race.geenKeuze(i); });
+  race.geenKeuze(3); // dubbel melden telt niet dubbel
+  race.naar(24);
+  check(race.stand().totaal === met.stand.totaal, 'live = batch met geen keuze (' + race.stand().totaal + ' / ' + met.stand.totaal + ')');
+  check(zonder.verslag.telling.perDag.tekst === '4 g per dag' && /max\. 1 g per keer, 4 g per dag/.test(zonder.verslag.telling.perDag.grens), 'paracetamol per dag: ' + JSON.stringify(zonder.verslag.telling.perDag));
+  const lAlles = S.scoreSchema(L, M.poortjes(L).map((t) => ({ t, route: 'slik' })));
+  check(lAlles.verslag.telling.perDag.gemiddeld === 3 && lAlles.verslag.telling.perDag.dagen.length === 10 && /1\.200 mg/.test(lAlles.verslag.telling.perDag.tekst), 'lithium per dag: ' + lAlles.verslag.telling.perDag.tekst);
+}
+
+// ---------------------------------------------------------------------------------------------
+kop('Bonusrace carbamazepine (concept): rangorde en praktijkzinnen');
+{
+  const C3 = M.casus('carbamazepine'), PT = M.poortjes(C3);
+  const sp = (f) => S.scoreSchema(C3, PT.map((t, i) => ({ t, route: 'slik', aantal: f(i, t) })).filter((x) => x.aantal));
+  const r = { echt: sp((i, t) => (t >= 336 ? 2 : 1)), oplaad: sp((i, t) => (i === 0 ? 4 : t >= 336 ? 2 : 1)), nooit: sp(() => 1),
+    hoog: sp(() => 2), niets: sp(() => 0), achthonderd: sp(() => 4) };
+  const sc = Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.stand.totaal]));
+  console.log('scores:', JSON.stringify(sc));
+  check(sc.echt > sc.oplaad && sc.oplaad > sc.nooit && sc.nooit > sc.hoog && sc.hoog > sc.niets && sc.niets > sc.achthonderd,
+    'rangorde: echt > oplaaddosis > nooit ophogen > meteen 400 > niets > 800 mg per keer');
+  check(r.echt.verslag.praktijk.regel === 'goed' && r.nooit.verslag.praktijk.regel === 'nietOpgehoogd' && r.hoog.verslag.praktijk.regel === 'teSnelHoog' && r.achthonderd.verslag.praktijk.regel === 'giftig',
+    'praktijkzinnen carbamazepine');
+  check(M.venster(C3, 0).hoog === 8 && M.venster(C3, 200).hoog === 12, 'venster schuift: bovenkant 8 → 12 mg/L op dag 6');
+  check(r.echt.verslag.tijdlijn[40].jij.tekst === '400 mg' && r.echt.verslag.tijdlijn[40].echt === '400 mg', 'dosis in mg in de tijdlijn');
+}
+
+// ---------------------------------------------------------------------------------------------
 kop('Browser-lading (<script>)');
 {
   const ctx = { window: {} };
