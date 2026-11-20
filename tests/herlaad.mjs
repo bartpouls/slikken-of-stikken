@@ -14,7 +14,6 @@ const requireGlobaal = createRequire(execSync('npm root -g').toString().trim() +
 const { chromium } = requireGlobaal('playwright');
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const srv = http.createServer((q, r) => { r.setHeader('content-type','text/html; charset=utf-8'); r.end(fs.readFileSync(path.join(ROOT,'index.html'))); }).listen(0);
-const srv = http.createServer((q, r) => { r.setHeader('content-type','text/html; charset=utf-8'); r.end(fs.readFileSync(path.join(ROOT,'index.html'))); }).listen(0);
 const ok = (c, w) => { console.log((c ? 'OK   ' : 'FOUT ') + w); if (!c) process.exitCode = 1; };
 (async () => {
   const url = 'http://127.0.0.1:' + srv.address().port + '/?speed=25';
