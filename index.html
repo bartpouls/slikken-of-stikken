@@ -359,6 +359,7 @@ input { font: inherit; }
 .sc.ibu { box-shadow: inset 0 -3px 0 #ff9f43; }
 .sc svg { width: 18px; height: 18px; }
 .sc b { font-size: 11px; font-weight: 800; margin-left: -2px; }
+.sc b.mg { margin: 0; font-size: 11.5px; color: #fff; }
 .sc i { width: 9px; height: 2px; border-radius: 1px; background: rgba(255, 255, 255, .45); }
 .schema-tel { margin: 8px 0 0; font-size: 13.5px; line-height: 1.35; color: var(--zacht); }
 .schema-tel b { color: #fff; }
@@ -721,6 +722,8 @@ input { font: inherit; }
   .eind-legenda { margin-top: 8px; }
 }
 
+.eind-cel-txt.mg { color: var(--wit); margin: 0; font-size: 13px; }
+
 </style>
 </head>
 <body>
@@ -1047,50 +1050,58 @@ input { font: inherit; }
     nabespreking: 'In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.'
   };
 
-  // Casus 3 — Carbamazepine (bonusrace). CONCEPT: getallen uit geheugen (Claude), nog niet in het casusblad;
-  // wacht op akkoord van Bart Pouls. Zie docs/bouwopdracht.md, "Concept casus 3".
+  // Casus 3 — Carbamazepine (bonusrace). CONCEPT: getallen uit bronnen en spelkeuzes (zie docs/bouwopdracht.md,
+  // "Concept casus 3"); Bart akkoord op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend
+  // venster). Nog niet in het casusblad.
   var carbamazepine = {
     id: 'carbamazepine',
     concept: true,
     naam: 'Carbamazepine',
     patient: 'Meneer Bakker',
     gewichtKg: 70,
-    verhaal: 'Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. Na een paar dagen went zijn lever aan het middel.',
+    verhaal: 'Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.',
     eenheid: { dosis: 'mg', concentratie: 'mg/L', tijd: 'uur' },
-    dosis: { mg: 200, stof: 'carbamazepine', tekst: '200 mg per tablet' },
-    VdPerKg: 1.0,
-    Vd: 70,
-    VdTekst: '1,0 L/kg → 70 L',
+    dosis: { mg: 200, stof: 'carbamazepine', tekst: 'eenheid 200 mg; knoppen 200, 400 of 800 mg per poortje' },
+    VdPerKg: 1.2,
+    Vd: 84,
+    VdTekst: '1,2 L/kg → 84 L',
     Thalf: 36,
-    ThalfTekst: '36 uur bij de start; na de gewenning ±15 uur',
+    ThalfTekst: '36 uur bij de start; na 3 weken gewenning ±16 uur',
     routes: {
-      slik: { dosis: 200, F: 0.8, ka: 0.4, tekst: '200 mg per tablet, F = 0,8, ka = 0,4 /u (piek ±8 u na inname)' }
+      slik: { dosis: 200, F: 0.8, ka: 0.4, tekst: '200 mg per eenheid, F = 0,8, ka = 0,4 /u (piek ±8 u na inname)' }
     },
     zone: { laag: 4, hoog: 12, tekst: '4–12 mg/L' },
-    venster: [{ vanaf: 0, laag: 4, hoog: 12 }],
+    // Meeschuivend venster: in de eerste 6 dagen is meneer Bakker nog niet gewend aan de bijwerkingen (duizelig,
+    // slaperig, wankel): bovenkant 8 mg/L. Daarna 12 mg/L. Spelkeuze voor "start laag, verhoog langzaam".
+    venster: [{ vanaf: 0, laag: 4, hoog: 8 }, { vanaf: 144, laag: 4, hoog: 12 }],
     toxisch: 20,
     toxischTekst: '> 20 mg/L',
     bovengrens: { type: 'concentratie', waarde: 20, tekst: '> 20 mg/L' },
     poortjes: {
-      interval: 12, tijden: reeks(0, 12, 42), aantal: 42, keuzes: ['slik', 'overslaan'], maxTabletten: 2,
-      tekst: '2× per dag, om 0 en 12 uur (42 poortjes); 1 of 2 tabletten, of overslaan'
+      interval: 12, tijden: reeks(0, 12, 56), aantal: 56, keuzes: ['200 mg', '400 mg', '800 mg', 'overslaan'],
+      dosisKnoppen: [1, 2, 4], // in eenheden van 200 mg
+      tekst: '2× per dag, om 0 en 12 uur (56 poortjes); 200, 400 of 800 mg, of overslaan'
     },
     start: null, // begint vandaag: de spiegel moet nog opbouwen
-    raceDuur: 504,
-    raceDuurTekst: '21 dagen patiënttijd',
+    raceDuur: 672,
+    raceDuurTekst: '28 dagen patiënttijd',
     gebeurtenissen: [
-      { type: 'klaring', t: 120, tot: null, factor: 1.4, tegenactie: true, label: 'lever went', icoon: null,
-        tijdTekst: 'Dag 5 (t = 120 u)',
-        tekst: 'De lever van meneer Bakker went aan carbamazepine: hij ruimt het sneller op.',
-        gevolg: 'Klaring × 1,4 (zelfinductie, eerste stap).' },
-      { type: 'klaring', t: 240, tot: null, factor: 1.7, tegenactie: true, label: 'lever went', icoon: null,
-        tijdTekst: 'Dag 10 (t = 240 u)',
-        tekst: 'Zijn lever ruimt carbamazepine nóg sneller op.',
-        gevolg: 'Klaring nog eens × 1,7 (samen × 2,4: T½ 36 → 15 uur).' }
+      { type: 'klaring', t: 168, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 7 (t = 168 u)',
+        tekst: 'De lever van meneer Bakker went aan carbamazepine: hij gaat het sneller afbreken.',
+        gevolg: 'Klaring × 1,3 (autoinductie, stap 1 van 3).' },
+      { type: 'klaring', t: 336, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 14 (t = 336 u)',
+        tekst: 'Zijn lever breekt carbamazepine nóg sneller af.',
+        gevolg: 'Klaring × 1,3 (stap 2 van 3).' },
+      { type: 'klaring', t: 504, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 21 (t = 504 u)',
+        tekst: 'De gewenning van de lever is nu compleet.',
+        gevolg: 'Klaring × 1,3 (stap 3 van 3; samen × 2,2: T½ 36 → ±16 uur).' }
     ],
     echtSchema: {
-      tekst: '200 mg 2dd; na ±10 dagen ophogen naar 400 mg 2dd op geleide van de spiegel',
-      schema: reeks(0, 12, 42).map(function (t) { return { t: t, route: 'slik', aantal: t >= 264 ? 2 : 1 }; })
+      tekst: '200 mg 2dd; na 2 weken 400 mg 2dd op geleide van de spiegel',
+      schema: reeks(0, 12, 56).map(function (t) { return { t: t, route: 'slik', aantal: t >= 336 ? 2 : 1 }; })
     },
     lekentaal: {
       onder: 'Kans op een epileptische aanval.',
@@ -1678,6 +1689,7 @@ input { font: inherit; }
         j.soort = j.soorten[0].soort;
         j.aantal = j.soorten[0].aantal;
         j.tekst = j.soorten.map(function (so) {
+          if (c.poortjes.dosisKnoppen) return getal(so.aantal * c.dosis.mg) + ' mg'; // carbamazepine: dosis in mg
           return so.aantal > 1 ? so.aantal + ' ' + SOORT_MV[so.soort] : so.soort;
         }).join(' + ');
       } else if (j.geblokkeerd) { j.soort = 'geblokkeerd'; j.tekst = 'geblokkeerd'; }
@@ -1930,18 +1942,19 @@ input { font: inherit; }
     if (!doses.length) return { regel: 'niets',
       zin: 'Meneer Bakker kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
     if (teller.uren.toxisch > 0) return { regel: 'giftig',
-      zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus te veel tegelijk stapelt zich op.' };
+      zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus hoge doses stapelen zich op. ' +
+        'In het echt is de maximale dosis 1.200 mg per dag.' };
     if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
-      zin: 'Jij gaf in de eerste dagen al dubbele doses en de spiegel kwam boven de 12: duizelig en dubbelzien. ' +
-        'Het middel heeft dagen nodig om op te bouwen: start laag en verhoog langzaam.' };
+      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer Bakker werd duizelig: hij was nog niet ' +
+        'gewend aan het middel. Start laag en verhoog langzaam.' };
     if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
       zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +
         'In het echt verhoogt de arts dan de dosis, op geleide van een spiegelbepaling.' };
-    if (teller.uren.boven > 0) return { regel: 'boven',
+    if (teller.uren.boven / T > 0.02) return { regel: 'boven',
       zin: 'De spiegel kwam ' + pct(teller.uren.boven / T) + ' van de tijd boven de 12: duizelig en dubbelzien. ' +
         'Verhoog in kleine stappen en wacht een paar dagen op het effect.' };
     return { regel: 'goed',
-      zin: 'Jij hoogde de dosis op toen de lever het middel sneller ging afbreken. ' +
+      zin: 'Jij startte laag en hoogde de dosis op toen de lever het middel sneller ging afbreken. ' +
         'Zo doet de arts het ook: start laag, verhoog langzaam, en laat de spiegel prikken.' };
   }
 
@@ -2767,6 +2780,7 @@ input { font: inherit; }
 
   function celInhoud(rij) {
     var j = rij.jij, ic = SoS.ui.icoon;
+    if (j.soorten.length && /mg$/.test(j.tekst)) return '<span class="eind-cel-txt mg">' + esc(j.tekst) + '</span>'; // carbamazepine
     if (j.soorten.length) {
       return j.soorten.map(function (so) {
         return '<span class="eind-cel-ic">' + ic(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : '') + '</span>';
@@ -2847,7 +2861,7 @@ input { font: inherit; }
     var tijden = perDag.map(function (e) { return e.t; });
     var lek;
     if (c.id === 'carbamazepine') {
-      lek = '2× per dag 200 mg; na ±10 dagen, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling.';
+      lek = '2× per dag 200 mg (start laag: meneer Bakker moet wennen aan de bijwerkingen); na 2 weken, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling, maximaal 1.200 mg per dag.';
     } else if (c.id === 'lithium') {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
     } else {
@@ -3398,10 +3412,10 @@ input { font: inherit; }
         'De race heeft twee delen: halverwege verandert er iets, pas dan je plan aan.'];
     } else if (i === 2) {
       regels = ['Bonusrace: telt niet mee in je totaal. De getallen zijn nog een concept.',
-        'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + '. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
-        'Meneer Bakker begint vandaag: de spiegel heeft een paar dagen nodig om op te bouwen.',
+        'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + ' in de eerste dagen, ' + vensterTekst(c, 1e6) + ' als hij gewend is. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
+        'Meneer Bakker begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
         'De race duurt ' + Math.round(c.raceDuur / 24) + ' dagen, met 2 poortjes per dag: om 0 en 12 uur.',
-        'Tik twee keer op Tablet voor 2 tabletten (400 mg) op één poortje.'];
+        'Kies per poortje 200, 400 of 800 mg, of Overslaan.'];
     } else {
       // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).
       var uren = M.poortjes(c).filter(function (t) { return t < 24; });
@@ -3435,7 +3449,7 @@ input { font: inherit; }
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     },
     carbamazepine: {
-      secPerUur: 90 / 504, Cmax: 24, monster: 0.2, dun: 1, dec: 0, decWaarde: 1,
+      secPerUur: 110 / 672, Cmax: 24, monster: 0.2, dun: 1, dec: 0, decWaarde: 1,
       as: [], eenheid: 'mg/L',
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     }
@@ -3543,10 +3557,12 @@ input { font: inherit; }
     nav.innerHTML = '';
     var lijst = c.id === 'lithium'
       ? [['slik', 'Tablet', 'tablet'], ['niets', 'Overslaan', 'niets'], ['spuit', 'Spuit', 'spuit']]
-      : (c.id === 'carbamazepine' ? [['slik', 'Tablet', 'tablet'], ['niets', 'Overslaan', 'niets']]
+      : (c.poortjes.dosisKnoppen ? c.poortjes.dosisKnoppen.map(function (n) { return ['d' + n, mgTekst(c, n), 'tablet', 'slik', n]; }).concat([['niets', 'Overslaan', 'niets']])
         : [['slik', 'Tablet', 'tablet'], ['zetpil', 'Zetpil', 'zetpil'], ['spuit', 'Spuit', 'spuit'], ['niets', 'Overslaan', 'niets']]);
     R.knoppen = {};
+    R.knopInfo = {};
     lijst.forEach(function (d) {
+      R.knopInfo[d[0]] = { route: d[3] || d[0], vast: d[4] || 0 };
       var b = el('button', { type: 'button', class: 'actie', 'data-actie': d[0], 'aria-pressed': 'false', 'aria-label': d[1] });
       b.innerHTML = icoon(d[2]) + '<span>' + d[1] + '</span>';
       var viaPointer = 0;
@@ -3574,11 +3590,11 @@ input { font: inherit; }
     if (!R) return;
     var blok = doelGeblokkeerd();
     Object.keys(R.knoppen).forEach(function (r) {
-      var b = R.knoppen[r];
-      var gek = R.keuze.route === r;
+      var b = R.knoppen[r], info = R.knopInfo[r];
+      var gek = R.keuze.route === info.route && (!info.vast || R.keuze.aantal === info.vast);
       b.classList.toggle('gekozen', gek);
       b.setAttribute('aria-pressed', gek ? 'true' : 'false');
-      b.setAttribute('data-badge', gek ? (R.keuze.aantal > 1 ? R.keuze.aantal + '×' : '✓') : '');
+      b.setAttribute('data-badge', gek ? (R.keuze.aantal > 1 && !info.vast ? R.keuze.aantal + '×' : '✓') : '');
       if (r === 'slik') {
         b.classList.toggle('geblokkeerd', !!blok);
         b.querySelector('span').textContent = blok ? 'Misselijk' : 'Tablet';
@@ -3593,10 +3609,11 @@ input { font: inherit; }
     setTimeout(function () { b.classList.remove(klasse); }, 380);
   }
 
-  function tikActie(route, b) {
+  function tikActie(actie, b) {
     unlock();
     if (!R || R.klaar) return;
     var c = R.casus;
+    var info = R.knopInfo[actie] || { route: actie, vast: 0 }, route = info.route;
     flits(b, 'tik');
     // Oefenronde: de knoppen werken precies als in de race (kiezen, wisselen, wissen, te laat). Alleen de
     // klok wacht: zie gidsControle.
@@ -3631,7 +3648,10 @@ input { font: inherit; }
     var k = R.keuze;
     var max = maxAantal(route);
     var tekst;
-    if (k.route === route && k.aantal < max) {
+    if (info.vast) { // dosisknop (carbamazepine): één tik = die dosis; nog eens = keuze weg
+      if (k.route === route && k.aantal === info.vast) { k.route = null; k.aantal = 0; tekst = 'Keuze gewist voor ' + doelLabel + ': kies opnieuw, geen keuze kost punten.'; }
+      else { k.route = route; k.aantal = info.vast; tekst = mgTekst(c, info.vast) + ' voor ' + doelLabel; }
+    } else if (k.route === route && k.aantal < max) {
       k.aantal++;
       tekst = k.aantal + '× Tablet voor ' + doelLabel;
     } else if (k.route === route) {
@@ -3723,6 +3743,8 @@ input { font: inherit; }
   }
 
   // Lithium: tablet tot 2× per poortje (casusblad: "elk poortje dubbel"); paracetamol 1 g per keer.
+  function mgTekst(c, n) { return getal(n * c.dosis.mg, 0) + ' mg'; }
+  function keuzeNaam(c, k) { return c.poortjes.dosisKnoppen && k.route === 'slik' ? mgTekst(c, k.aantal) : (k.aantal > 1 ? k.aantal + '× ' : '') + KEUZENAAM[k.route]; }
   function maxAantal(route) { return route === 'slik' && R.casus.id !== 'paracetamol' ? (R.casus.poortjes.maxTabletten || 2) : 1; }
   var KEUZENAAM = { slik: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', niets: 'Overslaan' };
   var TE_LAAT_MS = 300; // echte tijd bij speed 1 (gedeeld door ?speed=N)
@@ -3829,7 +3851,7 @@ input { font: inherit; }
       ctx.font = '700 15px ' + FONT;
       var mx = 0;
       R.poorten.forEach(function (T) { mx = Math.max(mx, ctx.measureText(tijdLabel(R.casus, T, true)).width); });
-      R.labelMax = mx + 34 + (R.casus.id !== 'paracetamol' ? 18 : 0);
+      R.labelMax = mx + 34 + (R.casus.poortjes.dosisKnoppen ? 28 : (R.casus.id !== 'paracetamol' ? 18 : 0));
       pasStrookTekst();
     }
   }
@@ -3917,7 +3939,7 @@ input { font: inherit; }
         icoonSoort = gg.soort === 'slik' ? 'tablet' : (gg.soort === 'geblokkeerd' || gg.soort === 'geen' ? 'kruis' : (gg.soort === 'leeg' ? null : gg.soort));
         aantal = gg.aantal || 1;
       }
-      var extra = icoonSoort ? 34 + (aantal > 1 ? 18 : 0) : 0;
+      var extra = icoonSoort ? 34 + (c.poortjes.dosisKnoppen && icoonSoort === 'tablet' ? 28 : (aantal > 1 ? 18 : 0)) : 0;
       var wb = tw + extra;
       var xs = zijde === 'links' ? L + INSPRING : Rr - INSPRING - wb; // begin van label (+ icoon)
       var l1 = xs - 8, r1 = xs + wb + 8;
@@ -3958,11 +3980,13 @@ input { font: inherit; }
           ctx.beginPath(); ctx.arc(ix, yg, 15, 0, 6.283); ctx.fill();
           ctx.globalAlpha = a;
           tekenIcoon(ctx, icoonSoort, ix, yg, 26 * pop, verleden ? 0.55 : 1);
-          if (aantal > 1) {
+          var dk = c.poortjes.dosisKnoppen && icoonSoort === 'tablet';
+          if (aantal > 1 || dk) {
+            var at = dk ? getal(aantal * c.dosis.mg, 0) : aantal + '×';
             ctx.font = '800 13px ' + FONT;
-            ctx.strokeText(aantal + '×', ix + 17, yg + 1);
+            ctx.strokeText(at, ix + 17, yg + 1);
             ctx.fillStyle = '#fff';
-            ctx.fillText(aantal + '×', ix + 17, yg + 1);
+            ctx.fillText(at, ix + 17, yg + 1);
             ctx.font = '700 15px ' + FONT;
           }
         }
@@ -4325,9 +4349,16 @@ input { font: inherit; }
     });
     // wat elk stuk betekent
     ctx.font = '800 11.5px ' + FONT; ctx.textAlign = 'center';
+    // labels mogen niet over elkaar: past het niet, dan een kort woord; past dat ook niet, dan geen label
+    var KORT = { 'te weinig': 'laag', 'in de zone': 'zone', 'te veel': 'hoog' }, rechtsVorig = -Infinity;
     stukken.forEach(function (sk) {
+      var m = (sk.a + sk.b) / 2, lb = sk.label;
+      var past = function (t) { var bw = ctx.measureText(t).width; return m - bw / 2 >= rechtsVorig + 6 && bw <= sk.b - sk.a + 10; };
+      if (!past(lb)) lb = KORT[lb] || lb;
+      if (!past(lb)) return;
       ctx.fillStyle = sk.k;
-      halo(sk.label, (sk.a + sk.b) / 2, 47);
+      halo(lb, m, 47);
+      rechtsVorig = m + ctx.measureText(lb).width / 2;
     });
 
     // (de tijd loopt naar beneden: dat laat de tijdstrook links in het speelveld zien, met de klok erboven)
@@ -4605,7 +4636,7 @@ input { font: inherit; }
       if (R.g === 0) vorig = -AANLOOP_S / R.cfg.secPerUur;
       vul = Math.round(100 * Math.max(0, Math.min(1, (R.klok - vorig) / (T - vorig))));
       var lbl = inZin(tijdLabel(c, T, true)), k = R.keuze;
-      if (k.route) tekst = icoon(k.route === 'slik' ? 'tablet' : k.route) + (k.aantal > 1 ? k.aantal + '× ' : '') + KEUZENAAM[k.route] + ' staat klaar voor ' + lbl;
+      if (k.route) tekst = icoon(k.route === 'slik' ? 'tablet' : k.route) + keuzeNaam(c, k) + ' staat klaar voor ' + lbl;
       else {
         tekst = (vul >= 60 ? 'Kies nu voor ' : 'Volgend poortje: ') + lbl + (vul >= 60 ? '!' : '');
         klasse += vul >= 60 ? ' dringend' : ' leeg';
@@ -4650,6 +4681,7 @@ input { font: inherit; }
     if (!R.gids) c.gebeurtenissen.forEach(function (g) { if (g.type === 'klaring' && !klaring) klaring = g; }); // de eerste
     function inhoud(j, kort) {
       if (j.soorten.length) return j.soorten.map(function (so) {
+        if (c.poortjes.dosisKnoppen) return '<b class="mg">' + getal(so.aantal * c.dosis.mg, 0) + '</b>';
         return icoon(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : '') + (kort ? '' : ' ' + (KEUZENAAM[so.soort === 'tablet' ? 'slik' : so.soort] || so.soort));
       }).join(' ');
       if (j.soort === 'geblokkeerd') return icoon('kruis') + (kort ? '' : ' slikken lukte niet');
@@ -4661,7 +4693,7 @@ input { font: inherit; }
       var perDag = Math.round(24 / c.poortjes.interval), dagen = Math.ceil(rijen.length / perDag);
       s += '<div class="schema tl-dag' + (dagen > 12 ? ' veel' : '') + '" style="--k:' + perDag + '"><span class="sk dag"></span>';
       for (var u = 0; u < perDag; u++) s += '<span class="sk">' + rijen[u].t + ' u</span>';
-      s += '<span class="sk som">per dag</span>';
+      s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? 'mg/dag' : 'per dag') + '</span>';
       for (var d = 0; d < dagen; d++) {
         var ibu = klaring && d * 24 >= klaring.t - 1e-9;
         s += '<span class="sk dag' + (ibu ? ' ibu' : '') + '">Dag ' + d + '</span>';
@@ -4672,7 +4704,7 @@ input { font: inherit; }
           s += '<span class="sc' + (j.soorten.length ? ' gaf' : '') + (j.geenKeuze && !j.soorten.length ? ' geen' : '') + (ibu ? ' ibu' : '') +
             '" aria-label="Dag ' + d + ', ' + r.t % 24 + ' uur: ' + j.tekst + '">' + inhoud(j, true) + '</span>';
         }
-        s += '<span class="sk som">' + som + '×</span>';
+        s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? getal(som * c.dosis.mg, 0) : som + '×') + '</span>';
       }
       s += '</div>';
     } else {

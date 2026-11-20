@@ -225,3 +225,5 @@
   .eind-tegel { height: 17px; }
   .eind-legenda { margin-top: 8px; }
 }
+
+.eind-cel-txt.mg { color: var(--wit); margin: 0; font-size: 13px; }

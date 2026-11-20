@@ -359,10 +359,10 @@
         'De race heeft twee delen: halverwege verandert er iets, pas dan je plan aan.'];
     } else if (i === 2) {
       regels = ['Bonusrace: telt niet mee in je totaal. De getallen zijn nog een concept.',
-        'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + '. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
-        'Meneer Bakker begint vandaag: de spiegel heeft een paar dagen nodig om op te bouwen.',
+        'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + ' in de eerste dagen, ' + vensterTekst(c, 1e6) + ' als hij gewend is. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
+        'Meneer Bakker begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
         'De race duurt ' + Math.round(c.raceDuur / 24) + ' dagen, met 2 poortjes per dag: om 0 en 12 uur.',
-        'Tik twee keer op Tablet voor 2 tabletten (400 mg) op één poortje.'];
+        'Kies per poortje 200, 400 of 800 mg, of Overslaan.'];
     } else {
       // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).
       var uren = M.poortjes(c).filter(function (t) { return t < 24; });
@@ -396,7 +396,7 @@
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     },
     carbamazepine: {
-      secPerUur: 90 / 504, Cmax: 24, monster: 0.2, dun: 1, dec: 0, decWaarde: 1,
+      secPerUur: 110 / 672, Cmax: 24, monster: 0.2, dun: 1, dec: 0, decWaarde: 1,
       as: [], eenheid: 'mg/L',
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     }
@@ -504,10 +504,12 @@
     nav.innerHTML = '';
     var lijst = c.id === 'lithium'
       ? [['slik', 'Tablet', 'tablet'], ['niets', 'Overslaan', 'niets'], ['spuit', 'Spuit', 'spuit']]
-      : (c.id === 'carbamazepine' ? [['slik', 'Tablet', 'tablet'], ['niets', 'Overslaan', 'niets']]
+      : (c.poortjes.dosisKnoppen ? c.poortjes.dosisKnoppen.map(function (n) { return ['d' + n, mgTekst(c, n), 'tablet', 'slik', n]; }).concat([['niets', 'Overslaan', 'niets']])
         : [['slik', 'Tablet', 'tablet'], ['zetpil', 'Zetpil', 'zetpil'], ['spuit', 'Spuit', 'spuit'], ['niets', 'Overslaan', 'niets']]);
     R.knoppen = {};
+    R.knopInfo = {};
     lijst.forEach(function (d) {
+      R.knopInfo[d[0]] = { route: d[3] || d[0], vast: d[4] || 0 };
       var b = el('button', { type: 'button', class: 'actie', 'data-actie': d[0], 'aria-pressed': 'false', 'aria-label': d[1] });
       b.innerHTML = icoon(d[2]) + '<span>' + d[1] + '</span>';
       var viaPointer = 0;
@@ -535,11 +537,11 @@
     if (!R) return;
     var blok = doelGeblokkeerd();
     Object.keys(R.knoppen).forEach(function (r) {
-      var b = R.knoppen[r];
-      var gek = R.keuze.route === r;
+      var b = R.knoppen[r], info = R.knopInfo[r];
+      var gek = R.keuze.route === info.route && (!info.vast || R.keuze.aantal === info.vast);
       b.classList.toggle('gekozen', gek);
       b.setAttribute('aria-pressed', gek ? 'true' : 'false');
-      b.setAttribute('data-badge', gek ? (R.keuze.aantal > 1 ? R.keuze.aantal + '×' : '✓') : '');
+      b.setAttribute('data-badge', gek ? (R.keuze.aantal > 1 && !info.vast ? R.keuze.aantal + '×' : '✓') : '');
       if (r === 'slik') {
         b.classList.toggle('geblokkeerd', !!blok);
         b.querySelector('span').textContent = blok ? 'Misselijk' : 'Tablet';
@@ -554,10 +556,11 @@
     setTimeout(function () { b.classList.remove(klasse); }, 380);
   }
 
-  function tikActie(route, b) {
+  function tikActie(actie, b) {
     unlock();
     if (!R || R.klaar) return;
     var c = R.casus;
+    var info = R.knopInfo[actie] || { route: actie, vast: 0 }, route = info.route;
     flits(b, 'tik');
     // Oefenronde: de knoppen werken precies als in de race (kiezen, wisselen, wissen, te laat). Alleen de
     // klok wacht: zie gidsControle.
@@ -592,7 +595,10 @@
     var k = R.keuze;
     var max = maxAantal(route);
     var tekst;
-    if (k.route === route && k.aantal < max) {
+    if (info.vast) { // dosisknop (carbamazepine): één tik = die dosis; nog eens = keuze weg
+      if (k.route === route && k.aantal === info.vast) { k.route = null; k.aantal = 0; tekst = 'Keuze gewist voor ' + doelLabel + ': kies opnieuw, geen keuze kost punten.'; }
+      else { k.route = route; k.aantal = info.vast; tekst = mgTekst(c, info.vast) + ' voor ' + doelLabel; }
+    } else if (k.route === route && k.aantal < max) {
       k.aantal++;
       tekst = k.aantal + '× Tablet voor ' + doelLabel;
     } else if (k.route === route) {
@@ -684,6 +690,8 @@
   }
 
   // Lithium: tablet tot 2× per poortje (casusblad: "elk poortje dubbel"); paracetamol 1 g per keer.
+  function mgTekst(c, n) { return getal(n * c.dosis.mg, 0) + ' mg'; }
+  function keuzeNaam(c, k) { return c.poortjes.dosisKnoppen && k.route === 'slik' ? mgTekst(c, k.aantal) : (k.aantal > 1 ? k.aantal + '× ' : '') + KEUZENAAM[k.route]; }
   function maxAantal(route) { return route === 'slik' && R.casus.id !== 'paracetamol' ? (R.casus.poortjes.maxTabletten || 2) : 1; }
   var KEUZENAAM = { slik: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', niets: 'Overslaan' };
   var TE_LAAT_MS = 300; // echte tijd bij speed 1 (gedeeld door ?speed=N)
@@ -790,7 +798,7 @@
       ctx.font = '700 15px ' + FONT;
       var mx = 0;
       R.poorten.forEach(function (T) { mx = Math.max(mx, ctx.measureText(tijdLabel(R.casus, T, true)).width); });
-      R.labelMax = mx + 34 + (R.casus.id !== 'paracetamol' ? 18 : 0);
+      R.labelMax = mx + 34 + (R.casus.poortjes.dosisKnoppen ? 28 : (R.casus.id !== 'paracetamol' ? 18 : 0));
       pasStrookTekst();
     }
   }
@@ -878,7 +886,7 @@
         icoonSoort = gg.soort === 'slik' ? 'tablet' : (gg.soort === 'geblokkeerd' || gg.soort === 'geen' ? 'kruis' : (gg.soort === 'leeg' ? null : gg.soort));
         aantal = gg.aantal || 1;
       }
-      var extra = icoonSoort ? 34 + (aantal > 1 ? 18 : 0) : 0;
+      var extra = icoonSoort ? 34 + (c.poortjes.dosisKnoppen && icoonSoort === 'tablet' ? 28 : (aantal > 1 ? 18 : 0)) : 0;
       var wb = tw + extra;
       var xs = zijde === 'links' ? L + INSPRING : Rr - INSPRING - wb; // begin van label (+ icoon)
       var l1 = xs - 8, r1 = xs + wb + 8;
@@ -919,11 +927,13 @@
           ctx.beginPath(); ctx.arc(ix, yg, 15, 0, 6.283); ctx.fill();
           ctx.globalAlpha = a;
           tekenIcoon(ctx, icoonSoort, ix, yg, 26 * pop, verleden ? 0.55 : 1);
-          if (aantal > 1) {
+          var dk = c.poortjes.dosisKnoppen && icoonSoort === 'tablet';
+          if (aantal > 1 || dk) {
+            var at = dk ? getal(aantal * c.dosis.mg, 0) : aantal + '×';
             ctx.font = '800 13px ' + FONT;
-            ctx.strokeText(aantal + '×', ix + 17, yg + 1);
+            ctx.strokeText(at, ix + 17, yg + 1);
             ctx.fillStyle = '#fff';
-            ctx.fillText(aantal + '×', ix + 17, yg + 1);
+            ctx.fillText(at, ix + 17, yg + 1);
             ctx.font = '700 15px ' + FONT;
           }
         }
@@ -1286,9 +1296,16 @@
     });
     // wat elk stuk betekent
     ctx.font = '800 11.5px ' + FONT; ctx.textAlign = 'center';
+    // labels mogen niet over elkaar: past het niet, dan een kort woord; past dat ook niet, dan geen label
+    var KORT = { 'te weinig': 'laag', 'in de zone': 'zone', 'te veel': 'hoog' }, rechtsVorig = -Infinity;
     stukken.forEach(function (sk) {
+      var m = (sk.a + sk.b) / 2, lb = sk.label;
+      var past = function (t) { var bw = ctx.measureText(t).width; return m - bw / 2 >= rechtsVorig + 6 && bw <= sk.b - sk.a + 10; };
+      if (!past(lb)) lb = KORT[lb] || lb;
+      if (!past(lb)) return;
       ctx.fillStyle = sk.k;
-      halo(sk.label, (sk.a + sk.b) / 2, 47);
+      halo(lb, m, 47);
+      rechtsVorig = m + ctx.measureText(lb).width / 2;
     });
 
     // (de tijd loopt naar beneden: dat laat de tijdstrook links in het speelveld zien, met de klok erboven)
@@ -1566,7 +1583,7 @@
       if (R.g === 0) vorig = -AANLOOP_S / R.cfg.secPerUur;
       vul = Math.round(100 * Math.max(0, Math.min(1, (R.klok - vorig) / (T - vorig))));
       var lbl = inZin(tijdLabel(c, T, true)), k = R.keuze;
-      if (k.route) tekst = icoon(k.route === 'slik' ? 'tablet' : k.route) + (k.aantal > 1 ? k.aantal + '× ' : '') + KEUZENAAM[k.route] + ' staat klaar voor ' + lbl;
+      if (k.route) tekst = icoon(k.route === 'slik' ? 'tablet' : k.route) + keuzeNaam(c, k) + ' staat klaar voor ' + lbl;
       else {
         tekst = (vul >= 60 ? 'Kies nu voor ' : 'Volgend poortje: ') + lbl + (vul >= 60 ? '!' : '');
         klasse += vul >= 60 ? ' dringend' : ' leeg';
@@ -1611,6 +1628,7 @@
     if (!R.gids) c.gebeurtenissen.forEach(function (g) { if (g.type === 'klaring' && !klaring) klaring = g; }); // de eerste
     function inhoud(j, kort) {
       if (j.soorten.length) return j.soorten.map(function (so) {
+        if (c.poortjes.dosisKnoppen) return '<b class="mg">' + getal(so.aantal * c.dosis.mg, 0) + '</b>';
         return icoon(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : '') + (kort ? '' : ' ' + (KEUZENAAM[so.soort === 'tablet' ? 'slik' : so.soort] || so.soort));
       }).join(' ');
       if (j.soort === 'geblokkeerd') return icoon('kruis') + (kort ? '' : ' slikken lukte niet');
@@ -1622,7 +1640,7 @@
       var perDag = Math.round(24 / c.poortjes.interval), dagen = Math.ceil(rijen.length / perDag);
       s += '<div class="schema tl-dag' + (dagen > 12 ? ' veel' : '') + '" style="--k:' + perDag + '"><span class="sk dag"></span>';
       for (var u = 0; u < perDag; u++) s += '<span class="sk">' + rijen[u].t + ' u</span>';
-      s += '<span class="sk som">per dag</span>';
+      s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? 'mg/dag' : 'per dag') + '</span>';
       for (var d = 0; d < dagen; d++) {
         var ibu = klaring && d * 24 >= klaring.t - 1e-9;
         s += '<span class="sk dag' + (ibu ? ' ibu' : '') + '">Dag ' + d + '</span>';
@@ -1633,7 +1651,7 @@
           s += '<span class="sc' + (j.soorten.length ? ' gaf' : '') + (j.geenKeuze && !j.soorten.length ? ' geen' : '') + (ibu ? ' ibu' : '') +
             '" aria-label="Dag ' + d + ', ' + r.t % 24 + ' uur: ' + j.tekst + '">' + inhoud(j, true) + '</span>';
         }
-        s += '<span class="sk som">' + som + '×</span>';
+        s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? getal(som * c.dosis.mg, 0) : som + '×') + '</span>';
       }
       s += '</div>';
     } else {

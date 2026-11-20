@@ -310,6 +310,7 @@
         j.soort = j.soorten[0].soort;
         j.aantal = j.soorten[0].aantal;
         j.tekst = j.soorten.map(function (so) {
+          if (c.poortjes.dosisKnoppen) return getal(so.aantal * c.dosis.mg) + ' mg'; // carbamazepine: dosis in mg
           return so.aantal > 1 ? so.aantal + ' ' + SOORT_MV[so.soort] : so.soort;
         }).join(' + ');
       } else if (j.geblokkeerd) { j.soort = 'geblokkeerd'; j.tekst = 'geblokkeerd'; }
@@ -562,18 +563,19 @@
     if (!doses.length) return { regel: 'niets',
       zin: 'Meneer Bakker kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
     if (teller.uren.toxisch > 0) return { regel: 'giftig',
-      zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus te veel tegelijk stapelt zich op.' };
+      zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus hoge doses stapelen zich op. ' +
+        'In het echt is de maximale dosis 1.200 mg per dag.' };
     if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
-      zin: 'Jij gaf in de eerste dagen al dubbele doses en de spiegel kwam boven de 12: duizelig en dubbelzien. ' +
-        'Het middel heeft dagen nodig om op te bouwen: start laag en verhoog langzaam.' };
+      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer Bakker werd duizelig: hij was nog niet ' +
+        'gewend aan het middel. Start laag en verhoog langzaam.' };
     if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
       zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +
         'In het echt verhoogt de arts dan de dosis, op geleide van een spiegelbepaling.' };
-    if (teller.uren.boven > 0) return { regel: 'boven',
+    if (teller.uren.boven / T > 0.02) return { regel: 'boven',
       zin: 'De spiegel kwam ' + pct(teller.uren.boven / T) + ' van de tijd boven de 12: duizelig en dubbelzien. ' +
         'Verhoog in kleine stappen en wacht een paar dagen op het effect.' };
     return { regel: 'goed',
-      zin: 'Jij hoogde de dosis op toen de lever het middel sneller ging afbreken. ' +
+      zin: 'Jij startte laag en hoogde de dosis op toen de lever het middel sneller ging afbreken. ' +
         'Zo doet de arts het ook: start laag, verhoog langzaam, en laat de spiegel prikken.' };
   }
 

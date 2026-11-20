@@ -131,38 +131,42 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 | Boven de zone, in lekentaal | "Trillen, misselijk, diarree. Nog hoger: verward, nieren in gevaar." | |
 | Nabespreking | "In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken." | |
 
-### Concept casus 3 — Carbamazepine (bonusrace) · WACHT OP AKKOORD BART
+### Concept casus 3 — Carbamazepine (bonusrace) · CONCEPT
 
-Bonusrace, alleen via het menu en via de knop "Bonusrace" op het eindscherm. Telt niet mee in het totaal. Alle getallen hieronder komen uit het geheugen van Claude (niet nagezocht) en zijn nog geen casusblad: ze gaan pas in het casusblad na akkoord van Bart Pouls.
+Bonusrace, alleen via het menu en via de knop "Bonusrace" op het eindscherm. Telt niet mee in het totaal. Bart akkoord op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend venster, dosisknoppen 200/400/800 mg). De getallen zijn nagezocht via zoekresultaten; de Nederlandse bronnen (TDM-monografie, CBG-SmPC, UMC Utrecht) zijn vanuit de bouwomgeving niet zelf geopend.
 
-**Verhaal:** Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. Na een paar dagen went zijn lever aan het middel.
+**Verhaal:** Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.
 
-| Veld | Waarde | Status |
+| Veld | Waarde | Status / bron |
 |---|---|---|
-| Dosis | 200 mg per tablet; 1 of 2 tabletten per poortje | spelkeuze |
-| Vd | 1,0 L/kg → 70 L | geheugen (range ±0,8–1,4 L/kg) |
-| T½ | 36 uur bij de start; na de gewenning ±15 uur | geheugen (eenmalig ±25–65 u; na autoinductie ±12–17 u) |
-| F, ka | F = 0,8; ka = 0,4 /u (piek ±8 u na inname) | geheugen (tmax ±4–8 u) / aanname |
-| Zone | 4–12 mg/L | geheugen |
-| Boven de zone, in lekentaal | "Duizelig, dubbelzien, wankel lopen." | geheugen |
-| Toxisch | > 20 mg/L | geheugen, spelkeuze |
+| Knoppen | 200 mg, 400 mg, 800 mg of Overslaan, per poortje | spelkeuze (Bart); 800 mg per keer 2× per dag = 1.600 mg/dag, boven het maximum van 1.200 mg/dag [SmPC] |
+| Vd | 1,2 L/kg → 84 L | 0,8–1,9 L/kg; bij onderhoud 1,24 L/kg [review, ScienceDirect] |
+| T½ | 36 uur bij de start; na 3 weken ±16 uur | eenmalig ±36 u [SmPC NL], 25–65 u; chronisch 12–17 u [FDA-label], 16–24 u [SmPC NL], 12–24 u [UMC Utrecht] |
+| F, ka | F = 0,8; ka = 0,4 /u (piek ±8 u na inname) | F 75–85% [review]; tmax 4–8 u; ka is een aanname |
+| Venster | 4–12 mg/L; in de eerste 6 dagen bovenkant 8 mg/L | 4–12 mg/L [UMC Utrecht, TDM]. Het lagere plafond is een spelkeuze voor "start laag": tolerantie voor de bijwerkingen in de hersenen ontstaat in de eerste weken [ILAE 2015; SCHN] |
+| Boven de zone, in lekentaal | "Duizelig, dubbelzien, wankel lopen." | ataxie en nystagmus vanaf ±10–15 mg/L [StatPearls; RCH] |
+| Toxisch | > 20 mg/L | 15–25 agressie, hallucinaties; 20–40 coma [StatPearls; RCH]: "ernstig" |
 | Onder de zone, in lekentaal | "Kans op een epileptische aanval." | |
-| Poortjes | 2× per dag, om 0 en 12 uur (42 poortjes) | spelkeuze |
-| Start | spiegel 0: hij begint vandaag (opbouw naar steady state duurt dagen) | |
-| Racelengte | 21 dagen patiënttijd, ±90 s | spelkeuze |
-| Gebeurtenis | Autoinductie in twee stappen: dag 5 klaring × 1,4; dag 10 nog eens × 1,7 (samen × 2,4) | vereenvoudiging: in het echt geleidelijk over ±2–4 weken |
-| Echt schema | 200 mg 2dd; vanaf dag 11 400 mg 2dd (op geleide van de spiegel) | spelkeuze, vereenvoudigde titratie |
+| Poortjes | 2× per dag, om 0 en 12 uur (56 poortjes) | spelkeuze |
+| Start | spiegel 0: hij begint vandaag | steady state na 1–2 weken [TDM] |
+| Racelengte | 28 dagen patiënttijd, ±110 s | spelkeuze |
+| Gebeurtenis | Autoinductie in drie stappen: dag 7, 14 en 21 klaring × 1,3 (samen × 2,2) | autoinductie compleet na 3–5 weken [FDA-label] |
+| Echt schema | 200 mg 2dd; vanaf dag 14 400 mg 2dd | start 200–400 mg/dag, langzaam ophogen naar 800–1.200 mg/dag [SmPC NL]; 100–200 mg/dag in wekelijkse stappen [ILAE] |
 
-Doorgerekend met het model uit §4 (score met de formule van het spel):
+Doorgerekend met het model uit §4 en de score van het spel (ook in tests/score.test.mjs):
 
-| Strategie | In zone | Piek (mg/L) | QALY |
-|---|---|---|---|
-| Echt schema (200 mg 2dd, vanaf dag 11 400 mg 2dd) | 95% | 9,2 | 942 |
-| Nooit ophogen (200 mg 2dd) | 81% (laatste dagen 3,5–4,6) | 9,2 | 805 |
-| Meteen 400 mg 2dd | 57% (41% boven 12) | 18,4 | 530 |
-| Niets | 0% | 0 | −1000 |
+| Strategie | QALY |
+|---|---|
+| Echt schema | 943 |
+| Oplaaddosis 800 mg, dan het echte schema | 931 |
+| Nooit ophogen (200 mg 2dd) | 798 |
+| Meteen 400 mg 2dd | 434 |
+| Niets | −1000 |
+| 800 mg per keer | −2729 |
 
-Bekende beperking: een eerste dosis van 400 mg ("oplaaddosis") scoort in het spel iets hoger (974), terwijl je carbamazepine in het echt juist laag start om bijwerkingen te voorkomen. Die bijwerkingen bij de start zitten niet in het model.
+Bronnen casus 3: [UMC Utrecht bepalingenwijzer](https://www.umcutrecht.nl/bepalingenwijzer/carbamazepine) · [TDM-monografie (RUG)](https://fse.studenttheses.ub.rug.nl/22682/1/Carbamazepine%20TDM%20monografie%20versie%20repository.pdf) · [SmPC carbamazepine (CBG)](https://www.geneesmiddeleninformatiebank.nl/smpc/h03899_smpc.pdf) · [FDA-label (DailyMed)](https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=62d38b93-7dd0-48e7-bd59-a434d52520f6&type=display) · [Review farmacokinetiek](https://www.researchgate.net/publication/255988032_A_quick_review_of_carbamazepine_pharmacokinetics_in_epilepsy_from_1953_to_2012) · [StatPearls](https://www.statpearls.com/point-of-care/30317) · [RCH](https://www.rch.org.au/clinicalguide/guideline_index/carbamazepine_poisoning) · [ILAE 2015](https://icnapedia.org/elibrary/ilae2015/files/basic-html/page278.html) · [SCHN](https://www.schn.health.nsw.gov.au/epilepsy-clinician-handbook/medications/carbamazepine)
+
+Plank (idee Bart): in deel 2 ook de behandelopties laten veranderen (andere knoppen na de wending), voor latere casussen.
 
 ### Verwachte uitkomsten (referentie voor de criticus)
 

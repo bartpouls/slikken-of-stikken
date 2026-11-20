@@ -563,6 +563,23 @@ kop('Geen keuze (v2.2): poortje voorbij zonder keuze kost punten; live = batch; 
 }
 
 // ---------------------------------------------------------------------------------------------
+kop('Bonusrace carbamazepine (concept): rangorde en praktijkzinnen');
+{
+  const C3 = M.casus('carbamazepine'), PT = M.poortjes(C3);
+  const sp = (f) => S.scoreSchema(C3, PT.map((t, i) => ({ t, route: 'slik', aantal: f(i, t) })).filter((x) => x.aantal));
+  const r = { echt: sp((i, t) => (t >= 336 ? 2 : 1)), oplaad: sp((i, t) => (i === 0 ? 4 : t >= 336 ? 2 : 1)), nooit: sp(() => 1),
+    hoog: sp(() => 2), niets: sp(() => 0), achthonderd: sp(() => 4) };
+  const sc = Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.stand.totaal]));
+  console.log('scores:', JSON.stringify(sc));
+  check(sc.echt > sc.oplaad && sc.oplaad > sc.nooit && sc.nooit > sc.hoog && sc.hoog > sc.niets && sc.niets > sc.achthonderd,
+    'rangorde: echt > oplaaddosis > nooit ophogen > meteen 400 > niets > 800 mg per keer');
+  check(r.echt.verslag.praktijk.regel === 'goed' && r.nooit.verslag.praktijk.regel === 'nietOpgehoogd' && r.hoog.verslag.praktijk.regel === 'teSnelHoog' && r.achthonderd.verslag.praktijk.regel === 'giftig',
+    'praktijkzinnen carbamazepine');
+  check(M.venster(C3, 0).hoog === 8 && M.venster(C3, 200).hoog === 12, 'venster schuift: bovenkant 8 → 12 mg/L op dag 6');
+  check(r.echt.verslag.tijdlijn[40].jij.tekst === '400 mg' && r.echt.verslag.tijdlijn[40].echt === '400 mg', 'dosis in mg in de tijdlijn');
+}
+
+// ---------------------------------------------------------------------------------------------
 kop('Browser-lading (<script>)');
 {
   const ctx = { window: {} };

@@ -266,6 +266,7 @@
 
   function celInhoud(rij) {
     var j = rij.jij, ic = SoS.ui.icoon;
+    if (j.soorten.length && /mg$/.test(j.tekst)) return '<span class="eind-cel-txt mg">' + esc(j.tekst) + '</span>'; // carbamazepine
     if (j.soorten.length) {
       return j.soorten.map(function (so) {
         return '<span class="eind-cel-ic">' + ic(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : '') + '</span>';
@@ -346,7 +347,7 @@
     var tijden = perDag.map(function (e) { return e.t; });
     var lek;
     if (c.id === 'carbamazepine') {
-      lek = '2× per dag 200 mg; na ±10 dagen, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling.';
+      lek = '2× per dag 200 mg (start laag: meneer Bakker moet wennen aan de bijwerkingen); na 2 weken, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling, maximaal 1.200 mg per dag.';
     } else if (c.id === 'lithium') {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
     } else {

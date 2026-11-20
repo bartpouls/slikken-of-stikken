@@ -228,50 +228,58 @@
     nabespreking: 'In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.'
   };
 
-  // Casus 3 — Carbamazepine (bonusrace). CONCEPT: getallen uit geheugen (Claude), nog niet in het casusblad;
-  // wacht op akkoord van Bart Pouls. Zie docs/bouwopdracht.md, "Concept casus 3".
+  // Casus 3 — Carbamazepine (bonusrace). CONCEPT: getallen uit bronnen en spelkeuzes (zie docs/bouwopdracht.md,
+  // "Concept casus 3"); Bart akkoord op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend
+  // venster). Nog niet in het casusblad.
   var carbamazepine = {
     id: 'carbamazepine',
     concept: true,
     naam: 'Carbamazepine',
     patient: 'Meneer Bakker',
     gewichtKg: 70,
-    verhaal: 'Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. Na een paar dagen went zijn lever aan het middel.',
+    verhaal: 'Meneer Bakker (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.',
     eenheid: { dosis: 'mg', concentratie: 'mg/L', tijd: 'uur' },
-    dosis: { mg: 200, stof: 'carbamazepine', tekst: '200 mg per tablet' },
-    VdPerKg: 1.0,
-    Vd: 70,
-    VdTekst: '1,0 L/kg → 70 L',
+    dosis: { mg: 200, stof: 'carbamazepine', tekst: 'eenheid 200 mg; knoppen 200, 400 of 800 mg per poortje' },
+    VdPerKg: 1.2,
+    Vd: 84,
+    VdTekst: '1,2 L/kg → 84 L',
     Thalf: 36,
-    ThalfTekst: '36 uur bij de start; na de gewenning ±15 uur',
+    ThalfTekst: '36 uur bij de start; na 3 weken gewenning ±16 uur',
     routes: {
-      slik: { dosis: 200, F: 0.8, ka: 0.4, tekst: '200 mg per tablet, F = 0,8, ka = 0,4 /u (piek ±8 u na inname)' }
+      slik: { dosis: 200, F: 0.8, ka: 0.4, tekst: '200 mg per eenheid, F = 0,8, ka = 0,4 /u (piek ±8 u na inname)' }
     },
     zone: { laag: 4, hoog: 12, tekst: '4–12 mg/L' },
-    venster: [{ vanaf: 0, laag: 4, hoog: 12 }],
+    // Meeschuivend venster: in de eerste 6 dagen is meneer Bakker nog niet gewend aan de bijwerkingen (duizelig,
+    // slaperig, wankel): bovenkant 8 mg/L. Daarna 12 mg/L. Spelkeuze voor "start laag, verhoog langzaam".
+    venster: [{ vanaf: 0, laag: 4, hoog: 8 }, { vanaf: 144, laag: 4, hoog: 12 }],
     toxisch: 20,
     toxischTekst: '> 20 mg/L',
     bovengrens: { type: 'concentratie', waarde: 20, tekst: '> 20 mg/L' },
     poortjes: {
-      interval: 12, tijden: reeks(0, 12, 42), aantal: 42, keuzes: ['slik', 'overslaan'], maxTabletten: 2,
-      tekst: '2× per dag, om 0 en 12 uur (42 poortjes); 1 of 2 tabletten, of overslaan'
+      interval: 12, tijden: reeks(0, 12, 56), aantal: 56, keuzes: ['200 mg', '400 mg', '800 mg', 'overslaan'],
+      dosisKnoppen: [1, 2, 4], // in eenheden van 200 mg
+      tekst: '2× per dag, om 0 en 12 uur (56 poortjes); 200, 400 of 800 mg, of overslaan'
     },
     start: null, // begint vandaag: de spiegel moet nog opbouwen
-    raceDuur: 504,
-    raceDuurTekst: '21 dagen patiënttijd',
+    raceDuur: 672,
+    raceDuurTekst: '28 dagen patiënttijd',
     gebeurtenissen: [
-      { type: 'klaring', t: 120, tot: null, factor: 1.4, tegenactie: true, label: 'lever went', icoon: null,
-        tijdTekst: 'Dag 5 (t = 120 u)',
-        tekst: 'De lever van meneer Bakker went aan carbamazepine: hij ruimt het sneller op.',
-        gevolg: 'Klaring × 1,4 (zelfinductie, eerste stap).' },
-      { type: 'klaring', t: 240, tot: null, factor: 1.7, tegenactie: true, label: 'lever went', icoon: null,
-        tijdTekst: 'Dag 10 (t = 240 u)',
-        tekst: 'Zijn lever ruimt carbamazepine nóg sneller op.',
-        gevolg: 'Klaring nog eens × 1,7 (samen × 2,4: T½ 36 → 15 uur).' }
+      { type: 'klaring', t: 168, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 7 (t = 168 u)',
+        tekst: 'De lever van meneer Bakker went aan carbamazepine: hij gaat het sneller afbreken.',
+        gevolg: 'Klaring × 1,3 (autoinductie, stap 1 van 3).' },
+      { type: 'klaring', t: 336, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 14 (t = 336 u)',
+        tekst: 'Zijn lever breekt carbamazepine nóg sneller af.',
+        gevolg: 'Klaring × 1,3 (stap 2 van 3).' },
+      { type: 'klaring', t: 504, tot: null, factor: 1.3, tegenactie: true, label: 'lever went', icoon: null,
+        tijdTekst: 'Dag 21 (t = 504 u)',
+        tekst: 'De gewenning van de lever is nu compleet.',
+        gevolg: 'Klaring × 1,3 (stap 3 van 3; samen × 2,2: T½ 36 → ±16 uur).' }
     ],
     echtSchema: {
-      tekst: '200 mg 2dd; na ±10 dagen ophogen naar 400 mg 2dd op geleide van de spiegel',
-      schema: reeks(0, 12, 42).map(function (t) { return { t: t, route: 'slik', aantal: t >= 264 ? 2 : 1 }; })
+      tekst: '200 mg 2dd; na 2 weken 400 mg 2dd op geleide van de spiegel',
+      schema: reeks(0, 12, 56).map(function (t) { return { t: t, route: 'slik', aantal: t >= 336 ? 2 : 1 }; })
     },
     lekentaal: {
       onder: 'Kans op een epileptische aanval.',
