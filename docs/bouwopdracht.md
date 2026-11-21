@@ -44,7 +44,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 - Geluid (korte blips à la Flappy Bird, zelf gesynthetiseerd, geen gekopieerde geluidsbestanden) met een dempknop.
 - Nederlands.
 
-**Niet (plank):** multiplayer en centrale opslag, docentmodus, infuus, twee-compartimentenmodel, fenytoïne, digoxine, gentamicine, opiaten. Wel zo bouwen dat het therapeutisch venster per casus uit data komt en in de tijd kan verschuiven: dat is later nodig voor opiaten (gewenning: venster schuift omhoog).
+**Niet (plank):** multiplayer en centrale opslag, docentmodus, infuus, twee-compartimentenmodel, fenytoïne, digoxine, gentamicine, opiaten. Liggende race (tijd naar rechts, zoals in een boek; november 2026 besproken, niet vóór de ouderdag): alleen als oefenronde én race allebei liggend gaan (anders klopt §6C niet meer), met een eigen indeling (knoppen in een kolom opzij) en getest op een echte iPhone met draaislot aan. Wel zo bouwen dat het therapeutisch venster per casus uit data komt en in de tijd kan verschuiven: dat is later nodig voor opiaten (gewenning: venster schuift omhoog).
 
 ## 3. Spelmechaniek
 
