@@ -1,6 +1,10 @@
 // Slikken of Stikken — automatische spelers (bots), §6B en §6C van docs/bouwopdracht.md.
 // Draaien: node tests/bots.mjs            (alles: beide viewports, ±15–20 min)
 //          node tests/bots.mjs --kort     (snelle proef: alleen 375×667, 3 runs, geen run op normale snelheid)
+//          --run=r05 --vp=390   (één run, één schermbreedte; zonder --vp is het 375×667)
+//          --serieel            (schermmaten na elkaar in plaats van tegelijk)
+//          --browser=webkit | --browser=firefox   (andere browsermotor; rapport dan bots-rapport-webkit.md enz.)
+//                                         WebKit = de motor van Safari (iPhone-UA); Firefox zonder isMobile (niet ondersteund).
 // Schrijft: gauntlet/artefacten/bots-rapport.md
 //
 // Werkwijze
@@ -25,9 +29,15 @@ import path from 'node:path';
 
 const hier = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(hier, '..');
-const RAPPORT = path.join(ROOT, 'gauntlet', 'artefacten', 'bots-rapport.md');
+const BROWSER = ((process.argv.find((a) => a.startsWith('--browser=')) || '').slice(10) || 'chromium').toLowerCase();
+if (!['chromium', 'webkit', 'firefox'].includes(BROWSER)) throw new Error('onbekende --browser: ' + BROWSER);
+const RAPPORT = path.join(ROOT, 'gauntlet', 'artefacten', BROWSER === 'chromium' ? 'bots-rapport.md' : 'bots-rapport-' + BROWSER + '.md');
 const requireGlobaal = createRequire(execSync('npm root -g').toString().trim() + '/');
-const { chromium, devices } = requireGlobaal('playwright');
+const pw = requireGlobaal('playwright');
+const { devices } = pw;
+const MOTOR = pw[BROWSER];
+const MOTOR_NAAM = { chromium: 'Chromium', webkit: 'WebKit (Safari-motor)', firefox: 'Firefox' }[BROWSER];
+const UA = BROWSER === 'webkit' ? devices['iPhone 13'].userAgent : BROWSER === 'firefox' ? undefined : devices['Pixel 5'].userAgent;
 const requireLokaal = createRequire(import.meta.url);
 const M = requireLokaal(path.join(ROOT, 'src', 'model.js'));
 const S = requireLokaal(path.join(ROOT, 'src', 'score.js'));
@@ -429,8 +439,8 @@ const roosterVerwacht = (v) => (v === 'niets' ? 'overgeslagen' : v === 'geen' ? 
 async function speelRun(browser, vp, cfg, poging) {
   const speed = cfg.normaal ? 1 : SNEL;
   const ctx = await browser.newContext({
-    viewport: vp.viewport, deviceScaleFactor: vp.deviceScaleFactor, isMobile: true, hasTouch: true,
-    userAgent: devices['Pixel 5'].userAgent, locale: 'nl-NL'
+    viewport: vp.viewport, deviceScaleFactor: vp.deviceScaleFactor, isMobile: BROWSER !== 'firefox', hasTouch: true,
+    userAgent: UA, locale: 'nl-NL'
   });
   const page = await ctx.newPage();
   const run = {
@@ -548,7 +558,7 @@ async function speelRunBinnen(page, ctx, run, cfg, vp, speed, zetGeladen) {
 }
 
 async function speelViewport(vp, runs) {
-  const browser = await chromium.launch({ headless: true });
+  const browser = await MOTOR.launch({ headless: true });
   const uit = [];
   try {
     for (const cfg of runs) {
@@ -580,8 +590,14 @@ async function speelViewport(vp, runs) {
 // ---------------------------------------------------------------------------------------------
 const ALLEEN = (process.argv.find((a) => a.startsWith('--run=')) || '').slice(6).split(',').filter(Boolean);
 const runsTeDoen = ALLEEN.length ? RUNS.filter((r) => ALLEEN.includes(r.id)) : (KORT ? RUNS_KORT : RUNS);
-const vps = KORT || ALLEEN.length ? [VIEWPORTS[0]] : VIEWPORTS;
-const resultaten = await Promise.all(vps.map((vp) => speelViewport(vp, runsTeDoen)));
+const VPKEUZE = (process.argv.find((a) => a.startsWith('--vp=')) || '').slice(5); // bv. --vp=390: alleen die breedte
+const vps = VPKEUZE ? VIEWPORTS.filter((v) => String(v.viewport.width) === VPKEUZE) : (KORT || ALLEEN.length ? [VIEWPORTS[0]] : VIEWPORTS);
+if (!vps.length) throw new Error('onbekende --vp: ' + VPKEUZE);
+// Standaard spelen de twee schermmaten tegelijk. --serieel: na elkaar (trager, ±30 min), voor als de bots in WebKit
+// bij de gelijktijdige belasting een poortje te laat tikken (dat gaf een ongeldige run, niet een fout in het spel).
+let resultaten;
+if (process.argv.includes('--serieel')) { resultaten = []; for (const vp of vps) resultaten.push(await speelViewport(vp, runsTeDoen)); }
+else resultaten = await Promise.all(vps.map((vp) => speelViewport(vp, runsTeDoen)));
 server.close();
 const looptijd = (Date.now() - T0_SCRIPT) / 1000;
 
@@ -594,10 +610,10 @@ const L = [];
 L.push('# Bots-rapport §6B en §6C — Slikken of Stikken');
 L.push('');
 L.push(`Gegenereerd door \`node tests/bots.mjs\`${KORT ? ' --kort' : ''} op ${new Date().toISOString().replace('T', ' ').slice(0, 19)} UTC. ` +
-  `Looptijd: ${nl(looptijd / 60, 1)} min. Playwright ${requireGlobaal('playwright/package.json').version}, Chromium headless (/opt/pw-browsers). index.html: ${(HTML.length / 1024).toFixed(1)} kB, sha256 ${HTML_SHA}… (één keer ingelezen bij de start; alle runs spelen dezelfde build).`);
+  `Looptijd: ${nl(looptijd / 60, 1)} min. Playwright ${requireGlobaal('playwright/package.json').version}, ${MOTOR_NAAM} headless (browserversie van Playwright ${requireGlobaal('playwright/package.json').version}). index.html: ${(HTML.length / 1024).toFixed(1)} kB, sha256 ${HTML_SHA}… (één keer ingelezen bij de start; alle runs spelen dezelfde build).`);
 L.push('');
-L.push('**Opzet.** Het echte `index.html` (lokale http-server op 127.0.0.1) in mobiele emulatie (isMobile, hasTouch, ' +
-  'Pixel-5-UA): 375×667 @2x en 390×844 @3x. De bots handelen alleen via `page.touchscreen.tap` op het midden van een zichtbare ' +
+L.push('**Opzet.** Het echte `index.html` (lokale http-server op 127.0.0.1) in mobiele emulatie (' + (BROWSER === 'firefox' ? 'hasTouch, zonder isMobile' : 'isMobile, hasTouch') + ', ' +
+  (BROWSER === 'webkit' ? 'iPhone-UA' : BROWSER === 'firefox' ? 'standaard-UA' : 'Pixel-5-UA') + '): 375×667 @2x en 390×844 @3x. De bots handelen alleen via `page.touchscreen.tap` op het midden van een zichtbare ' +
   'knop (vooraf met `elementFromPoint` gecontroleerd). `SoS.debug` wordt alleen gelezen (doelpoortje, open/te laat, gekozen keuze, ' +
   'spiegel, fase). Scores komen van het scherm (finish-overlay en eindscherm); daarna wordt het gespeelde schema uit het rooster ' +
   `op het eindscherm nagerekend met \`SoS.score.scoreSchema\` (src/score.js, identiek aan de inline code). Strategie-runs op \`?speed=${SNEL}\`; ` +

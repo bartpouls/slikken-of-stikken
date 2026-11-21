@@ -79,6 +79,10 @@
 .eind-leg-m { width: 18px; height: 6px; border-radius: 2px; background: #c8eb78; }
 .eind-leg-ibu { width: 5px; height: 18px; border-radius: 2px; background: #ff9f43; }
 
+/* Voettekst met logo Capsule Pop, rechtsonder. Het logo heeft een donkere rand: op een crèmevlakje (kleur uit het logo zelf). */
+.cp-voet { display: flex; justify-content: flex-end; padding: 18px calc(var(--veilig-rechts) + 16px) calc(var(--veilig-onder) + 14px) 16px; }
+.cp-logo { background: #FBF4E6; border-radius: 12px; padding: 6px 8px; line-height: 0; }
+.cp-logo svg { display: block; height: 40px; width: auto; }
 .eind-acties { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-top: 14px; }
 .eind-acties .knop-lijn.groot { width: 100%; min-height: 52px; font-size: 18px; }
 .eind-acties .knop-paars.groot { flex: 1 1 auto; max-width: none; }

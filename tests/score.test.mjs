@@ -563,20 +563,48 @@ kop('Geen keuze (v2.2): poortje voorbij zonder keuze kost punten; live = batch; 
 }
 
 // ---------------------------------------------------------------------------------------------
-kop('Bonusrace carbamazepine (concept): rangorde en praktijkzinnen');
+kop('Bonusrace carbamazepine: rangorde, geleidelijk ophogen en praktijkzinnen');
 {
   const C3 = M.casus('carbamazepine'), PT = M.poortjes(C3);
   const sp = (f) => S.scoreSchema(C3, PT.map((t, i) => ({ t, route: 'slik', aantal: f(i, t) })).filter((x) => x.aantal));
-  const r = { echt: sp((i, t) => (t >= 336 ? 2 : 1)), oplaad: sp((i, t) => (i === 0 ? 4 : t >= 336 ? 2 : 1)), nooit: sp(() => 1),
-    hoog: sp(() => 2), niets: sp(() => 0), achthonderd: sp(() => 4) };
+  const echtSchema = C3.echtSchema.schema;
+  const r = { echt: S.scoreSchema(C3, echtSchema), eenStap: sp((i, t) => (t >= 336 ? 2 : 1)),
+    oplaad: S.scoreSchema(C3, echtSchema.map((e, i) => (i === 0 ? { ...e, aantal: 4 } : e))), nooit: sp(() => 1),
+    dag7: sp((i, t) => (t >= 168 ? 2 : 1)), hoog: sp(() => 2), niets: sp(() => 0), achthonderd: sp(() => 4) };
   const sc = Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v.stand.totaal]));
   console.log('scores:', JSON.stringify(sc));
-  check(sc.echt > sc.oplaad && sc.oplaad > sc.nooit && sc.nooit > sc.hoog && sc.hoog > sc.niets && sc.niets > sc.achthonderd,
-    'rangorde: echt > oplaaddosis > nooit ophogen > meteen 400 > niets > 800 mg per keer');
-  check(r.echt.verslag.praktijk.regel === 'goed' && r.nooit.verslag.praktijk.regel === 'nietOpgehoogd' && r.hoog.verslag.praktijk.regel === 'teSnelHoog' && r.achthonderd.verslag.praktijk.regel === 'giftig',
-    'praktijkzinnen carbamazepine');
+  check(sc.echt > sc.eenStap && sc.eenStap > sc.oplaad && sc.oplaad > sc.nooit && sc.nooit > sc.dag7 && sc.dag7 > sc.hoog &&
+    sc.hoog > sc.niets && sc.niets > sc.achthonderd,
+    'rangorde: geleidelijk > in één stap ophogen > oplaaddosis > nooit ophogen > dag 7 verdubbelen > meteen 400 > niets > 800 mg per keer');
+  // casusblad (docs/bouwopdracht.md, casus 3): doorgerekende tabel
+  const verwacht = { echt: 943, eenStap: 843, oplaad: 831, nooit: 798, dag7: 709, hoog: 334, niets: -1000, achthonderd: -2829 };
+  check(Object.entries(verwacht).every(([k, v]) => sc[k] === v), 'scores = tabel casusblad ' + JSON.stringify(verwacht));
+  // echt schema: 400 → 600 → 800 mg per dag
+  const mgDag = (d) => echtSchema.filter((e) => Math.floor(e.t / 24) === d).reduce((a, e) => a + e.aantal * 200, 0);
+  check(mgDag(0) === 400 && mgDag(6) === 400 && mgDag(7) === 600 && mgDag(13) === 600 && mgDag(14) === 800 && mgDag(27) === 800,
+    'echt schema: 400 mg/dag, na 1 week 600, na 2 weken 800');
+  // straf: alleen bij een te snelle stap, één keer per stap, -100
+  check(r.echt.stand.regels.snel === 0 && r.eenStap.stand.regels.snel === -100 && r.oplaad.stand.regels.snel === -100 &&
+    r.dag7.stand.regels.snel === -100 && r.hoog.stand.regels.snel === -100 && r.nooit.stand.regels.snel === 0,
+    'strafpunten te snel opgehoogd');
+  check(JSON.stringify(r.eenStap.verslag.teSnel) === JSON.stringify([{ dag: 14, mg: 800, toegestaan: 600 }]), 'te snelle stap op dag 14: 800 van max. 600 mg');
+  // na een week niets mag je weer met 400 mg per dag beginnen
+  const pauze = sp((i, t) => (t >= 168 && t < 336 ? 0 : 1));
+  check(pauze.stand.regels.snel === 0, 'na een week zonder: weer starten met 400 mg per dag kost niets');
+  // opbouw: zes regels bij carbamazepine, vijf bij paracetamol en lithium (§3)
+  check(r.echt.verslag.opbouw.regels.length === 6 && r.echt.verslag.opbouw.regels[5].label === 'te snel opgehoogd' &&
+    S.scoreSchema('lithium', []).verslag.opbouw.regels.length === 5 && S.scoreSchema('paracetamol', []).verslag.opbouw.regels.length === 5,
+    'opbouwregel "te snel opgehoogd" alleen bij carbamazepine');
+  // live = batch, ook voor de straf
+  const race = S.maakRace(C3);
+  PT.forEach((t, i) => { const n = (t >= 336 ? 2 : 1); race.geef('slik', { aantal: n, index: i }); });
+  race.naar(C3.raceDuur);
+  check(race.stand().totaal === sc.eenStap && race.stand().regels.snel === -100, 'live race = batch (' + race.stand().totaal + ')');
+  check(r.echt.verslag.praktijk.regel === 'goed' && r.eenStap.verslag.praktijk.regel === 'teSnel' && r.nooit.verslag.praktijk.regel === 'nietOpgehoogd' &&
+    r.hoog.verslag.praktijk.regel === 'teSnel' && r.achthonderd.verslag.praktijk.regel === 'giftig', 'praktijkzinnen carbamazepine');
   check(M.venster(C3, 0).hoog === 8 && M.venster(C3, 200).hoog === 12, 'venster schuift: bovenkant 8 → 12 mg/L op dag 6');
-  check(r.echt.verslag.tijdlijn[40].jij.tekst === '400 mg' && r.echt.verslag.tijdlijn[40].echt === '400 mg', 'dosis in mg in de tijdlijn');
+  check(r.echt.verslag.tijdlijn[40].jij.tekst === '400 mg' && r.echt.verslag.tijdlijn[40].echt === '400 mg' &&
+    r.echt.verslag.tijdlijn[14].echt === '400 mg' && r.echt.verslag.tijdlijn[15].echt === '200 mg', 'dosis in mg in de tijdlijn');
 }
 
 // ---------------------------------------------------------------------------------------------
