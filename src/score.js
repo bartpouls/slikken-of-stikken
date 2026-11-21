@@ -587,7 +587,7 @@
     return { regel: 'nabespreking', zin: c.nabespreking }; // vangnet
   }
 
-  // Carbamazepine (bonusrace, concept): opbouwen, en na de gewenning van de lever ophogen.
+  // Carbamazepine (bonusrace): opbouwen, en na de gewenning van de lever ophogen.
   function praktijkCarbamazepine(c, rijen, teller, doses) {
     var T = c.raceDuur, tK = eersteKlaring(c);
     var tabl = function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return n; };
@@ -607,7 +607,7 @@
           ' mg was de grens. Verhoog carbamazepine per week met hooguit 200 mg per dag: sneller geeft duizeligheid en dubbelzien.' };
     }
     if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
-      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer El Idrissi werd duizelig: hij was nog niet ' +
+      zin: 'In de eerste week kwam de spiegel boven de 8 en werd meneer El Idrissi duizelig: hij was nog niet ' +
         'gewend aan het middel. Start laag en verhoog langzaam.' };
     if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
       zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +

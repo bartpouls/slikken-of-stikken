@@ -27,7 +27,7 @@
  *      de QALY-punten en een tegelrij (één tegel per poortje, kleur = waar de spiegel tot het volgende
  *      poortje het meest zat: in de zone / te laag / te hoog / giftig; uit data.curves), de
  *      een regel over het scorebord, "spelpunten, geen echte QALY's".
- *   2. Toedienverslag per race (data-verslag="0|1"): mini-curve, QALY-opbouw in vier regels + totaal,
+ *   2. Toedienverslag per race (data-verslag="0|1"): mini-curve, QALY-opbouw in vijf regels (carbamazepine: zes) + totaal,
  *      rooster met je toedieningen per poortje naast het echte schema (van boven naar beneden, zoals de tijd in
  *      de race), telling (toedienmomenten, gemiddeld per dag naast de grens), de praktijkzin en (lithium) de
  *      nabesprekingszin uit het casusblad.

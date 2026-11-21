@@ -11,7 +11,7 @@ Een farmacokinetiek-race voor de telefoon: houd de spiegel van een geneesmiddel 
 
 ## Voor wie eraan bouwt
 
-De broncode staat in `src/`; `node tools/build.mjs` voegt alles samen tot `index.html`. Tests: `node tests/model.test.mjs` (rekenmodel tegen het casusblad), `node tests/score.test.mjs` (QALY-punten en eindverslag) `node tests/bots.mjs` (automatische spelers in een telefoonscherm, ±12 min, vraagt Playwright) en `node tests/herlaad.mjs` (herladen midden in het spel, ±1 min). Bots en herlaadtest kunnen ook in de Safari-motor of Firefox: `--browser=webkit` of `--browser=firefox` (rapport in `gauntlet/artefacten/bots-rapport-webkit.md` / `-firefox.md`). `node tools/schermen.mjs` maakt de schermafbeeldingen opnieuw.
+De broncode staat in `src/`; `node tools/build.mjs` voegt alles samen tot `index.html`. Tests: `node tests/model.test.mjs` (rekenmodel tegen het casusblad), `node tests/score.test.mjs` (QALY-punten en eindverslag), `node tests/bots.mjs` (automatische spelers in een telefoonscherm, ±12 min, vraagt Playwright) en `node tests/herlaad.mjs` (herladen midden in het spel, ±1 min). Bots en herlaadtest kunnen ook in de Safari-motor of Firefox: `--browser=webkit` of `--browser=firefox` (rapport in `gauntlet/artefacten/bots-rapport-webkit.md` / `-firefox.md`). `node tools/schermen.mjs` maakt de schermafbeeldingen opnieuw.
 
 De oefenronde (tutorial) is geen apart scherm: `src/tutorial.js` is alleen een draaiboek (wanneer staat de klok stil, welke knop, welke zin) dat de race-motor in `src/app.js` afspeelt op het gewone racescherm.
 

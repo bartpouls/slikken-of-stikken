@@ -602,7 +602,7 @@ const L = [];
 L.push('# Bots-rapport §6B en §6C — Slikken of Stikken');
 L.push('');
 L.push(`Gegenereerd door \`node tests/bots.mjs\`${KORT ? ' --kort' : ''} op ${new Date().toISOString().replace('T', ' ').slice(0, 19)} UTC. ` +
-  `Looptijd: ${nl(looptijd / 60, 1)} min. Playwright ${requireGlobaal('playwright/package.json').version}, ${MOTOR_NAAM} headless (${process.env.PLAYWRIGHT_BROWSERS_PATH}). index.html: ${(HTML.length / 1024).toFixed(1)} kB, sha256 ${HTML_SHA}… (één keer ingelezen bij de start; alle runs spelen dezelfde build).`);
+  `Looptijd: ${nl(looptijd / 60, 1)} min. Playwright ${requireGlobaal('playwright/package.json').version}, ${MOTOR_NAAM} headless (browserversie van Playwright ${requireGlobaal('playwright/package.json').version}). index.html: ${(HTML.length / 1024).toFixed(1)} kB, sha256 ${HTML_SHA}… (één keer ingelezen bij de start; alle runs spelen dezelfde build).`);
 L.push('');
 L.push('**Opzet.** Het echte `index.html` (lokale http-server op 127.0.0.1) in mobiele emulatie (' + (BROWSER === 'firefox' ? 'hasTouch, zonder isMobile' : 'isMobile, hasTouch') + ', ' +
   (BROWSER === 'webkit' ? 'iPhone-UA' : BROWSER === 'firefox' ? 'standaard-UA' : 'Pixel-5-UA') + '): 375×667 @2x en 390×844 @3x. De bots handelen alleen via `page.touchscreen.tap` op het midden van een zichtbare ' +

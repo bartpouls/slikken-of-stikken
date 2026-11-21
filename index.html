@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="bouw" content="9bd313ca45e8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="Slikken of Stikken: houd de spiegel van een geneesmiddel in het groene vlak. Vereenvoudigd model voor onderwijs, geen doseeradvies.">
@@ -1986,7 +1987,7 @@ input { font: inherit; }
     return { regel: 'nabespreking', zin: c.nabespreking }; // vangnet
   }
 
-  // Carbamazepine (bonusrace, concept): opbouwen, en na de gewenning van de lever ophogen.
+  // Carbamazepine (bonusrace): opbouwen, en na de gewenning van de lever ophogen.
   function praktijkCarbamazepine(c, rijen, teller, doses) {
     var T = c.raceDuur, tK = eersteKlaring(c);
     var tabl = function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return n; };
@@ -2006,7 +2007,7 @@ input { font: inherit; }
           ' mg was de grens. Verhoog carbamazepine per week met hooguit 200 mg per dag: sneller geeft duizeligheid en dubbelzien.' };
     }
     if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
-      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer El Idrissi werd duizelig: hij was nog niet ' +
+      zin: 'In de eerste week kwam de spiegel boven de 8 en werd meneer El Idrissi duizelig: hij was nog niet ' +
         'gewend aan het middel. Start laag en verhoog langzaam.' };
     if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
       zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +
@@ -2602,7 +2603,7 @@ input { font: inherit; }
  *      de QALY-punten en een tegelrij (één tegel per poortje, kleur = waar de spiegel tot het volgende
  *      poortje het meest zat: in de zone / te laag / te hoog / giftig; uit data.curves), de
  *      een regel over het scorebord, "spelpunten, geen echte QALY's".
- *   2. Toedienverslag per race (data-verslag="0|1"): mini-curve, QALY-opbouw in vier regels + totaal,
+ *   2. Toedienverslag per race (data-verslag="0|1"): mini-curve, QALY-opbouw in vijf regels (carbamazepine: zes) + totaal,
  *      rooster met je toedieningen per poortje naast het echte schema (van boven naar beneden, zoals de tijd in
  *      de race), telling (toedienmomenten, gemiddeld per dag naast de grens), de praktijkzin en (lithium) de
  *      nabesprekingszin uit het casusblad.
@@ -3403,19 +3404,18 @@ input { font: inherit; }
   var VOORTGANG = 'sos.voortgang', VOORTGANG_GELDIG = 12 * 3600 * 1000;
   // Vingerafdruk van deze versie van het spel (alle code op de pagina). Een stand uit een andere versie wordt
   // niet teruggezet: na een correctie op de dag zelf past een oud verslag misschien niet meer bij de code.
-  var bouwCode = null;
+  // De stempel komt uit tools/build.mjs (<meta name="bouw">, hash van alle CSS en JS): geen invloed van extensies,
+  // en ook een correctie alleen in de opmaak maakt oude standen ongeldig.
   function bouw() {
-    if (bouwCode) return bouwCode;
-    var tekst = '', h = 0, i;
-    try { var sc = doc.querySelectorAll('script'); for (i = 0; i < sc.length; i++) tekst += sc[i].textContent; } catch (e) { /* negeer */ }
-    for (i = 0; i < tekst.length; i++) h = (h * 31 + tekst.charCodeAt(i)) | 0;
-    bouwCode = (h >>> 0).toString(36) + '-' + tekst.length;
-    return bouwCode;
+    try { var m = doc.querySelector('meta[name="bouw"]'); if (m && m.content && m.content.indexOf('@@') < 0) return m.content; } catch (e) { /* negeer */ }
+    return 'zonder-stempel';
   }
   function heeftRace(v) { return !!(v && v.opbouw && isFinite(v.opbouw.totaal)); }
+  // Voortgang = race 1 of race 2 afgerond. De bonusrace alleen is geen voortgang (Verder zou dan race 1 openen).
+  function heeftVoortgang(vs) { return !!vs && (heeftRace(vs[0]) || heeftRace(vs[1])); }
   function bewaarVoortgang() {
     try {
-      if (!staat.verslagen.some(heeftRace)) { root.localStorage.removeItem(VOORTGANG); return; }
+      if (!heeftVoortgang(staat.verslagen)) { root.localStorage.removeItem(VOORTGANG); return; }
       root.localStorage.setItem(VOORTGANG, JSON.stringify({ v: 1, bouw: bouw(), op: Date.now(), naam: staat.naam,
         verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] }));
     } catch (e) { /* geen opslag of vol: het spel werkt gewoon door */ }
@@ -3424,14 +3424,14 @@ input { font: inherit; }
     try {
       var x = JSON.parse(root.localStorage.getItem(VOORTGANG) || 'null');
       if (!x || x.v !== 1 || x.bouw !== bouw() || typeof x.naam !== 'string' || !Array.isArray(x.verslagen) || !Array.isArray(x.curves)) return null;
-      if (!(Date.now() - x.op < VOORTGANG_GELDIG) || !x.verslagen.some(heeftRace)) return null;
+      if (!(Date.now() - x.op < VOORTGANG_GELDIG) || !heeftVoortgang(x.verslagen)) return null;
       return x;
     } catch (e) { return null; }
   }
   function wisVoortgang() { try { root.localStorage.removeItem(VOORTGANG); } catch (e) { /* geen opslag */ } }
   // Welke voortgang biedt het startscherm aan: die van dit spel (na "Naar het begin"), anders de bewaarde.
   function voortgangVoorStart() {
-    if (staat.verslagen.some(heeftRace)) return { naam: staat.naam, verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] };
+    if (heeftVoortgang(staat.verslagen)) return { naam: staat.naam, verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] };
     return leesVoortgang();
   }
   function werkVerderBij() {

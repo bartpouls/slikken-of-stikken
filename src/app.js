@@ -289,19 +289,18 @@
   var VOORTGANG = 'sos.voortgang', VOORTGANG_GELDIG = 12 * 3600 * 1000;
   // Vingerafdruk van deze versie van het spel (alle code op de pagina). Een stand uit een andere versie wordt
   // niet teruggezet: na een correctie op de dag zelf past een oud verslag misschien niet meer bij de code.
-  var bouwCode = null;
+  // De stempel komt uit tools/build.mjs (<meta name="bouw">, hash van alle CSS en JS): geen invloed van extensies,
+  // en ook een correctie alleen in de opmaak maakt oude standen ongeldig.
   function bouw() {
-    if (bouwCode) return bouwCode;
-    var tekst = '', h = 0, i;
-    try { var sc = doc.querySelectorAll('script'); for (i = 0; i < sc.length; i++) tekst += sc[i].textContent; } catch (e) { /* negeer */ }
-    for (i = 0; i < tekst.length; i++) h = (h * 31 + tekst.charCodeAt(i)) | 0;
-    bouwCode = (h >>> 0).toString(36) + '-' + tekst.length;
-    return bouwCode;
+    try { var m = doc.querySelector('meta[name="bouw"]'); if (m && m.content && m.content.indexOf('@@') < 0) return m.content; } catch (e) { /* negeer */ }
+    return 'zonder-stempel';
   }
   function heeftRace(v) { return !!(v && v.opbouw && isFinite(v.opbouw.totaal)); }
+  // Voortgang = race 1 of race 2 afgerond. De bonusrace alleen is geen voortgang (Verder zou dan race 1 openen).
+  function heeftVoortgang(vs) { return !!vs && (heeftRace(vs[0]) || heeftRace(vs[1])); }
   function bewaarVoortgang() {
     try {
-      if (!staat.verslagen.some(heeftRace)) { root.localStorage.removeItem(VOORTGANG); return; }
+      if (!heeftVoortgang(staat.verslagen)) { root.localStorage.removeItem(VOORTGANG); return; }
       root.localStorage.setItem(VOORTGANG, JSON.stringify({ v: 1, bouw: bouw(), op: Date.now(), naam: staat.naam,
         verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] }));
     } catch (e) { /* geen opslag of vol: het spel werkt gewoon door */ }
@@ -310,14 +309,14 @@
     try {
       var x = JSON.parse(root.localStorage.getItem(VOORTGANG) || 'null');
       if (!x || x.v !== 1 || x.bouw !== bouw() || typeof x.naam !== 'string' || !Array.isArray(x.verslagen) || !Array.isArray(x.curves)) return null;
-      if (!(Date.now() - x.op < VOORTGANG_GELDIG) || !x.verslagen.some(heeftRace)) return null;
+      if (!(Date.now() - x.op < VOORTGANG_GELDIG) || !heeftVoortgang(x.verslagen)) return null;
       return x;
     } catch (e) { return null; }
   }
   function wisVoortgang() { try { root.localStorage.removeItem(VOORTGANG); } catch (e) { /* geen opslag */ } }
   // Welke voortgang biedt het startscherm aan: die van dit spel (na "Naar het begin"), anders de bewaarde.
   function voortgangVoorStart() {
-    if (staat.verslagen.some(heeftRace)) return { naam: staat.naam, verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] };
+    if (heeftVoortgang(staat.verslagen)) return { naam: staat.naam, verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] };
     return leesVoortgang();
   }
   function werkVerderBij() {
