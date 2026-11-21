@@ -23,7 +23,7 @@
 - **Nabespreekvraag vervallen:** de docent reflecteert straks met de groep vanuit de eindverslagen.
 - **Tijdstrook naar verhouding:** deel 1 en deel 2 zijn even lang als hun duur. De vergelijking oefenronde–race (§6C2) laat de lengte van die stukken buiten beschouwing.
 - **Eindverslag:** de curve staat daar bewust horizontaal, "zoals in een boek", met die uitleg erbij (de race was dezelfde curve, een kwartslag gedraaid).
-- **Bonusrace carbamazepine (concept):** via het menu en het eindscherm, telt niet mee in het totaal. Zie "Concept casus 3" onder het casusblad.
+- **Bonusrace carbamazepine:** via het menu en het eindscherm, telt niet mee in het totaal. Zie "Casus 3" onder het casusblad.
 
 Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor het rekenmodel: het spel neemt ze letterlijk over. Afwijken mag alleen na akkoord van Bart Pouls (inhoudelijk eigenaar).
 
@@ -132,38 +132,42 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 | Boven de zone, in lekentaal | "Trillen, misselijk, diarree. Nog hoger: verward, nieren in gevaar." | |
 | Nabespreking | "In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken." | |
 
-### Concept casus 3 — Carbamazepine (bonusrace) · CONCEPT
+### Casus 3 — Carbamazepine (bonusrace)
 
-Bonusrace, alleen via het menu en via de knop "Bonusrace" op het eindscherm. Telt niet mee in het totaal. Bart akkoord op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend venster, dosisknoppen 200/400/800 mg). De getallen zijn nagezocht via zoekresultaten; de Nederlandse bronnen (TDM-monografie, CBG-SmPC, UMC Utrecht) zijn vanuit de bouwomgeving niet zelf geopend.
+Bonusrace voor wie meer wil ("voor de pro's"), alleen via het menu en via de knop "Bonusrace" op het eindscherm. Telt niet mee in het totaal. Bart akkoord (november 2026) op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend venster, dosisknoppen 200/400/800 mg), op de getallen, op geleidelijk ophogen met strafpunten en op bijwerkingen vanaf 10 mg/L (ernstiger boven 12). Venster, T½, Vd, dosering en de duur van de autoinductie zijn nagelopen in de CBG-SmPC (h03899), de bepalingenwijzer van UMC Utrecht en het FDA-label. Niet zelf geopend: StatPearls, RCH, ILAE, SCHN en de review (F, bijwerkingen bij hogere spiegels).
 
 **Verhaal:** Meneer El Idrissi (70 kg) heeft epilepsie en begint vandaag met carbamazepine. In de eerste week went hij aan de bijwerkingen; daarna gaat zijn lever het middel sneller afbreken.
 
 | Veld | Waarde | Status / bron |
 |---|---|---|
-| Knoppen | 200 mg, 400 mg, 800 mg of Overslaan, per poortje | spelkeuze (Bart); 800 mg per keer 2× per dag = 1.600 mg/dag, boven het maximum van 1.200 mg/dag [SmPC] |
-| Vd | 1,2 L/kg → 84 L | 0,8–1,9 L/kg; bij onderhoud 1,24 L/kg [review, ScienceDirect] |
-| T½ | 36 uur bij de start; na 3 weken ±16 uur | eenmalig ±36 u [SmPC NL], 25–65 u; chronisch 12–17 u [FDA-label], 16–24 u [SmPC NL], 12–24 u [UMC Utrecht] |
-| F, ka | F = 0,8; ka = 0,4 /u (piek ±8 u na inname) | F 75–85% [review]; tmax 4–8 u; ka is een aanname |
-| Venster | 4–12 mg/L; in de eerste 6 dagen bovenkant 8 mg/L | 4–12 mg/L [UMC Utrecht, TDM]. Het lagere plafond is een spelkeuze voor "start laag": tolerantie voor de bijwerkingen in de hersenen ontstaat in de eerste weken [ILAE 2015; SCHN] |
-| Boven de zone, in lekentaal | "Duizelig, dubbelzien, wankel lopen." | ataxie en nystagmus vanaf ±10–15 mg/L [StatPearls; RCH] |
+| Knoppen | 200 mg, 400 mg, 800 mg of Overslaan, per poortje | spelkeuze (Bart); 800 mg per keer 2× per dag = 1.600 mg/dag, boven het maximum van 1.200 mg/dag [SmPC, FDA] |
+| Ophogen | Eerste week hooguit 400 mg per dag; daarna per dag hooguit 200 mg meer dan 7 dagen eerder. Sneller: −100 QALY-punten per te snelle stap (opbouwregel "te snel opgehoogd"). Na een week zonder mag je weer met 400 mg per dag beginnen. | "Increase at weekly intervals by adding up to 200 mg/day" [FDA]; "langzaam verhogen" [SmPC]; strafgrootte: spelkeuze (Bart akkoord op strafpunten) |
+| Vd | 1,2 L/kg → 84 L | 0,8–1,9 L/kg [SmPC 5.2]; bij onderhoud 1,24 L/kg [review] |
+| T½ | 36 uur bij de start; na 3 weken ±16 uur | eenmalig "gemiddeld circa 36 uur" [SmPC 5.2], 25–65 u [FDA]; chronisch 16–24 u [SmPC 5.2], 12–17 u [FDA], 12–24 u [UMC Utrecht] (alle drie nagelopen) |
+| F, ka | F = 0,8; ka = 0,4 /u (piek ±8 u na inname) | F 75–85% [review]; SmPC: "bijna volledig" geabsorbeerd; tmax eenmalig binnen 12 u [SmPC], bij herhaald gebruik 4–5 u [FDA]; ka is een aanname |
+| Venster | 4–12 mg/L; in de eerste 6 dagen bovenkant 8 mg/L | 4–12 mg/L [UMC Utrecht, FDA; SmPC 4.6 noemt "therapeutische bereik van 4 tot 12 microgram/ml"] (nagelopen). Het lagere plafond is een spelkeuze voor "start laag": tolerantie voor de bijwerkingen in de hersenen ontstaat in de eerste weken [ILAE 2015; SCHN] |
+| Bijwerkingen (woorden bij de spiegel) | vanaf 10 mg/L "moe, duizelig"; boven 12 "dubbelzien, wankel"; boven 20 "giftig: verward, suf". In de eerste 6 dagen beginnen de lichte bijwerkingen boven 8. Alleen de woorden: de punten volgen het venster. | Bart: "vanaf 10 bijwerkingen, bij 12 ernstiger"; UMC Utrecht: "Toxische concentratie: > 12 mg/L"; ataxie en nystagmus vanaf ±10–15 mg/L [StatPearls; RCH] |
+| Boven de zone, in lekentaal | "Bijwerkingen: moe en duizelig. Hoger: dubbelzien, wankel lopen." | zie hierboven |
 | Toxisch | > 20 mg/L | 15–25 agressie, hallucinaties; 20–40 coma [StatPearls; RCH]: "ernstig" |
 | Onder de zone, in lekentaal | "Kans op een epileptische aanval." | |
 | Poortjes | 2× per dag, om 0 en 12 uur (56 poortjes) | spelkeuze |
 | Start | spiegel 0: hij begint vandaag | steady state na 1–2 weken [TDM] |
 | Racelengte | 28 dagen patiënttijd, ±110 s | spelkeuze |
 | Gebeurtenis | Autoinductie in drie stappen: dag 7, 14 en 21 klaring × 1,3 (samen × 2,2) | autoinductie compleet na 3–5 weken [FDA-label] |
-| Echt schema | 200 mg 2dd; vanaf dag 14 400 mg 2dd | start 200–400 mg/dag, langzaam ophogen naar 800–1.200 mg/dag [SmPC NL]; 100–200 mg/dag in wekelijkse stappen [ILAE] |
+| Echt schema | 200 mg 2dd; vanaf dag 7 400 mg om 0 u en 200 mg om 12 u (600 mg/dag); vanaf dag 14 400 mg 2dd | start "200 mg één- of tweemaal per dag", langzaam verhogen, gewoonlijk tot 1200 mg per dag, max. 1200 mg/dag [SmPC 4.2]; start 200 mg 2dd, wekelijks hooguit 200 mg/dag erbij, onderhoud meestal 800–1200 mg [FDA] |
 
 Doorgerekend met het model uit §4 en de score van het spel (ook in tests/score.test.mjs):
 
 | Strategie | QALY |
 |---|---|
-| Echt schema | 943 |
-| Oplaaddosis 800 mg, dan het echte schema | 931 |
+| Echt schema (geleidelijk: 400 → 600 → 800 mg per dag) | 943 |
+| Op dag 14 in één stap naar 400 mg 2dd | 843 |
+| Oplaaddosis 800 mg, dan het echte schema | 831 |
 | Nooit ophogen (200 mg 2dd) | 798 |
-| Meteen 400 mg 2dd | 434 |
+| Op dag 7 meteen 400 mg 2dd | 709 |
+| Meteen 400 mg 2dd | 334 |
 | Niets | −1000 |
-| 800 mg per keer | −2729 |
+| 800 mg per keer | −2829 |
 
 Bronnen casus 3: [UMC Utrecht bepalingenwijzer](https://www.umcutrecht.nl/bepalingenwijzer/carbamazepine) · [TDM-monografie (RUG)](https://fse.studenttheses.ub.rug.nl/22682/1/Carbamazepine%20TDM%20monografie%20versie%20repository.pdf) · [SmPC carbamazepine (CBG)](https://www.geneesmiddeleninformatiebank.nl/smpc/h03899_smpc.pdf) · [FDA-label (DailyMed)](https://dailymed.nlm.nih.gov/dailymed/fda/fdaDrugXsl.cfm?setid=62d38b93-7dd0-48e7-bd59-a434d52520f6&type=display) · [Review farmacokinetiek](https://www.researchgate.net/publication/255988032_A_quick_review_of_carbamazepine_pharmacokinetics_in_epilepsy_from_1953_to_2012) · [StatPearls](https://www.statpearls.com/point-of-care/30317) · [RCH](https://www.rch.org.au/clinicalguide/guideline_index/carbamazepine_poisoning) · [ILAE 2015](https://icnapedia.org/elibrary/ilae2015/files/basic-html/page278.html) · [SCHN](https://www.schn.health.nsw.gov.au/epilepsy-clinician-handbook/medications/carbamazepine)
 

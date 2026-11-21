@@ -6,7 +6,7 @@
  * PUBLIEKE API (voor UI- en scorebouwers)
  * ---------------------------------------
  * M.CASUSSEN.paracetamol / M.CASUSSEN.lithium   Casusdata, letterlijk uit het casusblad (zie onder).
- * M.CASUSSEN.carbamazepine          Bonusrace, CONCEPT (concept: true): getallen uit geheugen, wacht op akkoord.
+ * M.CASUSSEN.carbamazepine          Bonusrace (Bart akkoord nov. 2026; nagelopen in SmPC, UMC Utrecht, FDA-label).
  * M.casus(id)                       -> casusobject (id 'paracetamol' | 'lithium', of een object zelf).
  * M.venster(casus, t)               -> {laag, hoog}: therapeutisch venster op tijdstip t (uur).
  *                                      Komt uit casus.venster (reeks [{vanaf, laag, hoog}], stapsgewijs);
@@ -228,12 +228,11 @@
     nabespreking: 'In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.'
   };
 
-  // Casus 3 — Carbamazepine (bonusrace). CONCEPT: getallen uit bronnen en spelkeuzes (zie docs/bouwopdracht.md,
-  // "Concept casus 3"); Bart akkoord op de opzet (gewenning over 3 weken, race 28 dagen, Vd 1,2 L/kg, meeschuivend
-  // venster). Nog niet in het casusblad.
+  // Casus 3 — Carbamazepine (bonusrace). Getallen en spelkeuzes: docs/bouwopdracht.md, "Casus 3"; Bart akkoord
+  // (opzet, getallen, geleidelijk ophogen met strafpunten, bijwerkingen vanaf 10 mg/L en ernstiger boven 12).
   var carbamazepine = {
     id: 'carbamazepine',
-    concept: true,
+    concept: false,
     naam: 'Carbamazepine',
     patient: 'Meneer El Idrissi',
     gewichtKg: 70,
@@ -254,6 +253,13 @@
     venster: [{ vanaf: 0, laag: 4, hoog: 8 }, { vanaf: 144, laag: 4, hoog: 12 }],
     toxisch: 20,
     toxischTekst: '> 20 mg/L',
+    // Bijwerkingen (alleen de woorden bij de spiegel, niet de punten): vanaf 10 mg/L "moe, duizelig", boven 12
+    // ernstiger. In de eerste 6 dagen (nog niet gewend, venster tot 8) beginnen de lichte bijwerkingen boven 8.
+    bijwerkingen: { licht: 10, ernstig: 12, tekst: 'vanaf 10 mg/L licht (eerste 6 dagen: boven 8), boven 12 ernstiger' },
+    // Geleidelijk ophogen (FDA-label: "Increase at weekly intervals by adding up to 200 mg/day"): de eerste week
+    // hooguit 400 mg per dag; daarna per dag hooguit 200 mg meer dan 7 dagen eerder. Sneller: strafpunten.
+    titratie: { startPerDag: 400, stapPerWeek: 200,
+      tekst: 'eerste week hooguit 400 mg per dag; daarna per week hooguit 200 mg per dag erbij' },
     bovengrens: { type: 'concentratie', waarde: 20, tekst: '> 20 mg/L' },
     poortjes: {
       interval: 12, tijden: reeks(0, 12, 56), aantal: 56, keuzes: ['200 mg', '400 mg', '800 mg', 'overslaan'],
@@ -278,12 +284,15 @@
         gevolg: 'Klaring × 1,3 (stap 3 van 3; samen × 2,2: T½ 36 → ±16 uur).' }
     ],
     echtSchema: {
-      tekst: '200 mg 2dd; na 2 weken 400 mg 2dd op geleide van de spiegel',
-      schema: reeks(0, 12, 56).map(function (t) { return { t: t, route: 'slik', aantal: t >= 336 ? 2 : 1 }; })
+      tekst: '200 mg 2dd; na 1 week 600 mg per dag; na 2 weken 400 mg 2dd, op geleide van de spiegel',
+      // dag 0–6: 200 mg 2dd (400 mg/dag); dag 7–13: 400 mg om 0 u en 200 mg om 12 u (600 mg/dag); vanaf dag 14: 400 mg 2dd
+      schema: reeks(0, 12, 56).map(function (t) {
+        return { t: t, route: 'slik', aantal: t >= 336 ? 2 : (t >= 168 && t % 24 === 0 ? 2 : 1) };
+      })
     },
     lekentaal: {
       onder: 'Kans op een epileptische aanval.',
-      boven: 'Duizelig, dubbelzien, wankel lopen.'
+      boven: 'Bijwerkingen: moe en duizelig. Hoger: dubbelzien, wankel lopen.'
     },
     nabespreking: 'In het echt: start laag, verhoog langzaam, en laat na een paar weken de spiegel prikken: de lever gaat carbamazepine zelf sneller afbreken.'
   };

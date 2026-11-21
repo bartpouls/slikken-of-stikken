@@ -200,7 +200,8 @@ input { font: inherit; }
 .qaly.plus .qaly-trend { color: var(--groen); }
 .qaly.min .qaly-trend { color: var(--koraal); }
 .qaly { position: relative; }
-.qaly-straf { position: absolute; right: 0; top: 100%; font-size: 15px; font-weight: 800; color: var(--koraal); opacity: 0; pointer-events: none; white-space: nowrap; }
+.qaly-straf { position: absolute; right: 0; top: 100%; z-index: 3; padding: 1px 8px; border-radius: 999px; background: rgba(8, 6, 18, .94); font-size: 15px; font-weight: 800; color: var(--koraal); opacity: 0; pointer-events: none; white-space: nowrap; }
+/* (dekkende achtergrond: het label valt soms precies over een chip als "lever went" of "ibuprofen") */
 .qaly-straf.zicht { animation: straf 1.1s ease forwards; }
 @keyframes straf { 0% { opacity: 0; transform: translateY(-6px); } 15% { opacity: 1; transform: none; } 75% { opacity: 1; } 100% { opacity: 0; transform: translateY(8px); } }
 

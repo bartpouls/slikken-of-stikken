@@ -414,7 +414,8 @@
   // Hoe de patiënt zich voelt bij deze spiegel (lekentaal uit het casusblad) en welk gezicht erbij hoort.
   var GEVOEL = {
     lithium: { onder: ['kans op terugval', 'neutraal'], zone: ['stabiel', 'blij'], boven: ['trillen, misselijk', 'misselijk'], tox: ['giftig: verward', 'misselijk'] },
-    carbamazepine: { onder: ['kans op aanval', 'neutraal'], zone: ['geen aanvallen', 'blij'], boven: ['duizelig, dubbelzien', 'misselijk'], tox: ['giftig: suf, wankel', 'misselijk'] }
+    carbamazepine: { onder: ['kans op aanval', 'neutraal'], zone: ['geen aanvallen', 'blij'], licht: ['moe, duizelig', 'neutraal'],
+      boven: ['dubbelzien, wankel', 'misselijk'], tox: ['giftig: verward, suf', 'misselijk'] }
   };
   function toonIntro(i) {
     var c = M.casus(RACES[i]);
@@ -433,11 +434,13 @@
         'Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Overslaan. Geen keuze kost punten.',
         'De race heeft twee delen: halverwege verandert er iets, pas dan je plan aan.'];
     } else if (i === 2) {
-      regels = ['Bonusrace: telt niet mee in je totaal. De getallen zijn nog een concept.',
+      regels = ['Bonusrace: telt niet mee in je totaal.',
         'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + ' in de eerste dagen, ' + vensterTekst(c, 1e6) + ' als hij gewend is. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
         'Meneer El Idrissi begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
         'De race duurt ' + Math.round(c.raceDuur / 24) + ' dagen, met 2 poortjes per dag: om 0 en 12 uur.',
-        'Kies per poortje 200, 400 of 800 mg, of Overslaan.'];
+        'Kies per poortje 200, 400 of 800 mg, of Overslaan.',
+        'Verhoog rustig: de eerste week hooguit ' + getal(c.titratie.startPerDag, 0) + ' mg per dag, daarna per week hooguit ' +
+          getal(c.titratie.stapPerWeek, 0) + ' mg per dag erbij. Sneller kost ' + getal(SoS.score.PUNTEN.TE_SNEL, 0) + ' punten.'];
     } else {
       // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).
       var uren = M.poortjes(c).filter(function (t) { return t < 24; });
@@ -1462,6 +1465,14 @@
           var xB = xVan(Cvoor) > D.w / 2 ? xVan(Cvoor) - 50 : R.links + 20;
           R.effecten.push({ type: 'slik', t0: nu, soort: k.route === 'slik' ? 'tablet' : 'zetpil', xNaar: xB, ref: ref });
         }
+        if (res.teSnel < 0) {
+          speel('bonk');
+          var qs2 = $('qaly-straf');
+          qs2.textContent = getal(res.teSnel, 0) + ' te snel';
+          qs2.classList.remove('zicht'); void qs2.offsetWidth; qs2.classList.add('zicht');
+          R.psFlits = { tot: performance.now() + 2200 / Math.min(SPEED, 4),
+            tekst: 'Te snel opgehoogd: ' + getal(res.teSnel, 0) + ' punten' }; // de grens staat in het eindverslag
+        }
         if (res.lever < 0) {
           setTimeout(function () { speel('alarm'); }, 120);
           melding(c.lekentaal.boven, { soort: 'alarm', prio: 2, duur: 3 });
@@ -1504,7 +1515,17 @@
     var z = R.klok < 0 && c.start && c.start.type === 'steadyState' ? 'zone' : zoneVan(R.race.sim.C, Math.max(0, R.race.t));
     // In één of twee woorden hoe de patiënt zich nu voelt, bij deze spiegel (woorden uit het casusblad).
     var gv, gw = GEVOEL[c.id];
-    if (gw) { var rij = R.toxisch ? gw.tox : gw[z]; gv = rij[0]; st = rij[1]; }
+    if (gw) {
+      var rij = R.toxisch ? gw.tox : gw[z], bw = c.bijwerkingen;
+      // bijwerkingen (carbamazepine): licht vanaf 10 mg/L (eerste dagen al boven de bovenkant van het venster, 8),
+      // ernstiger boven 12. Alleen de woorden; de punten volgen het venster.
+      if (bw && gw.licht && !R.toxisch && R.klok >= 0) {
+        var Cn = R.race.sim.C, vh = M.venster(c, Math.max(0, R.race.t)).hoog;
+        if (Cn > bw.ernstig) rij = gw.boven;
+        else if (Cn >= Math.min(bw.licht, vh)) rij = gw.licht;
+      }
+      gv = rij[0]; st = rij[1];
+    }
     else {
       st = (R.leverOver || (!R.gids && R.klok >= 0 && M.geblokkeerd(c, 'slik', R.klok))) ? 'misselijk' : (z === 'onder' ? 'pijn' : 'blij');
       gv = R.leverOver ? 'lever beschadigd' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
