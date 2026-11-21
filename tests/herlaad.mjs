@@ -1,8 +1,9 @@
 // Slikken of Stikken — herladen midden in het spel (voortgang bewaren, src/app.js "Voortgang bewaren").
-// Draaien: node tests/herlaad.mjs   (±1 min, vraagt Playwright; schermafbeeldingen niet nodig)
+// Draaien: node tests/herlaad.mjs [--browser=webkit|firefox]   (±1 min per browser, vraagt Playwright)
 // Speelt race 1 op ?speed=25 in 375×667 en 390×844, herlaadt de pagina en controleert: knop "Verder als <naam>"
 // (≥ 48 px, geen horizontaal scrollen), verder bij race 2 met dezelfde score, eindscherm na herladen gelijk,
-// "Nog een keer" wist de oude stand, een stand ouder dan 12 uur of kapotte opslag wordt genegeerd, geen consolefouten.
+// "Nog een keer" wist de oude stand, een stand ouder dan 12 uur, uit een andere versie of kapotte opslag wordt
+// genegeerd, geen consolefouten.
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
@@ -11,16 +12,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const requireGlobaal = createRequire(execSync('npm root -g').toString().trim() + '/');
-const { chromium } = requireGlobaal('playwright');
+const pw = requireGlobaal('playwright');
+const BROWSER = ((process.argv.find((a) => a.startsWith('--browser=')) || '').slice(10) || 'chromium').toLowerCase();
+if (!['chromium', 'webkit', 'firefox'].includes(BROWSER)) throw new Error('onbekende --browser: ' + BROWSER);
+if (!process.env.PLAYWRIGHT_BROWSERS_PATH) process.env.PLAYWRIGHT_BROWSERS_PATH = '/opt/pw-browsers';
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const srv = http.createServer((q, r) => { r.setHeader('content-type','text/html; charset=utf-8'); r.end(fs.readFileSync(path.join(ROOT,'index.html'))); }).listen(0);
 const ok = (c, w) => { console.log((c ? 'OK   ' : 'FOUT ') + w); if (!c) process.exitCode = 1; };
 (async () => {
   const url = 'http://127.0.0.1:' + srv.address().port + '/?speed=25';
-  const b = await chromium.launch();
+  const b = await pw[BROWSER].launch();
+  console.log('Browser: ' + BROWSER);
   for (const vp of [{ width: 375, height: 667 }, { width: 390, height: 844 }]) {
     console.log('--- ' + vp.width + 'x' + vp.height);
-    const ctx = await b.newContext({ viewport: vp, isMobile: true, hasTouch: true, deviceScaleFactor: 1 });
+    const ctx = await b.newContext({ viewport: vp, isMobile: BROWSER !== 'firefox', hasTouch: true, deviceScaleFactor: 1 });
     const page = await ctx.newPage();
     const fouten = []; page.on('pageerror', e => fouten.push(e.message)); page.on('console', m => m.type() === 'error' && fouten.push(m.text()));
     const debug = () => page.evaluate(() => window.SoS.debug);
@@ -70,10 +75,20 @@ const ok = (c, w) => { console.log((c ? 'OK   ' : 'FOUT ') + w); if (!c) process
     await wachtFase(/^race1$/);
     await page.reload();
     ok(!(await page.isVisible('#start-verder')), 'na "Nog een keer" + herladen: geen oude stand');
-    // Start met bewaarde stand = nieuw spel
-    await page.evaluate(() => localStorage.setItem('sos.voortgang', JSON.stringify({ v: 1, op: Date.now() - 13 * 3600e3, naam: 'Oud', verslagen: [{ opbouw: { totaal: 5 } }], curves: [] })));
-    await page.reload();
+    // Een echte bewaarde stand, daarna verouderd of uit een andere versie: niet aanbieden
+    await page.fill('#naam', 'Versie');
+    await page.tap('[data-actie="start-over"]');
+    await wachtFase(/^intro1$/);
+    await speelRace();
+    await wachtFase(/^intro2$/);
+    const echt = await page.evaluate(() => localStorage.getItem('sos.voortgang'));
+    const zet = (wijzig) => page.evaluate(([e, w]) => { const x = JSON.parse(e); Object.assign(x, w); localStorage.setItem('sos.voortgang', JSON.stringify(x)); }, [echt, wijzig]);
+    await zet({}); await page.reload();
+    ok(await page.isVisible('#start-verder'), 'controle: de echte stand wordt wel aangeboden');
+    await zet({ op: Date.now() - 13 * 3600e3 }); await page.reload();
     ok(!(await page.isVisible('#start-verder')), 'stand ouder dan 12 uur wordt niet aangeboden');
+    await zet({ bouw: 'oud-123' }); await page.reload();
+    ok(!(await page.isVisible('#start-verder')), 'stand uit een andere versie van het spel wordt niet aangeboden');
     await page.evaluate(() => localStorage.setItem('sos.voortgang', '{kapot'));
     await page.reload();
     ok(!(await page.isVisible('#start-verder')), 'kapotte opslag: gewoon startscherm');
