@@ -3551,9 +3551,8 @@ input { font: inherit; }
       regels = ['Bonusrace: telt niet mee in je totaal.',
         'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + ' in de eerste dagen, ' + vensterTekst(c, 1e6) + ' als hij gewend is. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
         'Meneer El Idrissi begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
-        'De race duurt ' + Math.round(c.raceDuur / 24) + ' dagen, met 2 poortjes per dag: om 0 en 12 uur.',
-        'Kies per poortje 200, 400 of 800 mg, of Overslaan.',
-        'Verhoog rustig: de eerste week hooguit ' + getal(c.titratie.startPerDag, 0) + ' mg per dag, daarna per week hooguit ' +
+        Math.round(c.raceDuur / 24) + ' dagen, 2 poortjes per dag (0 en 12 uur): kies 200, 400 of 800 mg, of Overslaan.',
+        'Verhoog rustig: start met hooguit ' + getal(c.titratie.startPerDag, 0) + ' mg per dag, daarna per week hooguit ' +
           getal(c.titratie.stapPerWeek, 0) + ' mg per dag erbij. Sneller kost ' + getal(SoS.score.PUNTEN.TE_SNEL, 0) + ' punten.'];
     } else {
       // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).

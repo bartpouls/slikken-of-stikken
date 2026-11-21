@@ -1,6 +1,6 @@
 # Bots-rapport §6B en §6C — Slikken of Stikken
 
-Gegenereerd door `node tests/bots.mjs` op 2026-11-20 22:21:13 UTC. Looptijd: 14,9 min. Playwright 1.63.0, Chromium headless (/opt/pw-browsers). index.html: 262.7 kB, sha256 06390376c45f… (één keer ingelezen bij de start; alle runs spelen dezelfde build).
+Gegenereerd door `node tests/bots.mjs` op 2026-11-21 08:46:17 UTC. Looptijd: 14,9 min. Playwright 1.63.0, Chromium headless (/opt/pw-browsers). index.html: 268.5 kB, sha256 c510dbaf1299… (één keer ingelezen bij de start; alle runs spelen dezelfde build).
 
 **Opzet.** Het echte `index.html` (lokale http-server op 127.0.0.1) in mobiele emulatie (isMobile, hasTouch, Pixel-5-UA): 375×667 @2x en 390×844 @3x. De bots handelen alleen via `page.touchscreen.tap` op het midden van een zichtbare knop (vooraf met `elementFromPoint` gecontroleerd). `SoS.debug` wordt alleen gelezen (doelpoortje, open/te laat, gekozen keuze, spiegel, fase). Scores komen van het scherm (finish-overlay en eindscherm); daarna wordt het gespeelde schema uit het rooster op het eindscherm nagerekend met `SoS.score.scoreSchema` (src/score.js, identiek aan de inline code). Strategie-runs op `?speed=4`; run n01 op normale snelheid (geen parameter). Elke run: start → oefenronde (vol, of "Oefenronde overslaan" op het startscherm) → race 1 → race 2 → eindscherm. In de oefenronde tikt de bot uitsluitend op de knop met de markering (data-wijs) en op de knop van het eindkaartje. Een run is geldig als elk poortje precies de keuze van de bot kreeg (debug.gegeven én rooster op het eindscherm); anders opnieuw (max. 3 pogingen).
 
@@ -93,10 +93,10 @@ Knoppen die eerst in beeld gescrold moesten worden voor een tik: geen. Tikken di
 
 ### B4 Knoppen, scrollen, netwerk
 
-- 174 schermmetingen (1095 knopmetingen) op: einde, intro1, intro2, race1, race2, start, tutorial stap 11, tutorial stap 14, tutorial stap 8, tutorial stap 9.
+- 174 schermmetingen (1091 knopmetingen) op: einde, intro1, intro2, race1, race2, start, tutorial stap 11, tutorial stap 14, tutorial stap 8, tutorial stap 9.
 - Kleinste zichtbare knop: start-over "Oefenronde overslaan" 203.3×48 px (min. breedte 48 px, min. hoogte 48 px). Knoppen < 48×48: geen: **gehaald**
 - Horizontaal scrollen (scrollWidth > clientWidth op document, body of actief scherm): 0 van 174 metingen; grootste scrollWidth 375 px bij clientWidth 375 px: **gehaald**
-- Netwerkverzoeken (11 runs, elk een verse pagina): vóór/tijdens het laden 11 in totaal (http://127.0.0.1:37699/index.html); ná het laden 0: **gehaald**
+- Netwerkverzoeken (11 runs, elk een verse pagina): vóór/tijdens het laden 11 in totaal (http://127.0.0.1:35141/index.html); ná het laden 0: **gehaald**
 - **B4 375×667: gehaald**
 
 ### B5 Eindscherm
@@ -215,10 +215,10 @@ Knoppen die eerst in beeld gescrold moesten worden voor een tik: geen. Tikken di
 
 ### B4 Knoppen, scrollen, netwerk
 
-- 174 schermmetingen (1096 knopmetingen) op: einde, intro1, intro2, race1, race2, start, tutorial stap 11, tutorial stap 14, tutorial stap 8, tutorial stap 9.
+- 174 schermmetingen (1089 knopmetingen) op: einde, intro1, intro2, race1, race2, start, tutorial stap 11, tutorial stap 14, tutorial stap 8, tutorial stap 9.
 - Kleinste zichtbare knop: start-over "Oefenronde overslaan" 203.3×48 px (min. breedte 48 px, min. hoogte 48 px). Knoppen < 48×48: geen: **gehaald**
 - Horizontaal scrollen (scrollWidth > clientWidth op document, body of actief scherm): 0 van 174 metingen; grootste scrollWidth 390 px bij clientWidth 390 px: **gehaald**
-- Netwerkverzoeken (11 runs, elk een verse pagina): vóór/tijdens het laden 11 in totaal (http://127.0.0.1:37699/index.html); ná het laden 0: **gehaald**
+- Netwerkverzoeken (11 runs, elk een verse pagina): vóór/tijdens het laden 11 in totaal (http://127.0.0.1:35141/index.html); ná het laden 0: **gehaald**
 - **B4 390×844: gehaald**
 
 ### B5 Eindscherm
