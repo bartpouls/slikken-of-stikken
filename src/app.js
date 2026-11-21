@@ -358,9 +358,10 @@
       if (staat.fase !== 'start') return;
       unlock();
       speel('tik');
-      // Start = een nieuw spel: de stand van een vorige speler (of vorige keer) telt niet mee.
+      // Start = een nieuw spel: in het geheugen begint de stand opnieuw. De bewaarde stand blijft staan tot de
+      // eerste race van dit nieuwe spel klaar is (dan overschrijft bewaarVoortgang hem): een misser op Start
+      // kost dan niets.
       staat.verslagen = []; staat.curves = []; staat.duren = [];
-      wisVoortgang();
       var naam = (inp.value || '').replace(/\s+/g, ' ').trim().slice(0, 16);
       if (!naam) naam = 'Speler ' + (10 + Math.floor(Math.random() * 90));
       staat.naam = naam;

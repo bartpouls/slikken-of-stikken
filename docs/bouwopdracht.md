@@ -40,7 +40,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 - Eén HTML-pagina, mobiel eerst (staand), werkt zonder installatie, account of server, en zonder internet na het laden. Geen externe bestanden of CDN's.
 - Speelnaam invoeren → tutorial → race 1 → race 2 → eindscherm.
 - Eindscherm: speelnaam, QALY-punten race 1, race 2 en totaal, en per race een kort eindverslag (zie §3). (De nabespreekvraag is vervallen in v2.2.)
-- Herladen kost geen gespeelde race: na elke race blijft de stand 12 uur op de telefoon bewaard en biedt het startscherm "Verder als …". Een halve race telt niet mee (zoals bij het menu). "Start" en "Nog een keer" beginnen opnieuw.
+- Herladen kost geen gespeelde race: na elke race blijft de stand 12 uur op de telefoon bewaard en biedt het startscherm "Verder als …". Een halve race telt niet mee (zoals bij het menu). "Start" begint een nieuw spel, maar de bewaarde stand blijft staan tot de eerste nieuwe race klaar is (een misser op Start kost niets); "Nog een keer" wist hem meteen.
 - Een losse scorebordpagina voor de beamer: Bart of een student typt naam en totaal in, lijst sorteert zichzelf (alleen lokaal in die browser opgeslagen).
 - Geluid (korte blips à la Flappy Bird, zelf gesynthetiseerd, geen gekopieerde geluidsbestanden) met een dempknop.
 - Nederlands.

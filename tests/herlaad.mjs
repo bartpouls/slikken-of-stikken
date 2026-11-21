@@ -87,6 +87,16 @@ const ok = (c, w) => { console.log((c ? 'OK   ' : 'FOUT ') + w); if (!c) process
     ok(await page.isVisible('#start-verder'), 'controle: de echte stand wordt wel aangeboden');
     await zet({ op: Date.now() - 13 * 3600e3 }); await page.reload();
     ok(!(await page.isVisible('#start-verder')), 'stand ouder dan 12 uur wordt niet aangeboden');
+    // Start (per ongeluk) kost niets: de bewaarde stand blijft tot de eerste nieuwe race klaar is
+    await zet({}); await page.reload();
+    await page.fill('#naam', 'Nieuw'); await page.tap('[data-actie="start-over"]');
+    await wachtFase(/^intro1$/);
+    await page.reload();
+    ok(await page.isVisible('#start-verder') && (await page.textContent('#start-verder-knop')) === 'Verder als Versie', 'Start zonder race af te maken: oude stand blijft beschikbaar');
+    await page.fill('#naam', 'Nieuw'); await page.tap('[data-actie="start-over"]');
+    await wachtFase(/^intro1$/); await speelRace(); await wachtFase(/^intro2$/);
+    await page.reload();
+    ok((await page.textContent('#start-verder-knop')) === 'Verder als Nieuw', 'na de eerste nieuwe race vervangt die de oude stand');
     await zet({ verslagen: [null, null, JSON.parse(echt).verslagen[0]] }); await page.reload();
     ok(!(await page.isVisible('#start-verder')), 'alleen een bonusrace bewaard: geen "Verder"-knop');
     await zet({ bouw: 'oud-123' }); await page.reload();
