@@ -436,7 +436,7 @@
     var race = S.maakRace(c, gids ? { blokkades: false } : undefined);
     R = {
       i: i, casus: c, cfg: cfg, race: race,
-      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, vol: gids.vol, i: 0, bevroren: false, actief: false, wijsVanaf: 0, beatTot: 0, t0: performance.now(), duur: null } : null,
+      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, vol: gids.vol, geenKeuze: gids.geenKeuze, i: 0, bevroren: false, actief: false, wijsVanaf: 0, beatTot: 0, t0: performance.now(), duur: null } : null,
       stemming: null, gevoel: '', licht: null,
       // elke race heeft twee delen: een gewoon stuk, en dan verandert er iets (eerste gebeurtenis uit de casusdata)
       deel2: gids ? gids.deel2 : c.gebeurtenissen.reduce(function (m, g) { return Math.min(m, g.type === 'blokkade' ? g.van : g.t); }, Infinity),
@@ -1410,6 +1410,7 @@
       qs.textContent = getal(straf, 0) + ' geen keuze';
       qs.classList.remove('zicht'); void qs.offsetWidth; qs.classList.add('zicht');
       R.psFlits = { tot: performance.now() + 1300 / Math.min(SPEED, 4), tekst: 'Geen keuze voor ' + inZin(tijdLabel(c, T, true)) + ': ' + getal(straf, 0) + ' punten' };
+      if (R.gids && R.gids.geenKeuze) melding(R.gids.geenKeuze, { soort: 'au' }); // oefenronde: zeg waarom
     }
     R.gegeven[g] = uit;
     R.laatstePoort = { echt: performance.now(), label: tijdLabel(c, T, true), index: g };
