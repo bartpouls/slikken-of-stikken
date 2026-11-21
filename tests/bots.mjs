@@ -1,6 +1,8 @@
 // Slikken of Stikken — automatische spelers (bots), §6B en §6C van docs/bouwopdracht.md.
 // Draaien: node tests/bots.mjs            (alles: beide viewports, ±15–20 min)
 //          node tests/bots.mjs --kort     (snelle proef: alleen 375×667, 3 runs, geen run op normale snelheid)
+//          --run=r05 --vp=390   (één run, één schermbreedte; zonder --vp is het 375×667)
+//          --serieel            (schermmaten na elkaar in plaats van tegelijk)
 //          --browser=webkit | --browser=firefox   (andere browsermotor; rapport dan bots-rapport-webkit.md enz.)
 //                                         WebKit = de motor van Safari (iPhone-UA); Firefox zonder isMobile (niet ondersteund).
 // Schrijft: gauntlet/artefacten/bots-rapport.md
@@ -588,8 +590,14 @@ async function speelViewport(vp, runs) {
 // ---------------------------------------------------------------------------------------------
 const ALLEEN = (process.argv.find((a) => a.startsWith('--run=')) || '').slice(6).split(',').filter(Boolean);
 const runsTeDoen = ALLEEN.length ? RUNS.filter((r) => ALLEEN.includes(r.id)) : (KORT ? RUNS_KORT : RUNS);
-const vps = KORT || ALLEEN.length ? [VIEWPORTS[0]] : VIEWPORTS;
-const resultaten = await Promise.all(vps.map((vp) => speelViewport(vp, runsTeDoen)));
+const VPKEUZE = (process.argv.find((a) => a.startsWith('--vp=')) || '').slice(5); // bv. --vp=390: alleen die breedte
+const vps = VPKEUZE ? VIEWPORTS.filter((v) => String(v.viewport.width) === VPKEUZE) : (KORT || ALLEEN.length ? [VIEWPORTS[0]] : VIEWPORTS);
+if (!vps.length) throw new Error('onbekende --vp: ' + VPKEUZE);
+// Standaard spelen de twee schermmaten tegelijk. --serieel: na elkaar (trager, ±30 min), voor als de bots in WebKit
+// bij de gelijktijdige belasting een poortje te laat tikken (dat gaf een ongeldige run, niet een fout in het spel).
+let resultaten;
+if (process.argv.includes('--serieel')) { resultaten = []; for (const vp of vps) resultaten.push(await speelViewport(vp, runsTeDoen)); }
+else resultaten = await Promise.all(vps.map((vp) => speelViewport(vp, runsTeDoen)));
 server.close();
 const looptijd = (Date.now() - T0_SCRIPT) / 1000;
 
