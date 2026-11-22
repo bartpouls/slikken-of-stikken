@@ -2892,7 +2892,7 @@ input { font: inherit; }
     if (t.dagteller) { // paracetamol: de race is één dag, dus per dag = de dagteller
       s += '<div data-tel="dagteller" class="' + (t.dagteller.over ? 'over' : '') + '"><span>Per dag</span>' +
         '<b>' + getal(t.dagteller.hoogste, t.dagteller.hoogste % 1 ? 1 : 0) + ' g</b>' +
-        '<small>' + esc(pd.grens) + (t.dagteller.over ? '. Lever beschadigd.' : '') + '</small></div>';
+        '<small>' + esc(pd.grens) + (t.dagteller.over ? '. Lever in gevaar.' : '') + '</small></div>';
     } else if (pd) {
       s += '<div data-tel="perdag"><span>Gemiddeld per dag</span><b>' + getal(pd.gemiddeld, pd.gemiddeld % 1 ? 1 : 0) + '</b>' +
         '<small>tabletten (' + esc(pd.tekst.replace(/^.*\(|\)$/g, '')) + '); ' + esc(pd.grens) + '</small></div>';
@@ -4492,7 +4492,7 @@ input { font: inherit; }
     if (gw) { var rij = R.toxisch ? gw.tox : gw[z]; gv = rij[0]; st = rij[1]; }
     else {
       st = (R.leverOver || (!R.gids && R.klok >= 0 && M.geblokkeerd(c, 'slik', R.klok))) ? 'misselijk' : (z === 'onder' ? 'pijn' : 'blij');
-      gv = R.leverOver ? 'lever beschadigd' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
+      gv = R.leverOver ? 'lever in gevaar' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
     }
     R.gevoel = gv;
     if (st === R.stemming) return;
@@ -4736,7 +4736,7 @@ input { font: inherit; }
       regels.push(pd.grens.charAt(0).toUpperCase() + pd.grens.slice(1));
     } else {
       var over = t.dagteller && t.dagteller.over;
-      regels.push('<b' + (over ? ' class="over"' : '') + '>' + pd.tekst + '</b> · ' + pd.grens + (over ? ': <span class="over">lever beschadigd</span>' : ''));
+      regels.push('<b' + (over ? ' class="over"' : '') + '>' + pd.tekst + '</b> · ' + pd.grens + (over ? ': <span class="over">lever in gevaar</span>' : ''));
     }
     if (t.geenKeuze) regels.push('<span class="over">' + t.geenKeuze + '× geen keuze gemaakt</span>');
     if (leg.length) regels.push(leg.join(' · '));

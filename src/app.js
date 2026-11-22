@@ -1435,7 +1435,7 @@
     if (gw) { var rij = R.toxisch ? gw.tox : gw[z]; gv = rij[0]; st = rij[1]; }
     else {
       st = (R.leverOver || (!R.gids && R.klok >= 0 && M.geblokkeerd(c, 'slik', R.klok))) ? 'misselijk' : (z === 'onder' ? 'pijn' : 'blij');
-      gv = R.leverOver ? 'lever beschadigd' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
+      gv = R.leverOver ? 'lever in gevaar' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
     }
     R.gevoel = gv;
     if (st === R.stemming) return;
@@ -1679,7 +1679,7 @@
       regels.push(pd.grens.charAt(0).toUpperCase() + pd.grens.slice(1));
     } else {
       var over = t.dagteller && t.dagteller.over;
-      regels.push('<b' + (over ? ' class="over"' : '') + '>' + pd.tekst + '</b> · ' + pd.grens + (over ? ': <span class="over">lever beschadigd</span>' : ''));
+      regels.push('<b' + (over ? ' class="over"' : '') + '>' + pd.tekst + '</b> · ' + pd.grens + (over ? ': <span class="over">lever in gevaar</span>' : ''));
     }
     if (t.geenKeuze) regels.push('<span class="over">' + t.geenKeuze + '× geen keuze gemaakt</span>');
     if (leg.length) regels.push(leg.join(' · '));
