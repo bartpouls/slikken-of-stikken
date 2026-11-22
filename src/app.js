@@ -499,6 +499,8 @@
     $('finish-kop').textContent = R.gids ? R.gids.klaar.kop : 'Race klaar';
     $('finish-label').textContent = R.gids ? R.gids.klaar.label : 'QALY-punten';
     doc.querySelector('#finish [data-actie="verder"]').textContent = R.gids ? R.gids.klaar.knop : 'Verder';
+    $('finish-zin').textContent = R.gids && R.gids.klaar.zin ? R.gids.klaar.zin : '';
+    $('finish-zin').hidden = !(R.gids && R.gids.klaar.zin);
     $('chips').innerHTML = '';
     $('patient-naam').textContent = c.patient;
     // knoppen
@@ -673,11 +675,12 @@
 
   // Het schermonderdeel dat bij een vertelstap oplicht (in de DOM via een klasse, op het canvas via R.licht).
   // wat: 'patient' (bovenbalk) | 'meter' (spiegelbalk + gezicht, canvas) | 'banen' (canvas) | 'klok' (klok +
-  // tijdstrook) | 'delen' (tijdstrook) | 'qaly' | 'lever' | 'knoppen' (knoppen + het volgende poortje op het canvas)
-  var LICHT_DOM = { patient: ['patient'], klok: ['klok', 'tijdstrook'], delen: ['tijdstrook'], qaly: ['qaly'], lever: ['lever'], knoppen: ['knoppen'] };
+  // tijdstrook) | 'delen' (tijdstrook) | 'qaly' | 'lever' | 'knoppen' (knoppen + de balk erboven + het volgende
+  // poortje op het canvas)
+  var LICHT_DOM = { patient: ['patient'], klok: ['klok', 'tijdstrook'], delen: ['tijdstrook'], qaly: ['qaly'], lever: ['lever'], knoppen: ['knoppen', 'poort-status'] };
   function zetLicht(wat) {
     if (R) R.licht = wat || null;
-    ['patient', 'klok', 'tijdstrook', 'qaly', 'lever', 'knoppen'].forEach(function (id) {
+    ['patient', 'klok', 'tijdstrook', 'qaly', 'lever', 'knoppen', 'poort-status'].forEach(function (id) {
       $(id).classList.toggle('licht', !!(wat && LICHT_DOM[wat] && LICHT_DOM[wat].indexOf(id) >= 0));
     });
   }
@@ -1592,6 +1595,7 @@
         klasse += vul >= 60 ? ' dringend' : ' leeg';
       }
     }
+    if (R.licht === 'knoppen') klasse += ' licht'; // vertelstap in de oefenronde
     var stand = klasse + '|' + tekst;
     if (stand !== R.psStand) { R.psStand = stand; ps.className = klasse; $('ps-tekst').innerHTML = tekst; }
     $('ps-vul').style.width = vul + '%';

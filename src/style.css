@@ -315,6 +315,7 @@ input { font: inherit; }
 
 /* het doseerschema op het kaartje na de race: van boven naar beneden, zoals de tijd in de race */
 .finish-schema { width: 100%; max-width: 360px; }
+.finish-zin { margin: 10px 0 0; max-width: 320px; font-size: 17px; line-height: 1.35; text-align: center; }
 .finish-schema:empty { display: none; }
 .schema-kop { margin: 4px 0 6px; font-size: 14px; font-weight: 700; color: var(--paars); }
 .schema { list-style: none; margin: 0 auto; padding: 0; text-align: left; }
