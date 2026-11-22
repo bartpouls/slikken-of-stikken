@@ -23,6 +23,7 @@
 - **Nabespreekvraag vervallen:** de docent reflecteert straks met de groep vanuit de eindverslagen.
 - **Tijdstrook naar verhouding:** deel 1 en deel 2 zijn even lang als hun duur. De vergelijking oefenronde–race (§6C2) laat de lengte van die stukken buiten beschouwing.
 - **Eindverslag:** de curve staat daar bewust horizontaal, "zoals in een boek", met die uitleg erbij (de race was dezelfde curve, een kwartslag gedraaid).
+- **Oefenronde legt de race uit** (feedback Bart): jij doseert; het is een race tegen de klok; kies vóór élk poortje een knop, voordat de balk boven de knoppen vol is; niets geven is ook een keuze (Overslaan); de concentratie-tijdcurve is een kwartslag gedraaid zodat de race over het scherm naar beneden loopt. Gaat in de oefenronde een poortje voorbij zonder keuze, dan zegt één zin waarom dat punten kost. Op het kaartje "Klaar?": in de race wacht de klok niet op jou. De vertelstappen over klok en tijdstrook zijn samengevoegd, zodat de oefenronde onder de 2 minuten blijft (§6C4).
 - **Bonusrace carbamazepine (concept):** via het menu en het eindscherm, telt niet mee in het totaal. Zie "Concept casus 3" onder het casusblad.
 
 Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor het rekenmodel: het spel neemt ze letterlijk over. Afwijken mag alleen na akkoord van Bart Pouls (inhoudelijk eigenaar).
