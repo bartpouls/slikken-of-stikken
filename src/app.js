@@ -356,7 +356,7 @@
     if (i === 0) {
       regels = ['Jij regelt de medicijnen van opa Jan: wat hij krijgt, en wanneer.',
         'Blijf binnen het therapeutisch venster: boven de streep, met ' + getalKort(c.routes.slik.dosis / 1000, 1) +
-          ' g per keer en hooguit ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' g per dag. Boven ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' g per dag raakt de lever beschadigd.',
+          ' g per keer en hooguit ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' g per dag. Boven ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' g per dag loopt de lever gevaar.',
         'Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Overslaan. Geen keuze kost punten.',
         'De race heeft twee delen: halverwege verandert er iets, pas dan je plan aan.'];
     } else if (i === 2) {

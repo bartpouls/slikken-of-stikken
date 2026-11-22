@@ -66,7 +66,7 @@
       { op: 2.6, zin: 'De curve zakt: je lichaam ruimt het op, elke 2,5 uur is de helft weg.' },
       { op: 4.4, zin: 'lekentaal.onder', zinAnders: 'Kies nu de spuit.', knop: 'spuit', poortje: 5,
         daarna: 'Een prik werkt meteen, maar zakt net zo hard.' },
-      { op: 8.5, zin: 'De dagteller telt elke gram: 1 g per keer, en boven 4 g per dag raakt de lever beschadigd.', licht: 'lever' },
+      { op: 8.5, zin: 'De dagteller telt elke gram: 1 g per keer, en boven 4 g per dag loopt de lever gevaar.', licht: 'lever' },
       { op: 12, zin: 'Deel 2: in elke race verandert halverwege iets, en dan moet je plan mee.', licht: 'delen' },
       { op: 12.5, zin: 'Hier lukt slikken even niet: kies nu een zetpil.', knop: 'zetpil', poortje: 13,
         daarna: 'Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.' }

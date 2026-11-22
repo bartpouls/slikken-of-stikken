@@ -66,7 +66,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
    1. "Opa Jan heeft pijn." → speler kiest tablet voor het eerstvolgende poortje → curve stijgt pas na even: *een pil moet eerst door je maag.* (Zo leert de speler meteen hoe poortjes werken: je kiest vooruit, op het poortje gebeurt het.)
    2. Curve zakt → *je lichaam ruimt het op: elke 2,5 uur is de helft weg.*
    3. Spuit → *een prik werkt meteen, maar zakt net zo hard.*
-   4. Dagteller → *meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.*
+   4. Dagteller → *meer is niet beter: boven 4 gram per dag loopt de lever gevaar.*
    5. Zetpil → *een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.*
    6. "Klaar? Race!"
 
