@@ -26,6 +26,8 @@
  *                als in de race: de speler kan wisselen of zijn keuze wissen; dan wacht de klok opnieuw.
  *       poortje  index van dat poortje (controle: de motor weigert een draaiboek dat niet klopt)
  *       daarna   de ene zin die verschijnt op het moment dat het poortje de keuze uitvoert
+ *   geenKeuze de zin als een poortje voorbijgaat zonder keuze (alleen in de oefenronde; in de race is er
+ *             dezelfde −20-flits en dezelfde bonk, zonder zin). Staat in beeld tot de volgende stap.
  *   vol       de zin als een gevraagde dosis de dagteller boven het maximum zou brengen (kan alleen als de
  *             speler zelf iets extra gaf): de stap vervalt dan, de oefenronde vraagt nooit om een overdosis
  *   klaar     { kop, label, knop }: tekst op het eindkaartje (zelfde kaartje als "Race klaar" na een race)
@@ -56,19 +58,20 @@
       { op: -Infinity, zin: 'Links van de streep heeft hij pijn, in het groene vlak niet: blijf binnen dat venster.', licht: 'banen' },
       { op: -Infinity, zin: 'Linksboven loopt de klok; de strook eronder laat zien hoe ver je in de race bent.', licht: 'klok' },
       { op: -Infinity, zin: 'Een QALY is een jaar in goede gezondheid; hier zijn het spelpunten: in het groene vlak erbij, erbuiten eraf.', licht: 'qaly' },
-      { op: -Infinity, zin: 'De paarse lijnen zijn poortjes: kies vóór elk poortje een knop, op het poortje gebeurt het.', licht: 'knoppen' },
+      { op: -Infinity, zin: 'De paarse lijnen zijn poortjes. Vóór élk poortje kies je een knop; op het poortje gebeurt het.', licht: 'knoppen' },
       { op: -Infinity, zin: 'Opa Jan heeft pijn: kies een tablet voor het eerste poortje.', knop: 'slik', poortje: 0,
         daarna: 'Een pil moet eerst door je maag.' },
-      { op: 0.3, zin: 'Bij elk poortje kies je iets: Overslaan is ook een keuze, geen keuze kost punten.', knop: 'niets', poortje: 1,
-        daarna: 'Kies nu zelf bij elk poortje, tot de volgende uitleg.' },
+      { op: 0.3, zin: 'Wil je niets geven? Ook dan kies je: tik Overslaan. Geen keuze kost punten.', knop: 'niets', poortje: 1,
+        daarna: 'Nu jij: kies vóór elk poortje Tablet, Spuit, Zetpil of Overslaan.' },
       { op: 2.6, zin: 'De curve zakt: je lichaam ruimt het op, elke 2,5 uur is de helft weg.' },
       { op: 4.4, zin: 'lekentaal.onder', zinAnders: 'Kies nu de spuit.', knop: 'spuit', poortje: 5,
         daarna: 'Een prik werkt meteen, maar zakt net zo hard.' },
-      { op: 8.5, zin: 'De dagteller telt elke gram: 1 g per keer, en boven 4 g per dag raakt de lever beschadigd.', licht: 'lever' },
+      { op: 8.5, zin: 'De dagteller telt elke gram: 1 g per keer, en boven 4 g per dag loopt de lever gevaar.', licht: 'lever' },
       { op: 12, zin: 'Deel 2: in elke race verandert halverwege iets, en dan moet je plan mee.', licht: 'delen' },
       { op: 12.5, zin: 'Hier lukt slikken even niet: kies nu een zetpil.', knop: 'zetpil', poortje: 13,
         daarna: 'Een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.' }
     ],
+    geenKeuze: 'Geen keuze: dat kost punten. Kies vóór elk poortje een knop, ook als het Overslaan is.',
     vol: 'De dagteller is vol: opa Jan krijgt vandaag niets meer.',
     klaar: { kop: 'Klaar?', label: 'QALY-punten in de oefenronde', knop: 'Race!' }
   };

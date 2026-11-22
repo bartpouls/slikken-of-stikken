@@ -5,7 +5,7 @@
 **Wat is nieuw in v2.1 (op verzoek van Bart):** rekenmodel, casusblad en drempels zijn ongewijzigd. Wel nieuw op het racescherm, en dus ook in de oefenronde (zelfde tekencode):
 - **Verhaal in de oefenronde.** Drie vertelzinnen vooraf (wie je bent: de dokter; wat de spiegelbalk is; wat de grenzen zijn) en één bij deel 2. Ze gaan vanzelf verder (of met een tik op het speelveld) en kosten dus geen extra tik. Dit wijkt af van "de speler doet elke stap zelf" in §3 Flow stap 2.
 - **Spiegelbalk.** De horizontale as bovenaan is een gekleurde balk "spiegel in het bloed" met een wijzer; de banen eronder hebben dezelfde kleuren: te weinig (blauw), het groene vlak, te veel (geel) en giftig (rood). Paracetamol heeft geen bovengrens in mg/L (casusblad): "te veel" loopt daar via de dagteller.
-- **Gevoel bij de spiegel.** Het gezicht van de patiënt staat op de spiegel, met een woord erbij: paracetamol "pijn" / "pijn weg" / "misselijk" / "lever beschadigd"; lithium "kans op terugval" / "stabiel" / "trillen, misselijk" / "giftig: verward" (ontleend aan de lekentaal in het casusblad).
+- **Gevoel bij de spiegel.** Het gezicht van de patiënt staat op de spiegel, met een woord erbij: paracetamol "pijn" / "pijn weg" / "misselijk" / "lever in gevaar"; lithium "kans op terugval" / "stabiel" / "trillen, misselijk" / "giftig: verward" (ontleend aan de lekentaal in het casusblad).
 - **Twee delen.** Elke race toont een balk "Deel 1 · op schema" en "Deel 2 · verandering", en een geblokte strook in de tijdlijn waar deel 2 begint. Wát er verandert blijft een verrassing (§3 Flow stap 2); de oefenronde laat alleen zien dát er iets verandert.
 - **Doseerschema na de race.** Het kaartje "Race klaar" (en "Klaar?" na de oefenronde) toont naast de QALY-punten per poortje wat je gaf.
 
@@ -52,7 +52,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 - **Tijdas geschaald op de halfwaardetijd.** Elke race beslaat ±10 halfwaardetijden in ±90 seconden (60–120 s toegestaan). Daardoor voelt elke casus even snel, terwijl de klok laat zien dat het om uren (paracetamol) of dagen (lithium) gaat. Dat verschil is zelf een leerpunt.
 - **Directe feedback.** Elke keuze geeft binnen 100 ms beweging en geluid. Het verschil tussen slikken (vertraagd, lager) en spuiten (direct, hoog) moet je zien.
 - **Eerlijke race.** Iedereen speelt dezelfde casus, met de gebeurtenissen op hetzelfde moment. Toeval (zetpil) komt uit een vaste reeks die voor iedereen gelijk is.
-- **Score in QALY-punten.** Uitleg in het spel in één zin: *"Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer."* Het zijn spelpunten, geen echte QALY's; zeg dat ook zo. De bouwer ontwerpt de formule, maar die moet de botrangorde in §6B halen. Tijd in de zone levert punten op, tijd erbuiten kost punten, en hoe verder buiten de zone hoe meer (kwadratisch). Paracetamol: boven 4 g per 24 uur raakt de lever beschadigd (zware straf of einde race). Tijdens de race is de QALY-stand live zichtbaar.
+- **Score in QALY-punten.** Uitleg in het spel in één zin: *"Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer."* Het zijn spelpunten, geen echte QALY's; zeg dat ook zo. De bouwer ontwerpt de formule, maar die moet de botrangorde in §6B halen. Tijd in de zone levert punten op, tijd erbuiten kost punten, en hoe verder buiten de zone hoe meer (kwadratisch). Paracetamol: boven 4 g per 24 uur loopt de lever gevaar (zware straf of einde race). Tijdens de race is de QALY-stand live zichtbaar.
 - **Eindverslag per race** (toedienverslag, één scherm):
   - QALY-opbouw in vijf regels: *in de zone* (+), *te laag* (−), *te hoog* (−), *lever / giftig* (−), *geen keuze* (−, v2.2), en het totaal.
   - Tijdlijn van jouw toedieningen (welk poortje, tablet / zetpil / spuit / overgeslagen) naast het echte schema uit het casusblad.
@@ -66,7 +66,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
    1. "Opa Jan heeft pijn." → speler kiest tablet voor het eerstvolgende poortje → curve stijgt pas na even: *een pil moet eerst door je maag.* (Zo leert de speler meteen hoe poortjes werken: je kiest vooruit, op het poortje gebeurt het.)
    2. Curve zakt → *je lichaam ruimt het op: elke 2,5 uur is de helft weg.*
    3. Spuit → *een prik werkt meteen, maar zakt net zo hard.*
-   4. Dagteller → *meer is niet beter: boven 4 gram per dag raakt de lever beschadigd.*
+   4. Dagteller → *meer is niet beter: boven 4 gram per dag loopt de lever gevaar.*
    5. Zetpil → *een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.*
    6. "Klaar? Race!"
 
