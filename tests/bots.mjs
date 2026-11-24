@@ -667,7 +667,7 @@ resultaten.forEach((runs, vi) => {
     regel: elkRun.einde.regels[0].giftig
   } : null;
   const leverOk = !!(leverScherm && leverScherm.race && leverScherm.race.vol && leverScherm.race.zichtbaar &&
-    leverScherm.einde && leverScherm.einde.over && /Lever beschadigd/.test(leverScherm.einde.tekst));
+    leverScherm.einde && leverScherm.einde.over && /Lever in gevaar/.test(leverScherm.einde.tekst));
   const b1a = sc(echt) === sc(spuit) && sc(spuit) >= sc(zetp) && sc(zetp) > sc(gem) && sc(gem) > sc(nts);
   const b1b = leverOk && sc(elk) < sc(echt);
   const pct = 100 * sc(echt) / hoogste.s;

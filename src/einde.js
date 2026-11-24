@@ -374,7 +374,7 @@
     if (t.dagteller) { // paracetamol: de race is één dag, dus per dag = de dagteller
       s += '<div data-tel="dagteller" class="' + (t.dagteller.over ? 'over' : '') + '"><span>Per dag</span>' +
         '<b>' + getal(t.dagteller.hoogste, t.dagteller.hoogste % 1 ? 1 : 0) + ' g</b>' +
-        '<small>' + esc(pd.grens) + (t.dagteller.over ? '. Lever beschadigd.' : '') + '</small></div>';
+        '<small>' + esc(pd.grens) + (t.dagteller.over ? '. Lever in gevaar.' : '') + '</small></div>';
     } else if (pd) {
       s += '<div data-tel="perdag"><span>Gemiddeld per dag</span><b>' + getal(pd.gemiddeld, pd.gemiddeld % 1 ? 1 : 0) + '</b>' +
         '<small>tabletten (' + esc(pd.tekst.replace(/^.*\(|\)$/g, '')) + '); ' + esc(pd.grens) + '</small></div>';
