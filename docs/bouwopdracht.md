@@ -25,6 +25,11 @@
 - **Eindverslag:** de curve staat daar bewust horizontaal, "zoals in een boek", met die uitleg erbij (de race was dezelfde curve, een kwartslag gedraaid).
 - **Bonusrace carbamazepine:** via het menu en het eindscherm, telt niet mee in het totaal. Zie "Casus 3" onder het casusblad.
 
+**Wat is nieuw in v2.3 (feedback Bart, november 2026; Bart akkoord op de lithiumgetallen):**
+- **Lithium als retardtablet, ochtend- en avondpoortje.** Knoppen 400, 800 en 1200 mg (1, 2 of 3 retardtabletten van 400 mg; in Nederland Priadel en Camcolit-400, beide met gereguleerde afgifte) of Overslaan. Het echte schema is 1× per dag 1200 mg ('s ochtends; 's avonds overslaan). Beide poortjes vol (2400 mg per dag) maakt de spiegel giftig. Geen spuitknop meer: lithium bestaat niet als injectie. Na de ibuprofen is de dosis verlagen (naar 800 mg) de beste zet, niet pillen overslaan. Getallen: zie casus 2, nagelopen in de TDM-monografie lithium [9]. De startspiegel blijft de dalspiegel ±0,57 (Bart akkoord).
+- **Races ±12% sneller:** paracetamol ±80 s, lithium ±62 s, bonusrace ±97 s.
+- **Eindscherm koppelt terug wat er gebeurde,** zonder les: de praktijkzin en de nabesprekingszin zijn vervallen. Score, curve, QALY-opbouw, je toedieningen naast het echte schema en de telling blijven.
+
 Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor het rekenmodel: het spel neemt ze letterlijk over. Afwijken mag alleen na akkoord van Bart Pouls (inhoudelijk eigenaar).
 
 ## 1. Doel en doelgroep
@@ -50,7 +55,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
 ## 3. Spelmechaniek
 
 - **Poortjes in plaats van vrij tikken.** De tijdas schuift voorbij; op vaste doseermomenten (poortjes) kiest de speler wat er gebeurt. Overslaan is ook een keuze; geen keuze kost punten (v2.2). Zo is het doseerschema dat het eindscherm toont altijd een realistisch schema op vaste tijden.
-- **Tijdas geschaald op de halfwaardetijd.** Elke race beslaat ±10 halfwaardetijden in ±90 seconden (60–120 s toegestaan). Daardoor voelt elke casus even snel, terwijl de klok laat zien dat het om uren (paracetamol) of dagen (lithium) gaat. Dat verschil is zelf een leerpunt.
+- **Tijdas geschaald op de halfwaardetijd.** Elke race beslaat ±10 halfwaardetijden in ±60–100 seconden (60–120 s toegestaan). Daardoor voelt elke casus even snel, terwijl de klok laat zien dat het om uren (paracetamol) of dagen (lithium) gaat. Dat verschil is zelf een leerpunt.
 - **Directe feedback.** Elke keuze geeft binnen 100 ms beweging en geluid. Het verschil tussen slikken (vertraagd, lager) en spuiten (direct, hoog) moet je zien.
 - **Eerlijke race.** Iedereen speelt dezelfde casus, met de gebeurtenissen op hetzelfde moment. Toeval (zetpil) komt uit een vaste reeks die voor iedereen gelijk is.
 - **Score in QALY-punten.** Uitleg in het spel in één zin: *"Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt zich voelt, hoe meer."* Het zijn spelpunten, geen echte QALY's; zeg dat ook zo. De bouwer ontwerpt de formule, maar die moet de botrangorde in §6B halen. Tijd in de zone levert punten op, tijd erbuiten kost punten, en hoe verder buiten de zone hoe meer (kwadratisch). Paracetamol: boven 4 g per 24 uur loopt de lever gevaar (zware straf of einde race). Tijdens de race is de QALY-stand live zichtbaar.
@@ -58,7 +63,7 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
   - QALY-opbouw in vijf regels: *in de zone* (+), *te laag* (−), *te hoog* (−), *lever / giftig* (−), *geen keuze* (−, v2.2), en het totaal. De bonusrace (carbamazepine) heeft een zesde regel: *te snel opgehoogd* (−).
   - Tijdlijn van jouw toedieningen (welk poortje, tablet / zetpil / spuit / overgeslagen) naast het echte schema uit het casusblad.
   - Telling: aantal toedienmomenten en gemiddeld per dag naast de grens (paracetamol: max. 1 g per keer, 4 g per dag; lithium: schema en venster).
-  - Eén zin die je keuzes koppelt aan de praktijk. Paracetamol bijvoorbeeld: *"Tijdens de misselijkheid koos jij de zetpil. Die werkte maar half: daar kun je niet op rekenen."* Lithium: *"Jij liet na de ibuprofen 30% van de doses weg. Dat was nodig, want de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen overslaan wordt makkelijk vergeten."* Het spel mag nooit suggereren dat zelf pillen overslaan een goed idee is.
+  - (Vervallen in v2.3: de praktijkzin. Het eindverslag koppelt terug wat er gebeurde, zonder les.) Het spel mag nooit suggereren dat zelf pillen overslaan een goed idee is.
 
 ### Flow
 
@@ -71,9 +76,9 @@ Dit document is de bron voor de bouw. Getallen in het casusblad zijn de lat voor
    5. Zetpil → *een zetpil: soms goed, soms nauwelijks. Daar kun je niet van op aan.*
    6. "Klaar? Race!"
 
-   De plotwendingen (misselijkheid in race 1, ibuprofen en de geweigerde lithiumprik in race 2) komen bewust niet in de tutorial: dat zijn verrassingen. De tutorial duurt hoogstens ±2 minuten en is over te slaan.
+   De plotwendingen (misselijkheid in race 1, ibuprofen in race 2) komen bewust niet in de tutorial: dat zijn verrassingen. De tutorial duurt hoogstens ±2 minuten en is over te slaan.
 3. **Race 1: paracetamol** (tablet, zetpil of spuit, met misselijkheid; zie casusblad).
-4. **Race 2: lithium** (tablet of overslaan; de spuitknop is er wel, maar lithium bestaat niet als injectie; zie casusblad).
+4. **Race 2: lithium** (retardtablet 400, 800 of 1200 mg, of overslaan; geen spuit: lithium bestaat niet als injectie; zie casusblad).
 5. **Eindscherm** (zie §2), groot en leesbaar op 2 meter, één tik "Nog een keer".
 
 ## 4. Rekenmodel
@@ -102,11 +107,11 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 | Zetpil | 1 g per keer. Per zetpil F uit 0,3–0,9 en ka uit 0,3–1,0 /u, uit een vaste reeks (voor iedereen gelijk) | richting bron [4][5] (traag en wisselend); spreiding is een spelkeuze |
 | Spuit | 1 g iv, directe piek 1000/63 = 15,9 mg/L. In tutorial en race 1. Telt mee voor de dagteller. | vereenvoudiging: echt iv-paracetamol loopt in 15 min in, met piek ±30 mg/L [1] |
 | Zone | ≥ 5 mg/L = "pijnstilling (vereenvoudigd)" | spelkeuze, afgesteld op het echte schema (zie onder) |
-| Bovengrens | Dagteller: maximaal 4 g per 24 uur. Daarboven: levermeter vol. | Bart akkoord |
+| Bovengrens | Dagteller: maximaal 4 g per 24 uur. Daarboven: levermeter vol. | "maximaal totaal 4000 mg per 24 uur" (volwassenen > 55 kg); hoger dan aanbevolen: kans op ernstige leverschade [12]. Zelfzorgbijsluiters van 500 mg noemen max. 3 g per dag. Levermeter vol bij > 4 g is een spelkeuze (Bart akkoord): echte leverschade hangt af van dosis per kg en tijd [12, rubriek 4.9]. |
 | Poortjes | elk uur (24 poortjes) | spelkeuze |
 | Racelengte | 24 uur patiënttijd (±10 T½) | spelkeuze |
-| Gebeurtenis race 1 | Uur 10 tot 16: "Opa is misselijk na de narcose." Slikken geblokkeerd; zetpil, spuit of niets. | Bart akkoord |
-| Echt schema (eindscherm) | 1 g 4dd | Bart akkoord |
+| Gebeurtenis race 1 | Uur 10 tot 16: "Opa is misselijk na de narcose." Slikken geblokkeerd; zetpil, spuit of niets. | spelkeuze (Bart akkoord) |
+| Echt schema (eindscherm) | 1 g 4dd | 1 g per keer, bij hele tabletten minstens 6 uur ertussen, max. 4 g per 24 uur [12] |
 | Onder de zone, in lekentaal | "Au. De pijn komt terug." | |
 | Boven 4 g, in lekentaal | "Te veel paracetamol beschadigt de lever." | |
 
@@ -116,21 +121,22 @@ Eén compartiment, eliminatie eerste orde, orale en rectale opname eerste orde.
 
 | Veld | Waarde | Status / bron |
 |---|---|---|
-| Dosis | 400 mg lithiumcarbonaat = 10,8 mmol Li⁺ per poortje | rekenregel |
-| Vd | 0,8 L/kg → 56 L | geheugen, Bart akkoord |
-| T½ | 24 uur | geheugen, Bart akkoord |
-| F, ka | F = 1,0; ka = 1,0 /u (piek ±3,5 u na inname) | F: geheugen; ka: aanname (vereenvoudigd) |
-| Zone | 0,6–1,0 mmol/L | geheugen, Bart akkoord |
-| Toxisch | > 1,5 mmol/L | geheugen, Bart akkoord |
-| Poortjes | 3× per dag, om 0, 8 en 16 uur (30 poortjes); keuze slikken of overslaan | spelkeuze |
-| Spuitknop | Zichtbaar, maar doet niets aan de spiegel. Bij tikken: "Lithium bestaat niet als prik. Slikken of stikken!" Geen strafpunten. | farmacologisch: er is geen injecteerbare lithium; Bart akkoord |
-| Start | Al in steady state op 3dd 400 mg: spiegel ±0,76–0,87 | doorgerekend |
-| Racelengte | 10 dagen patiënttijd (±10 T½) | spelkeuze |
-| Gebeurtenis race 2 | Dag 5 (t = 120 u): "Mevrouw De Vries koopt ibuprofen bij de drogist." Klaring × 0,7 tot het einde. Geen tegenactie mogelijk. | factor binnen gerapporteerde range [6][7][8]; Bart akkoord |
-| Echt schema (eindscherm) | 3dd 400 mg; na een NSAID spiegel controleren | |
+| Tablet | Retardtablet 400 mg lithiumcarbonaat = 10,8 mmol Li⁺ | 400 mg = 10,8 mmol [9]; Priadel 400 mg en Camcolit-400: gereguleerde afgifte [10][11] |
+| Knoppen | 400 mg, 800 mg, 1200 mg (1, 2 of 3 tabletten) of Overslaan, per poortje | spelkeuze (Bart, max. vier opties) |
+| Vd | 0,8 L/kg → 56 L | 0,6–1,0 L/kg, populatiemodel 0,79 [9] |
+| T½ | 24 uur | 12–48 u [9] |
+| F, ka | F = 0,95; ka = 0,7 /u (piek ±4,8 u na inname) | F 95% [9]; Tmax vertraagde afgifte 2–5,5 u [9]; ka zelf gekozen binnen dat bereik |
+| Zone | 0,6–1,0 mmol/L | vereenvoudiging, Bart akkoord. Profylaxe 0,6–0,8 mmol/L, gemeten 12 u na inname; bij 1× per dag horen de gemeten waarden 1,2× zo hoog te zijn (±0,72–0,96) [9]. Het spel scoort de hele dagcurve, die bij 1× per dag meer schommelt. |
+| Toxisch | > 1,5 mmol/L | [9]; in de race bereikbaar door beide poortjes te gebruiken (bv. 2× 1200 mg per dag) |
+| Poortjes | 2× per dag, ochtend (0 u) en avond (12 u), 20 poortjes | spelkeuze (Bart akkoord); dosering in 1–3 doses bij gereguleerde afgifte [9]. Het echte schema gebruikt alleen de ochtend; verdelen over beide (bv. 400 + 800 mg) scoort iets hoger, omdat de spiegel dan minder schommelt. |
+| Spuit | Geen spuitknop | lithium bestaat niet als injectie; Bart akkoord (v2.3) |
+| Start | Al in steady state op 1dd 1200 mg retard: spiegel ±0,57–0,99 | doorgerekend |
+| Racelengte | 10 dagen patiënttijd (±10 T½), ±62 s | spelkeuze |
+| Gebeurtenis race 2 | Dag 5 (t = 120 u): "Mevrouw De Vries koopt ibuprofen bij de drogist." Klaring × 0,7 tot het einde. De ibuprofen zelf is niet terug te draaien. | factor binnen gerapporteerde range [6][7][8]; Bart akkoord |
+| Echt schema (eindscherm) | 1dd 1200 mg retard; na een NSAID de dosis verlagen (hier vanaf de dag erna 800 mg) en de spiegel laten prikken | "Doseringen dienen altijd op geleide van serumconcentratie en kliniek aangepast te worden"; NSAID's verhogen de lithiumconcentratie [9] |
 | Onder de zone, in lekentaal | "Kans op terugval: somber of juist ontremd." | |
 | Boven de zone, in lekentaal | "Trillen, misselijk, diarree. Nog hoger: verward, nieren in gevaar." | |
-| Nabespreking | "In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken." | |
+| Nabespreking | (vervallen in v2.3: niet meer op het eindscherm) | |
 
 ### Casus 3 — Carbamazepine (bonusrace)
 
@@ -196,10 +202,14 @@ Eén dosis 1 g slik: piek 9,21 mg/L na 1,38 u; boven 5 mg/L van 0,33 tot 4,29 u.
 
 | Strategie | In zone 0,6–1,0 | > 1,0 | > 1,5 | Laatste dag |
 |---|---|---|---|---|
-| Alles slikken | 63% | 37% | 0% | 1,07–1,20 |
-| Na de ibuprofen elke 3e dosis overslaan | 100% | 0% | 0% | 0,69–0,89 |
-| Niets (zakt onder 0,6 na ±8 u) | 3% | 0% | 0% | 0,00 |
-| Elk poortje dubbel | 2% | 98% | 76% | 2,14–2,41 |
+| Echt schema (ochtend 1200 mg, vanaf dag 6 800 mg; avond leeg) | 95% | 1% | 0% | 0,62–0,90 |
+| Verdeeld: 400 + 800 mg, vanaf dag 6 400 + 400 mg | 98% | 0% | 0% | 0,71–0,84 |
+| Alles 1200 mg ('s ochtends) | 71% | 25% | 0% | 0,86–1,28 |
+| Na de ibuprofen elke 3e dosis overslaan (1200 mg) | 83% | 9% | 0% | 0,64–1,08 |
+| Niets (start op de dalspiegel ±0,57) | 0% | 0% | 0% | 0,00 |
+| Beide poortjes 1200 mg (2400 mg per dag) | 6% | 94% | 66% | 1,96–2,33 |
+
+Eén retardtablet: piek na ±4,8 u.
 
 ## 6. De lat
 
@@ -219,7 +229,7 @@ Stopregel: stoppen zodra de blinde check 0 afwijkingen vindt.
 
 Automatische spelers (bots) spelen het echte spel in een telefoonscherm (375 × 667 en 390 × 844). Poortcriteria:
 1. **Paracetamol:** echt schema = spuit-variant ≥ zetpil-variant > gemiste dosis > niets. "Elk uur slikken" eindigt met leverschade en scoort lager dan het echte schema. Het echte schema haalt minstens 80% van de hoogste botscore.
-2. **Lithium:** "na de ibuprofen elke 3e overslaan" > "alles slikken" > "niets"; "elk poortje dubbel" belandt in de toxische zone en scoort het laagst.
+2. **Lithium (v2.3):** "na de ibuprofen de dosis verlagen" (echt schema) > "na de ibuprofen elke 3e overslaan" > "alles 1200 mg" > "niets"; "beide poortjes 1200 mg" belandt in de toxische zone en scoort het laagst. Het echte schema haalt minstens 80% van de hoogste botscore.
 3. Van openen tot spelen: maximaal 3 tikken. Een race duurt 60–120 seconden. "Nog een keer" is één tik.
 4. Knoppen minstens 48 × 48 px. Geen horizontaal scrollen. Geen netwerkverzoeken na het laden.
 5. Eindscherm: naam en totaalscore in minstens 32 px.
@@ -234,7 +244,7 @@ Gecontroleerd met schermafbeeldingen en bots in 375 × 667 en 390 × 844. Poortc
 2. **Nul zichtbare verschillen.** Een criticus legt per tutorialstap een schermafbeelding naast een vergelijkbaar moment uit race 1 en telt de verschillen in: richting van de tijd, achtergrond, kleuren (zone, streep, curve, poortjes), knoppen (vorm, plaats, icoon, tekst), lettertype en plaats van klok, QALY-stand, dagteller en levermeter. Drempel: 0. Toegestaan verschil: de uitlegzin, de stilstaande klok en een markering van de knop die de speler nu moet gebruiken.
 3. **Volledig en niets extra.** Elke knop en elk schermonderdeel van race 1 komt in de tutorial voor, en de speler heeft elke knop zelf gebruikt via het poortjesmechanisme. De tutorial bevat niets wat race 1 niet heeft. Uitzondering: de plotwendingen (§3 Flow stap 2).
 4. **Te volgen zonder hulp.** Een bot die alleen tikt op de knop die de uitleg aanwijst, komt met echte tikken door de hele tutorial, in beide schermmaten. Bij direct reageren duurt de tutorial hoogstens 2 minuten (zonder `?speed`).
-5. **Race 2 sluit aan.** Wat in race 2 anders is dan in race 1 (overslaan, 2× tablet per poortje), staat in één zin per verschil op het introkaartje van race 2.
+5. **Race 2 sluit aan.** Wat in race 2 anders is dan in race 1 (twee poortjes per dag, knoppen in mg, retardtablet, geen zetpil en geen spuit), staat in één zin per verschil op het introkaartje van race 2.
 
 Maximaal 2 rondes, tenzij de drempels nog niet gehaald zijn.
 
@@ -266,3 +276,7 @@ GitHub Pages vanaf deze (openbare) repo: openbare link, geen account nodig. QR-c
 6. Ibuprofen-bijsluiter (lithiumklaring −19% bij gezonde vrijwilligers) — https://medlibrary.org/lib/rx/meds/ibuprofen-98/page/4/
 7. NSAID's en lithiumspiegel, retrospectieve studie — https://thieme-connect.de/products/ejournals/html/10.1055/s-0039-3403006?lang=de
 8. Review lithiuminteracties met NSAID's en diuretica — https://www.journals.usp.br/acp/article/view/148060
+9. TDM-monografie lithium (NVZA, Commissie Analyse en Toxicologie; herzien april 2011) — tdm-monografie.org: vensters, F 95%, Vd 0,6–1,0 L/kg, T½ 12–48 u, Tmax vertraagde afgifte 2–5,5 u, populatiemodel (Vd 0,79 L/kg, ka 3 ± 1 /u), factor 1,2 bij 1× per dag, interacties
+10. Bijsluiter Priadel 400 mg, tabletten met gereguleerde afgifte (CBG) — https://www.geneesmiddeleninformatiebank.nl/Bijsluiters/h09013.pdf
+11. SmPC Camcolit-400 (CBG) — https://www.geneesmiddeleninformatiebank.nl/smpc/h05821_smpc.pdf
+12. SmPC Paracetamol 1000 mg Teva, tabletten (RVG 109093, CBG; juli 2025), rubriek 4.2, 4.4 en 4.9 — https://www.geneesmiddeleninformatiebank.nl/smpc/h109093_smpc.pdf

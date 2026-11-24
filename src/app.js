@@ -47,7 +47,7 @@
  * de keuze toegepast (race.naar(poortjetijd), dan race.geef) en gewist. Overslaan is ook een keuze; een poortje
  * zonder keuze kost punten (race.geenKeuze, S.PUNTEN.GEEN_KEUZE). Een geweigerde tablet telt als keuze.
  * Paracetamol: 1 toediening (1 g) per poortje; dezelfde knop nog eens = keuze weg.
- * Lithium: tablet tot 2× per poortje ("2× Tablet voor ..."), derde tik = keuze weg.
+ * Lithium en carbamazepine: dosisknoppen in mg; nog een tik op dezelfde knop = keuze weg.
  * Te laat: een tik binnen 0,3 s (echte tijd, /speed) ná een poortje telt NIET voor het volgende poortje
  * ("Te laat voor uur 16"); tik opnieuw. SoS.debug.poortje.open = false in dat venster.
  * INDELING CANVAS (geen tekst over tekst): poortlabels staan aan de kant weg van de stip (R.kant, strook
@@ -55,8 +55,7 @@
  * ernaast of eronder, buiten die strook. Meldingen staan boven in het podium (verleden), één tegelijk; labels
  * onder een melding worden niet getekend.
  * Termen: "het groene vlak" (de zone); de ondergrens ervan heet "de streep" (label bovenaan, intro race 1).
- * Slikken tijdens misselijkheid en de lithium-spuit worden geweigerd met de casusbladtekst (geen effect,
- * geen strafpunten). Leverschade (dagteller > 4 g): lijn en stip rood, QALY-pijl omlaag, levermeter vol.
+ * Slikken tijdens misselijkheid wordt geweigerd met de casusbladtekst (geen effect, geen strafpunten). Leverschade (dagteller > 4 g): lijn en stip rood, QALY-pijl omlaag, levermeter vol.
  * Het portretje in de racekop (#patient-kop) laat zien hoe het met de patiënt gaat (blij / pijn / misselijk).
  * Terug-knop: eerst een melding; nog een keer terug binnen 3 s verlaat het spel.
  *
@@ -70,7 +69,7 @@
  *     klok = spelklok (uur, negatief tijdens de aanloop); score = live QALY-totaal.
  *   Stabiele data-attributen: data-actie="start" en "start-over" (startscherm), "verder" (na de oefenronde en
  *     na elke race), "start-race" (intro-kaartje), "slik" | "zetpil" | "spuit" | "niets" (raceknoppen; lithium
- *     "Overslaan" = niets), "demp", "menu" (+ data-menu="verder|oefenronde|race-1|race-2|einde|begin"), "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
+ *     "d1" | "d2" | "d3" = 400 / 800 / 1200 mg, carbamazepine "d1" | "d2" | "d4" = 200 / 400 / 800 mg, "Overslaan" = niets), "demp", "menu" (+ data-menu="verder|oefenronde|race-1|race-2|einde|begin"), "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
  *     uitleg aanwijst heeft data-wijs="1".
  *   Raceknoppen reageren op pointerdown (snel) én click (toetsenbord); één tik telt één keer.
  */
@@ -446,9 +445,9 @@
       regels = ['Blijf binnen het therapeutisch venster: het groene vlak heeft nu ook een bovenkant, ' + vensterTekst(c, 0) + '.',
         'Boven ' + getal(c.toxisch, 1) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
         'De klok telt in dagen: de race duurt ' + Math.round(c.raceDuur / 24) + ' dagen.',
-        'Poortjes komen ' + uren.length + '× per dag: om ' + uren.slice(0, -1).join(', ') + ' en ' + uren[uren.length - 1] + ' uur.',
-        'Tik twee keer op Tablet voor 2 tabletten op één poortje.',
-        'Er is geen zetpil en geen dagteller.'];
+        'Twee poortjes per dag, ochtend (' + uren[0] + ' uur) en avond (' + uren[1] + ' uur): kies ' + c.poortjes.dosisKnoppen.map(function (n) { return getal(n * c.dosis.mg, 0); }).join(', ').replace(/, (?=[^,]*$)/, ' of ') + ' mg, of Overslaan.',
+        'Lithium is een tablet met vertraagde afgifte (retard): daardoor is één keer per dag genoeg.',
+        'Er is geen zetpil, geen spuit en geen dagteller.'];
     }
     var ul = $('intro-regel');
     ul.innerHTML = '';
@@ -463,17 +462,17 @@
   // ------------------------------------------------------------------------------------------
   var CFG = {
     paracetamol: {
-      secPerUur: 90 / 24, Cmax: 20, monster: 0.02, dun: 0.1,
+      secPerUur: 80 / 24, Cmax: 20, monster: 0.02, dun: 0.1,
       as: [10, 15], eenheid: 'mg/L', // hulplijnen; de venstergrenzen komen uit M.venster(casus, t)
       zoneLabel: null, toxLabel: null
     },
     lithium: {
-      secPerUur: 70 / 240, Cmax: 2, monster: 0.1, dun: 1, dec: 1, decWaarde: 2,
+      secPerUur: 62 / 240, Cmax: 2, monster: 0.1, dun: 1, dec: 1, decWaarde: 2,
       as: [], eenheid: 'mmol/L', // + casus.toxisch; de venstergrenzen komen uit M.venster(casus, t)
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     },
     carbamazepine: {
-      secPerUur: 110 / 672, Cmax: 24, monster: 0.2, dun: 1, dec: 0, decWaarde: 1,
+      secPerUur: 97 / 672, Cmax: 24, monster: 0.2, dun: 1, dec: 0, decWaarde: 1,
       as: [], eenheid: 'mg/L',
       zoneLabel: ['in de zone'], toxLabel: 'giftig'
     }
@@ -581,10 +580,8 @@
     // knoppen
     var nav = $('knoppen');
     nav.innerHTML = '';
-    var lijst = c.id === 'lithium'
-      ? [['slik', 'Tablet', 'tablet'], ['niets', 'Overslaan', 'niets'], ['spuit', 'Spuit', 'spuit']]
-      : (c.poortjes.dosisKnoppen ? c.poortjes.dosisKnoppen.map(function (n) { return ['d' + n, mgTekst(c, n), 'tablet', 'slik', n]; }).concat([['niets', 'Overslaan', 'niets']])
-        : [['slik', 'Tablet', 'tablet'], ['zetpil', 'Zetpil', 'zetpil'], ['spuit', 'Spuit', 'spuit'], ['niets', 'Overslaan', 'niets']]);
+    var lijst = c.poortjes.dosisKnoppen ? c.poortjes.dosisKnoppen.map(function (n) { return ['d' + n, mgTekst(c, n), 'tablet', 'slik', n]; }).concat([['niets', 'Overslaan', 'niets']])
+      : [['slik', 'Tablet', 'tablet'], ['zetpil', 'Zetpil', 'zetpil'], ['spuit', 'Spuit', 'spuit'], ['niets', 'Overslaan', 'niets']];
     R.knoppen = {};
     R.knopInfo = {};
     lijst.forEach(function (d) {
@@ -644,15 +641,6 @@
     // Oefenronde: de knoppen werken precies als in de race (kiezen, wisselen, wissen, te laat). Alleen de
     // klok wacht: zie gidsControle.
     var G = R.gids;
-    // Lithium-spuitknop: zichtbaar, doet niets, geen strafpunten.
-    if (route === 'spuit' && c.routes.spuit && c.routes.spuit.doetNiets) {
-      R.race.geef('spuit');
-      speel('bonk');
-      flits(b, 'schud');
-      melding(c.routes.spuit.tekst, { soort: 'grap', prio: 2, duur: 2.6 });
-      R.effecten.push({ type: 'bonk', t0: performance.now() });
-      return;
-    }
     // Slikken tijdens misselijkheid: geweigerd (wordt op het poortje gelogd als poging).
     var blok = route === 'slik' && doelGeblokkeerd();
     if (blok) {
@@ -674,7 +662,7 @@
     var k = R.keuze;
     var max = maxAantal(route);
     var tekst;
-    if (info.vast) { // dosisknop (carbamazepine): één tik = die dosis; nog eens = keuze weg
+    if (info.vast) { // dosisknop (lithium, carbamazepine): één tik = die dosis; nog eens = keuze weg
       if (k.route === route && k.aantal === info.vast) { k.route = null; k.aantal = 0; tekst = 'Keuze gewist voor ' + doelLabel + ': kies opnieuw, geen keuze kost punten.'; }
       else { k.route = route; k.aantal = info.vast; tekst = mgTekst(c, info.vast) + ' voor ' + doelLabel; }
     } else if (k.route === route && k.aantal < max) {
@@ -769,10 +757,11 @@
     speel('tik');
   }
 
-  // Lithium: tablet tot 2× per poortje (casusblad: "elk poortje dubbel"); paracetamol 1 g per keer.
+  // Dosisknoppen (lithium, carbamazepine): de keuze heet naar de dosis in mg; paracetamol 1 g per keer.
   function mgTekst(c, n) { return getal(n * c.dosis.mg, 0) + ' mg'; }
   function keuzeNaam(c, k) { return c.poortjes.dosisKnoppen && k.route === 'slik' ? mgTekst(c, k.aantal) : (k.aantal > 1 ? k.aantal + '× ' : '') + KEUZENAAM[k.route]; }
-  function maxAantal(route) { return route === 'slik' && R.casus.id !== 'paracetamol' ? (R.casus.poortjes.maxTabletten || 2) : 1; }
+  // Zonder dosisknoppen: één toediening per poortje, tenzij een casus poortjes.maxTabletten noemt (nu geen).
+  function maxAantal(route) { return route === 'slik' && R.casus.poortjes.maxTabletten ? R.casus.poortjes.maxTabletten : 1; }
   var KEUZENAAM = { slik: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', niets: 'Overslaan' };
   var TE_LAAT_MS = 300; // echte tijd bij speed 1 (gedeeld door ?speed=N)
 
@@ -874,7 +863,7 @@
       R.pxPerUur = gat / R.casus.poortjes.interval;
       R.yNu = Math.round(D.h * 0.52);
       R.links = 40; R.rechts = 24; // links: de tijdstrook; rechts: ruimte voor het gezicht aan de rand
-      // breedste poortlabel (+ icoontje, lithium ook "2×"): zo breed is de gereserveerde labelstrook
+      // breedste poortlabel (+ icoontje, dosisknoppen ook de mg): zo breed is de gereserveerde labelstrook
       ctx.font = '700 15px ' + FONT;
       var mx = 0;
       R.poorten.forEach(function (T) { mx = Math.max(mx, ctx.measureText(tijdLabel(R.casus, T, true)).width); });
@@ -1496,7 +1485,9 @@
       qs.textContent = getal(straf, 0) + ' geen keuze';
       qs.classList.remove('zicht'); void qs.offsetWidth; qs.classList.add('zicht');
       R.psFlits = { tot: performance.now() + 1300 / Math.min(SPEED, 4), tekst: 'Geen keuze voor ' + inZin(tijdLabel(c, T, true)) + ': ' + getal(straf, 0) + ' punten' };
-      if (R.gids && R.gids.geenKeuze) melding(R.gids.geenKeuze, { soort: 'au' }); // oefenronde: zeg waarom
+      // oefenronde: zeg waarom, maar niet over een uitlegzin heen die net verschijnt (vertelstap, klok staat stil);
+      // de puntenaftrek staat dan nog wel naast de QALY-stand
+      if (R.gids && R.gids.geenKeuze && !R.gids.bevroren) melding(R.gids.geenKeuze, { soort: 'au' });
     }
     R.gegeven[g] = uit;
     R.laatstePoort = { echt: performance.now(), label: tijdLabel(c, T, true), index: g };
@@ -1739,9 +1730,10 @@
     var s = '<p class="schema-kop">Jouw doseerschema: wanneer gaf je wat</p>';
     if (perDagCasus(c)) {
       var perDag = Math.round(24 / c.poortjes.interval), dagen = Math.ceil(rijen.length / perDag);
-      s += '<div class="schema tl-dag' + (dagen > 12 ? ' veel' : '') + '" style="--k:' + perDag + '"><span class="sk dag"></span>';
+      var metSom = perDag > 1; // één poortje per dag (lithium): de som is hetzelfde getal, dus geen extra kolom
+      s += '<div class="schema tl-dag' + (dagen > 12 ? ' veel' : '') + (metSom ? '' : ' zonder-som') + '" style="--k:' + perDag + '"><span class="sk dag"></span>';
       for (var u = 0; u < perDag; u++) s += '<span class="sk">' + rijen[u].t + ' u</span>';
-      s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? 'mg/dag' : 'per dag') + '</span>';
+      if (metSom) s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? 'mg/dag' : 'per dag') + '</span>';
       for (var d = 0; d < dagen; d++) {
         var ibu = klaring && d * 24 >= klaring.t - 1e-9;
         s += '<span class="sk dag' + (ibu ? ' ibu' : '') + '">Dag ' + d + '</span>';
@@ -1752,7 +1744,7 @@
           s += '<span class="sc' + (j.soorten.length ? ' gaf' : '') + (j.geenKeuze && !j.soorten.length ? ' geen' : '') + (ibu ? ' ibu' : '') +
             '" aria-label="Dag ' + d + ', ' + r.t % 24 + ' uur: ' + j.tekst + '">' + inhoud(j, true) + '</span>';
         }
-        s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? getal(som * c.dosis.mg, 0) : som + '×') + '</span>';
+        if (metSom) s += '<span class="sk som">' + (c.poortjes.dosisKnoppen ? getal(som * c.dosis.mg, 0) : som + '×') + '</span>';
       }
       s += '</div>';
     } else {

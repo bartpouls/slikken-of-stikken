@@ -16,7 +16,9 @@ Slikken of Stikken: een farmacokinetiek-race op de telefoon voor ouders en eerst
 
 - Elk getal in het spel (dosis, Vd, T½, F, ka, zone, grenzen, tijdstippen) staat letterlijk in het casusblad (§5). Een afwijking is een fout, ook een kleine.
 - De formules volgen §4. Let op eenheden (mg/L, mmol/L, uren) en op de wisseling van klaring bij een gebeurtenis.
-- Speltekst mag nooit suggereren dat zelf pillen overslaan of zelf de dosis aanpassen een goed idee is. Bij lithium bestaat geen prik.
+- De speler "regelt de medicijnen" (de rol van de voorschrijver). Een dosis verlagen of ophogen in het spel is dus een voorschrijfkeuze en mag de beste zet zijn (lithium na de ibuprofen, carbamazepine na de gewenning). Speltekst mag nooit suggereren dat een patiënt zelf pillen overslaat of zelf de dosis aanpast. Bij lithium bestaat geen prik.
+- Spelregels en getallen in het casusblad zijn in overleg met de inhoudelijk eigenaar (Bart Pouls) vastgesteld. Meld een afwijking tussen spel en casusblad, of een keuze die farmacologisch onjuist is (met bron); meld niet een keuze die zo in het casusblad staat.
+- Bronvermelding: elk getal in het casusblad heeft in de kolom "Status / bron" een bron of de vermelding "spelkeuze" / "aanname". Een nieuw of gewijzigd getal zonder bron is [Hoog]. Een bronvermelding die niet klopt met de genoemde bron (ander getal, andere eenheid, andere doelgroep) is [Hoog].
 
 ### 2. Gebruik op de telefoon (nu de belangrijkste werkplek)
 

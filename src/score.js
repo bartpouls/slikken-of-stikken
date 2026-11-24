@@ -25,7 +25,7 @@
  * Dus: hele race in de zone = +1000 per race, ongeacht of de race 24 uur of 10 dagen duurt. Afstand buiten
  * de zone is relatief t.o.v. de zonegrens, zodat paracetamol (mg/L) en lithium (mmol/L) dezelfde schaal
  * hebben. Paracetamol heeft geen concentratie-bovengrens (hoog = ∞): "te hoog" blijft 0, de lever loopt via
- * de dagteller. Lithium-spuitknop: geen effect, geen strafpunten. Meetconventie = M.simuleer: meetpunt t_i
+ * de dagteller. Meetconventie = M.simuleer: meetpunt t_i
  * telt voor [t_i, t_i + dt), een toediening op t_i telt al mee in meetpunt t_i.
  * Weergave: rond de vier regels elk af op hele punten; totaal = som van die afgeronde regels.
  *
@@ -69,31 +69,11 @@
  *                echt: '1 g' | '400 mg' | null}],   (dosis van het echte schema op dit moment, zonder route)
  *     echtSchema:{tekst, aantal}, telling:{toedienmomenten, totaleDosis:{waarde, eenheid, tekst},
  *     dagteller (alleen paracetamol): {hoogste, max, eenheid:'g', over, tekst}},
- *     uren:{zone, onder, boven, toxisch}, lever:{beschadigd, gramBoven4g, punten} (paracetamol),
- *     praktijk:{regel, zin} }
+ *     uren:{zone, onder, boven, toxisch}, lever:{beschadigd, gramBoven4g, punten} (paracetamol) }
  *   S.verslag(casus, log, teller) bouwt dit uit een sim-log en een S.maakTeller(casus) (intern gebruikt).
- *   Lithium-spuitknop in de tijdlijn: soort 'overgeslagen' (of 'tablet' als ook geslikt) met geenPrik = true.
  *   tijdlijn[i].echt komt uit casus.echtSchema: paracetamol "1 g 4dd" → '1 g' op 0, 6, 12, 18 u (bewust zonder
- *   route: het casusblad noemt er geen, en om 12 u is slikken geblokkeerd); lithium '400 mg' op elk poortje.
+ *   route: het casusblad noemt er geen, en om 12 u is slikken geblokkeerd); lithium '1.200 mg', vanaf dag 6 '800 mg'.
  *
- * PRAKTIJKZINNEN (praktijk.regel; de eerste die past; eigen zinnen max. twee; de woordelijke §3-zinnen mogen meer)
- *   paracetamol: lever (dagteller > 4 g) · niets · zetpil tijdens de misselijkheid: zetpilNauwelijks (F ≤ 0,4) /
- *     zetpilHalf (F < 0,7; bij één zetpil woordelijk §3) / zetpilGoed (F ≥ 0,7) / zetpilWisselend (meerdere zetpillen
- *     met verschillend effect; bij meerdere zetpillen meervoud) · spuit (spuit tijdens misselijkheid) · veelOnder
- *     (> 1/2 van de race onder de streep gaat vóór de misselijkheidsregels; anders > 1/4 buiten de misselijkheid;
- *     route-neutraal, bij één dosis "Eén dosis werkt maar een paar uur: daarna komt de pijn terug.") · nooitInZone
- *     (doses gegeven maar 0 u in de zone: "geen moment boven de streep", zetpil(len) "werkte(n) nooit genoeg"; staat
- *     vóór veelOnder en de zetpilregels) · misselijkGemist ·
- *     goed (vangnet; alleen bereikbaar zonder blokkade).
- *   lithium: giftigDubbel (> 1,5 na een dubbele dosis) · giftig (vangnet: met één tablet per poortje komt de
- *     spiegel nooit boven 1,5, dus in de race onbereikbaar) · niets · dubbel (zodra er ergens een dubbele dosis is:
- *     altijd genoemd, nooit geprezen, "ook niet om in te halen"; oorzaak van boven 1,0 naar de uren vóór (dubbele
- *     dosis) vs. na t = 120 (ibuprofen), beide genoemd als beide ≥ 1 u) · overgeslagenOnder (onder 0,6 en
- *     overgeslagen vóór de ibuprofen, of vóór én na) · naIbuTeVeelWeg (alleen na de ibuprofen overgeslagen en onder
- *     0,6) · naIbuMinder (woordelijk §3; alleen zonder dubbele doses en als na t = 120 ≥ 90% in de zone en < 1 u boven
- *     1,0; % = netto ontbrekende tabletten vanaf t = 120 / 15 poortjes) ·
- *     naIbuNogTeHoog (na ibuprofen overgeslagen, maar ≥ 1 u boven 1,0) · naIbuTeHoog (alles gegeven, boven 1,0) ·
- *     nabespreking (vangnet, casusbladtekst; in de race onbereikbaar).
  */
 (function (root, factory) {
   var api = factory(function () {
@@ -416,208 +396,8 @@
       uren: { zone: teller.uren.zone, onder: teller.uren.onder, boven: teller.uren.boven, toxisch: teller.uren.toxisch },
       lever: bg && bg.type === 'dagteller' ? { beschadigd: teller.lever.beschadigd, gramBoven4g: teller.lever.gramBoven,
         punten: Math.round(teller.lever.punten) + 0 } : null,
-      teSnel: c.titratie ? teller.teSnel.map(function (x) { return { dag: x.dag, mg: x.mg, toegestaan: x.toegestaan }; }) : null,
-      praktijk: praktijk(c, rijen, teller, telling)
+      teSnel: c.titratie ? teller.teSnel.map(function (x) { return { dag: x.dag, mg: x.mg, toegestaan: x.toegestaan }; }) : null
     };
-  }
-
-  // ---------------------------------------------------------------------------------------------
-  // Praktijkzin: eerste regel die past. Getallen alleen uit het casusblad of uit de eigen keuzes.
-  // ---------------------------------------------------------------------------------------------
-  function pct(x) { return Math.round(x * 100) + '%'; }
-
-  var ZETPIL_WERKING = ['nauwelijks', 'maar half', 'goed']; // F ≤ 0,4 · 0,4 < F < 0,7 · F ≥ 0,7
-  function zetpilKlasse(F) { return F <= 0.4 ? 0 : (F < 0.7 ? 1 : 2); }
-
-  function zetpilZin(zetpillen, nSpuit) {
-    var kl = zetpillen.map(function (x) { return zetpilKlasse(x.d.F); });
-    var lo = Math.min.apply(null, kl), hi = Math.max.apply(null, kl), n = 0;
-    zetpillen.forEach(function (x) { n += x.d.aantal; }); // eenheden (aantal 2 = twee zetpillen)
-    var regel = ['zetpilNauwelijks', 'zetpilHalf', 'zetpilGoed'][lo];
-    var kop, die, ze, deEne;
-    if (nSpuit) { // ook een spuit tijdens de misselijkheid: noem beide, oordeel over de zetpil
-      kop = 'Tijdens de misselijkheid gaf jij ' + (nSpuit === 1 ? 'een spuit' : nSpuit + ' spuiten') + ' en ' +
-        (n === 1 ? 'een zetpil' : n + ' zetpillen') + '. ';
-      die = 'De zetpil werkte'; ze = 'De zetpillen werkten'; deEne = 'De ene zetpil werkte ';
-    } else {
-      kop = n === 1 ? 'Tijdens de misselijkheid koos jij de zetpil. ' : 'Tijdens de misselijkheid gaf jij ' + n + ' zetpillen. ';
-      die = 'Die werkte'; ze = 'Ze werkten'; deEne = 'De ene werkte ';
-    }
-    if (lo !== hi) return { regel: 'zetpilWisselend',
-      zin: kop + deEne + ZETPIL_WERKING[hi] + ', ' + (zetpillen.length === 2 ? 'de andere ' : 'een andere ') +
-        ZETPIL_WERKING[lo] + ': daar kun je niet op rekenen.' };
-    if (lo === 2) return { regel: regel,
-      zin: kop + (n === 1 ? die : ze) + ' deze keer goed, maar een zetpil werkt soms goed en ' +
-        'soms nauwelijks: daar kun je niet op rekenen.' };
-    return { regel: regel, zin: kop + (n === 1 ? die : ze) + ' ' + ZETPIL_WERKING[lo] +
-      ': daar kun je niet op rekenen.' };
-  }
-
-  function praktijk(c, rijen, teller, telling) {
-    var Mo = mdl();
-    var doses = [];
-    rijen.forEach(function (r) { r.jij.toedieningen.forEach(function (d) { doses.push({ t: r.t, d: d }); }); });
-    var T = c.raceDuur;
-
-    if (c.id === 'paracetamol') {
-      var blok = function (t) { return !!Mo.geblokkeerd(c, 'slik', t); };
-      var inBlok = doses.filter(function (x) { return blok(x.t); });
-      var zetpillen = inBlok.filter(function (x) { return x.d.route === 'zetpil'; });
-      var spuiten = inBlok.filter(function (x) { return x.d.route === 'spuit'; });
-      var geblokt = rijen.some(function (r) { return blok(r.t) && r.jij.geblokkeerd; });
-      if (telling.dagteller && telling.dagteller.over) return { regel: 'lever',
-        zin: 'Jij gaf ' + getal(telling.dagteller.hoogste) + ' g in 24 uur, meer dan de ' + getal(telling.dagteller.max) +
-          ' g die mag. Te veel paracetamol beschadigt de lever.' };
-      if (!doses.length) return { regel: 'niets',
-        zin: 'Jij gaf opa Jan geen paracetamol, dus de pijn bleef. ' +
-          'Een vast schema op vaste tijden houdt de spiegel boven de streep.' };
-      if (teller.uren.zone === 0) { // geen moment boven de streep (kan alleen met zetpillen met lage F)
-        var nZ = 0;
-        doses.forEach(function (x) { if (x.d.route === 'zetpil') nZ += x.d.aantal; });
-        return { regel: 'nooitInZone', zin: nZ
-          ? 'De spiegel kwam geen moment boven de streep: ' + (nZ === 1 ? 'jouw zetpil werkte' : 'jouw zetpillen werkten') +
-            ' nooit genoeg. Een zetpil werkt soms goed en soms nauwelijks: daar kun je niet op rekenen.'
-          : 'De spiegel kwam geen moment boven de streep, dus de pijn bleef. ' +
-            'Een vast schema op vaste tijden houdt de spiegel boven de streep.' };
-      }
-      var nDoses = 0;
-      doses.forEach(function (x) { nDoses += x.d.aantal; });
-      var veelOnder = { regel: 'veelOnder',
-        zin: 'Opa Jan zat ' + pct(teller.uren.onder / T) + ' van de tijd onder de streep. ' + (nDoses === 1
-          ? 'Eén dosis werkt maar een paar uur: daarna komt de pijn terug.'
-          : 'Elke dosis werkt maar een paar uur: verdeel de doses over de dag.') };
-      if (teller.uren.onder / T > 1 / 2) return veelOnder; // grootste deel onder de streep: dáár gaat het over
-      if (zetpillen.length) return zetpilZin(zetpillen, spuiten.length);
-      if (spuiten.length) return { regel: 'spuit',
-        zin: 'Tijdens de misselijkheid koos jij de spuit. Een prik werkt meteen, ook als opa Jan niet kan slikken.' };
-      if ((teller.uren.onder - teller.onderTijdensBlokkade) / T > 1 / 4) return veelOnder;
-      if (!inBlok.length && (geblokt || teller.onderTijdensBlokkade > 0)) return { regel: 'misselijkGemist',
-        zin: 'Tijdens de misselijkheid kreeg opa Jan geen paracetamol, en de pijn kwam terug. ' +
-          'Kan iemand niet slikken, dan kan het ook als zetpil of prik.' };
-      return { regel: 'goed',
-        zin: 'Jij bleef met ' + telling.totaleDosis.tekst + ' binnen de 4 g per dag. ' +
-          'Een vast schema op vaste tijden houdt de pijn weg en de lever heel.' };
-    }
-
-    if (c.id === 'carbamazepine') return praktijkCarbamazepine(c, rijen, teller, doses);
-
-    // lithium
-    var tK = eersteKlaring(c), naDuur = T - tK;
-    var isNa = function (r) { return r.t >= tK - 1e-9; };
-    var weg = function (rs) { return rs.filter(function (r) { return r.jij.toedieningen.length === 0; }).length; };
-    var tabl = function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return n; };
-    var naRijen = rijen.filter(isNa), voorRijen = rijen.filter(function (r) { return !isNa(r); });
-    var wegVoor = weg(voorRijen), wegNa = weg(naRijen);
-    var dubbelVoor = voorRijen.filter(function (r) { return tabl(r) >= 2; }).length;
-    var dubbelNa = naRijen.filter(function (r) { return tabl(r) >= 2; }).length;
-    var dubbel = dubbelVoor + dubbelNa;
-    var meer = rijen.some(function (r) { return tabl(r) >= 3; });
-    var keer = function (n) {
-      return (n === 1 ? 'één' : n) + ' keer ' + (meer ? 'meer dan één tablet tegelijk' : 'een dubbele dosis');
-    };
-    var naZone = teller.na.zone / naDuur, naBoven = teller.na.boven / naDuur;
-    var tablNa = 0;
-    naRijen.forEach(function (r) { tablNa += tabl(r); });
-    var ontbrekendNa = Math.max(0, naRijen.length - tablNa); // netto ontbrekende tabletten na de ibuprofen
-    var SIG = 1; // uur boven 1,0 "van betekenis"
-    var NOOIT_DUBBEL = 'Bij lithium nooit dubbel innemen, ook niet om in te halen: te veel geeft trillen, misselijkheid en diarree.';
-
-    if (teller.uren.toxisch > 0) {
-      if (dubbel) return { regel: 'giftigDubbel',
-        zin: 'Jij gaf ' + keer(dubbel) + (teller.uren.onder > 0 && weg(rijen) > 0
-          ? ' en sloeg ' + weg(rijen) + ' van de ' + rijen.length + ' doses over: de spiegel kwam boven de 1,5 (giftig) én zakte onder de 0,6. '
-          : ' en de spiegel kwam boven de 1,5: giftig. ') +
-          'Bij lithium liggen goed en giftig dicht bij elkaar, dus nooit dubbel innemen, ook niet om in te halen.' };
-      return { regel: 'giftig', // vangnet, in de race onbereikbaar
-        zin: 'De spiegel kwam boven de 1,5: giftig, met kans op verwardheid en nieren in gevaar. ' +
-          'Bij lithium liggen goed en giftig dicht bij elkaar.' };
-    }
-    if (!doses.length) return { regel: 'niets',
-      zin: 'Jij gaf mevrouw De Vries geen lithium en de spiegel zakte onder de 0,6. ' +
-        'Kans op terugval: somber of juist ontremd.' };
-
-    // Ergens een dubbele dosis: altijd noemen, nooit prijzen. Oorzaak van "boven 1,0" volgens de uren
-    // vóór (alleen een dubbele dosis kan de spiegel dan boven 1,0 brengen) en na de ibuprofen.
-    if (dubbel) {
-      var waarD = dubbelNa === 0 ? ' vóór de ibuprofen' : (dubbelVoor === 0 ? ' na de ibuprofen' : '');
-      var kopD = 'Jij gaf ' + keer(dubbel) + waarD;
-      var bV = teller.voor.boven, bN = teller.na.boven;
-      var sigV = bV >= SIG, sigN = bN >= SIG;
-      if (!sigV && !sigN && (bV > 0 || bN > 0)) { sigV = bV >= bN; sigN = !sigV; }
-      var gevolg;
-      if (teller.uren.onder > 0 && weg(rijen) > 0) gevolg = ', maar sloeg ook ' + weg(rijen) + ' van de ' + rijen.length +
-        ' doses over: de spiegel ' + (teller.uren.boven > 0 ? 'kwam boven de 1,0 én zakte' : 'zakte') + ' onder de 0,6';
-      else if (sigV && sigN) gevolg = bN >= bV
-        ? ' en de spiegel kwam boven de 1,0: vooral na de ibuprofen, omdat de nieren minder opruimden, maar ook door het dubbel innemen'
-        : ' en de spiegel kwam boven de 1,0: vooral door het dubbel innemen, en na de ibuprofen ook omdat de nieren minder opruimden';
-      else if (sigV) gevolg = (dubbelNa ? ' en door die vóór de ibuprofen' : ' en daardoor') + ' kwam de spiegel boven de 1,0';
-      else if (sigN) gevolg = dubbelNa
-        ? (dubbelVoor ? ', terwijl de nieren na de ibuprofen al minder opruimden' : ', terwijl de nieren al minder opruimden') +
-          ': de spiegel kwam boven de 1,0'
-        : '; de spiegel kwam ' + (bV === 0 ? 'pas' : 'vooral') + ' na de ibuprofen boven de 1,0, omdat de nieren minder opruimden';
-      else gevolg = '; de spiegel bleef deze keer onder de 1,0';
-      return { regel: 'dubbel', zin: kopD + gevolg + '. ' + NOOIT_DUBBEL };
-    }
-
-    if (teller.uren.onder > 0 && wegVoor > 0 && (teller.voor.onder > 0 || wegNa > 0)) {
-      var waar = wegNa > 0 ? 'Jij sloeg ' + (wegVoor + wegNa) + ' van de ' + rijen.length + ' doses over, vóór én na de ibuprofen,'
-        : 'Jij sloeg vóór de ibuprofen ' + wegVoor + ' van de ' + voorRijen.length + ' doses over';
-      return { regel: 'overgeslagenOnder', zin: teller.uren.boven > 0
-        ? waar + ' en de spiegel zakte onder de 0,6: kans op terugval. Na de ibuprofen kwam hij ook boven de 1,0, ' +
-          'want de nieren ruimden minder op.'
-        : waar + ' en de spiegel zakte onder de 0,6. Kans op terugval: somber of juist ontremd.' };
-    }
-    if (ontbrekendNa > 0 && teller.na.onder > 0) return { regel: 'naIbuTeVeelWeg',
-      zin: 'Jij liet na de ibuprofen ' + pct(ontbrekendNa / naRijen.length) + ' van de doses weg en de spiegel ' +
-        (teller.uren.boven > 0 ? 'schommelde: soms boven de 1,0, soms onder de 0,6.' : 'zakte onder de 0,6.') + ' In het echt verlaagt de arts de dosis en laat de spiegel prikken: zelf pillen overslaan ' +
-        'is geen goed idee.' };
-    if (ontbrekendNa > 0 && naZone >= 0.9 && teller.na.boven < SIG) return { regel: 'naIbuMinder', // alleen zonder dubbele doses
-      zin: 'Jij liet na de ibuprofen ' + pct(ontbrekendNa / naRijen.length) + ' van de doses weg. Dat was nodig, want ' +
-        'de nieren ruimden minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: pillen ' +
-        'overslaan wordt makkelijk vergeten.' };
-    if (teller.na.boven > 0) {
-      if (ontbrekendNa > 0) return { regel: 'naIbuNogTeHoog',
-        zin: 'Na de ibuprofen zat de spiegel ' + pct(naBoven) + ' van de tijd boven de 1,0, want de nieren ruimden ' +
-          'minder op. In het echt verlaagt de arts de dosis en laat de spiegel prikken: zelf pillen overslaan is ' +
-          'geen goed idee.' };
-      return { regel: 'naIbuTeHoog',
-        zin: 'Jij gaf na de ibuprofen gewoon alle doses en de spiegel kroop boven de 1,0, want de nieren ruimden ' +
-          'minder op. In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.' };
-    }
-    return { regel: 'nabespreking', zin: c.nabespreking }; // vangnet
-  }
-
-  // Carbamazepine (bonusrace): opbouwen, en na de gewenning van de lever ophogen.
-  function praktijkCarbamazepine(c, rijen, teller, doses) {
-    var T = c.raceDuur, tK = eersteKlaring(c);
-    var tabl = function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return n; };
-    var eersteWeek = rijen.filter(function (r) { return r.t < tK; });
-    var laatsteDagen = rijen.filter(function (r) { return r.t >= T - 120; });
-    var dubbelVroeg = eersteWeek.filter(function (r) { return tabl(r) >= 2; }).length;
-    var gemLaat = laatsteDagen.reduce(function (s, r) { return s + tabl(r); }, 0) / Math.max(1, laatsteDagen.length);
-    if (!doses.length) return { regel: 'niets',
-      zin: 'Meneer El Idrissi kreeg geen carbamazepine: geen bescherming tegen aanvallen.' };
-    if (teller.uren.toxisch > 0) return { regel: 'giftig',
-      zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus hoge doses stapelen zich op. ' +
-        'In het echt is de maximale dosis 1.200 mg per dag.' };
-    if (teller.teSnel.length) {
-      var ts = teller.teSnel[0];
-      return { regel: 'teSnel',
-        zin: 'Op dag ' + ts.dag + ' verhoogde jij naar ' + getal(ts.mg) + ' mg per dag; ' + getal(ts.toegestaan) +
-          ' mg was de grens. Verhoog carbamazepine per week met hooguit 200 mg per dag: sneller geeft duizeligheid en dubbelzien.' };
-    }
-    if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
-      zin: 'In de eerste week kwam de spiegel boven de 8 en werd meneer El Idrissi duizelig: hij was nog niet ' +
-        'gewend aan het middel. Start laag en verhoog langzaam.' };
-    if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
-      zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +
-        'In het echt verhoogt de arts dan de dosis, op geleide van een spiegelbepaling.' };
-    if (teller.uren.boven / T > 0.02) return { regel: 'boven',
-      zin: 'De spiegel kwam ' + pct(teller.uren.boven / T) + ' van de tijd boven de 12: duizelig en dubbelzien. ' +
-        'Verhoog in kleine stappen en wacht een paar dagen op het effect.' };
-    return { regel: 'goed',
-      zin: 'Jij startte laag en hoogde de dosis op toen de lever het middel sneller ging afbreken. ' +
-        'Zo doet de arts het ook: start laag, verhoog langzaam, en laat de spiegel prikken.' };
   }
 
   return {

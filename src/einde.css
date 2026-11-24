@@ -197,19 +197,6 @@
 .eind-telling .over { border-color: var(--koraal); background: rgba(255, 111, 97, .12); }
 .eind-telling .over b, .eind-telling .over small { color: #ff9d92; }
 
-.eind-praktijk {
-  position: relative; margin: 22px 0 0; padding: 0; text-align: center;
-  font-size: 19px; font-weight: 600; line-height: 1.42;
-}
-.eind-praktijk::before {
-  content: "In de praktijk"; display: block; margin-bottom: 4px;
-  font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--paars);
-}
-.eind-nabespreking {
-  margin: 14px 0 0; text-align: center; color: var(--zacht);
-  font-size: 17px; font-weight: 600; line-height: 1.4;
-}
-
 /* ---------- 3. onderaan: terug naar boven ---------- */
 .eind-voet { display: flex; justify-content: center; margin-top: 26px; padding: 0 0 calc(var(--veilig-onder) + 18px); }
 
