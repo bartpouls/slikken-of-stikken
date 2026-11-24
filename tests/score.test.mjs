@@ -166,7 +166,8 @@ function zoekBeste4g() {
 // Lithium-bots
 // ---------------------------------------------------------------------------------------------
 const tK = L.gebeurtenissen.find(g => g.type === 'klaring').t;
-const naIbuNr = t => Math.round((t - tK) / 24) + 1; // poortjes (1× per dag) vanaf t = 120 genummerd 1, 2, 3, ...
+const naIbuNr = t => Math.round((t - tK) / 24) + 1; // ochtendpoortjes vanaf t = 120 genummerd 1, 2, 3, ...
+const och = t => t % 24 === 0; // ochtendpoortje (0 u); het avondpoortje is om 12 u
 const mgL = n => (n ? [{ route: 'slik', aantal: n }] : []); // n retardtabletten van 400 mg
 // Beste aantal tabletten (0–3) volgens een voorspelling over h uur
 const besteL = (race, h) => [0, 1, 2, 3].reduce((b, n) => {
@@ -174,15 +175,16 @@ const besteL = (race, h) => [0, 1, 2, 3].reduce((b, n) => {
   return p > b.p ? { n, p } : b;
 }, { n: 0, p: -Infinity }).n;
 const lBots = {
-  'echt schema (vanaf dag 6 800 mg)': (race, t) => mgL(t >= 144 ? 2 : 3),
-  'na de ibuprofen elke 3e overslaan': (race, t) => (t >= tK && naIbuNr(t) % 3 === 0 ? [] : mgL(3)),
-  'alles 1200 mg': () => mgL(3),
-  'na de ibuprofen 400 mg': (race, t) => mgL(t >= 144 ? 1 : 3),
+  'echt schema (vanaf dag 6 800 mg)': (race, t) => mgL(och(t) ? (t >= 144 ? 2 : 3) : 0),
+  'verdeeld 400 + 800, na de ibuprofen 400 + 400': (race, t) => mgL(t >= 144 ? 1 : (och(t) ? 1 : 2)),
+  'na de ibuprofen elke 3e overslaan': (race, t) => (!och(t) || (t >= tK && naIbuNr(t) % 3 === 0) ? [] : mgL(3)),
+  'alles 1200 mg': (race, t) => mgL(och(t) ? 3 : 0),
+  'na de ibuprofen 400 mg': (race, t) => mgL(och(t) ? (t >= 144 ? 1 : 3) : 0),
   'niets': () => [],
-  'elke dag dubbel (2400 mg)': () => mgL(6),
+  'beide poortjes 1200 mg (2400 mg per dag)': () => mgL(3),
   // Slimme bots
   'drempel: 1200 mg als spiegel < 0,8': race => mgL(race.sim.C < 0.8 ? 3 : 0),
-  'vooruitkijker (24 u, beste 0–1200 mg)': race => mgL(besteL(race, 24))
+  'vooruitkijker (12 u, beste 0–1200 mg)': race => mgL(besteL(race, 12))
 };
 
 // ---------------------------------------------------------------------------------------------
@@ -295,8 +297,8 @@ const laagsteL = Math.min(...Object.values(lRes).map(r => r.stand().totaal));
 eis('B2 dosis verlagen (echt schema) > elke 3e overslaan', sl('echt schema (vanaf dag 6 800 mg)') > sl('na de ibuprofen elke 3e overslaan'));
 eis('B2 elke 3e overslaan > alles 1200 mg', sl('na de ibuprofen elke 3e overslaan') > sl('alles 1200 mg'));
 eis('B2 alles 1200 mg > niets', sl('alles 1200 mg') > sl('niets'));
-eis('B2 elke dag dubbel: toxische zone', lRes['elke dag dubbel (2400 mg)'].verslag().uren.toxisch > 0);
-eis('B2 elke dag dubbel scoort het laagst (ook < niets)', sl('elke dag dubbel (2400 mg)') === laagsteL && sl('elke dag dubbel (2400 mg)') < sl('niets'));
+eis('B2 beide poortjes 1200 mg: toxische zone', lRes['beide poortjes 1200 mg (2400 mg per dag)'].verslag().uren.toxisch > 0);
+eis('B2 beide poortjes 1200 mg scoort het laagst (ook < niets)', sl('beide poortjes 1200 mg (2400 mg per dag)') === laagsteL && sl('beide poortjes 1200 mg (2400 mg per dag)') < sl('niets'));
 const hoogsteL = Math.max(...Object.values(lRes).map(r => r.stand().totaal));
 eis(`B2 echt schema >= 80% van hoogste botscore (${sl('echt schema (vanaf dag 6 800 mg)')} / ${hoogsteL})`, sl('echt schema (vanaf dag 6 800 mg)') >= 0.8 * hoogsteL);
 
@@ -383,20 +385,21 @@ kop('Eindverslag');
     check(j0.tekst === 'spuit + tablet' && j0.soorten.length === 2 && j0.soort === 'spuit' && j0.aantal === 1 &&
       j1.tekst === 'zetpil' && r.verslag().telling.toedienmomenten === 2, 'spuit + tablet op één poortje: beide getoond (' + j0.tekst + ')');
     const vLi = lRes['na de ibuprofen 400 mg'].verslag().tijdlijn;
-    check(vLi[0].jij.tekst === '1.200 mg' && vLi[0].echt === '1.200 mg' && vLi[6].jij.tekst === '400 mg' && vLi[6].echt === '800 mg',
-      'lithium: dosis in mg naast echt schema (' + vLi[6].jij.tekst + ' / ' + vLi[6].echt + ')');
+    check(vLi[0].jij.tekst === '1.200 mg' && vLi[0].echt === '1.200 mg' && vLi[1].jij.soort === 'overgeslagen' && vLi[1].echt === null &&
+      vLi[12].jij.tekst === '400 mg' && vLi[12].echt === '800 mg',
+      'lithium: dosis in mg naast echt schema, avondpoortje leeg (' + vLi[12].jij.tekst + ' / ' + vLi[12].echt + ')');
   }
   check(vL.telling.toedienmomenten === 3 && vL.telling.totaleDosis.tekst === '3 g' && vL.telling.dagteller.tekst === '3 g van max. 4 g', 'telling paracetamol: ' + JSON.stringify(vL.telling));
   const vS = pRes['spuit-variant'].verslag();
   check(vS.tijdlijn[12].jij.soort === 'spuit' && vS.tijdlijn[13].jij.soort === 'overgeslagen' && vS.echtSchema.tekst === '1 g 4dd', 'tijdlijn spuit / overgeslagen, echt schema 1 g 4dd');
   const vE = pRes['elk uur slikken'].verslag();
   check(vE.telling.dagteller.over && vE.telling.totaleDosis.tekst === '18 g', 'elk uur slikken: 18 g, dagteller over 4 g');
-  const vD = lRes['elke dag dubbel (2400 mg)'].verslag();
-  check(vD.tijdlijn.length === 10 && vD.tijdlijn[0].jij.aantal === 6 && vD.telling.totaleDosis.tekst === '24.000 mg', 'lithium dubbel: 2400 mg per dag, 24.000 mg');
+  const vD = lRes['beide poortjes 1200 mg (2400 mg per dag)'].verslag();
+  check(vD.tijdlijn.length === 20 && vD.tijdlijn[1].jij.aantal === 3 && vD.telling.totaleDosis.tekst === '24.000 mg', 'lithium beide poortjes: 2400 mg per dag, 24.000 mg');
   const vA = lRes['alles 1200 mg'].verslag();
   check(vA.tijdlijn[0].jij.soort === 'tablet' && vA.telling.totaleDosis.tekst === '12.000 mg' && vA.telling.toedienmomenten === 10 && !vA.telling.dagteller, 'lithium telling 12.000 mg, 10 momenten, geen dagteller');
   const vEc = lRes['echt schema (vanaf dag 6 800 mg)'].verslag();
-  check(vEc.tijdlijn.every(r => r.jij.tekst === r.echt) && /1\.200 mg per dag, later 800 mg per dag/.test(vEc.telling.perDag.grens), 'lithium echt schema: elk poortje gelijk aan het schema; ' + vEc.telling.perDag.grens);
+  check(vEc.tijdlijn.every(r => (r.echt ? r.jij.tekst === r.echt : r.jij.soort === 'overgeslagen')) && /1\.200 mg per dag, later 800 mg per dag/.test(vEc.telling.perDag.grens), 'lithium echt schema: elk poortje gelijk aan het schema; ' + vEc.telling.perDag.grens);
   check(!('praktijk' in vS), 'verslag heeft geen praktijkzin meer');
   console.log('voorbeeld verslag (spuit-variant):', JSON.stringify({ opbouw: vS.opbouw, telling: vS.telling }));
 }
@@ -417,7 +420,7 @@ kop('Geen keuze (v2.2): poortje voorbij zonder keuze kost punten; live = batch; 
   race.naar(24);
   check(race.stand().totaal === met.stand.totaal, 'live = batch met geen keuze (' + race.stand().totaal + ' / ' + met.stand.totaal + ')');
   check(zonder.verslag.telling.perDag.tekst === '4 g per dag' && /max\. 1 g per keer, 4 g per dag/.test(zonder.verslag.telling.perDag.grens), 'paracetamol per dag: ' + JSON.stringify(zonder.verslag.telling.perDag));
-  const lAlles = S.scoreSchema(L, M.poortjes(L).map((t) => ({ t, route: 'slik', aantal: 3 })));
+  const lAlles = S.scoreSchema(L, M.poortjes(L).filter((t) => t % 24 === 0).map((t) => ({ t, route: 'slik', aantal: 3 })));
   check(lAlles.verslag.telling.perDag.gemiddeld === 3 && lAlles.verslag.telling.perDag.dagen.length === 10 && /1\.200 mg/.test(lAlles.verslag.telling.perDag.tekst), 'lithium per dag: ' + lAlles.verslag.telling.perDag.tekst);
 }
 

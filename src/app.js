@@ -445,8 +445,8 @@
       regels = ['Blijf binnen het therapeutisch venster: het groene vlak heeft nu ook een bovenkant, ' + vensterTekst(c, 0) + '.',
         'Boven ' + getal(c.toxisch, 1) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
         'De klok telt in dagen: de race duurt ' + Math.round(c.raceDuur / 24) + ' dagen.',
-        'Eén poortje per dag: kies ' + c.poortjes.dosisKnoppen.map(function (n) { return getal(n * c.dosis.mg, 0); }).join(', ').replace(/, (?=[^,]*$)/, ' of ') + ' mg, of Overslaan.',
-        'Lithium is een tablet met vertraagde afgifte (retard): daardoor kan het één keer per dag.',
+        'Twee poortjes per dag, ochtend (' + uren[0] + ' uur) en avond (' + uren[1] + ' uur): kies ' + c.poortjes.dosisKnoppen.map(function (n) { return getal(n * c.dosis.mg, 0); }).join(', ').replace(/, (?=[^,]*$)/, ' of ') + ' mg, of Overslaan.',
+        'Lithium is een tablet met vertraagde afgifte (retard): daardoor is één keer per dag genoeg.',
         'Er is geen zetpil, geen spuit en geen dagteller.'];
     }
     var ul = $('intro-regel');

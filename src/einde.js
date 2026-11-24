@@ -349,7 +349,7 @@
     if (c.id === 'carbamazepine') {
       lek = '2× per dag 200 mg (start laag: meneer El Idrissi moet wennen aan de bijwerkingen); na 2 weken, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling, maximaal 1.200 mg per dag.';
     } else if (c.id === 'lithium') {
-      lek = '1× per dag ' + dosis + ' retard (' + (sch[0].aantal || 1) + ' tabletten van ' + c.dosis.mg + ' mg); vanaf de dag na de ibuprofen ' +
+      lek = '1× per dag ' + dosis + ' retard (' + (sch[0].aantal || 1) + ' tabletten van ' + c.dosis.mg + ' mg) om ' + sch[0].t + ' uur, het avondpoortje leeg; vanaf de dag na de ibuprofen ' +
         getal((sch[sch.length - 1].aantal || 1) * c.dosis.mg) + ' mg, en de spiegel laten prikken.';
     } else {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur).';

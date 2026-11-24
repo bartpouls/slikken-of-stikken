@@ -47,11 +47,11 @@
  *  - Tijdfracties: meetpunten t = 0, dt, ..., duur−dt (dt = 0,005 u), elk punt telt voor dt; toediening op t
  *    telt al mee in het meetpunt t. Paracetamol "in zone" = C ≥ 5. Lithium "in zone" = 0,6 ≤ C ≤ 1,0;
  *    "> 1,0" = C > 1,0; "> 1,5" = C > 1,5 (de > 1,5-tijd zit ook in > 1,0).
- *  - Poortje op t = 0 telt als doseermoment (paracetamol 0,6,12,18; lithium 0,24,...,216: 1× per dag).
+ *  - Poortje op t = 0 telt als doseermoment (paracetamol 0,6,12,18; lithium 0,12,...,228: ochtend en avond).
  *  - Lithium start in steady state (1dd 1200 mg retard) als dalspiegel VLAK VÓÓR de dosis van t = 0 (die dosis
  *    kiest de speler).
- *  - "Elke 3e dosis overslaan na de ibuprofen": poortjes vanaf t = 120 genummerd 1,2,3,...; nummer 3,6,...
- *    (t = 168, 240) wordt overgeslagen; binnen de race dus alleen t = 168.
+ *  - "Elke 3e dosis overslaan na de ibuprofen" (1× per dag, ochtendpoortjes): ochtenden vanaf t = 120 genummerd
+ *    1,2,3,...; nummer 3,6,... (t = 168, 240) wordt overgeslagen; binnen de race dus alleen t = 168.
  *  - "Laatste dag" = min–max van C over [duur−24, duur].
  *  - De tabel gaat uit van het schema zónder blokkade door misselijkheid (slik om 12 u telt gewoon);
  *    reproduceer met {blokkades:false}. In het spel (blokkades:true) wordt slikken uur 10–16 geweigerd.
@@ -200,9 +200,9 @@
     toxischTekst: '> 1,5 mmol/L',
     bovengrens: { type: 'concentratie', waarde: 1.5, tekst: '> 1,5 mmol/L' },
     poortjes: {
-      interval: 24, tijden: reeks(0, 24, 10), aantal: 10, keuzes: ['400 mg', '800 mg', '1200 mg', 'overslaan'],
+      interval: 12, tijden: reeks(0, 12, 20), aantal: 20, keuzes: ['400 mg', '800 mg', '1200 mg', 'overslaan'],
       dosisKnoppen: [1, 2, 3], // in retardtabletten van 400 mg
-      tekst: '1× per dag, om 0 uur (10 poortjes); 400, 800 of 1200 mg, of overslaan'
+      tekst: '2× per dag (ochtend en avond), om 0 en 12 uur (20 poortjes); 400, 800 of 1200 mg, of overslaan'
     },
     start: {
       type: 'steadyState', interval: 24, dosis: 32.4, schema: '1dd 1200 mg retard', bereik: [0.57, 0.99],
@@ -218,6 +218,7 @@
     }],
     echtSchema: {
       tekst: '1dd 1200 mg retard; na een NSAID de dosis verlagen (hier vanaf de dag erna 800 mg) en de spiegel laten prikken',
+      // 1× per dag, op het ochtendpoortje (0 u); het avondpoortje (12 u) blijft leeg. Vanaf dag 6 800 mg.
       schema: reeks(0, 24, 10).map(function (t) { return { t: t, route: 'slik', aantal: t >= 144 ? 2 : 3 }; })
     },
     lekentaal: {

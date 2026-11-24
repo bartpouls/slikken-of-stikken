@@ -152,14 +152,15 @@ const slik = ts => ts.map(t => ({ t, route: 'slik' }));
 {
   const G = M.poortjes('lithium');
   let n = 0;
-  const skip3 = G.filter(t => { if (t < 120) return true; n++; return n % 3 !== 0; });
+  const ochtend = G.filter(t => t % 24 === 0); // 1× per dag: ochtendpoortjes, het avondpoortje blijft leeg
+  const skip3 = ochtend.filter(t => { if (t < 120) return true; n++; return n % 3 !== 0; });
   const mg = (ts, f) => ts.map(t => ({ t, route: 'slik', aantal: f(t) })); // aantal retardtabletten van 400 mg
   const strat = [
     ['Echt schema (vanaf dag 6 800 mg)', L.echtSchema.schema, 95, 1, 0, 0.62, 0.90],
-    ['Alles 1200 mg', mg(G, () => 3), 71, 25, 0, 0.86, 1.28],
+    ['Alles 1200 mg (1× per dag)', mg(ochtend, () => 3), 71, 25, 0, 0.86, 1.28],
     ['Na ibuprofen elke 3e overslaan', mg(skip3, () => 3), 83, 9, 0, 0.64, 1.08],
     ['Niets', [], 0, 0, 0, 0.00, 0.00],
-    ['Elke dag dubbel (2400 mg)', mg(G, () => 6), 3, 97, 67, 1.71, 2.56]
+    ['Beide poortjes 1200 mg (2400 mg per dag)', mg(G, () => 3), 6, 94, 66, 1.96, 2.33]
   ];
   for (const [naam, schema, zone, boven, tox, ldMin, ldMax] of strat) {
     const s = M.simuleer('lithium', schema).samenvatting;
@@ -202,7 +203,7 @@ kop('Casusdata, spelregels en zetpilreeks');
   check(P.bovengrens.maxPer24u === 4000 && P.raceDuur === 24 && P.poortjes.tijden.length === 24, 'paracetamol bovengrens/poortjes');
   check(L.Vd === 56 && L.VdPerKg === 0.8 && L.Thalf === 24 && L.dosis.mmol === 10.8 && L.routes.slik.dosis === 10.8, 'lithium Vd/T½/dosis');
   check(L.routes.slik.F === 0.95 && L.routes.slik.ka === 0.7 && L.toxisch === 1.5 && L.raceDuur === 240, 'lithium F/ka/toxisch/duur');
-  check(JSON.stringify(L.poortjes.tijden.slice(0, 4)) === '[0,24,48,72]' && L.poortjes.tijden.length === 10, 'lithium poortjes 1× per dag');
+  check(JSON.stringify(L.poortjes.tijden.slice(0, 4)) === '[0,12,24,36]' && L.poortjes.tijden.length === 20, 'lithium poortjes ochtend en avond');
   check(JSON.stringify(L.poortjes.dosisKnoppen) === '[1,2,3]' && L.dosis.mg === 400, 'lithium knoppen 400/800/1200 mg');
   check(!L.routes.spuit && !L.routes.zetpil, 'lithium: geen spuit en geen zetpil');
   check(L.gebeurtenissen[0].t === 120 && L.gebeurtenissen[0].factor === 0.7, 'ibuprofen-gebeurtenis');

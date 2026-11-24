@@ -99,20 +99,22 @@ const PARA = {
     }
   }
 };
-// Lithium: 1 poortje per dag, index i op t = 24i; de ibuprofen begint op t = 120 (i = 5); vanaf daar n = i − 4.
+// Lithium: 2 poortjes per dag (ochtend 0 u, avond 12 u), index i op t = 12i; dag d = i / 2 (even i = ochtend).
+// De ibuprofen begint op t = 120 (dag 5); ochtenden vanaf daar genummerd n = d − 4.
 // Knoppen 400 / 800 / 1200 mg (data-actie d1 / d2 / d3 = 1–3 retardtabletten) of Overslaan.
-const naIbuN = (i) => i - 4;
+const och = (i) => i % 2 === 0, dagVan = (i) => Math.floor(i / 2), naIbuN = (i) => dagVan(i) - 4;
 const mgL = (n) => ({ route: 'slik', aantal: n, knop: 'd' + n });
 const LITH = {
-  echt: { naam: 'echt schema (1200 mg, vanaf dag 6 800 mg)', plan: (i) => mgL(i >= 6 ? 2 : 3) },
-  elke3: { naam: 'na de ibuprofen elke 3e overslaan (1200 mg)', plan: (i) => (i >= 5 && naIbuN(i) % 3 === 0 ? niets : mgL(3)) },
-  alles: { naam: 'alles 1200 mg', plan: () => mgL(3) },
-  laag: { naam: 'na de ibuprofen 400 mg', plan: (i) => mgL(i >= 6 ? 1 : 3) },
+  echt: { naam: 'echt schema (ochtend 1200 mg, vanaf dag 6 800 mg; avond Overslaan)', plan: (i) => (och(i) ? mgL(dagVan(i) >= 6 ? 2 : 3) : niets) },
+  elke3: { naam: 'na de ibuprofen elke 3e ochtend overslaan (1200 mg)', plan: (i) => (!och(i) || (dagVan(i) >= 5 && naIbuN(i) % 3 === 0) ? niets : mgL(3)) },
+  alles: { naam: 'alles 1200 mg (ochtend)', plan: (i) => (och(i) ? mgL(3) : niets) },
+  laag: { naam: 'na de ibuprofen 400 mg (ochtend)', plan: (i) => (och(i) ? mgL(dagVan(i) >= 6 ? 1 : 3) : niets) },
   niets: { naam: 'niets (elk poortje "Overslaan")', plan: () => niets },
+  dubbel: { naam: 'beide poortjes 1200 mg (2400 mg per dag)', plan: () => mgL(3) },
   greedy: {
-    naam: 'spiegelwacht: 8 u vóór het poortje < 0,75 → 1200 mg, < 0,9 → 800 mg, anders 400 mg',
-    vooruit: 8, // ruim vóór de tikmarge van 0,12 × 24 u
-    besluit(g, d) { return mgL(d.C < 0.75 ? 3 : (d.C < 0.9 ? 2 : 1)); }
+    naam: 'spiegelwacht: 4 u vóór het poortje < 0,7 → 800 mg, < 0,8 → 400 mg, anders Overslaan',
+    vooruit: 4, // ruim vóór de tikmarge van 0,12 × 12 u
+    besluit(g, d) { return d.C < 0.7 ? mgL(2) : (d.C < 0.8 ? mgL(1) : niets); }
   }
 };
 
@@ -122,11 +124,11 @@ const RUNS = [
   { id: 'r01', P: 'echt', L: 'echt', tut: 'vol', naam: 'Bot Echt' },
   { id: 'r02', P: 'spuit', L: 'alles', tut: 'over', naam: null },
   { id: 'r03', P: 'zetpil', L: 'niets', tut: 'vol', naam: 'Zetpilbot' },
-  { id: 'r04', P: 'gemist', L: 'laag', tut: 'over', naam: 'Gemist' },
+  { id: 'r04', P: 'gemist', L: 'dubbel', tut: 'over', naam: 'Gemist' },
   { id: 'r05', P: 'niets', L: 'greedy', tut: 'vol', naam: 'Nul' },
   { id: 'r06', P: 'elkuur', L: 'elke3', tut: 'over', naam: 'Elk uur' },
   { id: 'r07', P: 'slimA', L: 'echt', tut: 'vol', naam: 'Slim A' },
-  { id: 'r08', P: 'slimB', L: 'alles', tut: 'over', naam: 'Slim B' },
+  { id: 'r08', P: 'slimB', L: 'laag', tut: 'over', naam: 'Slim B' },
   { id: 'r09', P: 'greedy', L: 'elke3', tut: 'vol', naam: 'Gretig' },
   { id: 'r10', P: 'echt', L: 'echt', tut: 'over', naam: 'Bot Echt', herhaling: 'r01' },
   // normale snelheid (geen ?speed): raceduur met de klok; daarna "Nog een keer"
@@ -310,8 +312,8 @@ async function speelTutorial(page, run) {
 async function speelRace(page, run, nr) {
   const casus = nr === 0 ? 'paracetamol' : 'lithium';
   const strat = nr === 0 ? PARA[run.cfg.P] : LITH[run.cfg.L];
-  const interval = casus === 'paracetamol' ? 1 : 24;
-  const n = casus === 'paracetamol' ? 24 : 10;
+  const interval = casus === 'paracetamol' ? 1 : 12;
+  const n = casus === 'paracetamol' ? 24 : 20;
   const speed = run.speed;
   // Veiligheidsmarge: niet meer tikken vlak vóór het poortje (dan kan de tik net na het poortje vallen).
   const marge = interval * 0.12;
@@ -350,7 +352,7 @@ async function speelRace(page, run, nr) {
         laatsteG = g;
         hist.length = 0;
         d.gegeven.forEach((x, i) => { if (x && x !== 'leeg' && x !== 'niets' && x !== 'geblokkeerd' && x !== 'geen') hist.push(i); });
-        const meetMoment = casus === 'paracetamol' ? [1, 11, 20] : [1, 5, 8];
+        const meetMoment = casus === 'paracetamol' ? [1, 11, 20] : [2, 10, 17];
         if (meetMoment.includes(g) && !gemeten.has(g)) { gemeten.add(g); run.metingen.push(await meetScherm(page)); uit.metingen++; }
       }
       if (!(g in besluit)) {
@@ -704,10 +706,9 @@ resultaten.forEach((runs, vi) => {
   const lithAlle = geldig.map((r) => ({ id: r.cfg.id, k: r.cfg.L, s: r.races[1].scherm }));
   const laagste = lithAlle.reduce((m, x) => (x.s < m.s ? x : m), { s: Infinity });
   const b2a = sc(ec) > sc(e3) && sc(e3) > sc(al) && sc(al) > sc(ln);
-  // Met hooguit 1200 mg per poortje kan de spiegel niet boven 1,5 (giftig) komen; "alles 1200 mg" komt na de
-  // ibuprofen wel boven 1,0 (te hoog). Niets scoort het laagst.
-  const b2b = !!(al && al.maxC > 1.0 && al.uren.boven > 0 && lithAlle.every((x) => (x.k === 'niets' ? true : x.s > sc(ln))) &&
-    geldig.every((r) => r.races[1].maxC <= 1.5));
+  // Beide poortjes 1200 mg (2400 mg per dag) belandt in de toxische zone en scoort het laagst.
+  const db = l1('dubbel');
+  const b2b = !!(db && db.maxC > 1.5 && db.uren.toxisch > 0 && laagste.k === 'dubbel' && lithAlle.filter((x) => x.k !== 'dubbel').every((x) => x.s > sc(db)));
   const B2 = b2a && b2b;
   L.push('### B2 Lithium');
   L.push('');
@@ -720,8 +721,8 @@ resultaten.forEach((runs, vi) => {
   }
   L.push('');
   L.push(`- dosis verlagen / echt schema (${sc(ec)}) > elke 3e overslaan (${sc(e3)}) > alles 1200 mg (${sc(al)}) > niets (${sc(ln)}): ${jn(b2a)}`);
-  L.push(`- alles 1200 mg: max. spiegel ${nl(al ? al.maxC : NaN, 2)} mmol/L (> 1,0), ${nl(al ? al.uren.boven : NaN, 1)} u boven 1,0; niets scoort het laagst (laagste: ${laagste.s}, ${laagste.id}); ` +
-    `geen enkele run boven 1,5: ${jn(b2b)}`);
+  L.push(`- beide poortjes 1200 mg: max. spiegel ${nl(db ? db.maxC : NaN, 2)} mmol/L (> 1,5), ${nl(db ? db.uren.toxisch : NaN, 1)} u boven 1,5, regel "lever / giftig" op het eindscherm ${db ? db.regels.giftig : '–'}; ` +
+    `score ${sc(db)} = laagste van alle lithiumruns (laagste: ${laagste.s}, ${laagste.id}): ${jn(b2b)}`);
   L.push(`- **B2 ${vp.naam}: ${B2 ? 'gehaald' : 'niet gehaald'}**`);
   L.push('');
 
@@ -880,7 +881,7 @@ resultaten.forEach((runs, vi) => {
     // C5: introkaartje race 2
     const i2 = ref.intro2 || [];
     // v2.3: race 2 heeft één poortje per dag en knoppen in mg (retardtablet)
-    c5 = i2.some((z) => /1\.200 mg/.test(z)) && i2.some((z) => /retard/.test(z)) && i2.every((z) => (z.match(/[.!?](\s|$)/g) || []).length === 1);
+    c5 = i2.some((z) => /Twee poortjes per dag.*1\.200 mg/.test(z)) && i2.some((z) => /retard/.test(z)) && i2.every((z) => (z.match(/[.!?](\s|$)/g) || []).length === 1);
     L.push(`C5 (meting): introkaartje race 2 heeft ${i2.length} regels, elk één zin; knoppen in mg en "retard" staan erop: ${jn(c5)}. Regels: ${i2.map((z) => '“' + z + '”').join(' · ')}`);
   } else L.push('Geen run met volledige oefenronde.');
   L.push('');
@@ -909,7 +910,7 @@ const SV = ['## Samenvatting per eis', '', '| eis | ' + samenvatting.map((s) => 
 const rij = (naam, f) => SV.push(`| ${naam} | ${samenvatting.map((s) => f(s)).join(' | ')} |`);
 const gh = (b) => (b ? 'gehaald' : 'niet gehaald');
 rij('B1 paracetamol-rangorde, leverschade, echt ≥ 80% van hoogste', (s) => `${gh(s.B1)} (echt ${s.echt} = ${nl(s.pct, 1)}% van ${s.hoogste})`);
-rij('B2 lithium-rangorde (verlagen > overslaan > alles > niets), niets laagst, nooit > 1,5', (s) => gh(s.B2));
+rij('B2 lithium-rangorde (verlagen > overslaan > alles > niets), 2400 mg per dag giftig en laagst', (s) => gh(s.B2));
 rij('B3 raceduur 60–120 s (normale snelheid)', (s) => gh(s.b3duur));
 rij('B3 "Nog een keer" = 1 tik, race 1 loopt, zelfde naam', (s) => gh(s.b3opn));
 rij('B3 tikken tot spelen', () => 'zie B3 per viewport (getallen)');
