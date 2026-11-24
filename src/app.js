@@ -277,6 +277,58 @@
     if (mk) mk.hidden = staat.fase === 'start';
     var s = $('scherm-' + id);
     if (s) s.scrollTop = 0;
+    if (id === 'start') werkVerderBij();
+  }
+
+  // ------------------------------------------------------------------------------------------
+  // Voortgang bewaren. Herlaadt de telefoon de pagina (iPhone doet dat soms na een ander app), dan zijn de
+  // afgeronde races niet weg: na elke race gaan naam, verslagen en curves naar localStorage (alleen op deze
+  // telefoon, 12 uur geldig). Het startscherm biedt dan "Verder als …". Een race die halverwege onderbroken
+  // werd, telt niet mee (zelfde regel als het menu) en begint opnieuw bij zijn introkaartje.
+  // ------------------------------------------------------------------------------------------
+  var VOORTGANG = 'sos.voortgang', VOORTGANG_GELDIG = 12 * 3600 * 1000;
+  // Vingerafdruk van deze versie van het spel (alle code op de pagina). Een stand uit een andere versie wordt
+  // niet teruggezet: na een correctie op de dag zelf past een oud verslag misschien niet meer bij de code.
+  // De stempel komt uit tools/build.mjs (<meta name="bouw">, hash van alle CSS en JS): geen invloed van extensies,
+  // en ook een correctie alleen in de opmaak maakt oude standen ongeldig.
+  function bouw() {
+    try { var m = doc.querySelector('meta[name="bouw"]'); if (m && m.content && m.content.indexOf('@@') < 0) return m.content; } catch (e) { /* negeer */ }
+    return 'zonder-stempel';
+  }
+  function heeftRace(v) { return !!(v && v.opbouw && isFinite(v.opbouw.totaal)); }
+  // Voortgang = race 1 of race 2 afgerond. De bonusrace alleen is geen voortgang (Verder zou dan race 1 openen).
+  function heeftVoortgang(vs) { return !!vs && (heeftRace(vs[0]) || heeftRace(vs[1])); }
+  function bewaarVoortgang() {
+    try {
+      if (!heeftVoortgang(staat.verslagen)) { root.localStorage.removeItem(VOORTGANG); return; }
+      root.localStorage.setItem(VOORTGANG, JSON.stringify({ v: 1, bouw: bouw(), op: Date.now(), naam: staat.naam,
+        verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] }));
+    } catch (e) { /* geen opslag of vol: het spel werkt gewoon door */ }
+  }
+  function leesVoortgang() {
+    try {
+      var x = JSON.parse(root.localStorage.getItem(VOORTGANG) || 'null');
+      if (!x || x.v !== 1 || x.bouw !== bouw() || typeof x.naam !== 'string' || !Array.isArray(x.verslagen) || !Array.isArray(x.curves)) return null;
+      if (!(Date.now() - x.op < VOORTGANG_GELDIG) || !heeftVoortgang(x.verslagen)) return null;
+      return x;
+    } catch (e) { return null; }
+  }
+  function wisVoortgang() { try { root.localStorage.removeItem(VOORTGANG); } catch (e) { /* geen opslag */ } }
+  // Welke voortgang biedt het startscherm aan: die van dit spel (na "Naar het begin"), anders de bewaarde.
+  function voortgangVoorStart() {
+    if (heeftVoortgang(staat.verslagen)) return { naam: staat.naam, verslagen: staat.verslagen, curves: staat.curves, duren: staat.duren || [] };
+    return leesVoortgang();
+  }
+  function werkVerderBij() {
+    var blok = $('start-verder');
+    if (!blok) return;
+    var x = voortgangVoorStart();
+    blok.hidden = !x;
+    if (!x) return;
+    $('start-verder-knop').textContent = 'Verder als ' + x.naam;
+    var stand = [];
+    x.verslagen.forEach(function (v, i) { if (heeftRace(v)) stand.push(raceNaam(i) + ': ' + getal(v.opbouw.totaal, 0)); });
+    $('start-verder-stand').textContent = stand.join(' · ') + ' QALY-punten';
   }
 
   // Figuurtjes reageren op aanraken.
@@ -306,6 +358,10 @@
       if (staat.fase !== 'start') return;
       unlock();
       speel('tik');
+      // Start = een nieuw spel: in het geheugen begint de stand opnieuw. De bewaarde stand blijft staan tot de
+      // eerste race van dit nieuwe spel klaar is (dan overschrijft bewaarVoortgang hem): een misser op Start
+      // kost dan niets.
+      staat.verslagen = []; staat.curves = []; staat.duren = [];
       var naam = (inp.value || '').replace(/\s+/g, ' ').trim().slice(0, 16);
       if (!naam) naam = 'Speler ' + (10 + Math.floor(Math.random() * 90));
       staat.naam = naam;
@@ -317,6 +373,23 @@
     }
     $('start-form').addEventListener('submit', function (ev) { ev.preventDefault(); begin(true); });
     doc.querySelector('[data-actie="start-over"]').addEventListener('click', function () { begin(false); });
+    $('start-verder-knop').addEventListener('click', function () {
+      if (staat.fase !== 'start') return;
+      var x = voortgangVoorStart();
+      if (!x) { werkVerderBij(); return; }
+      unlock();
+      speel('tik');
+      staat.naam = x.naam;
+      staat.verslagen = x.verslagen.slice(); staat.curves = x.curves.slice(); staat.duren = (x.duren || []).slice();
+      inp.value = x.naam;
+      zetHistorie();
+      // eerste race die nog niet gespeeld is; zijn race 1 en 2 klaar, dan het eindverslag
+      var v = staat.verslagen;
+      if (!heeftRace(v[0])) toonIntro(0);
+      else if (!heeftRace(v[1])) toonIntro(1);
+      else toonEinde();
+    });
+    werkVerderBij();
   }
 
   // ------------------------------------------------------------------------------------------
@@ -341,7 +414,8 @@
   // Hoe de patiënt zich voelt bij deze spiegel (lekentaal uit het casusblad) en welk gezicht erbij hoort.
   var GEVOEL = {
     lithium: { onder: ['kans op terugval', 'neutraal'], zone: ['stabiel', 'blij'], boven: ['trillen, misselijk', 'misselijk'], tox: ['giftig: verward', 'misselijk'] },
-    carbamazepine: { onder: ['kans op aanval', 'neutraal'], zone: ['geen aanvallen', 'blij'], boven: ['duizelig, dubbelzien', 'misselijk'], tox: ['giftig: suf, wankel', 'misselijk'] }
+    carbamazepine: { onder: ['kans op aanval', 'neutraal'], zone: ['geen aanvallen', 'blij'], licht: ['moe, duizelig', 'neutraal'],
+      boven: ['dubbelzien, wankel', 'misselijk'], tox: ['giftig: verward, suf', 'misselijk'] }
   };
   function toonIntro(i) {
     var c = M.casus(RACES[i]);
@@ -360,11 +434,12 @@
         'Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Overslaan. Geen keuze kost punten.',
         'De race heeft twee delen: halverwege verandert er iets, pas dan je plan aan.'];
     } else if (i === 2) {
-      regels = ['Bonusrace: telt niet mee in je totaal. De getallen zijn nog een concept.',
+      regels = ['Bonusrace: telt niet mee in je totaal.',
         'Blijf binnen het therapeutisch venster: ' + vensterTekst(c, 0) + ' in de eerste dagen, ' + vensterTekst(c, 1e6) + ' als hij gewend is. Boven ' + getal(c.toxisch, 0) + '\u00a0' + CFG[c.id].eenheid + ' is het giftig.',
         'Meneer El Idrissi begint vandaag: de spiegel heeft dagen nodig om op te bouwen.',
-        'De race duurt ' + Math.round(c.raceDuur / 24) + ' dagen, met 2 poortjes per dag: om 0 en 12 uur.',
-        'Kies per poortje 200, 400 of 800 mg, of Overslaan.'];
+        Math.round(c.raceDuur / 24) + ' dagen, 2 poortjes per dag (0 en 12 uur): kies 200, 400 of 800 mg, of Overslaan.',
+        'Verhoog rustig: start met hooguit ' + getal(c.titratie.startPerDag, 0) + ' mg per dag, daarna per week hooguit ' +
+          getal(c.titratie.stapPerWeek, 0) + ' mg per dag erbij. Sneller kost ' + getal(SoS.score.PUNTEN.TE_SNEL, 0) + ' punten.'];
     } else {
       // §6C5: wat in race 2 anders is dan in race 1, één zin per verschil (getallen uit de casusdata).
       var uren = M.poortjes(c).filter(function (t) { return t < 24; });
@@ -1392,6 +1467,14 @@
           var xB = xVan(Cvoor) > D.w / 2 ? xVan(Cvoor) - 50 : R.links + 20;
           R.effecten.push({ type: 'slik', t0: nu, soort: k.route === 'slik' ? 'tablet' : 'zetpil', xNaar: xB, ref: ref });
         }
+        if (res.teSnel < 0) {
+          speel('bonk');
+          var qs2 = $('qaly-straf');
+          qs2.textContent = getal(res.teSnel, 0) + ' te snel';
+          qs2.classList.remove('zicht'); void qs2.offsetWidth; qs2.classList.add('zicht');
+          R.psFlits = { tot: performance.now() + 2200 / Math.min(SPEED, 4),
+            tekst: 'Te snel opgehoogd: ' + getal(res.teSnel, 0) + ' punten' }; // de grens staat in het eindverslag
+        }
         if (res.lever < 0) {
           setTimeout(function () { speel('alarm'); }, 120);
           melding(c.lekentaal.boven, { soort: 'alarm', prio: 2, duur: 3 });
@@ -1435,7 +1518,17 @@
     var z = R.klok < 0 && c.start && c.start.type === 'steadyState' ? 'zone' : zoneVan(R.race.sim.C, Math.max(0, R.race.t));
     // In één of twee woorden hoe de patiënt zich nu voelt, bij deze spiegel (woorden uit het casusblad).
     var gv, gw = GEVOEL[c.id];
-    if (gw) { var rij = R.toxisch ? gw.tox : gw[z]; gv = rij[0]; st = rij[1]; }
+    if (gw) {
+      var rij = R.toxisch ? gw.tox : gw[z], bw = c.bijwerkingen;
+      // bijwerkingen (carbamazepine): licht vanaf 10 mg/L (eerste dagen al boven de bovenkant van het venster, 8),
+      // ernstiger boven 12. Alleen de woorden; de punten volgen het venster.
+      if (bw && gw.licht && !R.toxisch && R.klok >= 0) {
+        var Cn = R.race.sim.C, vh = M.venster(c, Math.max(0, R.race.t)).hoog;
+        if (Cn > bw.ernstig) rij = gw.boven;
+        else if (Cn >= Math.min(bw.licht, vh)) rij = gw.licht;
+      }
+      gv = rij[0]; st = rij[1];
+    }
     else {
       st = (R.leverOver || (!R.gids && R.klok >= 0 && M.geblokkeerd(c, 'slik', R.klok))) ? 'misselijk' : (z === 'onder' ? 'pijn' : 'blij');
       gv = R.leverOver ? 'lever in gevaar' : ((st === 'misselijk' ? 'misselijk, ' : '') + (z === 'onder' ? 'pijn' : 'pijn weg'));
@@ -1615,6 +1708,7 @@
       staat.curves[R.i] = R.dun.slice();
       staat.duren = staat.duren || [];
       staat.duren[R.i] = R.duurEcht;
+      bewaarVoortgang();
     }
     speel('klaar');
     $('melding').classList.remove('zicht');
@@ -1774,6 +1868,7 @@
   function opnieuw() {
     if (staat.fase !== 'einde') return;
     staat.verslagen = []; staat.curves = []; staat.duren = [];
+    wisVoortgang();
     startRace(0);
   }
 

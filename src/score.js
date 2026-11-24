@@ -18,6 +18,10 @@
  *              minstens −1250, dus ≤ −250: altijd lager dan "gemiste dosis" (418). Leverschade kost in één klap
  *              een hele race aan punten. De race gaat door (geen einde race): de speler ziet de misselijkheid en
  *              zijn curve nog, en elke extra gram blijft even duur (geen "nu maakt het niet meer uit").
+ *   te snel opgehoogd (alleen casus.titratie, carbamazepine): −TE_SNEL (100) per te snelle ophoogstap, op de
+ *              toediening die de dagdosis boven de grens brengt. Grens op dag d: max(400 − 200, dagdosis dag d − 7) +
+ *              200 mg, dus eerste week hooguit 400 mg per dag, daarna per week hooguit 200 mg per dag erbij (FDA-label).
+ *              Alleen bij een echte verhoging t.o.v. gisteren, hooguit één keer per dag. Zesde opbouwregel.
  * Dus: hele race in de zone = +1000 per race, ongeacht of de race 24 uur of 10 dagen duurt. Afstand buiten
  * de zone is relatief t.o.v. de zonegrens, zodat paracetamol (mg/L) en lithium (mmol/L) dezelfde schaal
  * hebben. Paracetamol heeft geen concentratie-bovengrens (hoog = ∞): "te hoog" blijft 0, de lever loopt via
@@ -27,9 +31,10 @@
  *
  * PUBLIEKE API
  * ------------
- * S.PUNTEN                 {ZONE, LAAG, HOOG, GIFTIG, LEVER_SCHADE, LEVER_PER_GRAM, DT}
+ * S.PUNTEN                 {ZONE, LAAG, HOOG, GIFTIG, LEVER_SCHADE, LEVER_PER_GRAM, GEEN_KEUZE, TE_SNEL, DT}
  * S.UITLEG                 de QALY-uitlegzin uit §3 (+ "spelpunten, geen echte QALY's").
- * S.REGELS                 [{id:'zone'|'laag'|'hoog'|'giftig', label:'in de zone'|'te laag'|'te hoog'|'lever / giftig'}]
+ * S.REGELS                 [{id:'zone'|'laag'|'hoog'|'giftig'|'keuze'|'snel', label}] ('snel' = 'te snel opgehoogd': alleen
+ *                          in het verslag van een casus met titratie; race.geef geeft res.teSnel ≤ 0 terug)
  * S.tempo(casus, C, t)     -> {zone, laag, hoog, giftig}: punten per uur op dit moment (+ / − getekend).
  *
  * (a) Live (UI): één race-object per race; het bezit de model-sim en loopt op het vaste raster.
@@ -105,7 +110,7 @@
   'use strict';
 
   var PUNTEN = Object.freeze({ ZONE: 1000, LAAG: 1000, HOOG: 1000, GIFTIG: 2000, LEVER_SCHADE: 1000, LEVER_PER_GRAM: 250,
-    GEEN_KEUZE: 20, DT: 0.005 });
+    GEEN_KEUZE: 20, TE_SNEL: 100, DT: 0.005 });
 
   var UITLEG = 'Een QALY is een jaar in goede gezondheid. Hier speel je om QALY-punten: hoe beter je patiënt ' +
     'zich voelt, hoe meer. Het zijn spelpunten, geen echte QALY\'s.';
@@ -115,8 +120,10 @@
     { id: 'laag', label: 'te laag' },
     { id: 'hoog', label: 'te hoog' },
     { id: 'giftig', label: 'lever / giftig' },
-    { id: 'keuze', label: 'geen keuze' }
+    { id: 'keuze', label: 'geen keuze' },
+    { id: 'snel', label: 'te snel opgehoogd', alleen: 'titratie' } // alleen bij een casus met titratie (carbamazepine)
   ]);
+  function regelsVoor(c) { return REGELS.filter(function (r) { return !r.alleen || c[r.alleen]; }); }
 
   var M = null;
   function mdl() { return M || (M = haalModel()); }
@@ -142,8 +149,9 @@
     c = mdl().casus(c);
     var tK = eersteKlaring(c);
     var tl = {
-      som: { zone: 0, laag: 0, hoog: 0, giftig: 0, keuze: 0 },
+      som: { zone: 0, laag: 0, hoog: 0, giftig: 0, keuze: 0, snel: 0 },
       geenKeuze: [],                    // poortje-indexen die voorbijgingen zonder keuze (−GEEN_KEUZE elk)
+      teSnel: [],                       // te snelle ophoogstappen {dag, t, mg, toegestaan} (−TE_SNEL elk)
       uren: { zone: 0, onder: 0, boven: 0, toxisch: 0 },
       onderTijdensBlokkade: 0,          // uren onder de zone terwijl slikken geblokkeerd is
       voor: { zone: 0, onder: 0, boven: 0 }, // uren vóór de klaringsgebeurtenis (lithium: ibuprofen)
@@ -178,6 +186,31 @@
       tl.som.giftig += straf;
       return straf;
     };
+    // Geleidelijk ophogen (casus.titratie, carbamazepine). Dagdosis = mg op deze kalenderdag tot en met deze
+    // toediening. Toegestaan op dag d: max(start − stap, dagdosis op dag d − 7) + stap; dus de eerste week hooguit
+    // 400 mg per dag, daarna per week hooguit 200 mg per dag erbij (na een week niets: weer 400). Straf alleen bij
+    // een echte verhoging (dagdosis boven die van gisteren) en hooguit één keer per dag. Geeft de straf (≤ 0) terug.
+    tl.titratie = function (log, l) {
+      var ti = c.titratie;
+      if (!ti || !l.ok) return 0;
+      var dag = function (t) { return Math.floor(t / 24 + 1e-9); };
+      var d = dag(l.t), nu = 0, gisteren = 0, weekTerug = 0;
+      for (var i = 0; i < log.length; i++) {
+        var e = log[i];
+        if (e.ok) {
+          var de = dag(e.t);
+          if (de === d) nu += e.dosis; else if (de === d - 1) gisteren += e.dosis;
+          if (de === d - 7) weekTerug += e.dosis;
+        }
+        if (e === l) break;
+      }
+      var toegestaan = Math.max(ti.startPerDag - ti.stapPerWeek, weekTerug) + ti.stapPerWeek;
+      if (nu <= toegestaan + 1e-9 || nu <= gisteren + 1e-9) return 0;
+      for (var j = 0; j < tl.teSnel.length; j++) if (tl.teSnel[j].dag === d) return 0;
+      tl.teSnel.push({ dag: d, t: l.t, mg: nu, toegestaan: toegestaan });
+      tl.som.snel -= PUNTEN.TE_SNEL;
+      return -PUNTEN.TE_SNEL;
+    };
     // Een poortje ging voorbij zonder dat de speler iets koos (ook geen Overslaan): vaste straf.
     tl.geenKeuzeOp = function (index) {
       if (tl.geenKeuze.indexOf(index) >= 0) return 0;
@@ -188,7 +221,7 @@
     tl.stand = function () {
       var rg = {}, tot = 0;
       REGELS.forEach(function (r) { rg[r.id] = Math.round(tl.som[r.id]) + 0; tot += rg[r.id]; });
-      return { totaal: tot, regels: rg, exact: { zone: tl.som.zone, laag: tl.som.laag, hoog: tl.som.hoog, giftig: tl.som.giftig, keuze: tl.som.keuze } };
+      return { totaal: tot, regels: rg, exact: { zone: tl.som.zone, laag: tl.som.laag, hoog: tl.som.hoog, giftig: tl.som.giftig, keuze: tl.som.keuze, snel: tl.som.snel } };
     };
     return tl;
   }
@@ -231,6 +264,7 @@
       var res = sim.geef(route, o);
       if (tp != null && tp < race.t - dt / 2) res.laat = true;
       res.lever = res.ok ? teller.dosis(sim.log, res) : 0;
+      res.teSnel = res.ok ? teller.titratie(sim.log, res) : 0; // ≤ 0: strafpunten voor te snel ophogen
       res.leverSchade = !!res.leverSchade;
       return res;
     };
@@ -258,7 +292,7 @@
     var uit = Mo.simuleer(c, schema, { dt: dt, blokkades: opties.blokkades !== false });
     var teller = maakTeller(c);
     for (var i = 0; i < uit.t.length - 1; i++) teller.meet(uit.C[i], uit.t[i], dt);
-    uit.log.forEach(function (l) { teller.dosis(uit.log, l); });
+    uit.log.forEach(function (l) { teller.dosis(uit.log, l); teller.titratie(uit.log, l); });
     (opties.geenKeuze || []).forEach(function (i) { teller.geenKeuzeOp(i); });
     return { stand: teller.stand(), verslag: verslag(c, uit.log, teller), model: uit };
   }
@@ -373,7 +407,7 @@
     return {
       casus: c.id,
       opbouw: {
-        regels: REGELS.map(function (r) { return { id: r.id, label: r.label, punten: stand.regels[r.id] }; }),
+        regels: regelsVoor(c).map(function (r) { return { id: r.id, label: r.label, punten: stand.regels[r.id] }; }),
         totaal: stand.totaal
       },
       tijdlijn: rijen,
@@ -382,6 +416,7 @@
       uren: { zone: teller.uren.zone, onder: teller.uren.onder, boven: teller.uren.boven, toxisch: teller.uren.toxisch },
       lever: bg && bg.type === 'dagteller' ? { beschadigd: teller.lever.beschadigd, gramBoven4g: teller.lever.gramBoven,
         punten: Math.round(teller.lever.punten) + 0 } : null,
+      teSnel: c.titratie ? teller.teSnel.map(function (x) { return { dag: x.dag, mg: x.mg, toegestaan: x.toegestaan }; }) : null,
       praktijk: praktijk(c, rijen, teller, telling)
     };
   }
@@ -552,7 +587,7 @@
     return { regel: 'nabespreking', zin: c.nabespreking }; // vangnet
   }
 
-  // Carbamazepine (bonusrace, concept): opbouwen, en na de gewenning van de lever ophogen.
+  // Carbamazepine (bonusrace): opbouwen, en na de gewenning van de lever ophogen.
   function praktijkCarbamazepine(c, rijen, teller, doses) {
     var T = c.raceDuur, tK = eersteKlaring(c);
     var tabl = function (r) { var n = 0; r.jij.toedieningen.forEach(function (d) { n += d.aantal; }); return n; };
@@ -565,8 +600,14 @@
     if (teller.uren.toxisch > 0) return { regel: 'giftig',
       zin: 'De spiegel kwam boven de 20: giftig. Carbamazepine bouwt langzaam op, dus hoge doses stapelen zich op. ' +
         'In het echt is de maximale dosis 1.200 mg per dag.' };
+    if (teller.teSnel.length) {
+      var ts = teller.teSnel[0];
+      return { regel: 'teSnel',
+        zin: 'Op dag ' + ts.dag + ' verhoogde jij naar ' + getal(ts.mg) + ' mg per dag; ' + getal(ts.toegestaan) +
+          ' mg was de grens. Verhoog carbamazepine per week met hooguit 200 mg per dag: sneller geeft duizeligheid en dubbelzien.' };
+    }
     if (dubbelVroeg && teller.uren.boven > 0) return { regel: 'teSnelHoog',
-      zin: 'Jij gaf in de eerste week al meer dan 200 mg per keer en meneer El Idrissi werd duizelig: hij was nog niet ' +
+      zin: 'In de eerste week kwam de spiegel boven de 8 en werd meneer El Idrissi duizelig: hij was nog niet ' +
         'gewend aan het middel. Start laag en verhoog langzaam.' };
     if (gemLaat < 1.5 && teller.na.onder > 12) return { regel: 'nietOpgehoogd',
       zin: 'Na de gewenning van de lever zakte de spiegel onder de 4: kans op een aanval. ' +

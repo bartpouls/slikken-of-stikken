@@ -2,6 +2,7 @@
 // Alle CSS en JS worden inline gezet: geen externe bestanden, fonts of CDN.
 // Volgorde JS: model, score, sound, tutorial, einde, app (app gebruikt de rest).
 import { readFileSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -30,6 +31,9 @@ for (const [teken, inhoud] of [['<!-- @@CSS -->', css], ['<!-- @@JS -->', js]]) 
 }
 
 if (/@import|url\(\s*["']?https?:/i.test(html)) throw new Error('build: externe CSS-verwijzing gevonden');
+
+// Bouwstempel: hash van alle CSS en JS (src/app.js: een bewaarde stand hoort bij één versie van het spel).
+html = html.replace('@@BOUW', createHash('sha256').update(css).update(js).digest('hex').slice(0, 12));
 
 writeFileSync(join(root, 'index.html'), html);
 console.log(`index.html geschreven (${(html.length / 1024).toFixed(1)} kB)`);
