@@ -527,7 +527,12 @@ async function speelRunBinnen(page, ctx, run, cfg, vp, speed, zetGeladen) {
     run.einde.rooster[i].forEach((c) => {
       const v = r.verwacht[c.index];
       if (roosterVerwacht(v) !== c.soort) r.afwijkingen.push(`rooster ${c.index}: wilde ${v}, scherm ${c.soort}`);
-      if (v.endsWith('×2') && !/^2 tabletten/.test(c.tekst || '')) r.afwijkingen.push(`rooster ${c.index}: geen "2 tabletten"`);
+      // lithium: dosisknoppen, dus de tekst is de dosis in mg (aantal × 400 mg)
+      const n = /×(\d+)$/.exec(v), mgC = M.casus(r.casus).poortjes.dosisKnoppen;
+      if (mgC && v.startsWith('slik')) {
+        const mg = (n ? +n[1] : 1) * M.casus(r.casus).dosis.mg, want = mg.toLocaleString('nl-NL') + ' mg';
+        if ((c.tekst || '') !== want) r.afwijkingen.push(`rooster ${c.index}: scherm "${c.tekst}", verwacht "${want}"`);
+      } else if (n && !new RegExp('^' + n[1] + ' tabletten').test(c.tekst || '')) r.afwijkingen.push(`rooster ${c.index}: geen "${n[1]} tabletten"`);
     });
   });
   run.totaalScherm = getalVanScherm(run.einde.totaal);
@@ -874,9 +879,9 @@ resultaten.forEach((runs, vi) => {
     L.push(`  Zinnen bij lopende klok: ${ref.tut.zinnen.map((x) => '“' + x + '”').join(' · ')}`);
     // C5: introkaartje race 2
     const i2 = ref.intro2 || [];
-    // v2.2: "Overslaan" heet in beide races zo, dus geen verschil meer; "2 tabletten" wel
-    c5 = i2.some((z) => /2 tabletten/.test(z)) && i2.every((z) => (z.match(/[.!?](\s|$)/g) || []).length === 1);
-    L.push(`C5 (meting): introkaartje race 2 heeft ${i2.length} regels, elk één zin; "2 tabletten" staat erop: ${jn(c5)}. Regels: ${i2.map((z) => '“' + z + '”').join(' · ')}`);
+    // v2.3: race 2 heeft één poortje per dag en knoppen in mg (retardtablet)
+    c5 = i2.some((z) => /1\.200 mg/.test(z)) && i2.some((z) => /retard/.test(z)) && i2.every((z) => (z.match(/[.!?](\s|$)/g) || []).length === 1);
+    L.push(`C5 (meting): introkaartje race 2 heeft ${i2.length} regels, elk één zin; knoppen in mg en "retard" staan erop: ${jn(c5)}. Regels: ${i2.map((z) => '“' + z + '”').join(' · ')}`);
   } else L.push('Geen run met volledige oefenronde.');
   L.push('');
 
