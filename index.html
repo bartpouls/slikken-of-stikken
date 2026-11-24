@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="bouw" content="bd1a09b7ea00">
+<meta name="bouw" content="fa54c6d2e8d3">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="Slikken of Stikken: houd de spiegel van een geneesmiddel in het groene vlak. Vereenvoudigd model voor onderwijs, geen doseeradvies.">
@@ -1042,7 +1042,7 @@ input { font: inherit; }
       type: 'klaring', t: 120, tot: null, factor: 0.7, tegenactie: false,
       tijdTekst: 'Dag 5 (t = 120 u)',
       tekst: 'Mevrouw De Vries koopt ibuprofen bij de drogist.',
-      gevolg: 'Klaring × 0,7 tot het einde. Geen tegenactie mogelijk.'
+      gevolg: 'Klaring × 0,7 tot het einde. De ibuprofen zelf is niet terug te draaien.'
     }],
     echtSchema: {
       tekst: '1dd 1200 mg retard; na een NSAID de dosis verlagen (hier vanaf de dag erna 800 mg) en de spiegel laten prikken',
@@ -1053,7 +1053,7 @@ input { font: inherit; }
       onder: 'Kans op terugval: somber of juist ontremd.',
       boven: 'Trillen, misselijk, diarree. Nog hoger: verward, nieren in gevaar.'
     },
-    nabespreking: 'In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.'
+    nabespreking: null // vervallen in v2.3 (casusblad): het eindscherm koppelt terug zonder les
   };
 
   // Casus 3 — Carbamazepine (bonusrace). Getallen en spelkeuzes: docs/bouwopdracht.md, "Casus 3"; Bart akkoord
@@ -1122,7 +1122,7 @@ input { font: inherit; }
       onder: 'Kans op een epileptische aanval.',
       boven: 'Bijwerkingen: moe en duizelig. Hoger: dubbelzien, wankel lopen.'
     },
-    nabespreking: 'In het echt: start laag, verhoog langzaam, en laat na een paar weken de spiegel prikken: de lever gaat carbamazepine zelf sneller afbreken.'
+    nabespreking: null // vervallen in v2.3: het eindscherm koppelt terug zonder les
   };
 
   var CASUSSEN = { paracetamol: paracetamol, lithium: lithium, carbamazepine: carbamazepine };
@@ -2964,8 +2964,8 @@ input { font: inherit; }
  *     fase: 'start'|'tutorial'|'intro1'|'race1'|'intro2'|'race2'|'einde'; t = modeltijd (uur);
  *     klok = spelklok (uur, negatief tijdens de aanloop); score = live QALY-totaal.
  *   Stabiele data-attributen: data-actie="start" en "start-over" (startscherm), "verder" (na de oefenronde en
- *     na elke race), "start-race" (intro-kaartje), "slik" | "zetpil" | "spuit" | "niets" (raceknoppen; lithium en
- *     carbamazepine: "d1" | "d2" | "d3" | "d4" = 1–4 tabletten, "Overslaan" = niets), "demp", "menu" (+ data-menu="verder|oefenronde|race-1|race-2|einde|begin"), "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
+ *     na elke race), "start-race" (intro-kaartje), "slik" | "zetpil" | "spuit" | "niets" (raceknoppen; lithium
+ *     "d1" | "d2" | "d3" = 400 / 800 / 1200 mg, carbamazepine "d1" | "d2" | "d4" = 200 / 400 / 800 mg, "Overslaan" = niets), "demp", "menu" (+ data-menu="verder|oefenronde|race-1|race-2|einde|begin"), "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
  *     uitleg aanwijst heeft data-wijs="1".
  *   Raceknoppen reageren op pointerdown (snel) én click (toetsenbord); één tik telt één keer.
  */
@@ -3656,7 +3656,8 @@ input { font: inherit; }
   // Dosisknoppen (lithium, carbamazepine): de keuze heet naar de dosis in mg; paracetamol 1 g per keer.
   function mgTekst(c, n) { return getal(n * c.dosis.mg, 0) + ' mg'; }
   function keuzeNaam(c, k) { return c.poortjes.dosisKnoppen && k.route === 'slik' ? mgTekst(c, k.aantal) : (k.aantal > 1 ? k.aantal + '× ' : '') + KEUZENAAM[k.route]; }
-  function maxAantal(route) { return route === 'slik' && R.casus.id !== 'paracetamol' ? (R.casus.poortjes.maxTabletten || 2) : 1; }
+  // Zonder dosisknoppen: één toediening per poortje, tenzij een casus poortjes.maxTabletten noemt (nu geen).
+  function maxAantal(route) { return route === 'slik' && R.casus.poortjes.maxTabletten ? R.casus.poortjes.maxTabletten : 1; }
   var KEUZENAAM = { slik: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', niets: 'Overslaan' };
   var TE_LAAT_MS = 300; // echte tijd bij speed 1 (gedeeld door ?speed=N)
 

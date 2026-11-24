@@ -68,8 +68,8 @@
  *     fase: 'start'|'tutorial'|'intro1'|'race1'|'intro2'|'race2'|'einde'; t = modeltijd (uur);
  *     klok = spelklok (uur, negatief tijdens de aanloop); score = live QALY-totaal.
  *   Stabiele data-attributen: data-actie="start" en "start-over" (startscherm), "verder" (na de oefenronde en
- *     na elke race), "start-race" (intro-kaartje), "slik" | "zetpil" | "spuit" | "niets" (raceknoppen; lithium en
- *     carbamazepine: "d1" | "d2" | "d3" | "d4" = 1–4 tabletten, "Overslaan" = niets), "demp", "menu" (+ data-menu="verder|oefenronde|race-1|race-2|einde|begin"), "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
+ *     na elke race), "start-race" (intro-kaartje), "slik" | "zetpil" | "spuit" | "niets" (raceknoppen; lithium
+ *     "d1" | "d2" | "d3" = 400 / 800 / 1200 mg, carbamazepine "d1" | "d2" | "d4" = 200 / 400 / 800 mg, "Overslaan" = niets), "demp", "menu" (+ data-menu="verder|oefenronde|race-1|race-2|einde|begin"), "opnieuw" (einde). Naamveld: data-veld="naam". Oefenronde: de knop die de
  *     uitleg aanwijst heeft data-wijs="1".
  *   Raceknoppen reageren op pointerdown (snel) én click (toetsenbord); één tik telt één keer.
  */
@@ -760,7 +760,8 @@
   // Dosisknoppen (lithium, carbamazepine): de keuze heet naar de dosis in mg; paracetamol 1 g per keer.
   function mgTekst(c, n) { return getal(n * c.dosis.mg, 0) + ' mg'; }
   function keuzeNaam(c, k) { return c.poortjes.dosisKnoppen && k.route === 'slik' ? mgTekst(c, k.aantal) : (k.aantal > 1 ? k.aantal + '× ' : '') + KEUZENAAM[k.route]; }
-  function maxAantal(route) { return route === 'slik' && R.casus.id !== 'paracetamol' ? (R.casus.poortjes.maxTabletten || 2) : 1; }
+  // Zonder dosisknoppen: één toediening per poortje, tenzij een casus poortjes.maxTabletten noemt (nu geen).
+  function maxAantal(route) { return route === 'slik' && R.casus.poortjes.maxTabletten ? R.casus.poortjes.maxTabletten : 1; }
   var KEUZENAAM = { slik: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', niets: 'Overslaan' };
   var TE_LAAT_MS = 300; // echte tijd bij speed 1 (gedeeld door ?speed=N)
 

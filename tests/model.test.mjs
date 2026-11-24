@@ -214,7 +214,7 @@ kop('Casusdata, spelregels en zetpilreeks');
   check(P.gebeurtenissen[0].tekst === 'Opa is misselijk na de narcose.', 'tekst misselijk');
   check(P.lekentaal.onder === 'Au. De pijn komt terug.' && P.lekentaal.boven === 'Te veel paracetamol beschadigt de lever.', 'lekentaal paracetamol');
   check(L.gebeurtenissen[0].tekst === 'Mevrouw De Vries koopt ibuprofen bij de drogist.', 'tekst ibuprofen');
-  check(L.nabespreking === 'In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.', 'nabespreking');
+  check(L.nabespreking === null && L.gebeurtenissen[0].gevolg === 'Klaring × 0,7 tot het einde. De ibuprofen zelf is niet terug te draaien.', 'nabespreking vervallen; gevolg ibuprofen = casusblad');
   // Spelregels
   const s1 = M.maakSim('paracetamol'); s1.naar(10);
   const g = s1.geef('slik'); check(!g.ok && g.reden === 'geblokkeerd' && g.tekst === 'Opa is misselijk na de narcose.', 'slikken uur 10 geblokkeerd');

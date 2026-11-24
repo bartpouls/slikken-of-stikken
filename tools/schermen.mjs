@@ -179,22 +179,12 @@ while (true) {
   if (d.fase !== 'race2' || d.klaar) break;
   const p = d.poortje;
   if (p && p.open && !p.keuze && d.klok > p.t - 4 && d.klok < p.t - 1) {
-    // alles slikken; poortje 4 dubbel (2× tablet); na de ibuprofen elk 3e poortje overslaan
-    const na = p.index - 14, over = p.index >= 15 && na % 3 === 0;
-    await tik(`#knoppen [data-actie="${over ? 'niets' : 'slik'}"]`);
-    if (p.index === 4) {
-      await sleep(120);
-      await tik('#knoppen [data-actie="slik"]');
-      await sleep(300);
-      await foto('11-race2-twee-tabletten', 'Race 2: 2× tablet voor één poortje', 'Race 2');
-    }
-    if (over && !gedaan.over) { gedaan.over = true; await sleep(300); await foto('14-race2-overslaan', 'Race 2: Overslaan gekozen', 'Race 2'); }
-  }
-  if (!gedaan.spuit && d.klok >= 52) {
-    gedaan.spuit = true;
-    await tik('#knoppen [data-actie="spuit"]');
-    await sleep(500);
-    await foto('12-race2-spuit', 'Race 2: plotwending (de spuitknop)', 'Race 2', 'Lithium bestaat niet als prik.');
+    // echt schema: ochtend (even index) 1200 mg, vanaf dag 6 (index 12) 800 mg; avond Overslaan
+    const ochtend = p.index % 2 === 0, knop = ochtend ? (p.index >= 12 ? 'd2' : 'd3') : 'niets';
+    await tik(`#knoppen [data-actie="${knop}"]`);
+    if (p.index === 2) { await sleep(300); await foto('11-race2-dosisknop', 'Race 2: 1.200 mg gekozen voor de ochtend', 'Race 2'); }
+    if (!ochtend && !gedaan.over) { gedaan.over = true; await sleep(300); await foto('14-race2-overslaan', 'Race 2: Overslaan voor de avond', 'Race 2'); }
+    if (p.index === 12) { await sleep(300); await foto('12-race2-verlagen', 'Race 2: na de ibuprofen 800 mg', 'Race 2'); }
   }
   if (d.wacht) {
     if (!gedaan.ibu) {

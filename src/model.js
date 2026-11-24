@@ -214,7 +214,7 @@
       type: 'klaring', t: 120, tot: null, factor: 0.7, tegenactie: false,
       tijdTekst: 'Dag 5 (t = 120 u)',
       tekst: 'Mevrouw De Vries koopt ibuprofen bij de drogist.',
-      gevolg: 'Klaring × 0,7 tot het einde. Geen tegenactie mogelijk.'
+      gevolg: 'Klaring × 0,7 tot het einde. De ibuprofen zelf is niet terug te draaien.'
     }],
     echtSchema: {
       tekst: '1dd 1200 mg retard; na een NSAID de dosis verlagen (hier vanaf de dag erna 800 mg) en de spiegel laten prikken',
@@ -225,7 +225,7 @@
       onder: 'Kans op terugval: somber of juist ontremd.',
       boven: 'Trillen, misselijk, diarree. Nog hoger: verward, nieren in gevaar.'
     },
-    nabespreking: 'In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.'
+    nabespreking: null // vervallen in v2.3 (casusblad): het eindscherm koppelt terug zonder les
   };
 
   // Casus 3 — Carbamazepine (bonusrace). Getallen en spelkeuzes: docs/bouwopdracht.md, "Casus 3"; Bart akkoord
@@ -294,7 +294,7 @@
       onder: 'Kans op een epileptische aanval.',
       boven: 'Bijwerkingen: moe en duizelig. Hoger: dubbelzien, wankel lopen.'
     },
-    nabespreking: 'In het echt: start laag, verhoog langzaam, en laat na een paar weken de spiegel prikken: de lever gaat carbamazepine zelf sneller afbreken.'
+    nabespreking: null // vervallen in v2.3: het eindscherm koppelt terug zonder les
   };
 
   var CASUSSEN = { paracetamol: paracetamol, lithium: lithium, carbamazepine: carbamazepine };
