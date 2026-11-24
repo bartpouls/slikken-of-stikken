@@ -8,7 +8,7 @@
  *     data = {
  *       naam:    speelnaam (string),
  *       races:   [verslag1, verslag2]  — precies race.verslag() uit src/score.js (zie de API daar:
- *                casus, opbouw.regels/totaal, tijdlijn, echtSchema, telling, uren, praktijk.zin),
+ *                casus, opbouw.regels/totaal, tijdlijn, echtSchema, telling, uren),
  *                volgorde paracetamol, lithium,
  *       totaal:  som van races[i].opbouw.totaal (QALY-punten),
  *       curves:  [[{t, C}, ...], [{t, C}, ...]] — de gespeelde spiegel per race, uitgedund
@@ -29,8 +29,8 @@
  *      een regel over het scorebord, "spelpunten, geen echte QALY's".
  *   2. Toedienverslag per race (data-verslag="0|1"): mini-curve, QALY-opbouw in vijf regels (carbamazepine: zes) + totaal,
  *      rooster met je toedieningen per poortje naast het echte schema (van boven naar beneden, zoals de tijd in
- *      de race), telling (toedienmomenten, gemiddeld per dag naast de grens), de praktijkzin en (lithium) de
- *      nabesprekingszin uit het casusblad.
+ *      de race) en telling (toedienmomenten, gemiddeld per dag naast de grens). Geen praktijk- of
+ *      nabesprekingszin (Bart, nov. 2026): het eindscherm koppelt terug wat er gebeurde, zonder les.
  *   3. "Nog een keer" (data-actie="opnieuw") direct onder de racekaarten; één tik.
  *   Dempknop (van app.js): rechtsboven zoals op de andere schermen, maar hij scrolt mee (nooit over tekst).
  *   Tegels = lijnkleuren van de race; ibuprofen oranje (zoals in de race);
@@ -39,7 +39,7 @@
  *   behalve de tegelkleur (welke toestand de meeste meetpunten van de eigen curve had).
  * Stabiele haken voor tests: [data-eind="naam"|"totaal"|"race-0"|"race-1"], [data-verslag="i"] met
  *   [data-regel="zone|laag|hoog|giftig|totaal"], [data-poortje="index"][data-soort], [data-tel="..."],
- *   [data-zin="praktijk"|"nabespreking"], knoppen data-actie="opnieuw" en "naar-verslag" (data-race).
+ *   knoppen data-actie="opnieuw" en "naar-verslag" (data-race).
  */
 (function (root) {
   'use strict';
@@ -266,7 +266,7 @@
 
   function celInhoud(rij) {
     var j = rij.jij, ic = SoS.ui.icoon;
-    if (j.soorten.length && /mg$/.test(j.tekst)) return '<span class="eind-cel-txt mg">' + esc(j.tekst) + '</span>'; // carbamazepine
+    if (j.soorten.length && /mg$/.test(j.tekst)) return '<span class="eind-cel-txt mg">' + esc(j.tekst) + '</span>'; // dosisknoppen (lithium, carbamazepine)
     if (j.soorten.length) {
       return j.soorten.map(function (so) {
         return '<span class="eind-cel-ic">' + ic(so.soort) + (so.aantal > 1 ? '<b>' + so.aantal + '×</b>' : '') + '</span>';
@@ -349,7 +349,8 @@
     if (c.id === 'carbamazepine') {
       lek = '2× per dag 200 mg (start laag: meneer El Idrissi moet wennen aan de bijwerkingen); na 2 weken, als de lever het sneller afbreekt, 2× per dag 400 mg. In het echt op geleide van een spiegelbepaling, maximaal 1.200 mg per dag.';
     } else if (c.id === 'lithium') {
-      lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur): elk poortje 1 tablet van ' + dosis + '. Na een pijnstiller als ibuprofen (een NSAID): de spiegel laten prikken.';
+      lek = '1× per dag ' + dosis + ' retard (' + (sch[0].aantal || 1) + ' tabletten van ' + c.dosis.mg + ' mg); vanaf de dag na de ibuprofen ' +
+        getal((sch[sch.length - 1].aantal || 1) * c.dosis.mg) + ' mg, en de spiegel laten prikken.';
     } else {
       lek = perDag.length + '× per dag ' + dosis + ' (om ' + lijst(tijden) + ' uur).';
       // Een dosis van het echte schema tijdens de misselijkheid: dan kan opa Jan niet slikken.
@@ -401,10 +402,6 @@
     s += echtTekstHtml(c, v);
     s += roosterHtml(c, v);
     s += tellingHtml(v);
-    s += '<blockquote class="eind-praktijk" data-zin="praktijk">' + esc(v.praktijk.zin) + '</blockquote>';
-    if (c.nabespreking && v.praktijk.zin.indexOf(c.nabespreking) < 0) {
-      s += '<p class="eind-nabespreking" data-zin="nabespreking">' + esc(c.nabespreking) + '</p>';
-    }
     return s + '</section>';
   }
 

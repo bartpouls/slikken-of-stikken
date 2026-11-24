@@ -34,7 +34,7 @@
  *   klaar     { kop, label, knop, zin }: tekst op het eindkaartje (zelfde kaartje als "Race klaar" na een race);
  *             zin staat boven de knop (alleen na de oefenronde) en kost dus geen kloktijd
  * }
- * De plotwendingen (misselijkheid, ibuprofen, geweigerde lithiumprik) zitten er bewust niet in: de
+ * De plotwendingen (misselijkheid, ibuprofen) zitten er bewust niet in: de
  * motor zet de blokkade van casus 1 in de oefenronde uit.
  *
  * Doses in de oefenronde: tablet (uur 0), spuit (uur 5), zetpil (uur 13) = 3 × 1 g. Zo blijft er 1 g ruimte

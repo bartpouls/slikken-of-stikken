@@ -59,7 +59,7 @@ kop('(a) Eén dosis tegen de analytische formules (§4)');
     let maxRel = 0;
     for (const t of [0.5, 1, 2, 3.5, 6, 10, 24, 48, 72, 100, 119]) {
       sim.naar(t);
-      const verw = M.analytisch.oraal(1.0, 10.8, 1.0, 56, kL, t);
+      const verw = M.analytisch.oraal(0.95, 10.8, 0.7, 56, kL, t);
       maxRel = Math.max(maxRel, Math.abs(sim.C - verw) / verw);
     }
     console.log(`${'lithium slik 10,8 mmol'.padEnd(28)} 11 tijdstippen; max. afwijking ${maxRel.toExponential(2)}`);
@@ -153,11 +153,13 @@ const slik = ts => ts.map(t => ({ t, route: 'slik' }));
   const G = M.poortjes('lithium');
   let n = 0;
   const skip3 = G.filter(t => { if (t < 120) return true; n++; return n % 3 !== 0; });
+  const mg = (ts, f) => ts.map(t => ({ t, route: 'slik', aantal: f(t) })); // aantal retardtabletten van 400 mg
   const strat = [
-    ['Alles slikken', slik(G), 63, 37, 0, 1.07, 1.20],
-    ['Na ibuprofen elke 3e overslaan', slik(skip3), 100, 0, 0, 0.69, 0.89],
-    ['Niets', [], 3, 0, 0, 0.00, 0.00],
-    ['Elk poortje dubbel', G.map(t => ({ t, route: 'slik', aantal: 2 })), 2, 98, 76, 2.14, 2.41]
+    ['Echt schema (vanaf dag 6 800 mg)', L.echtSchema.schema, 95, 1, 0, 0.62, 0.90],
+    ['Alles 1200 mg', mg(G, () => 3), 71, 25, 0, 0.86, 1.28],
+    ['Na ibuprofen elke 3e overslaan', mg(skip3, () => 3), 83, 9, 0, 0.64, 1.08],
+    ['Niets', [], 0, 0, 0, 0.00, 0.00],
+    ['Elke dag dubbel (2400 mg)', mg(G, () => 6), 3, 97, 67, 1.71, 2.56]
   ];
   for (const [naam, schema, zone, boven, tox, ldMin, ldMax] of strat) {
     const s = M.simuleer('lithium', schema).samenvatting;
@@ -168,14 +170,18 @@ const slik = ts => ts.map(t => ({ t, route: 'slik' }));
     rij('lithium', naam, 'laatste dag max', ldMax, +s.laatsteDag.max.toFixed(4), 0.01);
     if (naam === 'Niets') {
       const r = M.simuleer('lithium', []);
-      const i = r.C.findIndex(c => c < 0.6);
-      console.log(`lithium niets: zakt onder 0,6 na ${r.t[i].toFixed(2)} u (casusblad: ±8 u)`);
-      check(Math.abs(r.t[i] - 8) < 1, 'niets: zakt niet onder 0,6 na ±8 u');
+      console.log(`lithium niets: start op de dalspiegel ${r.C[0].toFixed(3)} (casusblad: ±0,57), daarna alleen omlaag`);
+      check(Math.abs(r.C[0] - 0.57) < 0.01 && r.C[r.C.length - 1] < r.C[0], 'niets: start niet op de dalspiegel ±0,57');
     }
   }
   const ss = M.steadyState('lithium');
-  rij('lithium', 'Start steady state 3dd 400 mg', 'spiegel min', 0.76, +ss.min.toFixed(4), 0.01);
-  rij('lithium', 'Start steady state 3dd 400 mg', 'spiegel max', 0.87, +ss.max.toFixed(4), 0.01);
+  rij('lithium', 'Start steady state 1dd 1200 mg retard', 'spiegel min', 0.57, +ss.min.toFixed(4), 0.01);
+  rij('lithium', 'Start steady state 1dd 1200 mg retard', 'spiegel max', 0.99, +ss.max.toFixed(4), 0.01);
+  // Eén retardtablet: piek ±4,8 u na inname (TDM-monografie: vertraagde afgifte 2–5,5 u)
+  { const sim = M.maakSim('lithium', { steadyState: false }); sim.geef('slik'); let mx = 0, tm = 0;
+    for (let t = 0; t < 24; t += 0.01) { sim.naar(t); if (sim.C > mx) { mx = sim.C; tm = t; } }
+    console.log(`lithium 1 retardtablet: piek na ${tm.toFixed(2)} u`);
+    check(tm >= 2 && tm <= 5.5 && Math.abs(tm - 4.8) < 0.1, 'piek retardtablet niet ±4,8 u (binnen 2–5,5 u)'); }
   check(Math.abs(ss.naInterval - ss.C) < 1e-12, 'steady state is geen vast punt');
 }
 console.log('\n' + ['casus', 'strategie', 'grootheid', 'verwacht', 'gekregen', 'rel.afw.', 'oordeel'].join(' | '));
@@ -195,8 +201,10 @@ kop('Casusdata, spelregels en zetpilreeks');
   check(Math.abs(1000 / 63 - 15.9) < 0.05, 'directe piek 1000/63');
   check(P.bovengrens.maxPer24u === 4000 && P.raceDuur === 24 && P.poortjes.tijden.length === 24, 'paracetamol bovengrens/poortjes');
   check(L.Vd === 56 && L.VdPerKg === 0.8 && L.Thalf === 24 && L.dosis.mmol === 10.8 && L.routes.slik.dosis === 10.8, 'lithium Vd/T½/dosis');
-  check(L.routes.slik.F === 1.0 && L.routes.slik.ka === 1.0 && L.toxisch === 1.5 && L.raceDuur === 240, 'lithium F/ka/toxisch/duur');
-  check(JSON.stringify(L.poortjes.tijden.slice(0, 4)) === '[0,8,16,24]' && L.poortjes.tijden.length === 30, 'lithium poortjes');
+  check(L.routes.slik.F === 0.95 && L.routes.slik.ka === 0.7 && L.toxisch === 1.5 && L.raceDuur === 240, 'lithium F/ka/toxisch/duur');
+  check(JSON.stringify(L.poortjes.tijden.slice(0, 4)) === '[0,24,48,72]' && L.poortjes.tijden.length === 10, 'lithium poortjes 1× per dag');
+  check(JSON.stringify(L.poortjes.dosisKnoppen) === '[1,2,3]' && L.dosis.mg === 400, 'lithium knoppen 400/800/1200 mg');
+  check(!L.routes.spuit && !L.routes.zetpil, 'lithium: geen spuit en geen zetpil');
   check(L.gebeurtenissen[0].t === 120 && L.gebeurtenissen[0].factor === 0.7, 'ibuprofen-gebeurtenis');
   check(Math.abs(M.k('lithium', 130) / M.k('lithium', 100) - 0.7) < 1e-12, 'k × 0,7 na t=120');
   const v = M.venster('lithium', 50); check(v.laag === 0.6 && v.hoog === 1.0, 'venster lithium');
@@ -204,7 +212,6 @@ kop('Casusdata, spelregels en zetpilreeks');
   // Teksten woordelijk
   check(P.gebeurtenissen[0].tekst === 'Opa is misselijk na de narcose.', 'tekst misselijk');
   check(P.lekentaal.onder === 'Au. De pijn komt terug.' && P.lekentaal.boven === 'Te veel paracetamol beschadigt de lever.', 'lekentaal paracetamol');
-  check(L.routes.spuit.tekst === 'Lithium bestaat niet als prik. Slikken of stikken!', 'spuittekst lithium');
   check(L.gebeurtenissen[0].tekst === 'Mevrouw De Vries koopt ibuprofen bij de drogist.', 'tekst ibuprofen');
   check(L.nabespreking === 'In het echt: bij lithium liever paracetamol dan ibuprofen, en de spiegel laten prikken.', 'nabespreking');
   // Spelregels
@@ -214,7 +221,7 @@ kop('Casusdata, spelregels en zetpilreeks');
   s1.naar(16); check(s1.geef('slik').ok, 'slikken uur 16 weer mogelijk');
   check(s1.dagteller() === 3000, 'dagteller telt zetpil en spuit mee');
   const s2 = M.maakSim('lithium'); const C0 = s2.C; const sp = s2.geef('spuit');
-  check(!sp.ok && sp.reden === 'geenPrik' && s2.C === C0, 'lithium-spuit doet niets');
+  check(!sp.ok && sp.reden === 'onbekend' && s2.C === C0, 'lithium-spuit bestaat niet');
   // Zetpilreeks
   const R = M.ZETPIL_REEKS;
   check(R.length === 24 && R.every(z => z.F >= 0.3 && z.F <= 0.9 && z.ka >= 0.3 && z.ka <= 1.0), 'zetpilreeks binnen bereik');

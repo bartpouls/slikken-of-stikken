@@ -338,6 +338,7 @@ input { font: inherit; }
 .tl-rij.geen .tl-ic { color: var(--koraal); }
 .tl-rij.geen .tl-ic svg { width: 14px; height: 14px; }
 .tl-dag { width: 100%; max-width: 330px; display: grid; grid-template-columns: 52px repeat(var(--k, 3), 1fr) 34px; gap: 3px; align-items: center; }
+.tl-dag.zonder-som { grid-template-columns: 52px repeat(var(--k, 3), 1fr); }
 .tl-dag .sk { font-size: 11.5px; font-weight: 700; color: var(--zacht); text-align: center; }
 .tl-dag .sk.dag { text-align: left; }
 .tl-dag .sk.ibu { color: #ff9f43; }
