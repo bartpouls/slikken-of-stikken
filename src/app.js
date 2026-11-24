@@ -1485,7 +1485,9 @@
       qs.textContent = getal(straf, 0) + ' geen keuze';
       qs.classList.remove('zicht'); void qs.offsetWidth; qs.classList.add('zicht');
       R.psFlits = { tot: performance.now() + 1300 / Math.min(SPEED, 4), tekst: 'Geen keuze voor ' + inZin(tijdLabel(c, T, true)) + ': ' + getal(straf, 0) + ' punten' };
-      if (R.gids && R.gids.geenKeuze) melding(R.gids.geenKeuze, { soort: 'au' }); // oefenronde: zeg waarom
+      // oefenronde: zeg waarom, maar niet over een uitlegzin heen die net verschijnt (vertelstap, klok staat stil);
+      // de puntenaftrek staat dan nog wel naast de QALY-stand
+      if (R.gids && R.gids.geenKeuze && !R.gids.bevroren) melding(R.gids.geenKeuze, { soort: 'au' });
     }
     R.gegeven[g] = uit;
     R.laatstePoort = { echt: performance.now(), label: tijdLabel(c, T, true), index: g };

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="bouw" content="fa54c6d2e8d3">
+<meta name="bouw" content="635ef933df98">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
 <meta name="theme-color" content="#000000">
 <meta name="description" content="Slikken of Stikken: houd de spiegel van een geneesmiddel in het groene vlak. Vereenvoudigd model voor onderwijs, geen doseeradvies.">
@@ -4381,7 +4381,9 @@ input { font: inherit; }
       qs.textContent = getal(straf, 0) + ' geen keuze';
       qs.classList.remove('zicht'); void qs.offsetWidth; qs.classList.add('zicht');
       R.psFlits = { tot: performance.now() + 1300 / Math.min(SPEED, 4), tekst: 'Geen keuze voor ' + inZin(tijdLabel(c, T, true)) + ': ' + getal(straf, 0) + ' punten' };
-      if (R.gids && R.gids.geenKeuze) melding(R.gids.geenKeuze, { soort: 'au' }); // oefenronde: zeg waarom
+      // oefenronde: zeg waarom, maar niet over een uitlegzin heen die net verschijnt (vertelstap, klok staat stil);
+      // de puntenaftrek staat dan nog wel naast de QALY-stand
+      if (R.gids && R.gids.geenKeuze && !R.gids.bevroren) melding(R.gids.geenKeuze, { soort: 'au' });
     }
     R.gegeven[g] = uit;
     R.laatstePoort = { echt: performance.now(), label: tijdLabel(c, T, true), index: g };
