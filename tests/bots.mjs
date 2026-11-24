@@ -110,8 +110,8 @@ const LITH = {
   laag: { naam: 'na de ibuprofen 400 mg', plan: (i) => mgL(i >= 6 ? 1 : 3) },
   niets: { naam: 'niets (elk poortje "Overslaan")', plan: () => niets },
   greedy: {
-    naam: 'spiegelwacht: 3 u vóór het poortje < 0,75 → 1200 mg, < 0,9 → 800 mg, anders 400 mg',
-    vooruit: 3,
+    naam: 'spiegelwacht: 8 u vóór het poortje < 0,75 → 1200 mg, < 0,9 → 800 mg, anders 400 mg',
+    vooruit: 8, // ruim vóór de tikmarge van 0,12 × 24 u
     besluit(g, d) { return mgL(d.C < 0.75 ? 3 : (d.C < 0.9 ? 2 : 1)); }
   }
 };
