@@ -512,8 +512,7 @@ input { font: inherit; }
   .actie.wijs { animation: none; box-shadow: 0 0 0 4px rgba(255, 255, 255, .5); }
 }
 
-/* voettekst van het startscherm: colofon met het rust-logo rechtsonder (zelfde logovlakje als op het eindscherm) */
+/* voettekst van het startscherm: colofon met het rust-logo rechtsonder, direct op de achtergrond (zoals op het eindscherm) */
 .start-voet { flex: none; display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding-top: 8px; font-size: 13px; color: var(--zacht); }
-.start-voet .cp-logo { background: #FBF4E6; border-radius: 10px; padding: 4px 6px; line-height: 0; }
-.start-voet .cp-logo img { display: block; height: 32px; width: auto; }
-@media (max-height: 700px) { .start-voet .cp-logo img { height: 26px; } }
+.start-voet .cp-logo { line-height: 0; }
+.start-voet .cp-logo img { display: block; height: 28px; width: auto; }

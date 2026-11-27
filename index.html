@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="bouw" content="f4bc66b91380">
+<meta name="bouw" content="ae0bee365e90">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; font-src data:">
 <meta name="theme-color" content="#141A24">
 <meta name="description" content="Slikken of Stikken: houd de spiegel van een geneesmiddel in het groene vlak. Vereenvoudigd model voor onderwijs, geen doseeradvies.">
@@ -524,11 +524,10 @@ input { font: inherit; }
   .actie.wijs { animation: none; box-shadow: 0 0 0 4px rgba(255, 255, 255, .5); }
 }
 
-/* voettekst van het startscherm: colofon met het rust-logo rechtsonder (zelfde logovlakje als op het eindscherm) */
+/* voettekst van het startscherm: colofon met het rust-logo rechtsonder, direct op de achtergrond (zoals op het eindscherm) */
 .start-voet { flex: none; display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding-top: 8px; font-size: 13px; color: var(--zacht); }
-.start-voet .cp-logo { background: #FBF4E6; border-radius: 10px; padding: 4px 6px; line-height: 0; }
-.start-voet .cp-logo img { display: block; height: 32px; width: auto; }
-@media (max-height: 700px) { .start-voet .cp-logo img { height: 26px; } }
+.start-voet .cp-logo { line-height: 0; }
+.start-voet .cp-logo img { display: block; height: 28px; width: auto; }
 
 </style>
 <style data-bron="src/einde.css">
