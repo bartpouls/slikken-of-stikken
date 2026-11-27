@@ -3,6 +3,8 @@
 - Bron voor inhoud en getallen: `docs/bouwopdracht.md`. Getallen uit het casusblad (§5) wijzigen alleen na akkoord van Bart Pouls.
 - Broncode in `src/`; na elke wijziging `node tools/build.mjs` (schrijft `index.html`) en de tests in `tests/` draaien.
 - Bart is geen programmeur: leg keuzes uit zonder jargon.
+- Vormgeving: huisstijl Vonk & Vloeistof (Barts stijlgids, Design System-artefact "Stijlgids Vonk & Vloeistof") voor kleur, lettertype en logo, binnen de sfeer van Universe Forecast; details in `docs/bouwopdracht.md` §6D. Figuurtjes en instructiestijl niet veranderen zonder akkoord van Bart. Logo's alleen uit `src/logo/` (echte bestanden).
+- Het scorebord heeft ook een bron: `src/scorebord.template.html`; de build schrijft `scorebord.html`.
 
 ## Rolverdeling met Copilot
 

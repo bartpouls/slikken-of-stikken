@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="bouw" content="@@BOUW">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
-<meta name="theme-color" content="#000000">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:; font-src data:">
+<meta name="theme-color" content="#141A24">
 <meta name="description" content="Slikken of Stikken: houd de spiegel van een geneesmiddel in het groene vlak. Vereenvoudigd model voor onderwijs, geen doseeradvies.">
 <title>Slikken of Stikken</title>
 <link rel="icon" href="data:,">
@@ -22,7 +22,7 @@
         <div class="fig" data-fig="vries"></div>
         <div class="fig" data-fig="idrissi"></div>
       </div>
-      <h1 id="titel" class="titel">Slikken <span>of</span> Stikken</h1>
+      <h1 id="titel" class="titel">Slikken <span>of</span> Stikken<img class="titel-logo" src="@@LOGO:capsule-pop-powerup" alt=""></h1>
       <p class="tekst">Jij regelt de medicijnen: houd de spiegel van een geneesmiddel binnen het therapeutisch venster.</p>
       <form id="start-form" class="start-form" autocomplete="off" novalidate>
         <div id="start-verder" class="start-verder" hidden>
@@ -31,11 +31,12 @@
         </div>
         <label for="naam" class="markering">Jouw speelnaam</label>
         <input id="naam" name="naam" data-veld="naam" type="text" maxlength="16" placeholder="bv. Pilpiraat" enterkeyhint="go" autocapitalize="words" spellcheck="false">
-        <button type="submit" class="knop-paars groot" data-actie="start">Start</button>
+        <button type="submit" class="knop-hoofd groot" data-actie="start">Start</button>
         <button type="button" class="knop-stil" data-actie="start-over">Oefenronde overslaan</button>
       </form>
       <p class="kleintje">Vereenvoudigd model voor onderwijs. Geen doseeradvies.</p>
     </div>
+    <footer class="start-voet"><span>Bart Pouls</span><span class="cp-logo"><img src="@@LOGO:capsule-pop-rust" alt="Capsule Pop" width="20" height="40"></span></footer>
   </section>
 
   <!-- 2. De oefenronde (tutorial) draait op het racescherm hieronder: er is geen apart tutorialscherm. -->
@@ -48,7 +49,7 @@
       <p class="tekst groot" id="intro-verhaal"></p>
       <ul class="intro-regel" id="intro-regel"></ul>
       <p class="intro-qaly" id="intro-qaly"></p>
-      <button type="button" class="knop-paars groot" data-actie="start-race">Start race</button>
+      <button type="button" class="knop-hoofd groot" data-actie="start-race">Start race</button>
     </div>
   </section>
 
@@ -90,7 +91,7 @@
       <p class="finish-getal" id="finish-getal">0</p>
       <div class="finish-schema" id="finish-schema"></div>
       <p class="finish-zin" id="finish-zin" hidden></p>
-      <button type="button" class="knop-paars" data-actie="verder">Verder</button>
+      <button type="button" class="knop-hoofd" data-actie="verder">Verder</button>
     </div>
   </section>
 

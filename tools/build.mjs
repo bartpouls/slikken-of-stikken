@@ -1,5 +1,5 @@
 // Slikken of Stikken — build: `node tools/build.mjs` schrijft index.html (repo-root).
-// Alle CSS en JS worden inline gezet: geen externe bestanden, fonts of CDN.
+// Alle CSS, JS, lettertypes en logo's worden inline gezet: geen externe bestanden of CDN.
 // Volgorde JS: model, score, sound, tutorial, einde, app (app gebruikt de rest).
 import { readFileSync, writeFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
@@ -16,10 +16,15 @@ const JS = ['src/model.js', 'src/score.js', 'src/sound.js', 'src/tutorial.js', '
 const veiligJS = (s) => s.replace(/<\/script/gi, '<\\/script').replace(/<!--/g, '<\\!--');
 const veiligCSS = (s) => s.replace(/<\/style/gi, '<\\/style');
 
-const css = CSS.map((p) => `<style data-bron="${p}">\n${veiligCSS(lees(p))}\n</style>`).join('\n');
+// Lettertypes (src/fonts/*.woff2, SIL Open Font License) en logo's (src/logo/*.svg, Vonk & Vloeistof) gaan als
+// data-URI in het bestand: zo werkt alles zonder netwerk. In CSS: url("fonts/<naam>.woff2"); in de template: @@LOGO:<naam>.
+const datauri = (p, type) => `data:${type};base64,${readFileSync(join(root, p)).toString('base64')}`;
+const metFonts = (s) => s.replace(/url\("fonts\/([a-z0-9-]+\.woff2)"\)/g, (_, f) => `url("${datauri('src/fonts/' + f, 'font/woff2')}")`);
+
+const css = CSS.map((p) => `<style data-bron="${p}">\n${veiligCSS(metFonts(lees(p)))}\n</style>`).join('\n');
 const js = JS.map((p) => `<script data-bron="${p}">\n${veiligJS(lees(p))}\n</script>`).join('\n');
 
-let html = lees('src/index.template.html');
+let html = lees('src/index.template.html').replace(/@@LOGO:([a-z0-9-]+)/g, (_, n) => datauri(`src/logo/${n}.svg`, 'image/svg+xml'));
 
 // Controle (op de template; de inline bronnen noemen <script src> alleen in commentaar): geen externe verwijzingen.
 const extern = html.match(/<(?:script|link|img|iframe|audio|video|source|object|embed)\b[^>]*\b(?:src|href)\s*=\s*["'](?!data:|#)[^"']+["']/gi);
@@ -37,3 +42,10 @@ html = html.replace('@@BOUW', createHash('sha256').update(css).update(js).digest
 
 writeFileSync(join(root, 'index.html'), html);
 console.log(`index.html geschreven (${(html.length / 1024).toFixed(1)} kB)`);
+
+// Scorebord voor de beamer: één zelfstandig bestand; alleen lettertypes en logo's worden ingevuld.
+let bord = metFonts(lees('src/scorebord.template.html')).replace(/@@LOGO:([a-z0-9-]+)/g, (_, n) => datauri(`src/logo/${n}.svg`, 'image/svg+xml'));
+const bordExtern = bord.match(/<(?:script|link|img|iframe|audio|video|source|object|embed)\b[^>]*\b(?:src|href)\s*=\s*["'](?!data:|#)[^"']+["']/gi);
+if (bordExtern || /@import|url\(\s*["']?https?:/i.test(bord)) throw new Error('build: externe verwijzing in het scorebord');
+writeFileSync(join(root, 'scorebord.html'), bord);
+console.log(`scorebord.html geschreven (${(bord.length / 1024).toFixed(1)} kB)`);

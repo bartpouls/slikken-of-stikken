@@ -31,17 +31,17 @@
  *
  * GEDEELD, VOOR einde.js (SoS.ui; gebruik binnen toon(), niet bij het laden):
  *   SoS.ui.figuur({wie:'opa'|'vries', stemming:'neutraal'|'blij'|'pijn'|'misselijk', prop:'stok'|'doosje'|null,
- *                 kleur, label, kop}) -> SVG-string: plat figuurtje zonder schetslijn (past op zwart met sterren),
+ *                 kleur, label, kop}) -> SVG-string: plat figuurtje zonder schetslijn (past op de donkere grond met sterren),
  *                 herkenbaar aan het hoedje (opa Jan blauwe pet + wandelstok, mevrouw De Vries rode hoed met
  *                 rand, knotje en bril). kop:true = alleen hoofd en hoed. Zet hem in een .fig; .fig.wiebel = reactie.
  *   SoS.ui.icoon(soort)  soort 'tablet'|'slik'|'zetpil'|'spuit'|'niets'|'doosje' -> SVG-string (40×40).
  *   SoS.ui.el(tag, attrs, kinderen) -> element (attrs: class, text, html, data-*, aria-*, on<event>).
  *   SoS.ui.getal(x, decimalen) -> Nederlandse notatie ("1,5"; "1.250").
  *   SoS.ui.speel(naam)  SoS.sound.play zonder risico (namen: zie src/sound.js). SoS.ui.unlock().
- *   SoS.ui.KLEUR {paars, groen, koraal, geel, blauw, rood, roze}
- *   Stijl: style.css (één stijl: zwart met sterren; .kaart, .markering, .tekst, .knop-paars, .knop-lijn, .fig).
+ *   SoS.ui.KLEUR {teal, groen, koraal, geel, blauw, rood, roze, oranje, ibu}
+ *   Stijl: style.css (één stijl: donkere Vonk-grond met sterren; .kaart, .markering, .tekst, .knop-hoofd, .knop-lijn, .fig).
  *
- * RACE-INTERACTIE: de tijd loopt van boven naar beneden (pijltje "tijd" in de linkermarge); paarse poortjes
+ * RACE-INTERACTIE: de tijd loopt van boven naar beneden (pijltje "tijd" in de linkermarge); lichte poortjes
  * schuiven van onder naar de "nu"-lijn. De knoppen onderin kiezen wat er op het EERSTVOLGENDE poortje gebeurt
  * (stand "gekozen", icoontje op het poortje, regel "Tablet voor uur 18" boven de knoppen); op het poortje wordt
  * de keuze toegepast (race.naar(poortjetijd), dan race.geef) en gewist. Overslaan is ook een keuze; een poortje
@@ -91,9 +91,11 @@
   // ------------------------------------------------------------------------------------------
   // Gedeelde helpers (SoS.ui)
   // ------------------------------------------------------------------------------------------
-  var KLEUR = { paars: '#b07cff', groen: '#3ddc97', koraal: '#ff6f61', geel: '#ffd166', blauw: '#4f8dff',
-    rood: '#ff4d6d', roze: '#ff8fb8' };
-  var FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
+  // Vonk & Vloeistof, donker thema (zelfde waarden als de tokens in style.css). GROND = surface, CREME = ink.
+  var GROND = '#141A24', CREME = '#F4EEE2';
+  var KLEUR = { teal: '#6CC7D6', groen: '#3ddc97', koraal: '#ff6f61', geel: '#F6C343', blauw: '#4f8dff',
+    rood: '#ff4d6d', roze: '#ff8fb8', oranje: '#F28C28', ibu: '#F5A65A' };
+  var FONT = '"Space Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif';
 
   function speel(naam) {
     try { if (SoS.sound) SoS.sound.play(naam); } catch (e) { /* geluid is bijzaak */ }
@@ -133,7 +135,7 @@
     return e;
   }
 
-  // Platte figuurtjes voor de zwarte sterrenwereld (geen schetslijnen): herkenbaar aan het gekleurde hoedje.
+  // Platte figuurtjes voor de donkere sterrenwereld (geen schetslijnen): herkenbaar aan het gekleurde hoedje.
   // o.kop = true: alleen hoofd en hoed (klein portret in de racekop).
   function figuur(o) {
     o = o || {};
@@ -430,7 +432,7 @@
       regels = ['Jij regelt de medicijnen van opa Jan: wat hij krijgt, en wanneer.',
         'Blijf binnen het therapeutisch venster: boven de streep, met ' + getalKort(c.routes.slik.dosis / 1000, 1) +
           ' g per keer en hooguit ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' g per dag. Boven ' + getalKort(c.bovengrens.maxPer24u / 1000, 1) + ' g per dag loopt de lever gevaar.',
-        'Kies vóór elk paars poortje: Tablet, Zetpil, Spuit of Overslaan. Geen keuze kost punten.',
+        'Kies vóór elk poortje: Tablet, Zetpil, Spuit of Overslaan. Geen keuze kost punten.',
         'De race heeft twee delen: halverwege verandert er iets, pas dan je plan aan.'];
     } else if (i === 2) {
       regels = ['Bonusrace: telt niet mee in je totaal.',
@@ -546,7 +548,7 @@
     meetDoek();
     $('melding').className = 'melding';
     if (gids) gidsStap(); // stap 1: de klok staat meteen stil
-    else melding('Kies vóór elk paars poortje een knop: op het poortje gebeurt het. Geen keuze kost punten.', { prio: 0, duur: AANLOOP_S + 3 });
+    else melding('Kies vóór elk poortje een knop: op het poortje gebeurt het. Geen keuze kost punten.', { prio: 0, duur: AANLOOP_S + 3 });
     R.rafId = root.requestAnimationFrame(lus);
   }
 
@@ -802,7 +804,7 @@
       if (o.fig) m.appendChild(el('div', { class: 'm-fig' + (o.figGroot ? ' groot kw-fig' : ''), html: o.fig }));
       m.appendChild(el('div', { text: tekst }));
       if (o.wacht) {
-        m.appendChild(el('button', { type: 'button', class: 'knop-paars m-verder', 'data-actie': 'wending-verder', text: 'Verder',
+        m.appendChild(el('button', { type: 'button', class: 'knop-hoofd m-verder', 'data-actie': 'wending-verder', text: 'Verder',
           onclick: function (ev) { ev.stopPropagation(); wachtVerder(); } }));
         m.appendChild(el('div', { class: 'm-tik', text: 'De klok staat stil tot je verder tikt.' }));
       }
@@ -824,7 +826,7 @@
   var doek = null, ctx = null, D = { w: 0, h: 0, dpr: 1 };
   var STERREN = [];
   (function () {
-    var kleuren = ['#ff8fb8', '#ffd166', '#7cc4ff', '#b07cff', '#ffffff', '#7ef0c4', '#ffffff'];
+    var kleuren = ['#F28C28', '#F6C343', '#8FD3DB', '#4FB7C8', '#FBF4E6', '#F5A65A', '#FBF4E6']; // Vonk: oranje, geel, teal-licht, teal, crème
     var z = 7;
     function rnd() { z = (z * 16807) % 2147483647; return (z - 1) / 2147483646; } // vaste reeks
     for (var i = 0; i < 170; i++) {
@@ -846,7 +848,7 @@
         else { x.beginPath(); x.arc(st.x * W, st.y * H, st.r, 0, 6.283); x.fill(); }
       });
       doc.documentElement.style.setProperty('--sterren', 'url(' + cv.toDataURL('image/png') + ')');
-    } catch (e) { /* zonder sterren is het scherm gewoon zwart */ }
+    } catch (e) { /* zonder sterren is het scherm gewoon donker */ }
   }
 
   function meetDoek() {
@@ -896,8 +898,8 @@
     return C < v.laag ? 'onder' : (C > v.hoog ? 'boven' : 'zone');
   }
   // Eén kleur per betekenis (ook op het eindscherm): groen = in de zone, blauw = te laag, geel = te hoog,
-  // rood = giftig/lever; oranje = ibuprofen, limoen = misselijk, paars = poortjes.
-  var LIJNKLEUR = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', tox: '#ff4d5e' };
+  // rood = giftig/lever; oranje = ibuprofen, limoen = misselijk; poortjes crème, gekozen/markering teal.
+  var LIJNKLEUR = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#F6C343', tox: '#ff4d5e' };
   // lv = leverschade (dagteller boven het maximum): dan is de lijn rood, ook al is de spiegel "in de zone".
   function lijnKleur(C, t, lv) {
     if (lv) return LIJNKLEUR.tox;
@@ -911,7 +913,7 @@
   // heen en weer springen). Die strook (R.strook) is gereserveerd: de stip, het waardelabel en het
   // "onderweg"-bolletje blijven erbuiten. Poortjes vlak bij de nu-lijn (PROX) volgen de kant altijd; verder
   // in het verleden houden ze de kant die ze hadden. Zo ligt er nooit tekst over tekst, ook niet op het poortje.
-  var INSPRING = 30, PROX = 40; // inspringen: het paarse label heeft een lijn ervoor en erachter
+  var INSPRING = 30, PROX = 40; // inspringen: het label heeft een lijn ervoor en erachter
 
   function poortjeAlpha(yg, h, basis) {
     var a = basis;
@@ -928,7 +930,7 @@
     return !!(m && nu < m.tot && y1 > m.top - 10 && y0 < m.bottom + 12);
   }
 
-  // stap 1: lijnen; stap 2: label (met zwarte halo) en icoontje van de keuze/toediening.
+  // stap 1: lijnen; stap 2: label (met halo in de grondkleur) en icoontje van de keuze/toediening.
   function tekenPoortjes(nu, stap) {
     var c = R.casus, w = D.w, h = D.h, L = R.links, Rr = w - R.rechts;
     ctx.font = '700 15px ' + FONT;
@@ -960,14 +962,14 @@
       var xs = zijde === 'links' ? L + INSPRING : Rr - INSPRING - wb; // begin van label (+ icoon)
       var l1 = xs - 8, r1 = xs + wb + 8;
       // komend: ≥ 90% dekking (contrast), doel: vol en helder, verleden: gedimd (geschiedenis)
-      // verleden: lijn gedimd, label in een dof paars dat toch ≥ 4,5:1 haalt (#8a72c0 op zwart = 5,25)
+      // verleden: lijn gedimd, label in ink-muted (#A9B2C0 op de grond = 8:1)
       var a = poortjeAlpha(yg, h, verleden ? (stap === 1 ? 0.4 : 1) : (doel ? 1 : 0.92));
       if (stap === 1) {
         if (a <= 0.01) continue;
         ctx.globalAlpha = a;
-        ctx.strokeStyle = doel ? '#d9c2ff' : (verleden ? KLEUR.paars : '#c9a4ff');
+        ctx.strokeStyle = doel ? '#FBF4E6' : (verleden ? '#A9B2C0' : CREME);
         ctx.lineWidth = doel ? 2.5 : (verleden ? 1 : 1.25);
-        if (doel && R.licht === 'knoppen') { ctx.lineWidth = 3 + 3 * (0.5 + 0.5 * Math.sin(nu / 240)); ctx.strokeStyle = '#ffffff'; }
+        if (doel && R.licht === 'knoppen') { ctx.lineWidth = 3 + 3 * (0.5 + 0.5 * Math.sin(nu / 240)); ctx.strokeStyle = '#FBF4E6'; }
         if (verleden && R.gegeven[g] && R.gegeven[g].soort === 'geen') { ctx.strokeStyle = KLEUR.koraal; ctx.globalAlpha = Math.min(1, a * 1.6); }
         ctx.beginPath();
         if (l1 > L - 6) { ctx.moveTo(L - 6, yg); ctx.lineTo(l1, yg); }
@@ -979,19 +981,19 @@
         if (a <= 0.01) continue;
         ctx.globalAlpha = a;
         ctx.textAlign = 'left';
-        ctx.strokeStyle = '#000'; ctx.lineWidth = 6; ctx.lineJoin = 'round';
+        ctx.strokeStyle = GROND; ctx.lineWidth = 6; ctx.lineJoin = 'round';
         ctx.globalAlpha = Math.min(1, a * 2.5); // uitsparing dekt de spiegel ook bij gedimde labels
         ctx.strokeText(label, xs, yg + 0.5);
         ctx.globalAlpha = a;
-        if (doel) { ctx.shadowColor = 'rgba(176,124,255,0.95)'; ctx.shadowBlur = 14; }
-        ctx.fillStyle = doel ? '#ecdfff' : (verleden ? '#8a72c0' : '#c9a4ff');
+        if (doel) { ctx.shadowColor = 'rgba(108,199,214,0.95)'; ctx.shadowBlur = 14; }
+        ctx.fillStyle = doel ? '#FBF4E6' : (verleden ? '#A9B2C0' : CREME);
         ctx.fillText(label, xs, yg + 0.5);
         ctx.shadowBlur = 0;
         if (icoonSoort) {
           var ix = xs + tw + 19;
           var pop = 1;
           if (doel && R.kiesT0) { var dtk = (nu - R.kiesT0) / 160; if (dtk < 1) pop = 1 + 0.2 * Math.sin(dtk * Math.PI); }
-          ctx.fillStyle = '#000';
+          ctx.fillStyle = GROND;
           ctx.globalAlpha = Math.min(1, a * 2.5);
           ctx.beginPath(); ctx.arc(ix, yg, 15, 0, 6.283); ctx.fill();
           ctx.globalAlpha = a;
@@ -1001,7 +1003,7 @@
             var at = dk ? getal(aantal * c.dosis.mg, 0) : aantal + '×';
             ctx.font = '800 13px ' + FONT;
             ctx.strokeText(at, ix + 17, yg + 1);
-            ctx.fillStyle = '#fff';
+            ctx.fillStyle = CREME;
             ctx.fillText(at, ix + 17, yg + 1);
             ctx.font = '700 15px ' + FONT;
           }
@@ -1015,7 +1017,7 @@
     if (!ctx || !R) return;
     var c = R.casus, w = D.w, h = D.h, L = R.links, Rr = w - R.rechts;
     ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = GROND;
     ctx.fillRect(0, 0, w, h);
 
     // sterretjes (schuiven mee omhoog met de tijd, rustig)
@@ -1053,14 +1055,14 @@
     var heeftHoog = rechts[0][0] < Rr - 0.5;
     if (heeftHoog) {
       var xt0 = c.toxisch != null ? xVan(c.toxisch) : w;
-      ctx.fillStyle = 'rgba(255,225,77,0.07)';
+      ctx.fillStyle = 'rgba(246,195,67,0.07)';
       ctx.beginPath(); pad(rechts); ctx.lineTo(xt0, h); ctx.lineTo(xt0, 0); ctx.closePath(); ctx.fill();
     }
     // de grenzen: de streep (ondergrens) en, als die er is, de bovenkant van het groene vlak
     ctx.strokeStyle = 'rgba(86,235,170,0.95)'; ctx.lineWidth = 2.5 + 1.5 * puls;
     ctx.beginPath(); pad(links); ctx.stroke();
     if (heeftHoog) {
-      ctx.strokeStyle = 'rgba(255,225,77,0.8)'; ctx.lineWidth = 2;
+      ctx.strokeStyle = 'rgba(246,195,67,0.8)'; ctx.lineWidth = 2;
       ctx.beginPath(); pad(rechts); ctx.stroke();
     }
     if (c.toxisch != null) {
@@ -1086,7 +1088,7 @@
       var bw = ctx.measureText(tekst).width + (metIcoon ? 22 : 0);
       if (onderMelding(y - 2, y + 15, nu)) return;
       var x0 = R.kant === 'links' ? L + INSPRING : Rr - INSPRING - bw;
-      ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+      ctx.strokeStyle = GROND; ctx.lineWidth = 4; ctx.lineJoin = 'round';
       if (metIcoon) tekenIcoon(ctx, 'doosje', x0 + 8, y + 7, 18);
       ctx.strokeText(tekst, x0 + (metIcoon ? 22 : 0), y);
       ctx.fillText(tekst, x0 + (metIcoon ? 22 : 0), y);
@@ -1107,13 +1109,13 @@
       } else if (g.type === 'klaring') {
         var yk = yVan(g.t);
         if (yk > h) return;
-        ctx.fillStyle = 'rgba(255,159,67,0.06)';
+        ctx.fillStyle = 'rgba(242,140,40,0.06)';
         ctx.fillRect(0, Math.max(0, yk), w, h - Math.max(0, yk));
         if (yk > -20) {
-          ctx.strokeStyle = 'rgba(255,159,67,0.8)'; ctx.lineWidth = 1.5;
+          ctx.strokeStyle = 'rgba(242,140,40,0.8)'; ctx.lineWidth = 1.5;
           ctx.beginPath(); ctx.moveTo(0, yk); ctx.lineTo(w, yk); ctx.stroke();
         }
-        ctx.fillStyle = '#ff9f43';
+        ctx.fillStyle = KLEUR.ibu;
         gebeurtenisLabel(g.label || 'ibuprofen', Math.max(yk + 18, BOVENRAND + 4), g.icoon !== null);
       }
     });
@@ -1121,13 +1123,13 @@
     // waar deel 2 begint: een geblokte strook dwars over de baan (zoals een sectorgrens op een circuit)
     var yS = yVan(R.deel2);
     if (yS > BOVENRAND - 10 && yS < h + 10) {
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.fillStyle = 'rgba(244,238,226,0.5)';
       for (var bx = 0, bi = 0; bx < w; bx += 6, bi++) ctx.fillRect(bx, yS + (bi % 2 ? 0 : -6), 6, 6);
       var geenOnthuld = !Object.keys(R.onthuld).length;
-      if (geenOnthuld) { ctx.fillStyle = '#ffffff'; gebeurtenisLabel('deel 2', yS + 18, false); }
+      if (geenOnthuld) { ctx.fillStyle = CREME; gebeurtenisLabel('deel 2', yS + 18, false); }
     }
 
-    // paarse poortjes, stap 1: alleen de lijnen (onder de spiegel)
+    // poortjes, stap 1: alleen de lijnen (onder de spiegel)
     tekenPoortjes(nu, 1);
 
     // de spiegel: lijn van boven (verleden) naar de nu-lijn
@@ -1140,7 +1142,7 @@
     if (reeks.length - start >= 2) {
       ctx.lineJoin = 'round'; ctx.lineCap = 'round';
       // gloed
-      ctx.strokeStyle = 'rgba(255,255,255,0.10)'; ctx.lineWidth = 9;
+      ctx.strokeStyle = 'rgba(244,238,226,0.10)'; ctx.lineWidth = 9;
       ctx.beginPath();
       for (var m = start; m < reeks.length; m++) {
         var px = xVan(reeks[m].C), py = yVan(reeks[m].t);
@@ -1166,15 +1168,15 @@
     }
     ctx.restore();
 
-    // paarse poortjes, stap 2: labels + icoontjes met zwarte uitsparing (boven de spiegel)
+    // poortjes, stap 2: labels + icoontjes met uitsparing in de grondkleur (boven de spiegel)
     tekenPoortjes(nu, 2);
 
     // nu-lijn; het woord "nu" aan de rand aan de kant van de poortlabels (buiten hun strook)
-    ctx.strokeStyle = 'rgba(255,255,255,0.28)'; ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(244,238,226,0.28)'; ctx.lineWidth = 1;
     ctx.setLineDash([3, 6]);
     ctx.beginPath(); ctx.moveTo(0, yN); ctx.lineTo(w, yN); ctx.stroke();
     ctx.setLineDash([]);
-    ctx.fillStyle = 'rgba(255,255,255,0.75)'; ctx.font = '600 12px ' + FONT;
+    ctx.fillStyle = 'rgba(244,238,226,0.75)'; ctx.font = '600 12px ' + FONT;
     ctx.textBaseline = 'bottom';
     if (R.kant === 'links') { ctx.textAlign = 'left'; ctx.fillText('nu', 4, yN - 4); }
     else { ctx.textAlign = 'right'; ctx.fillText('nu', w - 4, yN - 4); }
@@ -1225,7 +1227,7 @@
       ctx.strokeStyle = 'rgba(255,225,161,0.8)'; ctx.lineWidth = 1.5; ctx.stroke();
       ctx.fillStyle = 'rgba(255,225,161,0.85)'; ctx.font = '600 11px ' + FONT;
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.strokeStyle = '#000'; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+      ctx.strokeStyle = GROND; ctx.lineWidth = 3; ctx.lineJoin = 'round';
       ctx.strokeText('onderweg', xB, yB + rB + 4);
       ctx.fillText('onderweg', xB, yB + rB + 4);
     }
@@ -1274,18 +1276,18 @@
     ctx.beginPath(); ctx.moveTo(xD, BOVENRAND - 6); ctx.lineTo(xD, yN - KOP_R - 14); ctx.stroke();
     ctx.restore();
     var gr = ctx.createRadialGradient(xD, yN, KOP_R - 4, xD, yN, KOP_R + 16);
-    gr.addColorStop(0, kl); gr.addColorStop(1, 'rgba(0,0,0,0)');
+    gr.addColorStop(0, kl); gr.addColorStop(1, 'rgba(20,26,36,0)');
     ctx.globalAlpha = 0.5; ctx.fillStyle = gr;
     ctx.beginPath(); ctx.arc(xD, yN, KOP_R + 16, 0, 6.283); ctx.fill();
     ctx.globalAlpha = 1;
-    ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(xD, yN, KOP_R, 0, 6.283); ctx.fill();
+    ctx.fillStyle = GROND; ctx.beginPath(); ctx.arc(xD, yN, KOP_R, 0, 6.283); ctx.fill();
     ctx.strokeStyle = kl; ctx.lineWidth = 3; ctx.stroke();
     if (!tekenKop(ctx, wieVan(c), R.stemming || 'neutraal', xD, yN + 2)) {
       ctx.fillStyle = kl; ctx.beginPath(); ctx.arc(xD, yN, 6.5, 0, 6.283); ctx.fill();
     }
     if (R.licht === 'meter' || R.licht === 'patient') { // vertelstap: het gezicht licht op
       var pr = 0.5 + 0.5 * Math.sin(nu / 240);
-      ctx.strokeStyle = 'rgba(255,255,255,' + (0.9 - 0.6 * pr) + ')'; ctx.lineWidth = 2.5;
+      ctx.strokeStyle = 'rgba(244,238,226,' + (0.9 - 0.6 * pr) + ')'; ctx.lineWidth = 2.5;
       ctx.beginPath(); ctx.arc(xD, yN, KOP_R + 5 + 9 * pr, 0, 6.283); ctx.stroke();
     }
     if (C > R.cfg.Cmax) { // buiten beeld: pijltje
@@ -1294,26 +1296,26 @@
     }
     // bij het gezicht: hoe de patiënt zich voelt (kleur van de toestand) en daaronder de spiegel in getallen
     ctx.textBaseline = 'bottom'; ctx.textAlign = 'left';
-    ctx.strokeStyle = '#000'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+    ctx.strokeStyle = GROND; ctx.lineWidth = 4; ctx.lineJoin = 'round';
     ctx.font = '800 13.5px ' + FONT; ctx.fillStyle = kl;
     ctx.strokeText(gevoel, ga, gy);
     ctx.fillText(gevoel, ga, gy);
-    ctx.font = '600 12.5px ' + FONT; ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.font = '600 12.5px ' + FONT; ctx.fillStyle = 'rgba(244,238,226,0.85)';
     ctx.textBaseline = 'top';
     ctx.strokeText(waarde, wa, yN + 3);
     ctx.fillText(waarde, wa, yN + 3);
 
     // rand boven: as-labels; rand onder: vervagen naar de knoppen
     var gb = ctx.createLinearGradient(0, 0, 0, BOVENRAND);
-    gb.addColorStop(0, 'rgba(0,0,0,1)'); gb.addColorStop(0.86, 'rgba(0,0,0,0.9)'); gb.addColorStop(1, 'rgba(0,0,0,0)');
+    gb.addColorStop(0, 'rgba(20,26,36,1)'); gb.addColorStop(0.86, 'rgba(20,26,36,0.9)'); gb.addColorStop(1, 'rgba(20,26,36,0)');
     ctx.fillStyle = gb; ctx.fillRect(0, 0, w, BOVENRAND);
     var go = ctx.createLinearGradient(0, h - 50, 0, h);
-    go.addColorStop(0, 'rgba(0,0,0,0)'); go.addColorStop(1, 'rgba(0,0,0,1)');
+    go.addColorStop(0, 'rgba(20,26,36,0)'); go.addColorStop(1, 'rgba(20,26,36,1)');
     ctx.fillStyle = go; ctx.fillRect(0, h - 50, w, 50);
 
     ctx.lineJoin = 'round';
     function halo(tekst, x, y) {
-      ctx.strokeStyle = '#000'; ctx.lineWidth = 5; ctx.strokeText(tekst, x, y); ctx.fillText(tekst, x, y);
+      ctx.strokeStyle = GROND; ctx.lineWidth = 5; ctx.strokeText(tekst, x, y); ctx.fillText(tekst, x, y);
     }
     // DE SPIEGELBALK: de horizontale as bovenaan is de spiegel in het bloed. Een gekleurde balk met dezelfde
     // stukken als de banen eronder (te weinig | het groene vlak | te veel | giftig) en een wijzer die met het
@@ -1328,9 +1330,9 @@
     if (c.toxisch != null) stukken.push({ a: xVan(c.toxisch), b: Rr, k: LIJNKLEUR.tox, label: R.cfg.toxLabel });
     var mp = R.licht === 'meter' ? 0.5 + 0.5 * Math.sin(nu / 240) : 0;
     ctx.font = '800 10.5px ' + FONT; ctx.textBaseline = 'top';
-    ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.textAlign = 'left';
+    ctx.fillStyle = 'rgba(244,238,226,0.9)'; ctx.textAlign = 'left';
     halo('SPIEGEL IN HET BLOED', L, 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.72)'; ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(244,238,226,0.72)'; ctx.textAlign = 'right';
     halo(R.cfg.eenheid, Rr, 2);
     var by = 17, bh = 9;
     stukken.forEach(function (sk, si) {
@@ -1338,11 +1340,11 @@
       ctx.fillRect(sk.a + (si ? 1.5 : 0), by, sk.b - sk.a - (si ? 1.5 : 0), bh);
     });
     ctx.globalAlpha = 1;
-    if (mp) { ctx.strokeStyle = 'rgba(255,255,255,' + (0.9 - 0.5 * mp) + ')'; ctx.lineWidth = 2; ctx.strokeRect(L - 5 - 3 * mp, by - 5 - 3 * mp, Rr - L + 10 + 6 * mp, bh + 10 + 6 * mp); }
+    if (mp) { ctx.strokeStyle = 'rgba(244,238,226,' + (0.9 - 0.5 * mp) + ')'; ctx.lineWidth = 2; ctx.strokeRect(L - 5 - 3 * mp, by - 5 - 3 * mp, Rr - L + 10 + 6 * mp, bh + 10 + 6 * mp); }
     // de wijzer: zelfde plek links-rechts als het gezicht
     var xw = Math.max(L, Math.min(Rr, xD));
-    ctx.fillStyle = '#000'; ctx.fillRect(xw - 4, by - 4, 8, bh + 8);
-    ctx.fillStyle = '#fff'; ctx.fillRect(xw - 2, by - 4, 4, bh + 8);
+    ctx.fillStyle = GROND; ctx.fillRect(xw - 4, by - 4, 8, bh + 8);
+    ctx.fillStyle = CREME; ctx.fillRect(xw - 2, by - 4, 4, bh + 8);
     // getallen onder de balk; bij de ondergrens staat het woord "streep" (zo heet die grens in het spel)
     var vast = [{ C: v0.laag, streep: true }];
     if (v0.hoog !== Infinity) vast.push({ C: v0.hoog });
@@ -1354,7 +1356,7 @@
     ctx.font = '600 12px ' + FONT; ctx.textBaseline = 'top';
     ticks.forEach(function (tk) {
       var xt = xVan(tk.C), tekst = fmt(tk.C);
-      ctx.fillStyle = tk.streep ? 'rgba(126,240,196,1)' : 'rgba(255,255,255,0.72)';
+      ctx.fillStyle = tk.streep ? 'rgba(126,240,196,1)' : 'rgba(244,238,226,0.72)';
       if (tk.streep) {
         ctx.textAlign = 'right';
         halo('streep ' + tekst, xt + ctx.measureText(tekst).width / 2, 31);
@@ -1588,12 +1590,12 @@
   function draaiSvg() {
     return '<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Concentratie-tijdcurve die een kwartslag draait">' +
       '<g class="kw-draai">' +
-      '<path d="M18 82 H90 M18 82 V12" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
-      '<path d="M86 78 L91 82 L86 86 M14 16 L18 11 L22 16" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M18 82 H90 M18 82 V12" stroke="#F4EEE2" stroke-width="2.5" fill="none" stroke-linecap="round"/>' +
+      '<path d="M86 78 L91 82 L86 86 M14 16 L18 11 L22 16" stroke="#F4EEE2" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' +
       '<rect x="18" y="40" width="72" height="42" fill="rgba(61,220,151,0.18)"/>' +
       '<path d="M18 82 C26 30 34 24 42 32 C54 46 66 60 90 70" stroke="#7ef0c4" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
-      '<text class="kw-lbl" x="88" y="96" text-anchor="end" font-size="11" font-weight="700" fill="#d0d0d8">tijd</text>' +
-      '<text class="kw-lbl" x="4" y="10" font-size="11" font-weight="700" fill="#d0d0d8">spiegel</text>' +
+      '<text class="kw-lbl" x="88" y="96" text-anchor="end" font-size="11" font-weight="700" fill="#A9B2C0">tijd</text>' +
+      '<text class="kw-lbl" x="4" y="10" font-size="11" font-weight="700" fill="#A9B2C0">spiegel</text>' +
       '</g></svg>';
   }
 
@@ -1828,7 +1830,7 @@
     lijst.innerHTML = '';
     var bezig = R && !R.klaar && /^(race|tutorial)/.test(staat.fase);
     function knop(tekst, actie, fn, hoofd, huidig) {
-      lijst.appendChild(el('button', { type: 'button', class: hoofd ? 'knop-paars' : 'knop-lijn', 'data-menu': actie,
+      lijst.appendChild(el('button', { type: 'button', class: hoofd ? 'knop-hoofd' : 'knop-lijn', 'data-menu': actie,
         'aria-current': huidig ? 'true' : null, text: tekst, onclick: function () { sluitMenu(); fn(); } }));
     }
     knop(bezig ? 'Verder spelen' : 'Terug', 'verder', function () {}, true);
@@ -1960,6 +1962,11 @@
     $('menu-knop').addEventListener('click', openMenu);
     doc.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') sluitMenu(); });
     root.addEventListener('resize', function () { if (R && !R.klaar) meetDoek(); else if (R) { meetDoek(); teken(performance.now()); } });
+    // Het canvas meet labelbreedtes met Space Grotesk: laad die gewichten meteen en meet opnieuw zodra ze er zijn.
+    try {
+      Promise.all(['600 12px', '700 15px', '800 13px'].map(function (f) { return doc.fonts.load(f + ' "Space Grotesk"'); }))
+        .then(function () { if (R) { meetDoek(); teken(performance.now()); } }, function () { /* systeemletter */ });
+    } catch (e) { /* geen FontFace-API: systeemletter */ }
     naarScherm('start');
   }
 

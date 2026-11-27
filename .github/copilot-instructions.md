@@ -27,7 +27,7 @@ Meetbare regels (uit §6B, aangevuld):
 - Knoppen en tikvlakken minstens 48 × 48 px, met genoeg ruimte ertussen.
 - Geen horizontaal scrollen bij 375 px breed. Niets valt weg achter de notch of de onderbalk (safe-area).
 - Eindscherm: naam en totaalscore minstens 32 px, leesbaar op 2 meter.
-- Tekstcontrast minstens 4,5 : 1 (grote tekst 3 : 1), ook op de zwarte racescherm-achtergrond.
+- Tekstcontrast minstens 4,5 : 1 (grote tekst 3 : 1), ook op de donkere racescherm-achtergrond (`#141A24`).
 - Kleur is nooit de enige drager van betekenis (zone, te laag, te hoog): er is ook tekst, vorm of icoon. Denk aan kleurenblindheid.
 - Elke tik geeft binnen 100 ms zichtbare reactie. Animaties via `transform` en `opacity`; respecteer `prefers-reduced-motion`.
 - Geen externe bestanden, fonts, CDN's of netwerkverzoeken.
@@ -40,7 +40,7 @@ Fouten in de console, dode code, dubbele definities (gedeelde kleuren en knoppen
 
 ## Waar je níet op let
 
-Smaak: kleurkeuze, sfeer, tekeningen en woordkeus binnen de regels hierboven. Daar beslist de inhoudelijk eigenaar (Bart Pouls) zelf. Hooguit noemen als vraag, niet als fout.
+Smaak: kleurkeuze, sfeer, tekeningen en woordkeus binnen de regels hierboven. De huisstijl is Vonk & Vloeistof (bouwopdracht §6D); meld hooguit een kleur, lettertype of logo dat daar niet bij hoort, als vraag. Daar beslist de inhoudelijk eigenaar (Bart Pouls) zelf. Hooguit noemen als vraag, niet als fout.
 
 ## Vorm van elke opmerking
 

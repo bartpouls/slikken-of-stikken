@@ -21,7 +21,7 @@
  *   Eisen (§6B): naam en totaalscore ≥ 32 px. (De nabespreekvraag is vervallen op verzoek van Bart: de docent
  *   reflecteert straks met de groep vanuit de eindverslagen.)
  *
- * OPBOUW (één scrollend scherm in dezelfde stijl als de rest: zwart met sterren, witte tekst, paarse
+ * OPBOUW (één scrollend scherm in dezelfde stijl als de rest: donkere grond met sterren, crème tekst,
  * markering; de mini-curves zien er net zo uit als de spiegel tijdens de race):
  *   1. Eindscherm (boven de vouw): speelnaam (36 px), totaal QALY-punten (72 px), per race een kaart met
  *      de QALY-punten en een tegelrij (één tegel per poortje, kleur = waar de spiegel tot het volgende
@@ -48,8 +48,8 @@
 
   var TOESTAND_LABEL = { zone: 'in de zone', onder: 'te laag', boven: 'te hoog', giftig: 'giftig' };
   var SOORT_LABEL = { tablet: 'Tablet', zetpil: 'Zetpil', spuit: 'Spuit', overgeslagen: 'Overslaan', geblokkeerd: 'geblokkeerd', geenKeuze: 'geen keuze' }; // knopnamen uit de race
-  var IBU = '#ff9f43'; // ibuprofen: oranje, zoals in de race (paars is voor de poortjes)
-  var LIJN = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#ffe14d', giftig: '#ff4d5e' }; // = LIJNKLEUR in de race
+  var IBU = '#F5A65A'; // ibuprofen: oranje, zoals in de race
+  var LIJN = { zone: '#7ef0c4', onder: '#7cc4ff', boven: '#F6C343', giftig: '#ff4d5e' }; // = LIJNKLEUR in de race
 
   var WIE = { paracetamol: 'opa', lithium: 'vries', carbamazepine: 'idrissi' };
   function perDagCasus(c) { return c.raceDuur > 48; }
@@ -188,7 +188,7 @@
     var f = function (n) { return Math.round(n * 10) / 10; };
     var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" ' +
       'aria-label="Jouw spiegel tijdens de race, met de zone">';
-    s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="14" fill="#000"/>';
+    s += '<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="14" fill="#141A24"/>';
     // gebeurtenissen
     c.gebeurtenissen.forEach(function (g) {
       if (g.type === 'blokkade') {
@@ -435,7 +435,7 @@
           '<p class="eind-totaal" data-eind="totaal">' + getal(totaal) + '</p>' +
           '<div class="eind-kaarten">' + kaarten + '</div>' +
           legendaHtml(cs) +
-          '<div class="eind-acties"><button type="button" class="knop-paars groot" data-actie="opnieuw">Nog een keer</button>' +
+          '<div class="eind-acties"><button type="button" class="knop-hoofd groot" data-actie="opnieuw">Nog een keer</button>' +
             (data.bonus && !races[2] ? '<button type="button" class="knop-lijn groot" data-actie="bonus">Bonusrace: carbamazepine</button>' : '') + '</div>' +
           '<p class="eind-scorebord">Laat je naam en totaal op het scorebord zetten.</p>' +
           '<p class="eind-spelpunten">QALY-punten zijn spelpunten, geen echte QALY\'s.</p>' +
