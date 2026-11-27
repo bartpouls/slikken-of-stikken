@@ -1,8 +1,8 @@
 /*
  * Slikken of Stikken — src/einde.css  (eindscherm + toedienverslag). Prefix .eind- ; gedeelde stijl in style.css.
- * Zelfde stijl als de rest van het spel: zwart met sterren, witte tekst in het midden, paarse markering met een
- * lijn ervoor en erachter. Tegels en curve gebruiken precies de lijnkleuren van de race. Ibuprofen is oranje
- * (zoals in de race); paars blijft voor poortjes en tijdmarkering. Tekstkleuren halen WCAG AA op zwart.
+ * Zelfde stijl als de rest van het spel: donkere Vonk-grond met sterren, crème tekst in het midden, markering in
+ * teal met een lijn ervoor en erachter. Tegels en curve gebruiken precies de lijnkleuren van de race. Ibuprofen is
+ * oranje (zoals in de race). Tekstkleuren halen WCAG AA op de grond (#141A24).
  */
 #scherm-einde { padding-bottom: 0; scroll-behavior: auto; }
 .eind-binnen { position: relative; }
@@ -15,7 +15,7 @@
 /* ---------- 1. eindscherm ---------- */
 .eind-held { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 2px; }
 .eind-naam {
-  margin: 0; width: 100%;
+  margin: 0; width: 100%; font-family: var(--font-titel);
   font-size: 36px; font-weight: 800; line-height: 1.08; letter-spacing: -.01em;
   overflow-wrap: normal; word-break: normal; hyphens: none; /* einde.js past de maat aan (≥ 32 px) */
 }
@@ -43,7 +43,7 @@
 .eind-kaart-titel small { font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--zacht); }
 .eind-kaart-score { flex: none; font-size: 34px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
 .eind-kaart-rechts { flex: none; display: flex; flex-direction: column; align-items: flex-end; }
-.eind-kaart-meer { margin-top: 2px; font-size: 15px; font-weight: 700; color: var(--paars); }
+.eind-kaart-meer { margin-top: 2px; font-size: 15px; font-weight: 700; color: var(--teal-diep); }
 
 /* tegels: één per poortje, twee rijen */
 .eind-tegels { display: flex; flex-direction: column; gap: 6px; margin-top: 9px; }
@@ -52,21 +52,21 @@
 .eind-tegelvak { display: grid; grid-template-columns: repeat(var(--n), 1fr); gap: 3px; padding: 0; }
 .eind-tegel {
   position: relative;
-  display: block; height: 22px; border-radius: 4px; background: #2c2c33;
+  display: block; height: 22px; border-radius: 4px; background: #2A3443;
   animation: eind-tegel .32s ease both; animation-delay: calc(var(--i, 0) * 14ms + 150ms);
 }
 @keyframes eind-tegel { from { transform: scale(.4) rotateX(80deg); opacity: .2; } }
 .eind-tegel.m::after { /* misselijk: limoen streepje in de tegel (zoals de misselijk-strook in de race) */
   content: ""; position: absolute; left: 3px; right: 3px; bottom: 3px; height: 4px; background: #c8eb78; border-radius: 2px;
-  box-shadow: 0 0 0 1.5px #000;
+  box-shadow: 0 0 0 1.5px var(--grond);
 }
 .eind-tegel.ibu::before { /* ibuprofen: oranje streep vóór de tegel */
-  content: ""; position: absolute; left: -3px; top: -3px; bottom: -3px; width: 3px; background: #ff9f43; border-radius: 2px;
+  content: ""; position: absolute; left: -3px; top: -3px; bottom: -3px; width: 3px; background: var(--ibu); border-radius: 2px;
 }
 /* = LIJNKLEUR in app.js (de kleur van de spiegel in de race) */
 .t-zone { background: #7ef0c4; }
 .t-onder { background: #7cc4ff; }
-.t-boven { background: #ffe14d; }
+.t-boven { background: #F6C343; }
 .t-giftig { background: #ff4d5e; }
 
 .eind-legenda {
@@ -77,15 +77,11 @@
 .eind-legenda li { display: inline-flex; align-items: center; gap: 6px; }
 .eind-legenda .eind-tegel { width: 16px; height: 16px; border-radius: 4px; animation: none; }
 .eind-leg-m { width: 18px; height: 6px; border-radius: 2px; background: #c8eb78; }
-.eind-leg-ibu { width: 5px; height: 18px; border-radius: 2px; background: #ff9f43; }
+.eind-leg-ibu { width: 5px; height: 18px; border-radius: 2px; background: var(--ibu); }
 
-/* Voettekst met logo Capsule Pop, rechtsonder. Het logo heeft een donkere rand: op een crèmevlakje (kleur uit het logo zelf). */
-.cp-voet { display: flex; justify-content: flex-end; padding: 18px calc(var(--veilig-rechts) + 16px) calc(var(--veilig-onder) + 14px) 16px; }
-.cp-logo { background: #FBF4E6; border-radius: 12px; padding: 6px 8px; line-height: 0; }
-.cp-logo svg { display: block; height: 40px; width: auto; }
 .eind-acties { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-top: 14px; }
 .eind-acties .knop-lijn.groot { width: 100%; min-height: 52px; font-size: 18px; }
-.eind-acties .knop-paars.groot { flex: 1 1 auto; max-width: none; }
+.eind-acties .knop-hoofd.groot { flex: 1 1 auto; max-width: none; }
 /* dempknop van app.js: dezelfde plek als op de andere schermen (rechtsboven), maar hij scrolt mee */
 #scherm-einde > .demp { position: absolute; top: calc(var(--veilig-boven) + 6px); right: calc(var(--veilig-rechts) + 6px); }
 .eind-naam-vrij { float: left; width: 46px; height: 1em; }
@@ -99,7 +95,8 @@
 .eind-v-kop { display: flex; align-items: center; gap: 12px; }
 .eind-v-fig { width: 54px; flex: none; cursor: pointer; }
 .eind-v-kop > div { flex: 1 1 auto; min-width: 0; }
-.eind-v-kop h2 { margin: 2px 0 0; font-size: 28px; font-weight: 800; line-height: 1.05; }
+.eind-v-kop h2 { margin: 2px 0 0; font-family: var(--font-titel); font-size: 28px; font-weight: 800; line-height: 1.05; }
+.eind-v-kop h2 .eind-v-wie { font-family: var(--font); }
 .eind-v-wie { font-size: 15px; font-weight: 600; color: var(--zacht); white-space: nowrap; }
 .eind-v-score { margin: 4px 0 0; font-size: 15px; font-weight: 700; color: var(--zacht); }
 .eind-v-score b { font-size: 30px; font-weight: 800; line-height: 1; color: var(--wit); font-variant-numeric: tabular-nums; }
@@ -108,11 +105,11 @@
 .eind-curve svg { display: block; width: 100%; height: auto; border: 1.5px solid var(--lijn); border-radius: 14px; }
 .eind-curve figcaption { margin-top: 6px; font-size: 14px; color: var(--zacht); }
 .eind-svg-label, .eind-svg-as, .eind-svg-gebeurtenis, .eind-svg-ibu { font-family: var(--font); font-size: 11.5px; font-weight: 600; }
-.eind-svg-label { fill: rgba(255, 255, 255, .8); }
+.eind-svg-label { fill: rgba(244, 238, 226, .82); }
 .eind-svg-label.tox { fill: #ff9a9a; }
-.eind-svg-as { fill: rgba(255, 255, 255, .72); }
+.eind-svg-as { fill: var(--zacht); }
 .eind-svg-gebeurtenis { fill: #d6ef9a; }
-.eind-svg-ibu { fill: #ff9f43; }
+.eind-svg-ibu { fill: var(--ibu); }
 
 .eind-opbouw { width: 100%; margin: 16px 0 0; border-collapse: collapse; font-size: 18px; font-variant-numeric: tabular-nums; }
 .eind-opbouw caption { text-align: left; font-size: 13px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--zacht); padding-bottom: 4px; }
@@ -127,8 +124,8 @@
 .eind-echt { margin: 0 0 10px; font-size: 15.5px; line-height: 1.45; color: var(--zacht); }
 .eind-echt b { font-size: 17px; color: var(--wit); }
 .eind-echt-kop {
-  display: inline-block; padding: 0 8px; border: 2px dashed var(--paars); border-radius: 8px;
-  font-size: 13px; font-weight: 800; color: var(--paars); letter-spacing: .04em;
+  display: inline-block; padding: 0 8px; border: 2px dashed var(--teal-diep); border-radius: 8px;
+  font-size: 13px; font-weight: 800; color: var(--teal-diep); letter-spacing: .04em;
 }
 
 /* rooster per poortje */
@@ -146,10 +143,10 @@
   background: var(--vlak); border: 1.5px solid var(--lijn); border-radius: 10px;
 }
 .eind-cel.misselijk { background: rgba(190, 230, 90, .16); }
-.eind-cel.echt { border: 2px dashed var(--paars); }
+.eind-cel.echt { border: 2px dashed var(--teal-diep); }
 .eind-cel-uur { position: absolute; top: 2px; left: 6px; font-size: 11.5px; font-weight: 700; color: var(--zacht); }
 .eind-cel-echt {
-  position: absolute; top: 1px; right: 4px; font-size: 11px; font-weight: 800; color: var(--paars);
+  position: absolute; top: 1px; right: 4px; font-size: 11px; font-weight: 800; color: var(--teal-diep);
 }
 .eind-cel-anders { /* neutraal: alleen "anders dan schema", geen oordeel */
   position: absolute; bottom: 2px; right: 3px;
@@ -170,8 +167,8 @@
 .eind-dagkop { font-size: 12.5px; font-weight: 700; color: var(--zacht); text-align: center; grid-template-columns: 54px repeat(var(--k, 3), 1fr); gap: 5px 6px; }
 .eind-dagkop span:first-child { visibility: hidden; }
 .eind-dag { font-size: 15px; font-weight: 700; color: var(--zacht); }
-.eind-markering { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; color: #ff9f43; font-size: 15px; font-weight: 800; }
-.eind-markering::before, .eind-markering::after { content: ""; flex: 1 1 auto; height: 1.5px; background: #ff9f43; }
+.eind-markering { display: flex; align-items: center; gap: 10px; margin: 6px 0 4px; color: var(--ibu); font-size: 15px; font-weight: 800; }
+.eind-markering::before, .eind-markering::after { content: ""; flex: 1 1 auto; height: 1.5px; background: var(--ibu); }
 
 .eind-leg {
   list-style: none; margin: 10px 0 0; padding: 0;
@@ -181,7 +178,8 @@
 .eind-leg-ic { display: inline-flex; width: 22px; height: 22px; align-items: center; justify-content: center; }
 .eind-leg-ic svg { width: 22px; height: 22px; }
 .eind-leg-leeg { font-weight: 700; color: var(--zacht); font-size: 17px; }
-.eind-leg-echt { padding: 0 5px; border: 2px dashed var(--paars); border-radius: 6px; font-size: 11.5px; font-weight: 800; color: var(--paars); }
+.eind-leg-echt { padding: 0 5px; border: 2px dashed var(--teal-diep); border-radius: 6px; font-size: 11.5px; font-weight: 800; color: var(--teal-diep); }
+
 .eind-leg-anders { width: 20px; display: grid; place-items: center; color: var(--zacht); font-weight: 800; font-size: 17px; }
 .eind-leg-misselijk { width: 18px; height: 18px; border-radius: 5px; background: rgba(190, 230, 90, .16); border: 1.5px solid var(--lijn); }
 
@@ -198,7 +196,11 @@
 .eind-telling .over b, .eind-telling .over small { color: #ff9d92; }
 
 /* ---------- 3. onderaan: terug naar boven ---------- */
-.eind-voet { display: flex; justify-content: center; margin-top: 26px; padding: 0 0 calc(var(--veilig-onder) + 18px); }
+.eind-voet { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: 26px; padding: 0 0 calc(var(--veilig-onder) + 18px); }
+.eind-voet .knop-lijn { grid-column: 2; }
+/* logo Capsule Pop rechts naast de knop, klein en direct op de achtergrond (op donker draagt de crème P de vorm) */
+.eind-logo { grid-column: 3; justify-self: end; line-height: 0; }
+.eind-logo svg { display: block; height: 28px; width: auto; }
 
 @media (min-height: 800px) {
   .eind-totaal { font-size: 80px; }

@@ -60,7 +60,7 @@
       { op: -Infinity, zin: 'Zijn gezicht staat op de spiegel: zoveel paracetamol zit er in zijn bloed.', licht: 'meter' },
       { op: -Infinity, zin: 'Links van de streep heeft hij pijn, in het groene vlak niet: blijf binnen dat venster.', licht: 'banen' },
       { op: -Infinity, zin: 'Een QALY is een jaar in goede gezondheid; hier zijn het spelpunten: in het groene vlak erbij, erbuiten eraf.', licht: 'qaly' },
-      { op: -Infinity, zin: 'De paarse lijnen zijn poortjes: kies vóór élk poortje een knop, voordat de balk boven de knoppen vol is.', licht: 'knoppen' },
+      { op: -Infinity, zin: 'De lichte lijnen zijn poortjes: kies vóór élk poortje een knop, voordat de balk boven de knoppen vol is.', licht: 'knoppen' },
       { op: -Infinity, zin: 'Opa Jan heeft pijn: kies een tablet voor het eerste poortje.', knop: 'slik', poortje: 0,
         daarna: 'Een pil moet eerst door je maag.' },
       { op: 0.3, zin: 'Niets geven is ook een keuze: tik dan Overslaan. Geen keuze kost punten.', knop: 'niets', poortje: 1,

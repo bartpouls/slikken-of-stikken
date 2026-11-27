@@ -239,8 +239,8 @@ const kaart = (l) => `<figure><a href="${l.bestand}"><img src="${l.bestand}" alt
 let html = `<!doctype html><html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Slikken of Stikken — schermen ${maat.join(' × ')}</title>
 <style>
-body{margin:0;padding:24px;background:#16161c;color:#eee;font:16px/1.45 system-ui,sans-serif}
-h1{font-size:24px;margin:0 0 4px}h2{font-size:19px;margin:36px 0 12px;color:#b07cff}
+body{margin:0;padding:24px;background:#141A24;color:#F4EEE2;font:16px/1.45 system-ui,sans-serif}
+h1{font-size:24px;margin:0 0 4px}h2{font-size:19px;margin:36px 0 12px;color:#6CC7D6}
 p{max-width:820px;color:#c4c4cc;margin:6px 0}
 .rij{display:flex;flex-wrap:wrap;gap:18px}
 figure{margin:0;width:260px}img{display:block;width:260px;height:auto;border:1px solid #3a3a44;border-radius:10px}
