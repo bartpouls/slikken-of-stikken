@@ -254,13 +254,15 @@ Eén bouwronde, één verse controle op A, B en C, daarna de correctielijst van 
 
 Stijlkeuze: **één stijl voor alle schermen** (start, tutorial, introkaartjes, races en eindscherm): de sfeer van Universe Forecast (donkere grond met gekleurde sterretjes, platte illustraties, tijdmarkeringen met een lijn ervoor en erachter, korte tekst in het midden), met de tijd van boven naar beneden.
 
-**Huisstijl: Vonk & Vloeistof** (stijlgids van Bart Pouls, november 2026; niveau "Vol"). Leidend voor kleur, lettertype en logo; de sfeer hierboven, de figuurtjes en de vorm van de instructies blijven zoals ze zijn. Concreet:
+**Huisstijl: Vonk & Vloeistof** (stijlgids van Bart Pouls, november 2026). De stijlgids levert input, geen voorschrift: doel is dat spelers die op één dag meerdere spellen van Bart doen, zien dat ze van dezelfde maker zijn. Het logo draagt die herkenning het meest; palet en lettertypes helpen. De sfeer hierboven, de figuurtjes en de vorm van de instructies blijven zoals ze zijn. Zo is het nu ingevuld:
 - Kleuren uit het donkere thema van de stijlgids: grond `#141A24`, vlakken `#1E2633`, tekst crème `#F4EEE2`, bijzaken `#A9B2C0`. Markeringen, gekozen knop en tijdstrook in teal (`#6CC7D6`/`#4FB7C8`). Poortjes zijn crème lijnen (geen paars meer). Sterretjes in oranje, geel, teal en crème.
 - Eén oranje hoofdknop per scherm (`#F28C28`, inkttekst `#1B2230`, harde schaduw), capsulevormig.
 - De zonekleuren blijven betekenisdragers en vallen buiten het palet: blauw (te weinig), groen (het groene vlak), geel `#F6C343` (te veel), rood (giftig/lever); ibuprofen oranje `#F5A65A`.
 - Lettertypes: Bricolage Grotesque 800 voor titels, Space Grotesk voor al het andere, ingebed in het bestand (geen netwerk).
 - Logo Capsule Pop: power-up-stand één keer bij de titel (startscherm, scorebord), rust-stand rechtsonder in de voettekst (startscherm, eindscherm, scorebord). Altijd het echte bestand (`src/logo/`), nooit natekenen.
-- Bewust afwijkend van de stijlgids: het spel heeft alleen een donker thema (de sfeer), geen petrol kopbalk, en het heeft figuurtjes met gezichten (patiënten in de casus). Opa Jan en mevrouw De Vries blijven herkenbaar aan hun gekleurde hoedje, maar zijn zo getekend dat ze in die wereld passen. De tutorial ziet eruit als het spel, omdat hij het spel is.
+- Eigen keuzes binnen die herkenning: alleen een donker thema (de sfeer), geen petrol kopbalk, figuurtjes met gezichten en gekleurde hoedjes (ook rood: kleding is geen veiligheidssignaal).
+
+Opa Jan en mevrouw De Vries blijven herkenbaar aan hun gekleurde hoedje, maar zijn zo getekend dat ze in die wereld passen. De tutorial ziet eruit als het spel, omdat hij het spel is.
 
 Referenties (patronen overnemen, niets kopiëren):
 - **Uitstraling:** Universe Forecast van Neal Agarwal (neal.fun/universe-forecast) — rustige, grote typografie, veel lucht, alles beweegt soepel, één ding tegelijk in beeld.
