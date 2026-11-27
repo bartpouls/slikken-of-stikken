@@ -259,7 +259,7 @@ Stijlkeuze: **één stijl voor alle schermen** (start, tutorial, introkaartjes, 
 - Eén oranje hoofdknop per scherm (`#F28C28`, inkttekst `#1B2230`, harde schaduw), capsulevormig.
 - De zonekleuren blijven betekenisdragers en vallen buiten het palet: blauw (te weinig), groen (het groene vlak), geel `#F6C343` (te veel), rood (giftig/lever); ibuprofen oranje `#F5A65A`.
 - Lettertypes: Bricolage Grotesque 800 voor titels, Space Grotesk voor al het andere, ingebed in het bestand (geen netwerk).
-- Logo Capsule Pop: power-up-stand één keer bij de titel (startscherm, scorebord), rust-stand rechtsonder in de voettekst (startscherm, eindscherm, scorebord). Altijd het echte bestand (`src/logo/`), nooit natekenen.
+- Logo Capsule Pop: power-up-stand één keer bij de titel (startscherm, scorebord), rust-stand rechtsonder (startscherm en scorebord in de voettekst; op het eindscherm klein rechts naast "Terug naar je score", direct op de achtergrond, zonder vlakje). Altijd het echte bestand (`src/logo/`), nooit natekenen.
 - Eigen keuzes binnen die herkenning: alleen een donker thema (de sfeer), geen petrol kopbalk, figuurtjes met gezichten en gekleurde hoedjes (ook rood: kleding is geen veiligheidssignaal).
 
 Opa Jan en mevrouw De Vries blijven herkenbaar aan hun gekleurde hoedje, maar zijn zo getekend dat ze in die wereld passen. De tutorial ziet eruit als het spel, omdat hij het spel is.

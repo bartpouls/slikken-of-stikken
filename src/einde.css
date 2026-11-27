@@ -79,10 +79,6 @@
 .eind-leg-m { width: 18px; height: 6px; border-radius: 2px; background: #c8eb78; }
 .eind-leg-ibu { width: 5px; height: 18px; border-radius: 2px; background: var(--ibu); }
 
-/* Voettekst met logo Capsule Pop, rechtsonder. Het logo heeft een donkere rand: op een crèmevlakje (kleur uit het logo zelf). */
-.cp-voet { display: flex; justify-content: flex-end; padding: 18px calc(var(--veilig-rechts) + 16px) calc(var(--veilig-onder) + 14px) 16px; }
-.cp-logo { background: #FBF4E6; border-radius: 12px; padding: 6px 8px; line-height: 0; }
-.cp-logo svg { display: block; height: 40px; width: auto; }
 .eind-acties { width: 100%; display: flex; flex-direction: column; align-items: stretch; gap: 10px; margin-top: 14px; }
 .eind-acties .knop-lijn.groot { width: 100%; min-height: 52px; font-size: 18px; }
 .eind-acties .knop-hoofd.groot { flex: 1 1 auto; max-width: none; }
@@ -200,7 +196,11 @@
 .eind-telling .over b, .eind-telling .over small { color: #ff9d92; }
 
 /* ---------- 3. onderaan: terug naar boven ---------- */
-.eind-voet { display: flex; justify-content: center; margin-top: 26px; padding: 0 0 calc(var(--veilig-onder) + 18px); }
+.eind-voet { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; margin-top: 26px; padding: 0 0 calc(var(--veilig-onder) + 18px); }
+.eind-voet .knop-lijn { grid-column: 2; }
+/* logo Capsule Pop rechts naast de knop, klein en direct op de achtergrond (op donker draagt de crème P de vorm) */
+.eind-logo { grid-column: 3; justify-self: end; line-height: 0; }
+.eind-logo svg { display: block; height: 28px; width: auto; }
 
 @media (min-height: 800px) {
   .eind-totaal { font-size: 80px; }
