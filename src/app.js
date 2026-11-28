@@ -512,7 +512,7 @@
     var race = S.maakRace(c, gids ? { blokkades: false } : undefined);
     R = {
       i: i, casus: c, cfg: cfg, race: race,
-      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, vol: gids.vol, geenKeuze: gids.geenKeuze, i: 0, bevroren: false, actief: false, wijsVanaf: 0, beatTot: 0, t0: performance.now(), duur: null } : null,
+      gids: gids ? { stappen: gids.stappen, eind: gids.eind, klaar: gids.klaar, vol: gids.vol, geenKeuze: gids.geenKeuze, i: 0, bevroren: false, actief: false, wijsVanaf: 0, beatTot: 0, leesTot: 0, t0: performance.now(), duur: null } : null,
       stemming: null, gevoel: '', licht: null,
       // elke race heeft twee delen: een gewoon stuk, en dan verandert er iets (eerste gebeurtenis uit de casusdata)
       deel2: gids ? gids.deel2 : c.gebeurtenissen.reduce(function (m, g) { return Math.min(m, g.type === 'blokkade' ? g.van : g.t); }, Infinity),
@@ -698,12 +698,12 @@
     }
     G.actief = true;
     if (!st.knop) { // vertelstap: de klok staat even stil, daarna gaat het vanzelf verder
-      var duur = (1.3 + 0.045 * st.zin.length + (st.fig ? 2 : 0)) * 1000 / Math.min(SPEED, 4);
+      var duur = leestijd(st.zin, !!st.fig);
       G.beatVan = performance.now() + MELD_FADE;
       G.beatTot = G.beatVan + duur;
       G.bevroren = true;
       zetLicht(st.licht);
-      melding(st.zin, { soort: 'beat', beat: duur, fig: st.fig === 'draai' ? draaiSvg() : null, figGroot: st.fig === 'draai' });
+      melding(st.zin, { soort: 'beat', beat: duur, tik: duur, fig: st.fig === 'draai' ? draaiSvg() : null, figGroot: st.fig === 'draai' });
       return;
     }
     zetLicht(null);
@@ -713,6 +713,12 @@
     melding(zin, { soort: st.zin === 'lekentaal.onder' && onder ? 'au' : null });
     G.wijsVanaf = performance.now() + MELD_FADE + 40; // de markering komt samen met de zin, niet ervoor
     gidsControle();
+  }
+  // Leestijd van een uitlegzin in de oefenronde (ms echte tijd): ruim genoeg voor een rustige lezer
+  // (2 s om te kijken + 0,07 s per teken, ±14 tekens per seconde; met figuur 3 s extra). Wie sneller leest,
+  // tikt op het speelveld en gaat meteen verder.
+  function leestijd(zin, fig) {
+    return (2 + 0.07 * zin.length + (fig ? 3 : 0)) * 1000 / Math.min(SPEED, 4);
   }
   // De klok staat stil zolang de gevraagde keuze niet klaarstaat voor het poortje van deze stap. Wisselt of
   // wist de speler zijn keuze (dat kan, net als in de race), dan wacht de klok opnieuw. De gevraagde knop is
@@ -753,10 +759,17 @@
   function tikPodium() {
     if (R && R.wacht) { wachtVerder(); return; }
     var G = R && R.gids;
-    if (!G || !G.actief || G.stappen[G.i].knop || R.klaar) return;
+    if (!G || R.klaar) return;
+    if (!G.actief && performance.now() < G.leesTot) { G.leesTot = 0; wegHint(); speel('tik'); return; } // zin na een keuze
+    if (!G.actief || G.stappen[G.i].knop) return;
     if (performance.now() < G.beatVan + 500) return;
     G.beatTot = 0;
     speel('tik');
+  }
+
+  function wegHint() {
+    var h = doc.querySelector('#melding .m-tik-verder');
+    if (h) h.parentNode.removeChild(h);
   }
 
   // Dosisknoppen (lithium, carbamazepine): de keuze heet naar de dosis in mg; paracetamol 1 g per keer.
@@ -780,7 +793,8 @@
   // ---------- meldingen (korte witte tekst, boven in het podium, in het verleden-deel) ----------
   // Er is er altijd hooguit één in beeld: een nieuwe melding wacht tot de vorige is uitgefaded.
   // Zolang hij zichtbaar is, tekent het canvas geen poort- of gebeurtenislabels onder hem (R.meldVlak).
-  var meldTimer = 0, meldWissel = 0, MELD_FADE = 260;
+  var meldTimer = 0, meldWissel = 0, hintTimer = 0, MELD_FADE = 260;
+  var TIK_VERDER = 'Klaar met lezen? Tik om verder te gaan.';
   function melding(tekst, o) {
     o = o || {};
     if (!R) return;
@@ -802,7 +816,15 @@
       if (o.beat) m.style.setProperty('--beat', Math.round(o.beat) + 'ms');
       m.innerHTML = '';
       if (o.fig) m.appendChild(el('div', { class: 'm-fig' + (o.figGroot ? ' groot kw-fig' : ''), html: o.fig }));
-      m.appendChild(el('div', { text: tekst }));
+      var tekstVak = el('div', { text: tekst });
+      m.appendChild(tekstVak);
+      // oefenronde: wie klaar is met lezen mag tikken; de regel verdwijnt als de leestijd om is
+      if (o.tik) {
+        var hint = el('div', { class: 'm-tik-verder', text: TIK_VERDER, 'aria-hidden': 'true' });
+        tekstVak.appendChild(hint);
+        clearTimeout(hintTimer);
+        hintTimer = setTimeout(function () { if (hint.parentNode) hint.parentNode.removeChild(hint); }, o.tik);
+      }
       if (o.wacht) {
         m.appendChild(el('button', { type: 'button', class: 'knop-hoofd m-verder', 'data-actie': 'wending-verder', text: 'Verder',
           onclick: function (ev) { ev.stopPropagation(); wachtVerder(); } }));
@@ -1394,9 +1416,11 @@
     if (!(G && G.bevroren) && !R.wacht) R.klok += dtEcht * SPEED / R.cfg.secPerUur;
     var c = R.casus, race = R.race, duur = G ? G.eind : c.raceDuur;
     // oefenronde: de klok stopt precies op het moment van de volgende stap
+    // (maar niet zolang de zin na de vorige keuze nog gelezen wordt: dan wacht de klok op die stap)
+    var leest = G && performance.now() < G.leesTot;
     if (G && !G.actief && G.i < G.stappen.length && R.klok >= G.stappen[G.i].op) {
       if (isFinite(G.stappen[G.i].op)) R.klok = G.stappen[G.i].op;
-      gidsStap();
+      if (!leest) gidsStap();
     }
     if (G) gidsControle();
     if (R.klok > duur) R.klok = duur;
@@ -1418,7 +1442,7 @@
     werkPatientBij();
     teken(performance.now());
 
-    if (R.klok >= duur && (G || race.klaar)) eindeRace();
+    if (R.klok >= duur && (G ? !leest : race.klaar)) eindeRace();
   }
 
   function neemMonster(forceer) {
@@ -1498,7 +1522,10 @@
     werkKnoppenBij();
     var G = R.gids;
     if (G && G.i < G.stappen.length && G.stappen[G.i].poortje === g) {
-      melding(G.stappen[G.i].daarna, {});
+      // deze zin blijft minstens zijn leestijd staan: de volgende stap (of het eindkaartje) wacht zo nodig
+      var lees = leestijd(G.stappen[G.i].daarna, false);
+      melding(G.stappen[G.i].daarna, { tik: lees });
+      G.leesTot = performance.now() + MELD_FADE + lees;
       G.i++;
       G.actief = false;
       gidsControle();
@@ -1853,7 +1880,7 @@
     var weg = performance.now() - menuSinds;
     if (R && !R.klaar) {
       R.laatsteTs = null;
-      if (R.gids) { R.gids.beatVan += weg; R.gids.beatTot += weg; R.gids.wijsVanaf += weg; } // vertelstap loopt verder waar hij was
+      if (R.gids) { R.gids.beatVan += weg; R.gids.beatTot += weg; R.gids.wijsVanaf += weg; if (R.gids.leesTot) R.gids.leesTot += weg; } // vertelstap loopt verder waar hij was
       if (R.psFlits) R.psFlits.tot += weg;
     }
     $('menu-knop').focus({ preventScroll: true });

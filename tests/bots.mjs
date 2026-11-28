@@ -272,7 +272,7 @@ async function speelTutorial(page, run) {
       const d = window.SoS.debug, w = document.querySelector('#knoppen [data-wijs]');
       return { fase: d.fase, gids: d.gids, klok: d.klok, wijs: w ? w.getAttribute('data-actie') : null,
         aantalWijs: document.querySelectorAll('[data-wijs]').length, finish: !document.getElementById('finish').hidden,
-        zin: (document.querySelector('#melding.zicht') || { textContent: '' }).textContent.trim() };
+        zin: ((document.querySelector('#melding.zicht') || { getAttribute: () => '' }).getAttribute('data-zin') || '').trim() };
     });
     if (s.fase !== 'tutorial') break;
     if (s.finish) break;
@@ -280,7 +280,7 @@ async function speelTutorial(page, run) {
       laatsteStap = s.gids.stap;
       // wacht tot de zin van deze stap is ingefaded (de vorige zin fadet eerst uit)
       await wachtOp(page, () => { const m = document.querySelector('#melding.zicht'); return !!m && m.getAttribute('data-zin') === window.SoS.debug.gids.zin && getComputedStyle(m).opacity > 0.9; }, undefined, 3000).catch(() => null);
-      const na = await page.evaluate(() => ({ klok: window.SoS.debug.klok, zin: (document.querySelector('#melding.zicht') || { textContent: '' }).textContent.trim() }));
+      const na = await page.evaluate(() => ({ klok: window.SoS.debug.klok, zin: ((document.querySelector('#melding.zicht') || { getAttribute: () => '' }).getAttribute('data-zin') || '').trim() }));
       run.tut.klokStil.push(na.klok === s.klok); // de klok staat stil zolang de speler niets doet
       run.metingen.push(await meetScherm(page));
       if (run.tut.stappen.length === 2) run.tut.ui = await meetRaceUi(page); // derde knopstap (vertelstappen tellen niet mee)
