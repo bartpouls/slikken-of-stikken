@@ -324,6 +324,9 @@ input { font: inherit; }
 }
 .melding.beat.zicht::after { animation: beat var(--beat, 4s) linear forwards; }
 @keyframes beat { to { transform: scaleX(0); } }
+/* oefenronde: "Klaar met lezen? Tik om verder te gaan." komt rustig na de zin, zodat eerst de zin gelezen wordt */
+.melding .m-tik-verder { margin-top: 8px; font-size: 15px; font-weight: 600; color: var(--zacht); opacity: 0; animation: tik-verder .4s ease 1.2s forwards; }
+@keyframes tik-verder { to { opacity: 1; } }
 
 .finish {
   position: absolute; inset: 0; z-index: 5;
@@ -507,6 +510,7 @@ input { font: inherit; }
   .scherm, .melding, .lever-vul { transition: none; }
   .tijdstrook.in2 #deel-2, .licht, .knoppen.licht .actie, .melding.beat.zicht::after, .kw-fig .kw-draai, .kw-fig .kw-lbl, .qaly-straf.zicht, .poort-status.dringend .ps-balk { animation: none; }
   .qaly-straf.zicht { opacity: 1; }
+  .melding .m-tik-verder { animation: none; opacity: 1; }
   .licht { box-shadow: 0 0 0 4px rgba(255, 255, 255, .55); }
   .fig.wiebel, .actie.schud, .lever.vol .lever-meter, .lever.vol .lever-icoon, .lever.tel .lever-tekst { animation: none; }
   .actie.wijs { animation: none; box-shadow: 0 0 0 4px rgba(255, 255, 255, .5); }
